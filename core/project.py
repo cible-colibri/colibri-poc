@@ -12,6 +12,11 @@ class Project:
         link = Link(model1, variable1, model2, variable2)
         self.links.append(link)
 
+    def link(self, model1, model2, connector):
+        for c in connector.connections:
+            link = Link(model1, c[0], model2, c[1])
+            self.links.append(link)
+
     def run(self):
         print()
         for i in range(2):
