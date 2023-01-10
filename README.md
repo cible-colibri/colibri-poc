@@ -7,7 +7,7 @@
 Colibri-suce delivers the juce for the COLIBRI project. It proposes a prove-of-concept implementation to demonstrate how
 we imagine a future simulation environment that can serve to implement future building regulation codes, but also 
 become a tool of choice for project work which, due to its intuitive design, will quickly become so popular that it 
-will replace most existing tools, unify the building modelling appraoch and bring peace to the world.   
+will replace most existing tools, unify the building modelling approach and bring peace to the world.   
 
 Design goals are (in order)
 - intuitive: it should be possible to learn how to use and extend the system by just looking at it. We want the user experience to be so joyfull that we do not have to convince people to use the system - they will beg for it. Contributions will flow in from all over the world.
