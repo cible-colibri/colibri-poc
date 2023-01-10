@@ -8,7 +8,7 @@ class Project:
     def add(self, m):
         self.models.append(m)
 
-    def link(self, model1, variable1, model2, variable2):
+    def connect(self, model1, variable1, model2, variable2):
         link = Link(model1, variable1, model2, variable2)
         self.links.append(link)
 

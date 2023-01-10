@@ -1,7 +1,7 @@
 class Variable:
 
-    def __init__(self, name):
+    def __init__(self, name, value=0):
         self.name = name
-        self.value = 0.0
+        self.value = value
         self.unit = "-"
 
