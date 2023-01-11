@@ -31,3 +31,15 @@ class Model:
             return v[0]
         else:
             return None
+
+    def run(self):
+        pass
+
+    def init(self):
+        pass
+
+    def iteration_done(self):
+        pass
+
+    def simulation_done(self):
+        pass

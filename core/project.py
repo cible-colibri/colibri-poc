@@ -22,14 +22,22 @@ class Project:
 
     def run(self):
         print()
-        for i in range(2):
-            print("Iteration ", i)
-            for m in self.models:
-                print("computing ", m.name)
-                m.run()
+        for m in self.models:
+            m.init()
 
-            for l in self.links:
-                print("substituting ", l.from_model + "." + l.from_variable + "->"
-                      + l.to_model + "." + l.to_variable)
+        for step in range(24):
+            for i in range(2):
+                print("Iteration ", i)
+                for m in self.models:
+                    print("computing ", m.name)
+                    m.run()
 
+                for l in self.links:
+                    print("substituting ", l.from_model + "." + l.from_variable + "->"
+                          + l.to_model + "." + l.to_variable)
+
+                m.iteration_done()
+
+        for m in self.models:
+            m.simulation_done()
         print("Result is 42.")
