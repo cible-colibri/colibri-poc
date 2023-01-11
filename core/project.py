@@ -2,8 +2,9 @@ from core.link import Link
 
 
 class Project:
-    models = []
-    links = []
+    def __init__(self):
+        self.models = []
+        self.links = []
 
     def add(self, m):
         self.models.append(m)

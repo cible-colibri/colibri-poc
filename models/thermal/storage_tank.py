@@ -26,5 +26,6 @@ class StorageTank(Model):
         ]
 
     def run(self):
-        self.get_output("Outlet flow").value = self.get_input("Inlet flow").value
-        self.get_output("Outlet temperature").value = self.get_input("Inlet temperature").value / 2
+        #self.get_output("Outlet flow").value = self.get_input("Inlet flow").value
+        #self.get_output("Outlet temperature").value = self.get_input("Inlet temperature").value / 2
+        pass

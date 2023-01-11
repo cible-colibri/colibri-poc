@@ -1,7 +1,9 @@
+import json
 from connectors.thermal.flow import LiquidFlowConnector
 from core.project import Project
 from models.thermal.duct import Duct
 from models.thermal.storage_tank import StorageTank
+from utils.noncyclyc_encoder import NonCyclycEncoder
 
 
 def test_project():
@@ -27,8 +29,9 @@ def test_project():
     st.set("Number of thermostats", 2) # expands variable list to 2:
     st.set("Height fraction of thermostat-1", 0.0)
     st.get_input("Height fraction of thermostat-2").value = 0.5
+    p.add(st)
 
     p.link("duct-2", "flow", "storage tank-1", "Inlet temperature for port-1")
-
+    s = json.dumps(p, cls=NonCyclycEncoder, check_circular=False, indent=2)
     p.run()
 
