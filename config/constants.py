@@ -4,18 +4,19 @@
 # External imports
 # ========================================
 
-import dataclasses
 
 # ========================================
 # Internal imports
 # ========================================
 
-from utils.enums_utils import Units
+from utils.converters_utils import get_unit_conversion_factors
 
 # ========================================
 # Constants
 # ========================================
 
+# Dataframe containing all unit conversion factors
+UNIT_CONVERSION_FACTORS = get_unit_conversion_factors()
 
 # ========================================
 # Variables
@@ -26,13 +27,8 @@ from utils.enums_utils import Units
 # Classes
 # ========================================
 
-@dataclasses.dataclass
-class Variable:
-    name: str
-    value: float = 0
-    unit: Units = Units.UNITLESS
-    description: str = "Sorry, no description yet."
 
 # ========================================
 # Functions
 # ========================================
+

@@ -4,13 +4,12 @@
 # External imports
 # ========================================
 
-import dataclasses
 
 # ========================================
 # Internal imports
 # ========================================
 
-from utils.enums_utils import Units
+from core.variable_connector import VariableConnector
 
 # ========================================
 # Constants
@@ -26,12 +25,15 @@ from utils.enums_utils import Units
 # Classes
 # ========================================
 
-@dataclasses.dataclass
-class Variable:
-    name: str
-    value: float = 0
-    unit: Units = Units.UNITLESS
-    description: str = "Sorry, no description yet."
+class LiquidFlowConnector(VariableConnector):
+
+    def __init__(self):
+        self.connections = [
+                                # (from_variable, to_variable)
+                                ("inlet_temperature", "outlet_temperature"),
+                                ("inlet_flow_rate", "outlet_flow_rate")
+                            ]
+
 
 # ========================================
 # Functions

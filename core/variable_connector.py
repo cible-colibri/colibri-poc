@@ -1,7 +1,37 @@
+# -*- coding: utf-8 -*-
+
+# ========================================
+# External imports
+# ========================================
+
+
+# ========================================
+# Internal imports
+# ========================================
+
+
+# ========================================
+# Constants
+# ========================================
+
+
+# ========================================
+# Variables
+# ========================================
+
+
+# ========================================
+# Classes
+# ========================================
+
 class VariableConnector:
 
     def __init__(self):
         self.connections = []
 
-    def add(self, from_variable_name, to_variable_name):
+    def add(self, from_variable_name: str, to_variable_name: str) -> None:
         self.connections.append((from_variable_name, to_variable_name))
+
+# ========================================
+# Functions
+# ========================================

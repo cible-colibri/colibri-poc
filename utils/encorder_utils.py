@@ -4,13 +4,12 @@
 # External imports
 # ========================================
 
-import dataclasses
+import json
 
 # ========================================
 # Internal imports
 # ========================================
 
-from utils.enums_utils import Units
 
 # ========================================
 # Constants
@@ -26,12 +25,25 @@ from utils.enums_utils import Units
 # Classes
 # ========================================
 
-@dataclasses.dataclass
-class Variable:
-    name: str
-    value: float = 0
-    unit: Units = Units.UNITLESS
-    description: str = "Sorry, no description yet."
+class NonCyclycEncoder(json.JSONEncoder):
+
+    def __init__(self, *args, **argv):
+        super().__init__(*args, **argv)
+        self.proc_objs = []
+
+    def default(self, obj):
+        if obj in self.proc_objs:
+            # short circle the object dumping
+            return obj.name
+        self.proc_objs.append(obj)
+        attr = obj.__dict__
+        cls = type(obj).__name__
+        # try:
+        #     cls = obj.__class__
+        # except:
+        #     pass
+        attr.update({'class': cls})
+        return attr
 
 # ========================================
 # Functions

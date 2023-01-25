@@ -4,13 +4,12 @@
 # External imports
 # ========================================
 
-import dataclasses
+import enum
 
 # ========================================
 # Internal imports
 # ========================================
 
-from utils.enums_utils import Units
 
 # ========================================
 # Constants
@@ -26,12 +25,29 @@ from utils.enums_utils import Units
 # Classes
 # ========================================
 
-@dataclasses.dataclass
-class Variable:
-    name: str
-    value: float = 0
-    unit: Units = Units.UNITLESS
-    description: str = "Sorry, no description yet."
+@enum.unique
+class Schema(enum.Enum):
+    RE2020 = "re2020"
+
+
+# TODO: Split Units by theme to avoid something too long (like EnergyUnits, etc.)
+@enum.unique
+class Units(enum.Enum):
+    DEGREE_CELCIUS      = "°C"
+    KILOGRAM_PER_SECOND = "kg/s"
+    METER               = "m"
+    PASCAL              = "Pa"
+    UNITLESS            = "-"
+
+
+@enum.unique
+class EnergyUnits(enum.Enum):
+    JOULE          = "J"
+    KILO_JOULE     = "kJ"
+    KILO_WATT_HOUR = "kWh"
+    WATT_HOUR      = "Wh"
+
+
 
 # ========================================
 # Functions
