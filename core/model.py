@@ -35,7 +35,8 @@ class MetaModel(abc.ABCMeta):
     @staticmethod
     def _transform_variables_to_attributes(obj):
         for input in obj.inputs:
-            setattr(obj, input.name, input)
+            if not (type(input)==VariableList):
+                setattr(obj, input.name, input.value)
 
 
 class Model(metaclass =  MetaModel):

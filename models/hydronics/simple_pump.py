@@ -4,14 +4,19 @@
 # External imports
 # ========================================
 
+import numpy
+
+from scipy.interpolate import interp1d
 
 # ========================================
 # Internal imports
 # ========================================
-from math import exp
 
-from core.model    import Model
-from core.variable import Variable
+from core.conditions   import Conditions
+from core.model        import Model
+from core.parameters   import Parameters
+from core.variable     import Variable
+from utils.enums_utils  import Units
 
 # ========================================
 # Constants
@@ -27,24 +32,23 @@ from core.variable import Variable
 # Classes
 # ========================================
 
-class Duct(Model):
+class SimplePump(Model):
 
     def __init__(self, name: str):
-        self.name    = name
+
+        self.name       = name
         self.inputs  = [
-            Variable("loss_coefficient", 3.0), # kJ/h
-            Variable("cp_fluid", 4.186), #  J/g°C
             Variable("inlet_flow", 100), # kg/h
             Variable("inlet_temperature", 40), # °C
-            Variable("outside_temperature", 20) # °C
         ]
         self.outputs = [
                             Variable("outlet_flow"), # kg/h
                             Variable("outlet_temperature"), # °C
-                        ]
-    def initialize(self):
-        self.loss_factor = 1. - exp(- self.loss_coefficient / (self.inlet_flow * self.cp_fluid))
+                            Variable("outlet_pressure")  # Pa
+        ]
 
-    def run(self):
+    def run(self) -> None:
         self.outlet_flow = self.inlet_flow
-        self.outlet_temperature = (1. - self.loss_factor) * self.inlet_temperature + self.loss_factor * self.outside_temperature
+        self.outlet_temperature = self.inlet_temperature
+        self.outlet_pressure = 42
+
