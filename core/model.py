@@ -34,9 +34,9 @@ class MetaModel(abc.ABCMeta):
 
     @staticmethod
     def _transform_variables_to_attributes(obj):
-        for input in obj.inputs:
-            if not (type(input)==VariableList):
-                setattr(obj, input.name, input.value)
+        for variable in obj.inputs + obj.outputs:
+            if not (type(variable)==VariableList):
+                setattr(obj, variable.name, variable.value)
 
 
 class Model(metaclass =  MetaModel):
@@ -79,6 +79,9 @@ class Model(metaclass =  MetaModel):
         pass
 
     def iteration_done(self):
+        pass
+
+    def timestep_done(self):
         pass
 
     def simulation_done(self):

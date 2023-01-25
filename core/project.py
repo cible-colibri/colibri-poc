@@ -45,6 +45,13 @@ class Project:
     def add(self, model: Model) -> None:
         self.models.append(model)
 
+    def get(self, name):
+        models = [m for m in self.models if m.name == name]
+        if len(models) == 1:
+            return models[0]
+        else:
+            return None
+
     def link(self, model_1, arg_2, *connection):
         if len(connection) ==2:
             model_2 = connection[0]
@@ -64,18 +71,44 @@ class Project:
 
         # Run the simulation (for each time step)
         for time_step in range(0, self.time_steps):
-            for i in range(2):
-                print("Iteration ", i)
+            n_iteration = 1
+            converged = False
+            while not converged:
+                print(f"Iteration {n_iteration}")
                 for model in self.models:
                     print(f"Computing: {model.name}")
                     model.run()
-                for link in self.links:
-                    print(f"Substituting {link.from_model}.{link.from_variable} by {link.to_model}.{link.to_variable}")
-                model.iteration_done()
 
+                    # substitute vales following links
+                    for link in self.links:
+                        value_in = getattr(link.from_model, link.to_variable)
+                        value_out = getattr(link.from_model, link.from_variable)
+                        setattr(link.to_model, link.to_variable, value_out)
+                        print(f"Substituting {link.from_model}.{link.from_variable} by {link.to_model}.{link.to_variable} : {value_out} -> {value_out}")
+
+                        if (abs(value_out) < self.convergence_tolerance) and (abs(value_out - value_in) < self.convergence_tolerance):
+                            converged = True
+                        elif value_out == 0:
+                            pass
+                        elif abs(value_in - value_out) / value_out < self.convergence_tolerance:
+                            converged = True
+
+                # check for convergence limit
+                if n_iteration > self.n_max_iterations:
+                    converged = True
+                    self.n_non_convergence = self.n_non_convergence + 1
+                    self.non_convergence_times.append(time_step)
+
+                model.iteration_done()
+                n_iteration = n_iteration + 1
+
+            model.timestep_done()
+
+        print("Simulation summary")
+        print("==================")
         for m in self.models:
             m.simulation_done()
-        print("Result is 42.")
+        print(f"{self.n_non_convergence} timesteps have convergence problems")
 
     # Return project as json object
     def to_json(self) -> str:
@@ -126,3 +159,7 @@ class Project:
         if self.schema is Schema.RE2020:
             self.time_steps   = 24
             self.models_order = []
+            self.n_max_iterations = 5
+            self.n_non_convergence = 0
+            self.non_convergence_times = []
+            self.convergence_tolerance = 0.01

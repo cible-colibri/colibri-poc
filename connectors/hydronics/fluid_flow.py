@@ -30,8 +30,8 @@ class LiquidFlowConnector(VariableConnector):
     def __init__(self):
         self.connections = [
                                 # (from_variable, to_variable)
-                                ("inlet_temperature", "outlet_temperature"),
-                                ("inlet_flow_rate", "outlet_flow_rate")
+                                ("outlet_temperature", "inlet_temperature"),
+                                ("outlet_flow_rate", "inlet_flow_rate")
                             ]
 
 
