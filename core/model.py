@@ -29,11 +29,11 @@ from core.variable_list import VariableList
 class MetaModel(abc.ABCMeta):
     def __call__(cls, *args, **kwargs):
         obj = type.__call__(cls, *args, **kwargs)
-        cls._transform_variables_in_attributes(obj)
+        cls._transform_variables_to_attributes(obj)
         return obj
 
     @staticmethod
-    def _transform_variables_in_attributes(obj):
+    def _transform_variables_to_attributes(obj):
         for input in obj.inputs:
             setattr(obj, input.name, input)
 
@@ -59,7 +59,7 @@ class Model(metaclass =  MetaModel):
         return self.get_variable(name, self.inputs)
 
     def set(self, variable_name: str, value: float):
-        # set value and expand vectors
+        # TODO : set value and expand vectors
         pass
 
     def get(self, variable_name: str):

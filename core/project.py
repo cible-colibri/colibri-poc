@@ -45,10 +45,17 @@ class Project:
     def add(self, model: Model) -> None:
         self.models.append(model)
 
-    def link(self, model_1: Model, model_2: Model, connector: VariableConnector):
-        for connection_from, connection_to in connector.connections:
-            link = Link(model_1, connection_from, model_2, connection_to)
+    def link(self, model_1, arg_2, *connection):
+        if len(connection) ==2:
+            model_2 = connection[0]
+            variable_2 = connection[1]
+            link = Link(model_1, arg_2, model_2, variable_2)
             self.links.append(link)
+        else:
+            connector = connection[0]
+            for c in connector.connections:
+                link = Link(model_1, c[0], arg_2, c[1])
+                self.links.append(link)
 
     def run(self):
         # Initialize models
@@ -64,7 +71,7 @@ class Project:
                     model.run()
                 for link in self.links:
                     print(f"Substituting {link.from_model}.{link.from_variable} by {link.to_model}.{link.to_variable}")
-                m.iteration_done()
+                model.iteration_done()
 
         for m in self.models:
             m.simulation_done()
