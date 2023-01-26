@@ -19,5 +19,6 @@ def test_building():
     project.link(weather, "temperature", building, "ext_temperature")
     project.link(weather, "GloHorzRad", building, "radiation")
 
+    project.time_steps = 8760
     project.run()
     pass

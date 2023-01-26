@@ -9,6 +9,9 @@ import abc
 # ========================================
 # Internal imports
 # ========================================
+import numbers
+
+import numpy as np
 
 from core.variable_list import VariableList
 
@@ -39,7 +42,7 @@ class MetaModel(abc.ABCMeta):
                 setattr(obj, variable.name, variable.value)
         for variable in obj.outputs:
             if type(variable) != VariableList:
-                setattr(obj, variable.name + '_series', [])
+                setattr(obj, variable.name + '_series', np.ones(8760))
 
 
 class Model(metaclass =  MetaModel):
@@ -83,8 +86,9 @@ class Model(metaclass =  MetaModel):
 
     def save_time_step(self, time_step):
         for variable in self.outputs:
-            if type(variable) != VariableList:
-                getattr(self, variable.name + '_series').append(getattr(self, variable.name))
+            value = getattr(self, variable.name)
+            if type(variable) != VariableList and isinstance(value, numbers.Number):
+                getattr(self, variable.name + '_series')[time_step] = value
 
     @abc.abstractmethod
     def run(self, time_step=0):

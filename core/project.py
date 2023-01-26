@@ -172,4 +172,4 @@ class Project:
         self.convergence_tolerance = 0.01
 
         if self.schema is Schema.RE2020:
-            self.time_steps = 24
+            pass

@@ -30,8 +30,8 @@ class SimpleBuilding(Model):
             Variable('radiation', 0)
         ]
         self.outputs = [
-            Variable("outlet_flow_rate"),  # kg/h
-            Variable("outlet_temperature"),  # °C
+            Variable("phi_hvac"),
+            Variable("zone_temperature"),
         ]
 
     def initialize(self):
@@ -42,16 +42,16 @@ class SimpleBuilding(Model):
         self.area_walls = self.area_walls_t * (1 - self.wwr)
 
         # pre-calculate setpoint for all(!) time steps (heating or cooling default setpoint)
-        # this demonstrates how to creates a link to a different model (the weather data model) :
+        # this demonstrates how to create a link to a different model (the weather data model) :
         # this model (the SimpleBuilding) cannot run without it!
         # it is recommended to reduce such dependencies to the minimum
         weather = self.project.get_models('Weather')[0]
 
-        ext_temperature_list = weather.climate_data['temperature']
-        self.zone_setpoint_list = np.zeros(len(ext_temperature_list)) + self.zone_setpoint_heating
+        self.ext_temperature_list = weather.climate_data['temperature']
+        self.zone_setpoint_list = np.zeros(len(self.ext_temperature_list)) + self.zone_setpoint_heating
 
-        self.heating_season = np.empty(len(ext_temperature_list))
-        self.heating_on = ext_temperature_list.rolling(48).mean() <= 15
+        self.heating_season = np.empty(len(self.ext_temperature_list))
+        self.heating_on = self.ext_temperature_list.rolling(48).mean() <= 15
         self.heating_on[0:48] = True
         self.heating_season_list = self.heating_on
 
@@ -79,7 +79,7 @@ class SimpleBuilding(Model):
 
     def simulation_done(self, time_step=0):
         print(f"{self.name}:")
-        # plot_building(1, zone_temperature, phi_hvac, ext_temperature_list, model_type='simplicity', to_plot=True)
+        plot_building(1, self.zone_temperature_series, self.phi_hvac_series, self.ext_temperature_list, model_type='simplicity', to_plot=True)
 
 
 def plot_building(id, zone_temperatures, phi_hvacs, ext_temperature, model_type='simplicity', to_plot=False):
