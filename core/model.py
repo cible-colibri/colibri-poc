@@ -37,6 +37,9 @@ class MetaModel(abc.ABCMeta):
         for variable in obj.inputs + obj.outputs:
             if type(variable) != VariableList:
                 setattr(obj, variable.name, variable.value)
+        for variable in obj.outputs:
+            if type(variable) != VariableList:
+                setattr(obj, variable.name + '_series', [])
 
 
 class Model(metaclass =  MetaModel):
@@ -77,6 +80,11 @@ class Model(metaclass =  MetaModel):
             return v[0]
         else:
             return None
+
+    def save_time_step(self, time_step):
+        for variable in self.outputs:
+            if type(variable) != VariableList:
+                getattr(self, variable.name + '_series').append(getattr(self, variable.name))
 
     @abc.abstractmethod
     def run(self, time_step=0):

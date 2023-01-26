@@ -104,6 +104,10 @@ class Project:
                     self.non_convergence_times.append(time_step)
 
                 model.iteration_done(time_step)
+
+                for model in self.models:
+                    model.save_time_step(time_step)
+
                 n_iteration = n_iteration + 1
 
             model.timestep_done(time_step)
