@@ -59,8 +59,6 @@ class SimpleBuilding(Model):
         if self.cooling:  # replace setpoint for cooling in setpoint_list
             self.zone_setpoint_list[self.heating_season == False] = self.zone_setpoint_cooling
 
-        self.phi_hvac = np.empty(len(ext_temperature_list))
-        self.zone_temperature = np.empty(len(ext_temperature_list))
 
     def run(self, step):
         ext_temperature = self.ext_temperature
@@ -69,7 +67,7 @@ class SimpleBuilding(Model):
         zone_setpoint = self.zone_setpoint_list[step]
         heating_season = self.heating_season_list[step]
 
-        self.phi_hvac[step], self.zone_temperature[step] = model(self.volume, zone_setpoint, self.ach, self.eta_recup,
+        self.phi_hvac, self.zone_temperature = model(self.volume, zone_setpoint, self.ach, self.eta_recup,
                                                                  ext_temperature,
                                                                  self.u_window, self.area_windows, self.trans_window,
                                                                  self.area_walls, self.u_wall,
