@@ -8,10 +8,12 @@
 # ========================================
 # Internal imports
 # ========================================
+import os
 from math import exp
 
 import pandas as pd
 
+from core import data_path
 from core.file import File
 from core.model    import Model
 from core.variable import Variable
@@ -73,7 +75,7 @@ class Weather(Model):
             Variable('rain_hr')
         ]
 
-        self.files = [File('weather_data', 'C:\home\source\colibrisuce\data\weather\EnergyPlus\Paris.epw',
+        self.files = [File('weather_data', os.path.join(data_path['weather_data'], 'EnergyPlus', 'Paris.epw'),
                       'Weather data in EPW format')]
 
     def initialize(self):

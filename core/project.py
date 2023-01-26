@@ -44,6 +44,7 @@ class Project:
 
     def add(self, model: Model) -> None:
         self.models.append(model)
+        model.project = self
 
     def get(self, name):
         models = [m for m in self.models if m.name == name]
@@ -51,6 +52,9 @@ class Project:
             return models[0]
         else:
             return None
+
+    def get_models(self, cls):
+        return [m for m in self.models if self.models[0].__class__.__name__ == cls]
 
     def link(self, model_1, arg_2, *connection):
         if len(connection) ==2:
@@ -81,10 +85,10 @@ class Project:
                     model.run(time_step)
                     # substitute vales following links
                     for link in self.links:
-                        value_in = getattr(link.from_model, link.to_variable)
+                        value_in = getattr(link.to_model, link.to_variable)
                         value_out = getattr(link.from_model, link.from_variable)
                         setattr(link.to_model, link.to_variable, value_out)
-                        print(f"Substituting {link.from_model}.{link.from_variable} by {link.to_model}.{link.to_variable} : {value_out} -> {value_out}")
+                        print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
 
                         if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
                             converged = False

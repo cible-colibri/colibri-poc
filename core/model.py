@@ -46,6 +46,7 @@ class Model(metaclass =  MetaModel):
         self.inputs  = []
         self.outputs = []
         self.files   = []
+        self.project = None
 
     @staticmethod
     def get_variable(name: str, variables: list) -> object:
