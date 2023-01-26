@@ -35,7 +35,7 @@ class MetaModel(abc.ABCMeta):
     @staticmethod
     def _transform_variables_to_attributes(obj):
         for variable in obj.inputs + obj.outputs:
-            if not (type(variable)==VariableList):
+            if type(variable) != VariableList:
                 setattr(obj, variable.name, variable.value)
 
 
@@ -45,6 +45,7 @@ class Model(metaclass =  MetaModel):
         self.name    = name
         self.inputs  = []
         self.outputs = []
+        self.files   = []
 
     @staticmethod
     def get_variable(name: str, variables: list) -> object:
@@ -59,6 +60,11 @@ class Model(metaclass =  MetaModel):
     def get_input(self, name: str):
         return self.get_variable(name, self.inputs)
 
+    def get_file(self, name: str) -> object:
+        for f in self.files:
+            if f.name == name:
+                return f
+
     def set(self, variable_name: str, value: float):
         # TODO : set value and expand vectors
         pass
@@ -72,19 +78,19 @@ class Model(metaclass =  MetaModel):
             return None
 
     @abc.abstractmethod
-    def run(self):
+    def run(self, time_step=0):
         pass
 
     def initialize(self):
         pass
 
-    def iteration_done(self):
+    def iteration_done(self, time_step=0):
         pass
 
-    def timestep_done(self):
+    def timestep_done(self, time_step=0):
         pass
 
-    def simulation_done(self):
+    def simulation_done(self, time_step=0):
         pass
 
     # Return the string representation of the object

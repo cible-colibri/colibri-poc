@@ -45,12 +45,11 @@ class Duct(Model):
     def initialize(self):
         self.loss_factor = 1. - exp(- self.loss_coefficient / (self.inlet_flow_rate * self.cp_fluid))
 
-    def run(self):
+    def run(self, time_step):
         self.outlet_flow_rate = self.inlet_flow_rate
         self.outlet_temperature = (1. - self.loss_factor) * self.inlet_temperature + self.loss_factor * self.outside_temperature
-        pass
 
-    def simulation_done(self):
+    def simulation_done(self, time_step=0):
         print(f"{self.name}:")
         for output in self.outputs:
             print(f"{output.name}={getattr(self, output.name)}")

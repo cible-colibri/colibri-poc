@@ -52,7 +52,7 @@ class Pipe(Model):
         self.parameters = parameters
 
 
-    def run(self) -> None:
+    def run(self, time_step) -> None:
         has_converged = False
         while not has_converged:
             self.compute_friction_coefficient()

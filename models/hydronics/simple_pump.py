@@ -47,7 +47,7 @@ class SimplePump(Model):
                             Variable("outlet_pressure")  # Pa
         ]
 
-    def run(self) -> None:
+    def run(self, time_step) -> None:
         self.outlet_flow_rate = self.inlet_flow_rate
         self.outlet_temperature = self.inlet_temperature
         self.outlet_pressure = 42

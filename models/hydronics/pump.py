@@ -53,7 +53,7 @@ class Pump(Model):
         self.parameters = parameters
 
     # Run the pump model
-    def run(self) -> None:
+    def run(self, time_step) -> None:
         """Run the pump model
 
         Parameters
