@@ -20,5 +20,6 @@ def test_building():
     project.link(weather, "GloHorzRad", building, "radiation")
 
     project.time_steps = 8760
+    project.iterate = False # no loops - runs 2 times faster
     project.run()
     pass

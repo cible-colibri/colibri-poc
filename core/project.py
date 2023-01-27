@@ -83,6 +83,7 @@ class Project:
                 for model in self.models:
                     print(f"Computing: {model.name}")
                     model.run(time_step)
+
                     # substitute vales following links
                     for link in self.links:
                         value_in = getattr(link.to_model, link.to_variable)
@@ -90,12 +91,13 @@ class Project:
                         setattr(link.to_model, link.to_variable, value_out)
                         print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
 
-                        if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
-                            converged = False
-                        elif value_out == 0:
-                            pass
-                        elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
-                            converged = False
+                        if self.iterate:
+                            if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
+                                converged = False
+                            elif value_out == 0:
+                                pass
+                            elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
+                                converged = False
 
                 # check for convergence limit
                 if n_iteration > self.n_max_iterations:
@@ -170,6 +172,7 @@ class Project:
         self.n_non_convergence = 0
         self.non_convergence_times = []
         self.convergence_tolerance = 0.01
+        self.iterate = True
 
         if self.schema is Schema.RE2020:
             pass
