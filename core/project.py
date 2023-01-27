@@ -114,11 +114,11 @@ class Project:
 
             model.timestep_done(time_step)
 
-        # print("Simulation summary")
-        # print("==================")
-        # for m in self.models:
-        #     m.simulation_done(time_step)
-        # print(f"{self.n_non_convergence} timesteps have convergence problems")
+        print("Simulation summary")
+        print("==================")
+        for m in self.models:
+            m.simulation_done(time_step)
+        print(f"{self.n_non_convergence} timesteps have convergence problems")
 
     # Return project as json object
     def to_json(self) -> str:
