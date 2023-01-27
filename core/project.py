@@ -78,10 +78,10 @@ class Project:
             n_iteration = 1
             converged = False
             while not converged:
-                print(f"Iteration {n_iteration}")
+                #print(f"Iteration {n_iteration}")
                 converged = True
                 for model in self.models:
-                    print(f"Computing: {model.name}")
+                    #print(f"Computing: {model.name}")
                     model.run(time_step)
 
                     # substitute vales following links
@@ -89,7 +89,7 @@ class Project:
                         value_in = getattr(link.to_model, link.to_variable)
                         value_out = getattr(link.from_model, link.from_variable)
                         setattr(link.to_model, link.to_variable, value_out)
-                        print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
+                        #print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
 
                         if self.iterate:
                             if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
@@ -114,11 +114,11 @@ class Project:
 
             model.timestep_done(time_step)
 
-        print("Simulation summary")
-        print("==================")
-        for m in self.models:
-            m.simulation_done(time_step)
-        print(f"{self.n_non_convergence} timesteps have convergence problems")
+        # print("Simulation summary")
+        # print("==================")
+        # for m in self.models:
+        #     m.simulation_done(time_step)
+        # print(f"{self.n_non_convergence} timesteps have convergence problems")
 
     # Return project as json object
     def to_json(self) -> str:
@@ -173,6 +173,7 @@ class Project:
         self.non_convergence_times = []
         self.convergence_tolerance = 0.01
         self.iterate = True
+        self.verbose = False # TODO: implement printing ON/OFF mechanism
 
         if self.schema is Schema.RE2020:
             pass
