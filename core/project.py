@@ -7,17 +7,19 @@
 import json
 import pathlib
 import typing
+import time
+import numpy as np
+from matplotlib import pyplot as plt
 
 # ========================================
 # Internal imports
 # ========================================
-import numpy as np
-from matplotlib import pyplot as plt
+
 
 from core.link               import Link
 from core.model              import Model
-from core.plot import Plot
-from core.variable_list import VariableList
+from core.plot               import Plot
+from core.variable_list      import VariableList
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file
@@ -119,6 +121,8 @@ class Project:
                     setattr(model, variable.name + '_series', np.ones(self.time_steps))
 
     def run(self):
+        starting_time = time.perf_counter()
+
         # Initialize models
         self.initialize_series()
         for model in self.models:
@@ -171,6 +175,7 @@ class Project:
         for m in self.models:
             m.simulation_done(time_step)
         print(f"{self.n_non_convergence} timesteps have convergence problems")
+        print(f"Simulation time: {(time.perf_counter() - starting_time):3.2f} seconds")
 
         self.plot()
 

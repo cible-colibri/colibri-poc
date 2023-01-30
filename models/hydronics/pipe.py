@@ -46,8 +46,8 @@ class Pipe(Model):
                                 Variable("inlet_temperature", 0.0, Units.DEGREE_CELCIUS, "Temperature of the flow rate of the pump"),
                            ]
         self.outputs    = [
-                               Variable("Outlet flow"),
-                               Variable("Outlet temperature"),
+                               Variable("outlet_flow_rate"),
+                               Variable("outlet_temperature"),
                            ]
         self.parameters = parameters
 

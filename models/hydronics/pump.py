@@ -42,12 +42,14 @@ class Pump(Model):
                                 Variable("inlet_flow_rate"),
                                 Variable("inlet_pressure"),
                                 Variable("pump_speed"),
+                                Variable("inlet_temperature"),
 
-                           ]
+        ]
         self.outputs    = [
                                Variable("outlet_flow_rate"),
-                               Variable("power")
-                           ]
+                               Variable("power"),
+                               Variable("outlet_temperature")
+        ]
         if parameters is None:
             parameters = Parameters().add(Variable("efficiency", 0.25, Units.METER))
         self.parameters = parameters
