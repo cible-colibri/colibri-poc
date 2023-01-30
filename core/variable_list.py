@@ -16,9 +16,9 @@ class VariableList:
             j = 1
             for v in self.variables:
                 if len(self.variables) >1:
-                    variable_name = v.name + "-" + str(i+1) + "-" + str(j)
+                    variable_name = v.name + "_" + str(i+1) + "_" + str(j)
                 else:
-                    variable_name = v.name + "-" + str(i+1)
+                    variable_name = v.name + "_" + str(i+1)
                 new_variables.append(Variable(variable_name))
                 j = j+1
         return new_variables

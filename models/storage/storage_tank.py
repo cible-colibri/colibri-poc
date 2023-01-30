@@ -1,3 +1,5 @@
+import numpy as np
+
 from core.model import Model
 from core.variable import Variable
 from core.variable_list import VariableList
@@ -10,22 +12,38 @@ class StorageTank(Model):
         self.inputs = []
         self.outputs = []
 
-        self.inputs.append(Variable("Number of thermostats", 2))
+        self.inputs.append(Variable("Number_of_tank_nodes", 2))
         self.inputs.extend(
-            VariableList(self, "Number of thermostats",
-                [Variable("Height fraction of thermostat")]).expand())
-        self.inputs.append(Variable("Inlet temperature for port-1"))
-        self.inputs.append(Variable("Inlet temperature for port-2"))
+            VariableList(self, "Number_of_tank_nodes",
+                [Variable("Height_node")]).expand())
+
+        self.inputs.append(Variable("Initial_temperature"))
+
+        self.inputs.append(Variable("inlet_temperature_1", 40))
+        self.inputs.append(Variable("inlet_flow_rate_1", 100))
+        self.inputs.append(Variable("inlet_temperature_2", 40))
+        self.inputs.append(Variable("inlet_flow_rate_2", 100))
 
 
         self.outputs = [
-            Variable("Temperature at outlet 1"),
-            Variable("Flow rate at outlet 1"),
-            Variable("Temperature at outlet 2"),
-            Variable("Flow rate at outlet 2")
+            Variable("outlet_temperature_1"),
+            Variable("outlet_flow_rate_1"),
+            Variable("outlet_temperature_2"),
+            Variable("outlet_flow_rate_2"),
         ]
 
-    def run(self):
-        #self.get_output("Outlet flow").value = self.get_input("Inlet flow").value
-        #self.get_output("Outlet temperature").value = self.get_input("Inlet temperature").value / 2
+        self.node_temperatures = None
+
+    def initialize(self):
+        self.node_temperatures = np.ones(self.Number_of_tank_nodes) * self.Initial_temperature
+
+    def run(self, time_step):
+        self.outlet_flow_rate_1 = self.inlet_flow_rate_1
+        self.outlet_flow_rate_2 = self.inlet_flow_rate_2
+        self.outlet_temperature_1 = self.inlet_temperature_1
+        self.outlet_temperature_2 = self.inlet_temperature_2
+
+        self.node_temperatures[:] =  self.get_input("inlet_temperature_1").value
+        self.node_temperatures[:-1] = self.get_output("outlet_temperature_1").value
+
         pass

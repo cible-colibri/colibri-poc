@@ -11,10 +11,11 @@ import typing
 # ========================================
 # Internal imports
 # ========================================
+from matplotlib import pyplot as plt
 
 from core.link               import Link
 from core.model              import Model
-from core.variable_connector import VariableConnector
+from core.plot import Plot
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file
@@ -40,11 +41,13 @@ class Project:
         self.schema = schema
         self.models = []
         self.links  = []
+        self.plots = {}
         self._set_project_parameters()
 
     def add(self, model: Model) -> None:
         self.models.append(model)
         model.project = self
+
 
     def get(self, name):
         models = [m for m in self.models if m.name == name]
@@ -60,13 +63,52 @@ class Project:
         if len(connection) ==2:
             model_2 = connection[0]
             variable_2 = connection[1]
+            if not self.is_eligible_link(model_1, arg_2, model_2, variable_2):
+                raise ValueError(f"Cannot link {model_1}.{arg_2} to {model_2}.{variable_2}")
             link = Link(model_1, arg_2, model_2, variable_2)
             self.links.append(link)
         else:
             connector = connection[0]
             for c in connector.connections:
+                if not self.is_eligible_link(model_1, c[0], arg_2, c[1]):
+                    raise ValueError(f"Cannot link {model_1}.{c[0]} to {arg_2}.{c[1]}")
                 link = Link(model_1, c[0], arg_2, c[1])
                 self.links.append(link)
+
+    def is_eligible_link(self, model1, variable1, model2, variable2):
+        for link in self.links:
+            if link.from_model == model1 and link.to_model == model2 \
+                and link.from_variable == variable1 and link.to_variable == variable2:
+                return False
+        return hasattr(model1, variable1) and hasattr(model2, variable2)
+
+    def add_plot(self, name, model, variable):
+        plot = Plot(name, model, variable)
+        if name in self.plots:
+            self.plots[name].append(plot)
+        else:
+            self.plots[name] =[plot]
+
+    def plot(self):
+        if self.to_plot and len(self.plots) > 1:
+            fig1 = plt.figure()
+            disposition = len(self.plots) * 100 + 11
+
+            for title, plots in self.plots.items():
+                ax1 = fig1.add_subplot(disposition)
+                ax1.set_title(title)
+                for plot in plots:
+                    model = plot.model
+                    variable = model.get_output(plot.variable)
+                    series = getattr(model, variable.name + '_series')
+                    ax1.plot(series, label=model.name + "." + variable.name)
+                    ylabel = '[' + variable.unit.name + ']'
+                    ax1.set_ylabel(ylabel)
+
+                disposition = disposition + 1
+
+            plt.legend(handles=[ax1])
+            plt.show()
 
     def run(self):
         # Initialize models
@@ -75,29 +117,30 @@ class Project:
 
         # Run the simulation (for each time step)
         for time_step in range(0, self.time_steps):
+            if self.verbose: print(f"### step {time_step}")
             n_iteration = 1
             converged = False
             while not converged:
-                #print(f"Iteration {n_iteration}")
+                if self.verbose: print(f"Iteration {n_iteration}")
                 converged = True
                 for model in self.models:
-                    #print(f"Computing: {model.name}")
+                    if self.verbose: print(f"Computing: {model.name}")
                     model.run(time_step)
 
-                    # substitute vales following links
-                    for link in self.links:
-                        value_in = getattr(link.to_model, link.to_variable)
-                        value_out = getattr(link.from_model, link.from_variable)
-                        setattr(link.to_model, link.to_variable, value_out)
-                        #print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
+                # substitute vales following links
+                for link in self.links:
+                    value_in = getattr(link.to_model, link.to_variable)
+                    value_out = getattr(link.from_model, link.from_variable)
+                    setattr(link.to_model, link.to_variable, value_out)
+                    if self.verbose: print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
 
-                        if self.iterate:
-                            if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
-                                converged = False
-                            elif value_out == 0:
-                                pass
-                            elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
-                                converged = False
+                    if self.iterate:
+                        if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
+                            converged = False
+                        elif value_out == 0:
+                            pass
+                        elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
+                            converged = False
 
                 # check for convergence limit
                 if n_iteration > self.n_max_iterations:
@@ -119,6 +162,8 @@ class Project:
         for m in self.models:
             m.simulation_done(time_step)
         print(f"{self.n_non_convergence} timesteps have convergence problems")
+
+        self.plot()
 
     # Return project as json object
     def to_json(self) -> str:
@@ -174,6 +219,7 @@ class Project:
         self.convergence_tolerance = 0.01
         self.iterate = True
         self.verbose = False # TODO: implement printing ON/OFF mechanism
+        self.to_plot = True
 
         if self.schema is Schema.RE2020:
             pass

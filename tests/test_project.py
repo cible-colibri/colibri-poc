@@ -48,7 +48,7 @@ def test_project():
     project.add(duct_1)
     # Create another duct (from Duct model)
     duct_2 = Duct("duct_2")
-    duct_2.inlet_temperature = 20
+    duct_2.inlet_temperature = 40
     project.add(duct_2)
     # Create a connector
     liquid_flow = LiquidFlowConnector()
@@ -57,27 +57,36 @@ def test_project():
 
     # add a pump
     pump_1 = SimplePump("pump_1")
-    pump_1.inlet_temperature = 10
+    pump_1.inlet_temperature = 40
     project.add(pump_1)
     project.link(duct_2, pump_1, liquid_flow)
-    project.link(pump_1, duct_1, liquid_flow)
-
 
 
     # Alternative for linking models variable by variable
     #project.link("duct-1", "flow", "duct-2", "flow")
 
     # Create a storage tank
-    # storage_tank_1 = StorageTank("storage tank_1")
-    # # Define the
-    # storage_tank_1.set("Number of thermostats", 2) # expands variable list to 2:
-    # storage_tank_1.set("Height fraction of thermostat-1", 0.0)
-    # storage_tank_1.get_input("Height fraction of thermostat-2").value = 0.5
-    # project.add(storage_tank_1)
-    # # Link ducts
-    # project.link(duct_2, storage_tank_1, liquid_flow)
+    storage_tank_1 = StorageTank("storage_tank_1")
+    storage_tank_1.set("Number_of_thermostats", 2) # expands variable list to 2:
+    storage_tank_1.set("Height_node_1", 0.0)
+    storage_tank_1.get_input("Height_node_2").value = 0.5
+    project.add(storage_tank_1)
+    # # Link to pump & ducts
+    project.link(pump_1, "outlet_flow_rate", storage_tank_1, "inlet_flow_rate_1")
+    project.link(pump_1, "outlet_temperature", storage_tank_1, "inlet_temperature_1")
+    project.link(storage_tank_1, "outlet_flow_rate_1", duct_1, "inlet_flow_rate")
+    project.link(storage_tank_1, "outlet_temperature_1", duct_1, "inlet_temperature")
     # Save project as a json file
     # TODO: fix project dumping
     # project.save_as_json(f"{project.name}.json")
     # Run project
+    project.time_steps = 24
+    project.n_max_iterations = 200
+
+    project.add_plot("Temperatures_ducts", duct_1, "outlet_temperature")
+    project.add_plot("Temperatures_ducts", duct_2, "outlet_temperature")
+    project.add_plot("Temperatures_pump", pump_1, "outlet_temperature")
+    project.add_plot("Temperatures_storage", storage_tank_1, "outlet_temperature_1")
+
     project.run()
+    pass
