@@ -11,11 +11,13 @@ import typing
 # ========================================
 # Internal imports
 # ========================================
+import numpy as np
 from matplotlib import pyplot as plt
 
 from core.link               import Link
 from core.model              import Model
 from core.plot import Plot
+from core.variable_list import VariableList
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file
@@ -110,8 +112,15 @@ class Project:
             plt.legend(handles=[ax1])
             plt.show()
 
+    def initialize_series(self):
+        for model in self.models:
+            for variable in model.outputs:
+                if type(variable) != VariableList:
+                    setattr(model, variable.name + '_series', np.ones(self.time_steps))
+
     def run(self):
         # Initialize models
+        self.initialize_series()
         for model in self.models:
             model.initialize()
 
@@ -211,7 +220,7 @@ class Project:
         write_json_file(file_path, self.to_json())
 
     def _set_project_parameters(self) -> None:
-        self.time_steps   = 24
+        self.time_steps   = 168
         self.models_order = []
         self.n_max_iterations = 25
         self.n_non_convergence = 0

@@ -40,10 +40,6 @@ class MetaModel(abc.ABCMeta):
         for variable in obj.inputs + obj.outputs:
             if type(variable) != VariableList:
                 setattr(obj, variable.name, variable.value)
-        for variable in obj.outputs:
-            if type(variable) != VariableList:
-                setattr(obj, variable.name + '_series', np.ones(8760))
-
 
 class Model(metaclass =  MetaModel):
 
