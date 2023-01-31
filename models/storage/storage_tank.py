@@ -35,7 +35,7 @@ class StorageTank(Model):
         self.node_temperatures = None
 
     def initialize(self):
-        self.node_temperatures = np.ones(self.Number_of_tank_nodes) * self.Initial_temperature
+        self.node_temperatures = np.ones(self.Number_of_tank_nodes.value) * self.Initial_temperature
 
     def run(self, time_step):
         self.outlet_flow_rate_1 = self.inlet_flow_rate_1
