@@ -40,3 +40,31 @@ def test_variable():
     assert c == b
 
     # TODO: add tests for all operators
+
+def test_unit_conversion():
+    a = Variable("a")
+    a.value = 42.2
+    a.unit = "J"
+
+    a_kJ = a.convert("kJ")
+    assert a_kJ == a.value / 1000
+
+    a.unit = "J"
+    a_kWh = a.convert("kWh")
+    assert a_kWh == pytest.approx( 1.17222e-5, 1e-4)
+
+    a.unit = "kJ"
+    a_kWh = a.convert("kWh")
+    assert a_kWh == pytest.approx( 0.01172222, 1e-4)
+
+    a.unit = "C"
+    a_F = a.convert("K")
+    assert a_F == pytest.approx(315.35, 0.01)
+
+    a.unit = "C"
+    a_F = a.convert("F")
+    assert a_F == pytest.approx(107.96, 0.01)
+
+    a.unit = "F"
+    a_F = a.convert("K")
+    assert a_F == pytest.approx(278.8167, 1e-4)

@@ -13,7 +13,7 @@ Design goals are (in order)
 - intuitive: it should be possible to learn how to use and extend the system by just looking at it. We want the user experience to be so joyfull that we do not have to convince people to use the system - they will beg for it. Contributions will flow in from all over the world.
 - modular: it must be possible to add a new phenomenon without any knowledge about the already existing ones - just copy a single file containinng a simple model in the language of your choice and add your formulae  
 - open: it should be able to use most existing models implemented for tools like MATLAB, TRN-suce, Modellica, ...  
-- automatic testing: test cases that make it unbreakable ever by very motivated idiots
+- automatic testing: test cases that make it unbreakable even by very motivated idiots
 
 ## FAQ
 

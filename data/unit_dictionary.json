@@ -1,0 +1,1846 @@
+{
+  "dimensions": [
+    {
+      "name": "Specific Thermal Capacitance",
+      "definition": "The product of specific heat and density",
+      "base_unit": {
+        "name": "kJ/m3.K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Absolute Thermal Resistance",
+      "definition": "Absolute thermal resistance is a specific property of a material, Typically a characteristic of a heat sink.",
+      "base_unit": {
+        "name": "K/W",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Voltage Dependent Current Coefficient",
+      "definition": "",
+      "base_unit": {
+        "name": "A/V",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Acceleration",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.",
+      "base_unit": {
+        "name": "m/s2",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m*s^-2"
+      },
+      "equivalent_units": [
+        {
+          "name": "ft/s2",
+          "description": "A unit of acceleration.",
+          "addition_factor": "0",
+          "multiplication_factor": "3.28084",
+          "si_code": "m*s^-2"
+        }
+      ]
+    },
+    {
+      "name": "Electric Resistance",
+      "definition": "base units are: m^2*kg*s^-3*A^-2",
+      "base_unit": {
+        "name": "ohm",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": [
+        {
+          "name": "mOhm",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.001",
+          "si_code": "-"
+        },
+        {
+          "name": "kOhm",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "1000",
+          "si_code": "-"
+        },
+        {
+          "name": "MOhm",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "1000000",
+          "si_code": "-"
+        }
+      ]
+    },
+    {
+      "name": "Temp. Dependent Current Coeff.",
+      "definition": "",
+      "base_unit": {
+        "name": "A/K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Temp. Dependent Voltage Coeff.",
+      "definition": "",
+      "base_unit": {
+        "name": "V/K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m*kg^-1*s^2*K"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Thermal Capacitance per Unit Area",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.  This unit is the thermal capacitance (mass * specific heat) of a material per unit area.",
+      "base_unit": {
+        "name": "J/m^2.K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "kg*s^-2*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/m^2.K",
+          "description": "A unit of thermal capacitance per unit area in the modified SI unit system.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.001",
+          "si_code": "kg*s^-2*K^-1"
+        },
+        {
+          "name": "BTU/ft^2.F",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.000054451",
+          "si_code": "kg*s^-2*K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Volumetric Heat Capacitance",
+      "definition": "The product of density and specific heat.",
+      "base_unit": {
+        "name": "J/m^3/K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m*kg*s^-2*K"
+      },
+      "equivalent_units": [
+        {
+          "name": "BTU/ft^3/F",
+          "description": "A measure of the volumetric heat capacitance.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.000014911",
+          "si_code": "m*kg*s^-2*K"
+        },
+        {
+          "name": "kJ/m^3/K",
+          "description": "A measure of the volumetric heat capacitance.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.001",
+          "si_code": "m*kg*s^-2*K"
+        }
+      ]
+    },
+    {
+      "name": "Inverse Temperature Difference",
+      "definition": "The inverse of temperature",
+      "base_unit": {
+        "name": "1/K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "1/C",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "1",
+          "si_code": "K^-1"
+        },
+        {
+          "name": "1/F",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.55555556",
+          "si_code": "K^-1"
+        },
+        {
+          "name": "%/K",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "100",
+          "si_code": "K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Infiltration per wind velocity",
+      "definition": "This unit is used to calculate the infiltration as a function of a temperature difference.",
+      "base_unit": {
+        "name": "1/m",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "ACH.s/m",
+          "description": "A unit of infiltration per wind velocity.",
+          "addition_factor": "0",
+          "multiplication_factor": "3600",
+          "si_code": "m^-1"
+        },
+        {
+          "name": "ACH/mph",
+          "description": "A unit of infiltration per wind velocity.",
+          "addition_factor": "0",
+          "multiplication_factor": "1609.343949",
+          "si_code": "m^-1"
+        }
+      ]
+    },
+    {
+      "name": "Infiltration - Temperature Coefficient",
+      "definition": "This unit is used to calculate the infiltration as a function of a temperature difference.",
+      "base_unit": {
+        "name": "1/s.C",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "s^-1*K"
+      },
+      "equivalent_units": [
+        {
+          "name": "ACH/C",
+          "description": "A unit of infiltration per temperature difference.",
+          "addition_factor": "0",
+          "multiplication_factor": "3600",
+          "si_code": "s^-1*K"
+        },
+        {
+          "name": "ACH/F",
+          "description": "A unit of infiltration per temperature difference.",
+          "addition_factor": "0",
+          "multiplication_factor": "2000",
+          "si_code": "s^-1*K"
+        }
+      ]
+    },
+    {
+      "name": "Air Change",
+      "definition": "The Air Change dimension is used to describe the rate at which the volume of air in a space is completely replaced.//The formula for determining air changes is:////Air Changes = Volumetric flow rate of air/Volume of air in the space////The most common apllication is ventilation and infiltration for the Type 56 multi-zone building.//",
+      "base_unit": {
+        "name": "acs",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "ach",
+          "description": "Air Changes per Hour (ACH) is a standard way of describing the turnover rate of air in a room.//For example, 1 ACH means that the volume of air in the room is completely replaced by fresh air every hour.//The formula for ACH is:////ACH = Volumetric flow rate of air per hour / Volume of air in room////The units of ACH are 1/hour.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3600.0",
+          "si_code": "s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Area",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "m^2",
+        "description": "A unit of AREA in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2"
+      },
+      "equivalent_units": [
+        {
+          "name": "cm^2",
+          "description": "A unit of AREA in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "10000.0",
+          "si_code": "m^2"
+        },
+        {
+          "name": "km^2",
+          "description": "A unit of AREA in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000001",
+          "si_code": "m^2"
+        },
+        {
+          "name": "in^2",
+          "description": "A unit of area in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1550.0",
+          "si_code": "m^2"
+        },
+        {
+          "name": "ft^2",
+          "description": "A unit of AREA in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "10.764",
+          "si_code": "m^2"
+        },
+        {
+          "name": "mi^2",
+          "description": "A unit of AREA in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000000386102",
+          "si_code": "m^2"
+        }
+      ]
+    },
+    {
+      "name": "Luminous intensity",
+      "definition": "This is a base magnitude.////The luminous intensity is the luminous flux emitted from a point per unit solid angle into a particular direction.//",
+      "base_unit": {
+        "name": "cd",
+        "description": "A unit of ILLUMINATION in the inch-pound and SI unit systems.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "cd"
+      },
+      "equivalent_units": [
+        {
+          "name": "candle",
+          "description": "Candle",
+          "addition_factor": "0",
+          "multiplication_factor": "1.02",
+          "si_code": "cd"
+        },
+        {
+          "name": "Hefner unit",
+          "description": "Hefner unit",
+          "addition_factor": "0",
+          "multiplication_factor": "0.9",
+          "si_code": "cd"
+        },
+        {
+          "name": "violle",
+          "description": "1 violle is the luminous intensity of 1 cm2 of platinum at its temperature of solidification of 1042 kelvin",
+          "addition_factor": "0",
+          "multiplication_factor": "20.17",
+          "si_code": "cd"
+        }
+      ]
+    },
+    {
+      "name": "Atomic Weight",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "mol",
+        "description": "A unit of ATOMIC WEIGHT in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "mol"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Density",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "kg/m^3",
+        "description": "A unit of DENSITY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^-3*kg"
+      },
+      "equivalent_units": [
+        {
+          "name": "kg/l",
+          "description": "A unit of DENSITY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^-3*kg"
+        },
+        {
+          "name": "lbm/ft^3",
+          "description": "A unit of DENSITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.062428",
+          "si_code": "m^-3*kg"
+        },
+        {
+          "name": "lbm/gal",
+          "description": "A unit of DENSITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0083454",
+          "si_code": "m^-3*kg"
+        }
+      ]
+    },
+    {
+      "name": "Direction (Angle)",
+      "definition": "",
+      "base_unit": {
+        "name": "degrees",
+        "description": "A unit of DIRECTION in the SI and inch-pound unit systems.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "-"
+      },
+      "equivalent_units": [
+        {
+          "name": "rads",
+          "description": "A unit of DIRECTION in both the SI and inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0174533",
+          "si_code": "-"
+        }
+      ]
+    },
+    {
+      "name": "Dynamic Viscosity",
+      "definition": "A derived unit in the mass,time,length,temperature base unit system.////1 Newton second per square meter = 1 kg per meter second//",
+      "base_unit": {
+        "name": "N.s/m^2",
+        "description": "A unit of DYNAMIC VISCOSITY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^-1*kg*s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kg/m.s",
+          "description": "A unit of DYNAMIC VISCOSITY in the SI unit system.////1 kg/m s = 1 N s/m^2//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1.0",
+          "si_code": "m^-1*kg*s^-1"
+        },
+        {
+          "name": "poise",
+          "description": "A unit of DYNAMIC VISCOSITY in the SI unit system.////1 poise = 1 kg/m s = 1 N s/m^2//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1.0",
+          "si_code": "m^-1*kg*s^-1"
+        },
+        {
+          "name": "lbf.s/ft^2",
+          "description": "A unit of DYNAMIC VISCOSITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0208854",
+          "si_code": "m^-1*kg*s^-1"
+        },
+        {
+          "name": "lbf.hr/ft^2",
+          "description": "A unit of DYNAMIC VISCOSITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00000580151",
+          "si_code": "m^-1*kg*s^-1"
+        },
+        {
+          "name": "lbm/ft.hr",
+          "description": "A unit of DYNAMIC VISCOSITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "2419.08",
+          "si_code": "m^-1*kg*s^-1"
+        },
+        {
+          "name": "kg/m.hr",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "3600",
+          "si_code": "m^-1*kg*s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Electric current",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "amperes",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "A"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Energy",
+      "definition": "A derived unit in the mass,length,time,temperature base unit system.//",
+      "base_unit": {
+        "name": "J",
+        "description": "A unit of ENERGY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2*kg*s^-2"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ",
+          "description": "A unit of ENERGY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "kWh",
+          "description": "",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000000277777777778",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "cal",
+          "description": "A unit of ENERGY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.238846",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "ft.lbf",
+          "description": "A unit of ENERGY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.737562",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "hphr",
+          "description": "A unit of ENERGY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000000372506",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "BTU",
+          "description": "A unit of ENERGY in the inch-pound unit system.////The BTU is defined as the amount of energy required to raise one pound mass of water 1 degree Fahrenheit at standard conditions.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000947817",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "Wh",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.000277777777778",
+          "si_code": "m^2*kg*s^-2"
+        },
+        {
+          "name": "eV",
+          "description": "electron volt: the amount of kinetic energy gained by a single unbound electron when it accelerates through an electric potential difference of one volt.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.0000000000000000001602",
+          "si_code": "m^2*kg*s^-2"
+        }
+      ]
+    },
+    {
+      "name": "Dimensionless",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "-",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "-"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Fan Curve Slope",
+      "definition": "Slope of the curve pressure-rise versus volume flowrate.//Used to define fans in COMIS.//",
+      "base_unit": {
+        "name": "m3/s/Pa",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^4*kg^-1*s"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Fan Curve Slope 2",
+      "definition": "",
+      "base_unit": {
+        "name": "m3/s/Pa2",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^5*kg^-2*s^3"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Fan Curve Slope 3",
+      "definition": "",
+      "base_unit": {
+        "name": "m3/s/Pa3",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^6*kg^-3*s^5"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Fan Curve Slope 4",
+      "definition": "",
+      "base_unit": {
+        "name": "m3/s/Pa4",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^7*kg^-4*s^7"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Fan Curve Slope 5",
+      "definition": "",
+      "base_unit": {
+        "name": "m3/s/Pa5",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^8*kg^-5*s^9"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Flow Coefficient",
+      "definition": "",
+      "base_unit": {
+        "name": "m*kg*s^-1",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1.0",
+        "si_code": "m*kg*s^-1"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Flow Rate",
+      "definition": "A derived unit in the mass,length,time,temperature base uit system.//",
+      "base_unit": {
+        "name": "kg/s",
+        "description": "A unit of FLOW RATE in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "kg*s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kg/hr",
+          "description": "A unit of FLOW RATE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3600.0",
+          "si_code": "kg*s^-1"
+        },
+        {
+          "name": "lbm/hr",
+          "description": "A unit of FLOW RATE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "7936.65422",
+          "si_code": "kg*s^-1"
+        },
+        {
+          "name": "lbm/s",
+          "description": "A unit of FLOW RATE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "2.204628",
+          "si_code": "kg*s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Flow/area",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "kg/s.m^2",
+        "description": "A unit of FLOWRATE PER UNIT AREA in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^-2*kg*s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kg/hr.m^2",
+          "description": "A unit of FLOWRATE PER AREA in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3600",
+          "si_code": "m^-2*kg*s^-1"
+        },
+        {
+          "name": "lbm/s.ft^2",
+          "description": "A unit of FLOWRATE/AREA in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.204816",
+          "si_code": "m^-2*kg*s^-1"
+        },
+        {
+          "name": "lbm/hr.ft^2",
+          "description": "A unit of FLOWRATE/AREA in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "737.3379",
+          "si_code": "m^-2*kg*s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Flux",
+      "definition": "A derived unitin the mass,time,temperature,length base unit system.////1 Watt per square meter = 1 Joule per meter squared second = //1 Newton per meter second = 1 kilogram per cubic second.//",
+      "base_unit": {
+        "name": "W/m^2",
+        "description": "A unit of FLUX in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "kg*s^-3"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/hr.m^2",
+          "description": "A unit of FLUX in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "kg*s^-3"
+        },
+        {
+          "name": "BTU/hr.ft^2",
+          "description": "A unit of FLUX in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.316998",
+          "si_code": "kg*s^-3"
+        }
+      ]
+    },
+    {
+      "name": "Force",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "N",
+        "description": "A unit of FORCE in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m*kg*s^-2"
+      },
+      "equivalent_units": [
+        {
+          "name": "lbf",
+          "description": "A unit of FORCE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.224809",
+          "si_code": "m*kg*s^-2"
+        }
+      ]
+    },
+    {
+      "name": "Frequency",
+      "definition": "",
+      "base_unit": {
+        "name": "1/S",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "rpm",
+          "description": "Rounds per minute.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "60",
+          "si_code": "s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Heat Transfer Coeff.",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.////1 Watt per meter squared K = 1 Joule per meter squared K second = 1//1 Newton per meter second K = 1 kilogram per cubic second K//",
+      "base_unit": {
+        "name": "W/m^2.K",
+        "description": "A unit of HEAT TRANSFER COEFFICIENT in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "kg*s^-3*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/hr.m^2.K",
+          "description": "A unit of HEAT TRANSFER COEFFICIENT in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "kg*s^-3*K^-1"
+        },
+        {
+          "name": "BTU/hr.ft^2.R",
+          "description": "A unit of HEAT TRANSFER COEFFICIENT in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.17610984",
+          "si_code": "kg*s^-3*K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Kinematic Viscosity",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.////The kinematic viscosity is simply the dynamic viscosity divided by the fluid density.////The units for kinematic viscosity are the same units used for thermal diffusivity.//",
+      "base_unit": {
+        "name": "m^2/s",
+        "description": "A unit of KINEMATIC VISCOSITY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2*s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "m^2/hr",
+          "description": "A unit of KINEMATIC VISCOSITY or THERMAL DIFFUSIVITY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3600",
+          "si_code": "m^2*s^-1"
+        },
+        {
+          "name": "ft^2/s",
+          "description": "A unit of KINEMATIC VISCOSITY or THERMAL DIFFUSIVITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "10.7639",
+          "si_code": "m^2*s^-1"
+        },
+        {
+          "name": "ft^2/hr",
+          "description": "A unit of KINEMATIC VISCOSITY or THERMAL DIFFUSIVITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "38750.1",
+          "si_code": "m^2*s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Length",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "m",
+        "description": "A unit of LENGTH in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m"
+      },
+      "equivalent_units": [
+        {
+          "name": "mi",
+          "description": "A unit of LENGTH in the inch-pound unit system:////1 mile = 5280 feet = 63360 inches//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00062137",
+          "si_code": "m"
+        },
+        {
+          "name": "km",
+          "description": "A unit of LENGTH in the SI unit system:////1 kilometer = 1000 meters//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m"
+        },
+        {
+          "name": "in",
+          "description": "A unit of LENGTH in the inch-pound unit system:////12 inches = 1 foot//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "39.37008",
+          "si_code": "m"
+        },
+        {
+          "name": "ft",
+          "description": "A unit of LENGTH in the inch-pound unit system//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.28084",
+          "si_code": "m"
+        },
+        {
+          "name": "cm",
+          "description": "A unit of LENGTH in the SI unit system:////100 centimeters = 1 meter//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "100.00",
+          "si_code": "m"
+        },
+        {
+          "name": "mm",
+          "description": "A unit of LENGTH in the SI unit system:////1 milimeter = 0.0001 meters//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000",
+          "si_code": "m"
+        }
+      ]
+    },
+    {
+      "name": "Mass",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "kg",
+        "description": "A unit of MASS in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "kg"
+      },
+      "equivalent_units": [
+        {
+          "name": "g",
+          "description": "A unit of MASS in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000.0",
+          "si_code": "kg"
+        },
+        {
+          "name": "lbm",
+          "description": "A unit of MASS in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "2.20462",
+          "si_code": "kg"
+        },
+        {
+          "name": "oz",
+          "description": "A unit of MASS in the inch-pound unit system:////16 ounces = 1 pound//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "35.274",
+          "si_code": "kg"
+        },
+        {
+          "name": "ton",
+          "description": "A unit of MASS in the inch-pound unit system:////1 ton = 2000 pounds//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0011023",
+          "si_code": "kg"
+        }
+      ]
+    },
+    {
+      "name": "Overall Loss Coefficient",
+      "definition": "A derived unit in the time,temperature,mass,length base unit system.//",
+      "base_unit": {
+        "name": "W/K",
+        "description": "A unit of OVERALL LOSS COEFFICIENT (UA) in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2*kg*s^-3*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "BTU/hr.F",
+          "description": "A unit of OVERALL LOSS COEFFICIENT in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1.895734",
+          "si_code": "m^2*kg*s^-3*K^-1"
+        },
+        {
+          "name": "kJ/hr.K",
+          "description": "A unit of OVERALL LOSS COEFFICIENT in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "m^2*kg*s^-3*K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Power",
+      "definition": "A derived unit in the mass,length,time,temperature base unit system.////Power=Energy/Time////1 Watt = 1 Joule per second = 1 Newton meter per second =//1 kilogram meter squared per cubic second//",
+      "base_unit": {
+        "name": "W",
+        "description": "A unit of POWER in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2*kg*s^-3"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/hr",
+          "description": "A unit of POWER in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "m^2*kg*s^-3"
+        },
+        {
+          "name": "kW",
+          "description": "A unit of POWER in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^2*kg*s^-3"
+        },
+        {
+          "name": "hp",
+          "description": "A unit of POWER in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001341",
+          "si_code": "m^2*kg*s^-3"
+        },
+        {
+          "name": "BTU/hr",
+          "description": "A unit of POWER in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.41214",
+          "si_code": "m^2*kg*s^-3"
+        },
+        {
+          "name": "BTU/min",
+          "description": "A unit of POWER in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0568688",
+          "si_code": "m^2*kg*s^-3"
+        },
+        {
+          "name": "tons",
+          "description": "A unit of POWER in the inch-pound unit system.////1 ton = 12000 BTU's/hr//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000284344",
+          "si_code": "m^2*kg*s^-3"
+        }
+      ]
+    },
+    {
+      "name": "Pressure",
+      "definition": "A derived unit in the mass,length,time,temperature base unit system.////One pascal = 1 Newton per square meter = 1 kilogram per second squared meter.//",
+      "base_unit": {
+        "name": "Pa",
+        "description": "A unit of PRESSURE in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^-1*kg*s^-2"
+      },
+      "equivalent_units": [
+        {
+          "name": "bar",
+          "description": "A unit of PRESSURE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00001",
+          "si_code": "m^-1*kg*s^-2"
+        },
+        {
+          "name": "kPa",
+          "description": "A unit of PRESSURE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^-1*kg*s^-2"
+        },
+        {
+          "name": "atm",
+          "description": "A unit of PRESSURE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00000986923",
+          "si_code": "m^-1*kg*s^-2"
+        },
+        {
+          "name": "psi",
+          "description": "A unit of PRESSURE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000145038",
+          "si_code": "m^-1*kg*s^-2"
+        },
+        {
+          "name": "lbf/ft^2",
+          "description": "A unit of PRESSURE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0208854",
+          "si_code": "m^-1*kg*s^-2"
+        },
+        {
+          "name": "inH2O",
+          "description": "A unit of PRESSURE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00401463",
+          "si_code": "m^-1*kg*s^-2"
+        },
+        {
+          "name": "inHg",
+          "description": "A unit of PRESSURE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0002953",
+          "si_code": "m^-1*kg*s^-2"
+        }
+      ]
+    },
+    {
+      "name": "Specific Energy",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//(Examples of specific energy include enthalpy (h) and internal energy (u))////1 Joule per kilogram = 1 Newton meter per kilogram = 1 meter squared per second squared.//",
+      "base_unit": {
+        "name": "J/kg",
+        "description": "A unit of SPECIFIC ENERGY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2*s^-2"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/kg",
+          "description": "A unit of SPECIFIC ENERGY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^2*s^-2"
+        },
+        {
+          "name": "BTU/lbm",
+          "description": "A unit of SPECIFIC ENERGY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000429923",
+          "si_code": "m^2*s^-2"
+        },
+        {
+          "name": "ft.lbf/lbm",
+          "description": "A unit of SPECIFIC ENERGY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.334553",
+          "si_code": "m^2*s^-2"
+        }
+      ]
+    },
+    {
+      "name": "Specific Heat",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//1 Joule per kilogram K = 1 Newton meter per kilogram K = //1 meter squared per second squared K////Since the units are identical, entropy is included with specific heat.//",
+      "base_unit": {
+        "name": "J/kg.K",
+        "description": "A unit of SPECIFIC HEAT in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^2*s^-2*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/kg.K",
+          "description": "A unit of SPECIFIC HEAT in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^2*s^-2*K^-1"
+        },
+        {
+          "name": "Wh/kg.K",
+          "description": "A unit of SPECIFIC HEAT in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.0002777778",
+          "si_code": "m^2*s^-2*K^-1"
+        },
+        {
+          "name": "BTU/lbm.R",
+          "description": "A unit of SPECIFIC HEAT in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.000238846",
+          "si_code": "m^2*s^-2*K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Specific Volume",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "m^3/kg",
+        "description": "A unit of SPECIFIC VOLUME in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^3*kg^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "l/kg",
+          "description": "A unit of SPECIFIC VOLUME in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000.0",
+          "si_code": "m^3*kg^-1"
+        },
+        {
+          "name": "ft^3/lbm",
+          "description": "A unit of SPECIFIC VOLUME in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "16.0185",
+          "si_code": "m^3*kg^-1"
+        },
+        {
+          "name": "in^3/lbm",
+          "description": "A unit of SPECIFIC VOLUME in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "27679.9",
+          "si_code": "m^3*kg^-1"
+        }
+      ]
+    },
+    {
+      "name": "Temp. Dependent Loss Coeff.",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "W/m^2.K^2",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "kg*s^-3*K^-2"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/hr.m^2.K^2",
+          "description": "A unit of TEMPERATURE DEPENDENT LOSS COEFFICIENT in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "kg*s^-3*K^-2"
+        }
+      ]
+    },
+    {
+      "name": "Temp. Difference",
+      "definition": "The dimension of temperature difference is required due to differing conversion factors between temperature and temperature difference.//The temperature difference dimension uses the same multiplication factor, but does not use the addition factor that the temperature dimension uses.//",
+      "base_unit": {
+        "name": "deltaC",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "K"
+      },
+      "equivalent_units": [
+        {
+          "name": "deltaR",
+          "description": "",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1.8",
+          "si_code": "K"
+        },
+        {
+          "name": "deltaF",
+          "description": "",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1.8",
+          "si_code": "K"
+        }
+      ]
+    },
+    {
+      "name": "Temperature",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "K",
+        "description": "A measure of TEMPERATURE in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "K"
+      },
+      "equivalent_units": [
+        {
+          "name": "C",
+          "description": "A unit of TEMPERATURE in the SI unit system:////K = C + 273.15//",
+          "addition_factor": "-273.15",
+          "multiplication_factor": "1.0",
+          "si_code": "K"
+        },
+        {
+          "name": "F",
+          "description": "A unit of TEMPERATURE in the inch-pound unit system:////F = 1.8 C + 32, K = C + 273.15//",
+          "addition_factor": "-459.67",
+          "multiplication_factor": "1.8",
+          "si_code": "K"
+        },
+        {
+          "name": "R",
+          "description": "A unit of TEMPERATURE in the inch-pound unit system:////R = F + 460; F = 1.8 C + 32  K = C + 273.15//",
+          "addition_factor": "0.3333",
+          "multiplication_factor": "1.8",
+          "si_code": "K"
+        }
+      ]
+    },
+    {
+      "name": "Temp Gradient",
+      "definition": "",
+      "base_unit": {
+        "name": "K/m",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^-1*K"
+      },
+      "equivalent_units": [
+        {
+          "name": "C/m",
+          "description": "",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1.0",
+          "si_code": "m^-1*K"
+        }
+      ]
+    },
+    {
+      "name": "Thermal Conductivity",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "W/m.K",
+        "description": "A unit of THERMAL CONDUCTIVITY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m*kg*s^-3*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/hr.m.K",
+          "description": "A unit of THERMAL CONDUCTIVITY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "m*kg*s^-3*K^-1"
+        },
+        {
+          "name": "BTU/hr.ft.F",
+          "description": "A unit of THERMAL CONDUCTIVITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.5777892",
+          "si_code": "m*kg*s^-3*K^-1"
+        },
+        {
+          "name": "kW/m.K",
+          "description": "A unit of thermal conductivity.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.001",
+          "si_code": "m*kg*s^-3*K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Time",
+      "definition": "This is a base magnitude.//",
+      "base_unit": {
+        "name": "s",
+        "description": "A unit of TIME in the SI and inch-pound unit systems.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "s"
+      },
+      "equivalent_units": [
+        {
+          "name": "day",
+          "description": "A unit of TIME in the SI and inch-pound unit systems.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00001157407407407407",
+          "si_code": "s"
+        },
+        {
+          "name": "min",
+          "description": "A unit of TIME in the SI and inch-pound unit systems.////1 minute = 60 seconds = 1/60th of one hour//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.01666666666666666667",
+          "si_code": "s"
+        },
+        {
+          "name": "hr",
+          "description": "A unit of TIME in the SI and inch-pound unit systems.////One hour = 60 minutes = 3600 seconds//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "0.00027777777777777778",
+          "si_code": "s"
+        }
+      ]
+    },
+    {
+      "name": "Velocity",
+      "definition": "A derived unit in the mass,temperature,time,length base unit system.//",
+      "base_unit": {
+        "name": "m/s",
+        "description": "A unit of VELOCITY in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m*s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kph",
+          "description": "A unit of VELOCITY in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.6",
+          "si_code": "m*s^-1"
+        },
+        {
+          "name": "ft/s",
+          "description": "A unit of VELOCITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3.28084",
+          "si_code": "m*s^-1"
+        },
+        {
+          "name": "ft/min",
+          "description": "A unit of VELOCITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "196.85",
+          "si_code": "m*s^-1"
+        },
+        {
+          "name": "mph",
+          "description": "A unit of VELOCITY in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "2.23694",
+          "si_code": "m*s^-1"
+        }
+      ]
+    },
+    {
+      "name": "Voltage",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "V",
+        "description": "A measure of VOLTAGE in both the SI and inch-pound unit systems.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m*kg^-1*s^2"
+      },
+      "equivalent_units": [
+        {
+          "name": "mV",
+          "description": "A unit of VOLTAGE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000.0",
+          "si_code": "m*kg^-1*s^2"
+        }
+      ]
+    },
+    {
+      "name": "Volume",
+      "definition": "A derived unit in the mass,tim,temperature,length base unit system.//",
+      "base_unit": {
+        "name": "m^3",
+        "description": "A unit of VOLUME in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^3"
+      },
+      "equivalent_units": [
+        {
+          "name": "l",
+          "description": "A unit of VOLUME in the SI unit system:////1000 liters = 1 cubic meter//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000.0",
+          "si_code": "m^3"
+        },
+        {
+          "name": "ml",
+          "description": "A unit of VOLUME in the SI unit system.////1000 milliliters = 1 liter//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000000.0",
+          "si_code": "m^3"
+        },
+        {
+          "name": "in^3",
+          "description": "A unit of VOLUME in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "61023.7",
+          "si_code": "m^3"
+        },
+        {
+          "name": "ft^3",
+          "description": "A unit of VOLUME in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "35.315",
+          "si_code": "m^3"
+        },
+        {
+          "name": "gal",
+          "description": "A unit of VOLUME in the inch-pound unit system:////1 cubic foot = 7.48 gallons//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "264.17",
+          "si_code": "m^3"
+        }
+      ]
+    },
+    {
+      "name": "Volumetric Flow Rate",
+      "definition": "A derived unit in the mass,length,time,temperature base unit system.////Vdot=Volume per time//",
+      "base_unit": {
+        "name": "m^3/s",
+        "description": "A unit of VOLUMETRIC FLOW RATE in the SI unit system.//",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "m^3*s^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "cfm",
+          "description": "A unit of VOLUMETRIC FLOW RATE in the inch-pound unit-system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "2118.8693",
+          "si_code": "m^3*s^-1"
+        },
+        {
+          "name": "m^3/hr",
+          "description": "A unit of VOLUMETRIC FLOW RATE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3600.0",
+          "si_code": "m^3*s^-1"
+        },
+        {
+          "name": "l/hr",
+          "description": "A unit of VOLUMTERIC FLOW RATE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "3600000.0",
+          "si_code": "m^3*s^-1"
+        },
+        {
+          "name": "l/s",
+          "description": "A unit of VOLUMETRIC FLOW RATE in the SI unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "1000.0",
+          "si_code": "m^3*s^-1"
+        },
+        {
+          "name": "ft^3/s",
+          "description": "A unit of VOLUMETRIC FLOW RATE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "35.314488",
+          "si_code": "m^3*s^-1"
+        },
+        {
+          "name": "ft^3/hr",
+          "description": "A unit of VOLUMETRIC FLOW RATE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "127131.84",
+          "si_code": "m^3*s^-1"
+        },
+        {
+          "name": "gpm",
+          "description": "A unit of VOLUMETRIC FLOW RATE in the inch-pound unit system.//",
+          "addition_factor": "0.0",
+          "multiplication_factor": "15850.34",
+          "si_code": "m^3*s^-1"
+        }
+      ]
+    },
+    {
+      "name": "any",
+      "definition": "This magnitude may be connected to anything.//",
+      "base_unit": {
+        "name": "any",
+        "description": "",
+        "addition_factor": "0.0",
+        "multiplication_factor": "1.0",
+        "si_code": "any"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Percentage",
+      "definition": "This dimension is used to express precentage values. ////It is compatible (can be connected with) with 'dimensionless'. ",
+      "base_unit": {
+        "name": "% (base 1)",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": [
+        {
+          "name": "% (base 100)",
+          "description": "Percentage expressed as a value between 0 and 100 %.",
+          "addition_factor": "0",
+          "multiplication_factor": "100",
+          "si_code": "-"
+        },
+        {
+          "name": "Fraction",
+          "description": "A ratio between 0 and 1.",
+          "addition_factor": "0",
+          "multiplication_factor": "1",
+          "si_code": "-"
+        }
+      ]
+    },
+    {
+      "name": "Illuminance",
+      "definition": "Illuminance (usually 'E' in formulas) is the total amount of visible light illuminating (incident upon) a point on a surface from all directions above the surface. ////Illumination is a deprecated term for Illuminance. ",
+      "base_unit": {
+        "name": "lux",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^-2*cd"
+      },
+      "equivalent_units": [
+        {
+          "name": "fc",
+          "description": "Foot Candle (US)",
+          "addition_factor": "0",
+          "multiplication_factor": "0.09293",
+          "si_code": "m^-2*cd"
+        },
+        {
+          "name": "lm/ft2",
+          "description": "Lumen / ft2",
+          "addition_factor": "0",
+          "multiplication_factor": "0.09293",
+          "si_code": "m^-2*cd"
+        },
+        {
+          "name": "cd sr/m2",
+          "description": "Candela Steradian / m2",
+          "addition_factor": "0",
+          "multiplication_factor": "1",
+          "si_code": "m^-2*cd"
+        },
+        {
+          "name": "lm/m2",
+          "description": "lumens/m2",
+          "addition_factor": "0",
+          "multiplication_factor": "1",
+          "si_code": "m^-2*cd"
+        },
+        {
+          "name": "phots",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.0001",
+          "si_code": "m^-2*cd"
+        }
+      ]
+    },
+    {
+      "name": "Solid Angle",
+      "definition": "The angle subtended at the center of a sphere by an area on its surface numerically equal to the square of the radius. ////Standard unit of a solid angle is the Steradian (sr). Mathematically, the solid angle is unitless, but for practical reasons, the steradian is assigned.////In IISiBat, it is treated as dimensionless.",
+      "base_unit": {
+        "name": "sr",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Luminance",
+      "definition": "The physical measure of brightness.//Luminous intensity per unit projected area of any surface, as measured from a specific direction.////'Photometric brightness' is an old and deprecated term for luminance. ",
+      "base_unit": {
+        "name": "cd/m2",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^-2*cd"
+      },
+      "equivalent_units": [
+        {
+          "name": "cd/ft2",
+          "description": "Candela per square foot",
+          "addition_factor": "0",
+          "multiplication_factor": "10.764",
+          "si_code": "m^-2*cd"
+        },
+        {
+          "name": "cd/in2",
+          "description": "Candela per square inch",
+          "addition_factor": "0",
+          "multiplication_factor": "1550",
+          "si_code": "m^-2*cd"
+        },
+        {
+          "name": "Nit",
+          "description": "Nit",
+          "addition_factor": "0",
+          "multiplication_factor": "1",
+          "si_code": "m^-2*cd"
+        }
+      ]
+    },
+    {
+      "name": "Thermal Capacitance",
+      "definition": "The product of mass and specific heat.",
+      "base_unit": {
+        "name": "J/K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^2*kg*s^-2*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ/K",
+          "description": "A measure of thermal capacitance in the modified SI unit system.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.001",
+          "si_code": "m^2*kg*s^-2*K^-1"
+        },
+        {
+          "name": "BTU/F",
+          "description": "A unit of thermal capacitance in the inch-pound unit system.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.000526592",
+          "si_code": "m^2*kg*s^-2*K^-1"
+        }
+      ]
+    },
+    {
+      "name": "Thermal Resistance",
+      "definition": "The resistance to heat transfer; or the inverse of the U-value.",
+      "base_unit": {
+        "name": "m2.K/W",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "kg^-1*s^3*K"
+      },
+      "equivalent_units": [
+        {
+          "name": "h.m2.K/kJ",
+          "description": "A unit of heat transfer resistance in the modified SI unit system.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.27777778",
+          "si_code": "kg^-1*s^3*K"
+        },
+        {
+          "name": "h.ft2.F/BTU",
+          "description": "A unit of heat transfer resistance in the inch-pound unit system.",
+          "addition_factor": "0",
+          "multiplication_factor": "5.678274422",
+          "si_code": "kg^-1*s^3*K"
+        }
+      ]
+    },
+    {
+      "name": "Inverse Length",
+      "definition": "The inverse of length",
+      "base_unit": {
+        "name": "m^-1",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "1/ft",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.3048",
+          "si_code": "m^-1"
+        },
+        {
+          "name": "1/in",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.0254",
+          "si_code": "m^-1"
+        }
+      ]
+    },
+    {
+      "name": "Inverse Flux",
+      "definition": "",
+      "base_unit": {
+        "name": "m2/W",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "kg^-1*s^3"
+      },
+      "equivalent_units": [
+        {
+          "name": "h.ft2/BTU",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "3.154594",
+          "si_code": "kg^-1*s^3"
+        },
+        {
+          "name": "h.m2/kJ",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "3.6",
+          "si_code": "kg^-1*s^3"
+        }
+      ]
+    },
+    {
+      "name": "Electric Charge",
+      "definition": "Unit of electric charge, derived from the unit of electric current and the unit of time (1 Coulomb = 1 A * 1 s)",
+      "base_unit": {
+        "name": "Coulomb",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "s*A"
+      },
+      "equivalent_units": [
+        {
+          "name": "Ah",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.000277777777778",
+          "si_code": "s*A"
+        }
+      ]
+    },
+    {
+      "name": "Inverse Velocity",
+      "definition": "A derived unit in the mass,time,temperature,length base unit system.  This unit is simple the inverse of velocity (time per distance)",
+      "base_unit": {
+        "name": "s/m",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^-1*s"
+      },
+      "equivalent_units": []
+    },
+    {
+      "name": "Electric Current Density ",
+      "definition": "",
+      "base_unit": {
+        "name": "A/m^2",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "-"
+      },
+      "equivalent_units": [
+        {
+          "name": "mA/cm^2",
+          "description": "",
+          "addition_factor": "0",
+          "multiplication_factor": "0.1",
+          "si_code": "-"
+        }
+      ]
+    },
+    {
+      "name": "Wind Dependent Collector Loss Coefficient",
+      "definition": "The efficiency of un-glazed solar collectors can be expressed using a wind-dependent heat loss coefficient: Efficiency = a0*(1-aov) - (a1 + a1v * WindSpeed) * (T-Tambient) / Solar Radiation.  THis unit is for the a1v term in that equation.",
+      "base_unit": {
+        "name": "W.s/m^3.K",
+        "description": "",
+        "addition_factor": "0",
+        "multiplication_factor": "1",
+        "si_code": "m^-1*kg*s^-2*K^-1"
+      },
+      "equivalent_units": [
+        {
+          "name": "kJ.s/hr.m^3.K",
+          "description": "The unit for the wind dependent heat loss coefficient for the collector efficiency equation when the solar radiation is in units of W/m2, the wind speed is in meters per second and the temperatures are in degrees Celcius.",
+          "addition_factor": "0",
+          "multiplication_factor": "3.6",
+          "si_code": "m^-1*kg*s^-2*K^-1"
+        },
+        {
+          "name": "BTU/ft^2.F.Miles",
+          "description": "The unit for the wind dependent heat loss coefficient for the collector efficiency equation when the solar radiation is in units of BTU/ft2, the wind speed is in mph and the temperatures are in degrees Fahrenheit.",
+          "addition_factor": "0",
+          "multiplication_factor": "0.078732456",
+          "si_code": "m^-1*kg*s^-2*K^-1"
+        }
+      ]
+    }
+  ]
+}

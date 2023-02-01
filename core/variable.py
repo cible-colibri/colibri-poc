@@ -27,13 +27,19 @@ from utils.enums_utils import Units
 # ========================================
 # Classes
 # ========================================
+from utils.unit_dictionary import unit_dictionary
+
 
 @dataclasses.dataclass
 class Variable:
     name: str
     value: float = 0
     unit: Units = Units.UNITLESS
-    description: str = "Sorry, no description yet."
+    description: str = ""
+
+    def convert(self, target_unit_name):
+        return unit_dictionary.convert(self.value, self.unit, target_unit_name)
+
 
     def __add__(self, val2):
         return self.value + val2
