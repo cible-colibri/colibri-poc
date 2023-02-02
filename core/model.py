@@ -13,6 +13,7 @@ import numbers
 
 import numpy as np
 
+from core.variable import Variable
 from core.variable_list import VariableList
 
 # ========================================
@@ -50,6 +51,18 @@ class Model(metaclass =  MetaModel):
         self.files   = []
         self.project = None
 
+    def __setattr__(self, name, value):
+        if hasattr(self, name):
+            v = getattr(self, name)
+            if hasattr(v, 'value'):
+                if type(value) == Variable:
+                    value = value.value
+                v.value = value
+            else:
+                self.__dict__[name] = value
+        else:
+            self.__dict__[name] = value
+
     @staticmethod
     def get_variable(name: str, variables: list) -> object:
         for v in variables:
@@ -83,8 +96,8 @@ class Model(metaclass =  MetaModel):
     def save_time_step(self, time_step):
         for variable in self.outputs:
             value = getattr(self, variable.name)
-            if type(variable) != VariableList and isinstance(value, numbers.Number):
-                getattr(self, variable.name + '_series')[time_step] = value
+            if type(variable) != VariableList and isinstance(value.value, numbers.Number):
+                getattr(self, variable.name + '_series')[time_step] = value.value
 
     @abc.abstractmethod
     def run(self, time_step=0):

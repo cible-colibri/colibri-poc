@@ -142,8 +142,8 @@ class Project:
 
                 # substitute vales following links
                 for link in self.links:
-                    value_in = getattr(link.to_model, link.to_variable)
-                    value_out = getattr(link.from_model, link.from_variable)
+                    value_in = getattr(link.to_model, link.to_variable).value
+                    value_out = getattr(link.from_model, link.from_variable).value
                     setattr(link.to_model, link.to_variable, value_out)
                     if self.verbose: print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
 
