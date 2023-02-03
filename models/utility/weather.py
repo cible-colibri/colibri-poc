@@ -88,7 +88,7 @@ class Weather(Model):
         # TODO : Modify when we wil have a package structure
         colibrisuce_path   = pathlib.Path(__file__).parents[2]
         print(colibrisuce_path)
-        epw_file_path      = colibrisuce_path / "config" / "data" / "weather" / "EnergyPlus" / "Paris.epw"
+        epw_file_path      = colibrisuce_path / "config" / "data" / "weather" / "epw" / "Paris.epw"
         self.files         = [File("weather_data", epw_file_path, "Weather data in EPW format")]
         self.epw_variables = [variable.name for variable in self.outputs]
         self.epw_path      = self.get_file("weather_data").path
