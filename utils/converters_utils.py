@@ -4,16 +4,14 @@
 # External imports
 # ========================================
 
-import pandas
+import pathlib
 
 # ========================================
 # Internal imports
 # ========================================
 
-from utils.enums_utils import (
-                                EnergyUnits,
-                                Units,
-                               )
+from utils.files_utils     import read_json_file
+from utils.unit_dictionary import UnitDictionary
 
 # ========================================
 # Constants
@@ -34,17 +32,17 @@ from utils.enums_utils import (
 # Functions
 # ========================================
 
-# Return unit conversion factors as a dataframe (index = si unit, columns = other units)
-def get_unit_conversion_factors() -> pandas.DataFrame:
-    """Return unit conversion factors as a dataframe (index = si unit, columns = other units)
+# Return an object to convert from one unit to another (containing all unit conversion factors)
+def get_unit_converter() -> UnitDictionary:
+    """Return an object to convert from one unit to another (containing all unit conversion factors)
 
     Parameters
     ----------
 
     Returns
     -------
-    unit_conversion_factors : pandas.DataFrame
-        Dataframe containing unit conversion factors (index = si unit, columns = other units)
+    unit_converter : UnitDictionary
+        UnitDictionary object to convert from one unit to another (containing all unit conversion factors)
 
     Raises
     ------
@@ -54,12 +52,9 @@ def get_unit_conversion_factors() -> pandas.DataFrame:
     --------
     >>> None
     """
-    data                            = {
-                                       "si_units":                 [EnergyUnits.JOULE],
-                                       EnergyUnits.KILO_JOULE:     [1_000],
-                                       EnergyUnits.KILO_WATT_HOUR: [1.0 / 3_600_000.0],
-                                       EnergyUnits.WATT_HOUR:      [1.0 / 3_600.0],
-                                       }
-    unit_conversion_factors         = pandas.DataFrame.from_dict(data)
-    unit_conversion_factors.set_index(["si_units"], inplace = True)
-    return unit_conversion_factors
+    # TODO : Modify when we wil have a package structure
+    colibrisuce_path = pathlib.Path(__file__).parents[1]
+    units_file_path  = colibrisuce_path / "config" / "data" / "unit_dictionary.json"
+    units            = read_json_file(units_file_path)
+    unit_converter   = UnitDictionary(**units)
+    return unit_converter

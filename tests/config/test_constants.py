@@ -9,14 +9,12 @@
 # Internal imports
 # ========================================
 
-from utils.converters_utils import get_unit_converter
 
 # ========================================
 # Constants
 # ========================================
 
-# Object to convert from one unit to another (containing all unit conversion factors)
-UNIT_CONVERTER = get_unit_converter()
+from config.constants import UNIT_CONVERTER
 
 # ========================================
 # Variables
@@ -32,3 +30,10 @@ UNIT_CONVERTER = get_unit_converter()
 # Functions
 # ========================================
 
+def test_constants():
+    print(UNIT_CONVERTER)
+    print(UNIT_CONVERTER.dimensions)
+    print(UNIT_CONVERTER.dimensions[0].base_unit)
+
+if __name__ == "__main__":
+    test_constants()

@@ -61,8 +61,9 @@ def read_json_file(file_path: typing.Union[str, pathlib.Path], mode: str = 'r') 
         data = json.load(_file_descriptor)
     return data
 
+
 # Write a json file based on the given data
-def write_json_file(file_path: typing.Union[str, pathlib.Path], data : typing.Any, mode: str = 'w') -> None:
+def write_json_file(file_path: typing.Union[str, pathlib.Path], data: typing.Any, mode: str = 'w') -> None:
     """Write a json file based on the given data
 
     Parameters
@@ -88,4 +89,4 @@ def write_json_file(file_path: typing.Union[str, pathlib.Path], data : typing.An
     """
     file_path = str(pathlib.Path(file_path).absolute())
     with open(file_path, mode) as _file_descriptor:
-        json.dump(_file_descriptor)
+        json.dump(data, _file_descriptor)
