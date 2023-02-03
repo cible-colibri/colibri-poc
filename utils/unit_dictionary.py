@@ -3,7 +3,6 @@ import json
 import os
 from typing import List
 
-from core import data_path
 from utils.singleton import Singleton
 
 

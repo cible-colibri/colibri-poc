@@ -9,7 +9,7 @@
 # Internal imports
 # ========================================
 
-from connectors.hydronics.fluid_flow import LiquidFlowConnector
+from connectors.hydronics.fluid_flow import FluidFlowConnector
 from core.project                    import Project
 from models.hydronics.duct           import Duct
 from models.hydronics.simple_pump    import SimplePump
@@ -51,7 +51,7 @@ def test_project():
     duct_2.inlet_temperature = 40
     project.add(duct_2)
     # Create a connector
-    liquid_flow = LiquidFlowConnector()
+    liquid_flow = FluidFlowConnector()
     # Link both ducts
     project.link(duct_1, duct_2, liquid_flow)
     # Add a pump

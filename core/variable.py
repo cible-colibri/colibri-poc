@@ -187,7 +187,7 @@ class Variable:
     def __ge__(self, other):
         return self.value >= other
 
-    # TODO : add
+    # TODO: add
     #  - augmented assignment methods (__iadd__ et al)
     #  - ALL type Conversion methods (__int__ et al)
 

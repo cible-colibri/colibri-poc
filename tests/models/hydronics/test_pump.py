@@ -10,7 +10,7 @@ import time
 # Internal imports
 # ========================================
 
-from connectors.hydronics.fluid_flow import LiquidFlowConnector
+from connectors.hydronics.fluid_flow import FluidFlowConnector
 from core.conditions                 import Conditions
 from core.project                    import Project
 from core.parameters                 import Parameters
@@ -66,7 +66,7 @@ def test_project():
     pump_1 = Pump("pump_1", parameters_pump_1,  conditions_pump_1)
     project.add(pump_1)
     # Create a connector
-    liquid_flow = LiquidFlowConnector()
+    liquid_flow = FluidFlowConnector()
     # Link pipe to pump
     project.link(pipe_1, pump_1, liquid_flow)
     # Save project as a json file

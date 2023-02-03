@@ -9,7 +9,8 @@
 # Internal imports
 # ========================================
 
-from core.variable_connector import VariableConnector
+from connectors.generics.generic import GenericConnector
+from core.variable_connector     import VariableConnector
 
 # ========================================
 # Constants
@@ -25,16 +26,22 @@ from core.variable_connector import VariableConnector
 # Classes
 # ========================================
 
-class FluidFlowConnector(VariableConnector):
-
-    def __init__(self):
-        self.connections = [
-                                # (from_variable, to_variable)
-                                ("outlet_temperature", "inlet_temperature"),
-                                ("outlet_flow_rate", "inlet_flow_rate")
-                            ]
-
 
 # ========================================
 # Functions
 # ========================================
+
+def test_generic():
+    connector = GenericConnector()
+    connector.add("from", "to")
+    assert isinstance(connector, GenericConnector)
+    assert isinstance(connector, VariableConnector)
+    assert hasattr(connector, "add")
+    assert isinstance(connector.connections, list)
+    assert connector.connections[0] == ("from", "to")
+    assert connector.__str__() == "GenericConnector().add([('from', 'to')])"
+    assert connector.__repr__() == connector.__str__()
+
+
+if __name__ == "__main__":
+    test_generic()

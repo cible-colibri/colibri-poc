@@ -4,12 +4,13 @@
 # External imports
 # ========================================
 
+import pathlib
 
 # ========================================
 # Internal imports
 # ========================================
 
-from core.variable_connector import VariableConnector
+from core.file import File
 
 # ========================================
 # Constants
@@ -25,16 +26,21 @@ from core.variable_connector import VariableConnector
 # Classes
 # ========================================
 
-class FluidFlowConnector(VariableConnector):
-
-    def __init__(self):
-        self.connections = [
-                                # (from_variable, to_variable)
-                                ("outlet_temperature", "inlet_temperature"),
-                                ("outlet_flow_rate", "inlet_flow_rate")
-                            ]
-
 
 # ========================================
 # Functions
 # ========================================
+
+def test_file():
+    # Create file
+    file = File("file", pathlib.Path(__file__))
+    # Test file
+    assert isinstance(file, File)
+    assert hasattr(file, "name")
+    assert hasattr(file, "path")
+    assert hasattr(file, "description")
+    assert file.__repr__() == file.__str__()
+
+
+if __name__ == "__main__":
+    test_file()

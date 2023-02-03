@@ -127,7 +127,7 @@ class Model(abc.ABC):
 
     def save_time_step(self, time_step: int):
         for variable in self.outputs:
-            # TODO : Check if we need this: if isinstance(value.value, numbers.Number): Yes, we do, but it's weird
+            # TODO: Check if we need this: if isinstance(value.value, numbers.Number): Yes, we do, but it's weird
             if isinstance(variable.value, numbers.Number):
                 getattr(self, variable.name + "_series")[time_step] = variable.value
 

@@ -11,7 +11,6 @@ import pandas
 # Internal imports
 # ========================================
 
-from core          import data_path
 from core.file     import File
 from core.model    import Model
 from core.variable import Variable
@@ -85,7 +84,7 @@ class Weather(Model):
         return parameters
 
     def initialize(self) -> None:
-        # TODO : Modify when we wil have a package structure
+        # TODO: Modify when we wil have a package structure
         colibrisuce_path   = pathlib.Path(__file__).parents[2]
         print(colibrisuce_path)
         epw_file_path      = colibrisuce_path / "config" / "data" / "weather" / "epw" / "Paris.epw"

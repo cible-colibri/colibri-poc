@@ -10,13 +10,12 @@ import pathlib
 # Internal imports
 # ========================================
 
-from utils.files_utils     import read_json_file
-from utils.unit_dictionary import UnitDictionary
 
 # ========================================
 # Constants
 # ========================================
 
+from utils.files_utils import read_json_file
 
 # ========================================
 # Variables
@@ -32,29 +31,23 @@ from utils.unit_dictionary import UnitDictionary
 # Functions
 # ========================================
 
-# Return an object to convert from one unit to another (containing all unit conversion factors)
-def get_unit_converter() -> UnitDictionary:
-    """Return an object to convert from one unit to another (containing all unit conversion factors)
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-    unit_converter : UnitDictionary
-        UnitDictionary object to convert from one unit to another (containing all unit conversion factors)
-
-    Raises
-    ------
-    None
-
-    Examples
-    --------
-    >>> None
-    """
+def test_data():
+    # Read units file
     # TODO: Modify when we wil have a package structure
-    colibrisuce_path = pathlib.Path(__file__).parents[1]
+    colibrisuce_path = pathlib.Path(__file__).parents[2]
     units_file_path  = colibrisuce_path / "config" / "data" / "units" / "units.json"
     units            = read_json_file(units_file_path)
-    unit_converter   = UnitDictionary(**units)
-    return unit_converter
+    # Check format of the units file
+    assert isinstance(units, dict)
+    assert isinstance(units["dimensions"], list)
+    assert len(units["dimensions"]) == 66
+    for unit in units["dimensions"]:
+        assert isinstance(unit["name"], str)
+        assert isinstance(unit["definition"], str)
+        assert isinstance(unit["base_unit"], dict)
+        assert isinstance(unit["equivalent_units"], list)
+    # TODO: Add test for weather files
+
+
+if __name__ == "__main__":
+    test_data()
