@@ -4,13 +4,12 @@
 # External imports
 # ========================================
 
-import dataclasses
+import operator
+import typing
 
 # ========================================
 # Internal imports
 # ========================================
-from math import floor
-from operator import truediv, floordiv
 
 from utils.enums_utils import Units
 
@@ -18,31 +17,34 @@ from utils.enums_utils import Units
 # Constants
 # ========================================
 
+from config.constants import UNIT_CONVERTER
 
 # ========================================
 # Variables
 # ========================================
 
+SelfVariable          = typing.TypeVar("SelfVariable", bound = "Variable")
+SelfContainerVariable = typing.TypeVar("SelfContainerVariable", bound = "ContainerVariable ")
 
 # ========================================
 # Classes
 # ========================================
-from utils.unit_dictionary import unit_dictionary
 
 
-@dataclasses.dataclass
 class Variable:
-    name: str
-    value: float = 0
-    unit: Units = Units.UNITLESS
-    description: str = ""
+
+    def __init__(self, name: str, value: typing.Any = 0, unit: Units = Units.UNITLESS, description: str = "Sorry, no description yet."):
+        self.name        = name
+        self.value       = value
+        self.unit        = unit
+        self.description = description
 
     def convert(self, target_unit_name):
-        return unit_dictionary.convert(self.value, self.unit, target_unit_name)
-
+        return UNIT_CONVERTER.convert(self.value, self.unit, target_unit_name)
 
     def __add__(self, val2):
         return self.value + val2
+
     __radd__ = __add__
 
     def __sub__(self, val2):
@@ -68,51 +70,61 @@ class Variable:
     #     return self.value / val2
 
     def __truediv__(self, val2):
-        return truediv(self.value, val2)
+        return operator.truediv(self.value, val2)
+
     def __rtruediv__(self, val2):
-        return truediv(val2, self.value)
+        return operator.truediv(val2, self.value)
 
     def __floordiv__(self, val2):
-        return floordiv(self.value, val2)
+        return operator.floordiv(self.value, val2)
+
     def __rfloordiv__(self, val2):
-        return floordiv(val2, self.value)
+        return operator.floordiv(val2, self.value)
 
     def __mod__(self, val2):
         return self.value % val2
+
     def __rmod__(self, val2):
         return val2 % self.value
 
     def __divmod__(self, val2):
         return divmod(self.value, val2)
+
     def __rdivmod__(self, val2):
         return divmod(val2, self.value)
 
     def __pow__(self, val2):
         return pow(self.value, val2)
+
     def __rpow__(self, val2):
         return pow(val2, self.value)
 
     def __lshift__(self, val2):
         return self.value << val2
+
     def __rlshift__(self, val2):
         return val2 << self.value
 
     def __rshift__(self, val2):
         return self.value >> val2
+
     def __rrshift__(self, val2):
         return val2 >> self.value
 
     def __and__(self, val2):
         return self.value and val2
+
     def __rand__(self, val2):
         return val2 and self.value
 
     def __xor__(self, val2):
         return self.value or val2
+
     __rxor__ = __xor__
 
     def __or__(self, val2):
         return self.value or val2
+
     __ror__ = __or__
 
     def __neg__(self):
@@ -146,7 +158,6 @@ class Variable:
     def __ge__(self, other):
         return self.value >= other
 
-
     # TODO : add
     #  - augmented assignment methods (__iadd__ et al)
     #  - ALL type Conversion methods (__int__ et al)
@@ -156,3 +167,100 @@ class Variable:
 
     def __float__(self, other):
         return float(self.value)
+
+
+# Class to store Variable objects
+class ContainerVariables:
+
+    """Class to store Variable objects
+
+    Attributes
+    ----------
+
+    Methods
+    -------
+    add(variable: Variable)
+        Add a variable to the container (ContainerVariables)
+
+    Notes
+    -----
+    None
+
+    Examples
+    --------
+    >>> variables = ContainerVariables()
+    >>> variables.add(Variable("1", 1.0).add(Variable("2", 2.0)
+    >>> variables
+    >>> 'ContainerVariables().add(Variable(name="1", value=1.0, unit=<Units.UNITLESS: "-">)).add(Variable(name="2", value=2.0, unit=<Units.UNITLESS: "-">))'
+    """
+
+    # Add a variable to the container (ContainerVariables)
+    def add(self, condition: Variable) -> SelfContainerVariable:
+        """Add a variable to the container (ContainerVariables)
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        Self
+            Return the instance itself
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> variables = ContainerVariables()
+        >>> variables.add(Variable("1", 1.0).add(Variable("2", 2.0)
+        """
+        setattr(self, condition.name, condition)
+        return self
+
+    # Return the string representation of the object
+    def __str__(self) -> str:
+        """Return the string representation of the object
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        string_representation : str
+            String representing the object
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        join_adds             = f".".join([f"add({condition})" for condition in self.__dict__.values()])
+        string_representation = f"{self.__class__.__name__}().{join_adds}"
+        return string_representation
+
+    # Return the object representation as a string
+    def __repr__(self) -> str:
+        """Return the object representation as a string
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        object_representation : str
+            String representing the object
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        object_representation = self.__str__()
+        return object_representation

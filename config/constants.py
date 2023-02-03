@@ -10,6 +10,7 @@
 # ========================================
 
 from utils.converters_utils import get_unit_conversion_factors
+from utils.unit_dictionary import get_unit_converter
 
 # ========================================
 # Constants
@@ -17,6 +18,8 @@ from utils.converters_utils import get_unit_conversion_factors
 
 # Dataframe containing all unit conversion factors
 UNIT_CONVERSION_FACTORS = get_unit_conversion_factors()
+#
+UNIT_CONVERTER = get_unit_converter()
 
 # ========================================
 # Variables

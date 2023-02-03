@@ -73,9 +73,10 @@ class UnitDictionary(metaclass=Singleton):
         return ((value - unit1.addition_factor) / unit1.multiplication_factor) \
                * unit2.multiplication_factor + unit2.addition_factor
 
+def get_unit_converter():
+    unit_dictionary_file = os.path.join(data_path['data'], 'unit_dictionary.json')
+    with open(unit_dictionary_file) as f:
+        unit_dictionary_json = json.load(f)
 
-unit_dictionary_file = os.path.join(data_path['data'], 'unit_dictionary.json')
-with open(unit_dictionary_file) as f:
-   unit_dictionary_json = json.load(f)
-
-unit_dictionary = UnitDictionary(**unit_dictionary_json)
+    unit_dictionary = UnitDictionary(**unit_dictionary_json)
+    return unit_dictionary
