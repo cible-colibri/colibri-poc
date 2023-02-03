@@ -1,16 +1,42 @@
-from operator import truediv
+# -*- coding: utf-8 -*-
 
+# ========================================
+# External imports
+# ========================================
+
+import operator
 import pytest
+
+# ========================================
+# Internal imports
+# ========================================
 
 from core.variable import Variable
 
+# ========================================
+# Constants
+# ========================================
+
+
+# ========================================
+# Variables
+# ========================================
+
+
+# ========================================
+# Classes
+# ========================================
+
+
+# ========================================
+# Functions
+# ========================================
 
 def test_variable():
     a = Variable("a")
     a.value = 42.2
     b = Variable("b")
     b.value = 2
-
     c = Variable("c")
     c.value = 2
 
@@ -30,9 +56,9 @@ def test_variable():
     assert a / 2 == 21.1
     assert 42.2 / b == 21.1
 
-    assert truediv(a,b) == 21.1
-    assert truediv(a,2) == 21.1
-    assert truediv(42.2,b) == 21.1
+    assert operator.truediv(a, b) == 21.1
+    assert operator.truediv(a, 2) == 21.1
+    assert operator.truediv(42.2, b) == 21.1
 
     assert a > b
     assert not (b > a)
@@ -40,6 +66,7 @@ def test_variable():
     assert c == b
 
     # TODO: add tests for all operators
+
 
 def test_unit_conversion():
     a = Variable("a")
@@ -68,3 +95,8 @@ def test_unit_conversion():
     a.unit = "F"
     a_F = a.convert("K")
     assert a_F == pytest.approx(278.8167, 1e-4)
+
+
+if __name__ == "__main__":
+    test_variable()
+    test_unit_conversion()

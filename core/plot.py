@@ -1,7 +1,33 @@
+# -*- coding: utf-8 -*-
 
-class Plot():
-    def __init__(self, name, model, variable):
-        self.name = name
-        self.model = model
-        self.variable = variable
+# ========================================
+# External imports
+# ========================================
 
+import dataclasses
+
+# ========================================
+# Internal imports
+# ========================================
+
+from core.model import Model
+
+# ========================================
+# Constants
+# ========================================
+
+
+# ========================================
+# Variables
+# ========================================
+
+
+# ========================================
+# Classes
+# ========================================
+
+@dataclasses.dataclass
+class Plot:
+    name: str
+    model: Model
+    variable_name: str

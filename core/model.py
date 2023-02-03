@@ -63,18 +63,21 @@ class Model(metaclass =  MetaModel):
         else:
             self.__dict__[name] = value
 
+    def get_variable(self, name: str) -> object:
+        variables = self.inputs + self.outputs
+        return self._get_variable(name, variables)
+
     @staticmethod
-    def get_variable(name: str, variables: list) -> object:
+    def _get_variable(name: str, variables: list) -> object:
         for v in variables:
             if v.name == name:
                 return v
 
-
     def get_output(self, name: str):
-        return self.get_variable(name, self.outputs)
+        return self._get_variable(name, self.outputs)
 
     def get_input(self, name: str):
-        return self.get_variable(name, self.inputs)
+        return self._get_variable(name, self.inputs)
 
     def get_file(self, name: str) -> object:
         for f in self.files:

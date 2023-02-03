@@ -16,13 +16,13 @@ from matplotlib import pyplot as plt
 # ========================================
 
 
-from core.link               import Link
-from core.model              import Model
-from core.plot               import Plot
-from core.variable_list      import VariableList
-from utils.encorder_utils    import NonCyclycEncoder
-from utils.enums_utils       import Schema
-from utils.files_utils       import write_json_file
+from core.link            import Link
+from core.model           import Model
+from core.plot            import Plot
+from core.variable_list   import VariableList
+from utils.encorder_utils import NonCyclycEncoder
+from utils.enums_utils    import Schema
+from utils.files_utils    import write_json_file
 
 # ========================================
 # Constants
@@ -45,7 +45,7 @@ class Project:
         self.schema = schema
         self.models = []
         self.links  = []
-        self.plots = {}
+        self._plots = dict()
         self._set_project_parameters()
 
     def add(self, model: Model) -> None:
@@ -86,33 +86,33 @@ class Project:
                 return False
         return hasattr(model1, variable1) and hasattr(model2, variable2)
 
-    def add_plot(self, name, model, variable):
-        plot = Plot(name, model, variable)
-        if name in self.plots:
-            self.plots[name].append(plot)
+    def add_plot(self, name: str, model: Model, variable_name: str) -> None:
+        plot = Plot(name, model, variable_name)
+        if name in self._plots:
+            self._plots[name].append(plot)
         else:
-            self.plots[name] =[plot]
+            self._plots[name] = [plot]
 
     def plot(self):
-        if self.to_plot and len(self.plots) > 1:
-            fig1 = plt.figure()
-            disposition = len(self.plots) * 100 + 11
-
-            for title, plots in self.plots.items():
-                ax1 = fig1.add_subplot(disposition)
-                ax1.set_title(title)
+        if self.to_plot and len(self._plots) > 1:
+            figure      = plt.figure()
+            disposition = len(self._plots) * 100 + 11
+            for title, plots in self._plots.items():
+                axis = figure.add_subplot(disposition)
+                axis.set_title(title)
                 for plot in plots:
-                    model = plot.model
-                    variable = model.get_output(plot.variable)
-                    series = getattr(model, variable.name + '_series')
-                    ax1.plot(series, label=model.name + "." + variable.name)
-                    ylabel = '[' + variable.unit.name + ']'
-                    ax1.set_ylabel(ylabel)
-
-                disposition = disposition + 1
-
-            plt.legend(handles=[ax1])
+                    model    = plot.model
+                    variable = model.get_variable(plot.variable_name)
+                    series   = getattr(model, variable.name + "_series")
+                    axis.plot(series, label = model.name + "." + variable.name)
+                    axis.set_ylabel(f"[{variable.unit.name}]")
+                axis.legend(loc = "upper right", numpoints = 1)
+                disposition += 1
+            #plt.legend(handles=[ax1])
+            # Show plot
             plt.show()
+            # Adjust everything automatically
+            plt.tight_layout()
 
     def initialize_series(self):
         for model in self.models:

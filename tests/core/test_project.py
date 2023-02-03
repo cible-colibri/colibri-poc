@@ -9,11 +9,11 @@
 # Internal imports
 # ========================================
 
-from connectors.hydronics.fluid_flow   import LiquidFlowConnector
-from core.project                      import Project
-from models.hydronics.duct             import Duct
-from models.hydronics.simple_pump import SimplePump
-from models.storage.storage_tank       import StorageTank
+from connectors.hydronics.fluid_flow import LiquidFlowConnector
+from core.project                    import Project
+from models.hydronics.duct           import Duct
+from models.hydronics.simple_pump    import SimplePump
+from models.storage.storage_tank     import StorageTank
 
 # ========================================
 # Constants
@@ -54,20 +54,17 @@ def test_project():
     liquid_flow = LiquidFlowConnector()
     # Link both ducts
     project.link(duct_1, duct_2, liquid_flow)
-
-    # add a pump
+    # Add a pump
     pump_1 = SimplePump("pump_1")
     pump_1.inlet_temperature = 40
     project.add(pump_1)
     project.link(duct_2, pump_1, liquid_flow)
-
-
     # Alternative for linking models variable by variable
     #project.link("duct-1", "flow", "duct-2", "flow")
-
     # Create a storage tank
     storage_tank_1 = StorageTank("storage_tank_1")
-    storage_tank_1.set("Number_of_thermostats", 2) # expands variable list to 2:
+    # Expand variable list to 2
+    storage_tank_1.set("Number_of_thermostats", 2)
     storage_tank_1.set("Height_node_1", 0.0)
     storage_tank_1.get_input("Height_node_2").value = 0.5
     project.add(storage_tank_1)
@@ -82,11 +79,12 @@ def test_project():
     # Run project
     project.time_steps = 24
     project.n_max_iterations = 200
-
     project.add_plot("Temperatures_ducts", duct_1, "outlet_temperature")
     project.add_plot("Temperatures_ducts", duct_2, "outlet_temperature")
     project.add_plot("Temperatures_pump", pump_1, "outlet_temperature")
     project.add_plot("Temperatures_storage", storage_tank_1, "outlet_temperature_1")
-
     project.run()
-    pass
+
+
+if __name__ == "__main__":
+    test_project()
