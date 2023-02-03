@@ -54,7 +54,7 @@ def get_unit_converter() -> UnitDictionary:
     """
     # TODO : Modify when we wil have a package structure
     colibrisuce_path = pathlib.Path(__file__).parents[1]
-    units_file_path  = colibrisuce_path / "config" / "data" / "unit_dictionary.json"
+    units_file_path  = colibrisuce_path / "config" / "data" / "units" / "units.json"
     units            = read_json_file(units_file_path)
     unit_converter   = UnitDictionary(**units)
     return unit_converter
