@@ -5,16 +5,19 @@
 # ========================================
 
 import abc
+import copy
+import numbers
+import typing
 
 # ========================================
 # Internal imports
 # ========================================
-import numbers
 
-import numpy as np
-
-from core.variable import Variable
-from core.variable_list import VariableList
+from core.conditions import Conditions
+from core.inputs     import Inputs
+from core.outputs    import Outputs
+from core.parameters import Parameters
+from core.variable   import Variable
 
 # ========================================
 # Constants
@@ -30,26 +33,103 @@ from core.variable_list import VariableList
 # Classes
 # ========================================
 
-class MetaModel(abc.ABCMeta):
-    def __call__(cls, *args, **kwargs):
-        obj = type.__call__(cls, *args, **kwargs)
-        cls._transform_variables_to_attributes(obj)
-        return obj
+class Model(abc.ABC):
+
+    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None, conditions: Conditions = None):
+        self.name       = name
+        self.conditions = conditions.to_list() if conditions is not None else self._define_conditions()
+        self.inputs     = inputs.to_list() if inputs is not None else self._define_inputs()
+        self.outputs    = outputs.to_list() if outputs is not None else self._define_outputs()
+        self.parameters = parameters.to_list() if parameters is not None else self._define_parameters()
+        self.project    = None
+        self._expand_variables()
+        self._transform_variables_to_attributes()
+        self._set_conditions()
+
+    @abc.abstractmethod
+    def _define_inputs(self) -> list:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def _define_outputs(self) -> list:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def _define_conditions(self) -> list:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def _define_parameters(self) -> list:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def initialize(self) -> None:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def check_units(self) -> None:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def run(self, time_step: int = 0) -> None:
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def iteration_done(self, time_step: int = 0):
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def timestep_done(self, time_step: int = 0):
+        raise NotImplementedError("Please, implement me...")
+
+    @abc.abstractmethod
+    def simulation_done(self, time_step: int = 0):
+        raise NotImplementedError("Please, implement me...")
+
+    def get_variable(self, name: str) -> object:
+        variables = self.inputs + self.outputs + self.parameters
+        return self._get_variable(name, variables)
+
+    def get_input(self, name: str):
+        return self._get_variable(name, self.inputs)
+
+    def get_output(self, name: str):
+        return self._get_variable(name, self.outputs)
+
+    def get_parameter(self, name: str):
+        return self._get_variable(name, self.parameters)
 
     @staticmethod
-    def _transform_variables_to_attributes(obj):
-        for variable in obj.inputs + obj.outputs:
-            if type(variable) != VariableList:
-                setattr(obj, variable.name, variable)
+    def _get_variable(name: str, variables: list) -> object:
+        for variable in variables:
+            if variable.name == name:
+                return variable
+        return None
 
-class Model(metaclass =  MetaModel):
+    def _transform_variables_to_attributes(self) -> None:
+        for variable in self.inputs + self.outputs + self.parameters:
+            setattr(self, variable.name, variable)
 
-    def __init__(self, name: str):
-        self.name    = name
-        self.inputs  = []
-        self.outputs = []
-        self.files   = []
-        self.project = None
+    def _set_conditions(self) -> None:
+        for variable in self.conditions:
+            setattr(self, variable.name, variable)
+
+    def _expand_variables(self) -> None:
+        inputs = copy.deepcopy(self.inputs)
+        for variable in inputs:
+            if variable.linked_to:
+                for list_name, expandable_variable in variable.linked_to:
+                    expandable_variable_name = expandable_variable.name
+                    for index in range(0, int(variable.value)):
+                        expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
+                        list_to_append_to        = getattr(self, list_name)
+                        list_to_append_to.append(copy.deepcopy(expandable_variable))
+
+    def save_time_step(self, time_step: int):
+        for variable in self.outputs:
+            # TODO : Check if we need this: if isinstance(value.value, numbers.Number): Yes, we do, but it's weird
+            if isinstance(variable.value, numbers.Number):
+                getattr(self, variable.name + "_series")[time_step] = variable.value
 
     def __setattr__(self, name, value):
         if hasattr(self, name):
@@ -63,63 +143,8 @@ class Model(metaclass =  MetaModel):
         else:
             self.__dict__[name] = value
 
-    def get_variable(self, name: str) -> object:
-        variables = self.inputs + self.outputs
-        return self._get_variable(name, variables)
-
-    @staticmethod
-    def _get_variable(name: str, variables: list) -> object:
-        for v in variables:
-            if v.name == name:
-                return v
-
-    def get_output(self, name: str):
-        return self._get_variable(name, self.outputs)
-
-    def get_input(self, name: str):
-        return self._get_variable(name, self.inputs)
-
-    def get_file(self, name: str) -> object:
-        for f in self.files:
-            if f.name == name:
-                return f
-
-    def set(self, variable_name: str, value: float):
-        # TODO : set value and expand vectors
-        pass
-
-    def get(self, variable_name: str):
-        # set value and expand vectors
-        v = [v for v in self.inputs + self.outputs if v.name == variable_name]
-        if len(v) == 1:
-            return v[0]
-        else:
-            return None
-
-    def save_time_step(self, time_step):
-        for variable in self.outputs:
-            value = getattr(self, variable.name)
-            if type(variable) != VariableList and isinstance(value.value, numbers.Number):
-                getattr(self, variable.name + '_series')[time_step] = value.value
-
-    @abc.abstractmethod
-    def run(self, time_step=0):
-        pass
-
-    def initialize(self):
-        pass
-
-    def iteration_done(self, time_step=0):
-        pass
-
-    def timestep_done(self, time_step=0):
-        pass
-
-    def simulation_done(self, time_step=0):
-        pass
-
     # Return the string representation of the object
-    def __str__(self):
+    def __str__(self) -> str:
         """Return the string representation of the object
 
         Parameters
@@ -142,7 +167,7 @@ class Model(metaclass =  MetaModel):
         return string_representation
 
     # Return the object representation as a string
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return the object representation as a string
 
         Parameters
@@ -163,3 +188,7 @@ class Model(metaclass =  MetaModel):
         """
         object_representation = self.__str__()
         return object_representation
+
+# ========================================
+# Functions
+# ========================================

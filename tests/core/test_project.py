@@ -64,9 +64,10 @@ def test_project():
     # Create a storage tank
     storage_tank_1 = StorageTank("storage_tank_1")
     # Expand variable list to 2
-    storage_tank_1.set("Number_of_thermostats", 2)
-    storage_tank_1.set("Height_node_1", 0.0)
-    storage_tank_1.get_input("Height_node_2").value = 0.5
+    storage_tank_1.number_of_nodes = 3
+    storage_tank_1.height_node_1 = 0.5
+    storage_tank_1.height_node_2 = 0.5
+    storage_tank_1.height_node_3 = 0.5
     project.add(storage_tank_1)
     # # Link to pump & ducts
     project.link(pump_1, "outlet_flow_rate", storage_tank_1, "inlet_flow_rate_1")

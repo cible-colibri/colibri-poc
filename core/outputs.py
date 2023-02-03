@@ -4,13 +4,12 @@
 # External imports
 # ========================================
 
-import dataclasses
-import pathlib
 
 # ========================================
 # Internal imports
 # ========================================
 
+from core.variable import ContainerVariables
 
 # ========================================
 # Constants
@@ -26,11 +25,8 @@ import pathlib
 # Classes
 # ========================================
 
-@dataclasses.dataclass
-class File:
-    name: str
-    path: pathlib.Path
-    description: str = ""
+class Outputs(ContainerVariables):
+    ...
 
 # ========================================
 # Functions

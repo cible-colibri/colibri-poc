@@ -4,6 +4,7 @@
 # External imports
 # ========================================
 
+import copy
 import operator
 import typing
 
@@ -33,14 +34,42 @@ SelfContainerVariable = typing.TypeVar("SelfContainerVariable", bound = "Contain
 
 class Variable:
 
-    def __init__(self, name: str, value: typing.Any = 0, unit: Units = Units.UNITLESS, description: str = "Sorry, no description yet."):
+    def __init__(self, name: str, value: typing.Any = 0, unit: Units = Units.UNITLESS, description: str = "Sorry, no description yet.", linked_to: typing.List[SelfVariable] = None, model = None):
         self.name        = name
         self.value       = value
         self.unit        = unit
         self.description = description
+        self.linked_to   = linked_to
+        self.model       = model
 
     def convert(self, target_unit_name):
         return UNIT_CONVERTER.convert(self.value, self.unit, target_unit_name)
+
+    @property
+    def value(self) -> typing.Any:
+        return self._value
+
+    @value.setter
+    def value(self, value: typing.Any) -> None:
+        if hasattr(self, "linked_to") and hasattr(self, "model"):
+            if self.linked_to is not None:
+                sizing_variable = getattr(self.model, self.name)
+                for list_name, expandable_variable in sizing_variable.linked_to:
+                    expandable_variable_name = expandable_variable.name
+                    for index in range(0, int(sizing_variable.value)):
+                        variable          = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
+                        list_to_remove_from = getattr(self.model, list_name)
+                        list_to_remove_from.remove(variable)
+                        del variable
+                for list_name, expandable_variable in sizing_variable.linked_to:
+                    expandable_variable_name = expandable_variable.name
+                    for index in range(0, int(value)):
+                        expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
+                        variable = copy.deepcopy(expandable_variable)
+                        list_to_append_to = getattr(self.model, list_name)
+                        list_to_append_to.append(variable)
+                        setattr(self.model, variable.name, variable)
+        self._value = value
 
     def __add__(self, val2):
         return self.value + val2
@@ -168,6 +197,52 @@ class Variable:
     def __float__(self, other):
         return float(self.value)
 
+    # Return the string representation of the object
+    def __str__(self) -> str:
+        """Return the string representation of the object
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        string_representation : str
+            String representing the object
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        string_representation = f"{self.__class__.__name__}({self.name}, {self.value}, {self.unit}, {self.description}, {self.linked_to})"
+        return string_representation
+
+    # Return the object representation as a string
+    def __repr__(self) -> str:
+        """Return the object representation as a string
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        object_representation : str
+            String representing the object
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        object_representation = self.__str__()
+        return object_representation
+
 
 # Class to store Variable objects
 class ContainerVariables:
@@ -264,3 +339,7 @@ class ContainerVariables:
         """
         object_representation = self.__str__()
         return object_representation
+
+# ========================================
+# Functions
+# ========================================

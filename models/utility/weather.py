@@ -4,17 +4,15 @@
 # External imports
 # ========================================
 
+import pathlib
+import pandas
 
 # ========================================
 # Internal imports
 # ========================================
-import os
-from math import exp
 
-import pandas as pd
-
-from core import data_path
-from core.file import File
+from core          import data_path
+from core.file     import File
 from core.model    import Model
 from core.variable import Variable
 
@@ -34,60 +32,96 @@ from core.variable import Variable
 
 class Weather(Model):
 
-    def __init__(self, name: str):
-        self.name    = name
-        self.inputs  = []
-        self.outputs = [
-            Variable('year'),
-            Variable('month'),
-            Variable('day'),
-            Variable('hour'),
-            Variable('minute'),
-            Variable('datasource'),
-            Variable('temperature'),
-            Variable('DewPoint'),
-            Variable('RelHum'),
-            Variable('pressure'),
-            Variable('ExtHorzRad'),
-            Variable('ExtDirRad'),
-            Variable('HorzIRSky'),
-            Variable('GloHorzRad'),
-            Variable('direct_radiation'),
-            Variable('diffuse_radiation'),
-            Variable('GloHorzIllum'),
-            Variable('DirNormIllum'),
-            Variable('DifHorzIllum'),
-            Variable('ZenLum'),
-            Variable('wind_direction'),
-            Variable('wind_speed'),
-            Variable('TotSkyCvr'),
-            Variable('OpaqSkyCvr'),
-            Variable('Visibility'),
-            Variable('Ceiling'),
-            Variable('presweathobs'),
-            Variable('presweathcodes'),
-            Variable('precipwtr'),
-            Variable('aerosoloptdepth'),
-            Variable('snowdepth'),
-            Variable('dayslastsnow'),
-            Variable('albedo'),
-            Variable('rain'),
-            Variable('rain_hr')
-        ]
+    def _define_inputs(self) -> list:
+        inputs = []
+        return inputs
 
-        self.files = [File('weather_data', os.path.join(data_path['weather_data'], 'EnergyPlus', 'Paris.epw'),
-                      'Weather data in EPW format')]
+    def _define_outputs(self) -> list:
+        outputs = [
+                       Variable("year"),
+                       Variable("month"),
+                       Variable("day"),
+                       Variable("hour"),
+                       Variable("minute"),
+                       Variable("datasource"),
+                       Variable("temperature"),
+                       Variable("DewPoint"),
+                       Variable("RelHum"),
+                       Variable("pressure"),
+                       Variable("ExtHorzRad"),
+                       Variable("ExtDirRad"),
+                       Variable("HorzIRSky"),
+                       Variable("GloHorzRad"),
+                       Variable("direct_radiation"),
+                       Variable("diffuse_radiation"),
+                       Variable("GloHorzIllum"),
+                       Variable("DirNormIllum"),
+                       Variable("DifHorzIllum"),
+                       Variable("ZenLum"),
+                       Variable("wind_direction"),
+                       Variable("wind_speed"),
+                       Variable("TotSkyCvr"),
+                       Variable("OpaqSkyCvr"),
+                       Variable("Visibility"),
+                       Variable("Ceiling"),
+                       Variable("presweathobs"),
+                       Variable("presweathcodes"),
+                       Variable("precipwtr"),
+                       Variable("aerosoloptdepth"),
+                       Variable("snowdepth"),
+                       Variable("dayslastsnow"),
+                       Variable("albedo"),
+                       Variable("rain"),
+                       Variable("rain_hr"),
+                   ]
+        return outputs
 
-    def initialize(self):
-        self.EPW_vars = [v.name for v in self.outputs]
-        weather_file = self.get_file('weather_data')
-        self.epw_path = weather_file.path
-        self.climate_data = pd.read_csv(self.epw_path, skiprows=8, header=None, names=self.EPW_vars)
+    def _define_conditions(self) -> list:
+        conditions = []
+        return conditions
 
-    def run(self, time_step=0):
-        for v in self.outputs:
-            setattr(self, v.name, self.climate_data[v.name][time_step])
+    def _define_parameters(self) -> list:
+        parameters = []
+        return parameters
 
-    def simulation_done(self, time_step=0):
+    def initialize(self) -> None:
+        # TODO : Modify when we wil have a package structure
+        colibrisuce_path   = pathlib.Path(__file__).parents[2]
+        print(colibrisuce_path)
+        epw_file_path      = colibrisuce_path / "config" / "data" / "weather" / "EnergyPlus" / "Paris.epw"
+        self.files         = [File("weather_data", epw_file_path, "Weather data in EPW format")]
+        self.epw_variables = [variable.name for variable in self.outputs]
+        self.epw_path      = self.get_file("weather_data").path
+        self.climate_data  = pandas.read_csv(str(self.epw_path.absolute()), skiprows = 8, header = None, names = self.epw_variables)
+
+    def check_units(self) -> None:
+        pass
+
+    def run(self, time_step: int = 0):
+        for variable in self.outputs:
+            setattr(self, variable.name, self.climate_data[variable.name][time_step])
+
+    def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
-        print(f"Mean temperature during simulation: {self.climate_data['temperature'][0:time_step].mean()}")
+        for output in self.outputs:
+            print(f"{output.name}={getattr(self, output.name)}")
+
+    def iteration_done(self, time_step: int = 0):
+        pass
+
+    def timestep_done(self, time_step: int = 0):
+        pass
+
+    def simulation_done(self, time_step: int = 0):
+        print(f"{self.name}:")
+        print(f'Mean temperature during simulation: {self.climate_data["temperature"][0:time_step].mean()}')
+
+    def get_file(self, name: str) -> object:
+        for f in self.files:
+            if f.name == name:
+                return f
+
+
+# ========================================
+# Functions
+# ========================================

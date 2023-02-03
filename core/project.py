@@ -15,7 +15,6 @@ from matplotlib import pyplot as plt
 # Internal imports
 # ========================================
 
-
 from core.link            import Link
 from core.model           import Model
 from core.plot            import Plot
