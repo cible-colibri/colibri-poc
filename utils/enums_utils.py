@@ -25,6 +25,15 @@ import enum
 # Classes
 # ========================================
 
+
+@enum.unique
+class Roles(enum.Enum):
+    CONDITIONS = "conditions"
+    INPUTS     = "inputs"
+    OUTPUTS    = "outputs"
+    PARAMETERS = "parameters"
+
+
 @enum.unique
 class Schema(enum.Enum):
     RE2020 = "re2020"

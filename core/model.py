@@ -12,11 +12,11 @@ import numbers
 # Internal imports
 # ========================================
 
-from core.conditions import Conditions
-from core.inputs     import Inputs
-from core.outputs    import Outputs
-from core.parameters import Parameters
-from core.variable   import Variable
+from core.inputs       import Inputs
+from core.outputs      import Outputs
+from core.parameters   import Parameters
+from core.variable     import Variable
+from utils.enums_utils import Roles
 
 # ========================================
 # Constants
@@ -34,39 +34,17 @@ from core.variable   import Variable
 
 class Model(abc.ABC):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None, conditions: Conditions = None):
+    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name       = name
-        self._define_variables()
-        self.conditions = conditions.to_list() if conditions is not None else self._define_conditions()
-        self.inputs     = inputs.to_list() if inputs is not None else self._define_inputs()
-        self.outputs    = outputs.to_list() if outputs is not None else self._define_outputs()
-        self.parameters = parameters.to_list() if parameters is not None else self._define_parameters()
         self.project    = None
+        self.inputs     = [] if inputs is None else inputs.to_list()
+        self.outputs    = [] if outputs is None else outputs.to_list()
+        self.parameters = [] if parameters is None else parameters.to_list()
+        self._define_variables()
+        self._add_attributes_to_internal_lists()
         self._expand_variables()
-        self._transform_variables_to_attributes()
-        self._set_conditions()
 
-    # TODO: Define variables here, with information inside the Variable class about where it belongs (inputs, outputs, etc.), then
-    #       add them to the proper lists instead of starting from the list then setting the variables (as attributes)
-    #       The Model class will be less complex (_define_inputs, _define_outputs, etc.) will be removed, keeping only _define_variables
-    @abc.abstractmethod
     def _define_variables(self) -> None:
-        raise NotImplementedError("Please, implement me...")
-
-    @abc.abstractmethod
-    def _define_inputs(self) -> list:
-        raise NotImplementedError("Please, implement me...")
-
-    @abc.abstractmethod
-    def _define_outputs(self) -> list:
-        raise NotImplementedError("Please, implement me...")
-
-    @abc.abstractmethod
-    def _define_conditions(self) -> list:
-        raise NotImplementedError("Please, implement me...")
-
-    @abc.abstractmethod
-    def _define_parameters(self) -> list:
         raise NotImplementedError("Please, implement me...")
 
     @abc.abstractmethod
@@ -114,29 +92,28 @@ class Model(abc.ABC):
                 return variable
         return None
 
-    def _transform_variables_to_attributes(self) -> None:
-        self.inputs     = [] if self.inputs is None else self.inputs
-        self.outputs    = [] if self.outputs is None else self.outputs
-        self.parameters = [] if self.parameters is None else self.parameters
-        for variable in self.inputs + self.outputs + self.parameters:
-            setattr(self, variable.name, variable)
-
-    def _set_conditions(self) -> None:
-        self.conditions = [] if self.conditions is None else self.conditions
-        for variable in self.conditions:
-            setattr(self, variable.name, variable)
+    def _add_attributes_to_internal_lists(self) -> None:
+        attributes     = [attribute for _, attribute in self.__dict__.items() if isinstance(attribute, Variable)]
+        variable_names = [variable.name for variable in self.inputs + self.outputs + self.parameters]
+        for attribute in attributes:
+            if (attribute.role == Roles.INPUTS) and (attribute.name not in variable_names):
+                self.inputs.append(attribute)
+            elif (attribute.role == Roles.OUTPUTS) and (attribute.name not in variable_names):
+                self.outputs.append(attribute)
+            elif (attribute.role == Roles.PARAMETERS) and (attribute.name not in variable_names):
+                self.parameters.append(attribute)
 
     def _expand_variables(self) -> None:
-        inputs = copy.deepcopy(self.inputs)
-        if inputs:
-            for variable in inputs:
-                if variable.linked_to:
-                    for list_name, expandable_variable in variable.linked_to:
-                        expandable_variable_name = expandable_variable.name
-                        for index in range(0, int(variable.value)):
-                            expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
-                            list_to_append_to        = getattr(self, list_name)
-                            list_to_append_to.append(copy.deepcopy(expandable_variable))
+        variables = copy.deepcopy(self.inputs) + copy.deepcopy(self.parameters)
+        for variable in variables:
+            if variable.linked_to:
+                for expandable_variable in variable.linked_to:
+                    list_name                = expandable_variable.role.value
+                    expandable_variable_name = expandable_variable.name
+                    for index in range(0, int(variable.value)):
+                        expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
+                        list_to_append_to        = getattr(self, list_name)
+                        list_to_append_to.append(copy.deepcopy(expandable_variable))
 
     def save_time_step(self, time_step: int) -> None:
         for variable in self.outputs:

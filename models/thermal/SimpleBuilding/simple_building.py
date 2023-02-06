@@ -14,7 +14,10 @@ import matplotlib.pyplot as plt
 
 from core.model        import Model
 from core.variable     import Variable
-from utils.enums_utils import Units
+from utils.enums_utils import (
+                                Roles,
+                                Units,
+                               )
 
 # ========================================
 # Constants
@@ -32,69 +35,26 @@ from utils.enums_utils import Units
 
 class SimpleBuilding(Model):
 
-    # TODO: Define variables here, with information inside the Variable class about where it belongs (inputs, outputs, etc.), then
-    #       add them to the proper lists instead of starting from the list then setting the variables (as attributes)
-    #       The Model class will be less complex (_define_inputs, _define_outputs, etc.) will be removed, keeping only _define_variables
     def _define_variables(self) -> None:
-        self.zone_setpoint_heating = None
-        self.zone_setpoint_cooling = None
-        self.wwr = None
-        self.ach = None
-        self.u_wall = None
-        self.u_roo = None
-        self.u_floor = None
-        self.u_window = None
-        self.area_walls_t = None
-        self.eta_recup = None
-        self.area_floor = None
-        self.nb_floors = None
-        self.trans_window = None
-        self.heating = None
-        self.cooling = None
-        self.ext_temperature = None
-        self.radiation = None
-        self.phi_hvac = None
-        self.zone_temperature = None
-        self.loss_factor = None
-
-    def _define_inputs(self) -> list:
-        inputs = [
-                       Variable('zone_setpoint_heating', 20.0, unit=Units.DEGREE_CELSIUS),  # default setpoint heating [°C]
-                       Variable('zone_setpoint_cooling', 27.0, unit=Units.DEGREE_CELSIUS),  # default setpoint cooling [°C]
-                       Variable('wwr', 0.2),  # window wall ration [-]
-                       Variable('ach', 0.5),  #
-                       Variable('u_wall', 0.5),
-                       Variable('u_roof', 0.3),
-                       Variable('u_floor', 0.25),
-                       Variable('u_window', 2.5),
-                       Variable('area_walls_t', 200.0),  # total wall area (windows+opac)
-                       Variable('eta_recup', 0.0),
-                       Variable('area_floor', 50.0),
-                       Variable('nb_floors', 2),
-                       Variable('trans_window', 0.7),
-                       Variable('heating', True),
-                       Variable('cooling', False),
-                       Variable('ext_temperature', 20, unit=Units.DEGREE_CELSIUS),
-                       Variable('radiation', 0),
-                  ]
-        return inputs
-
-    def _define_outputs(self) -> list:
-        outputs = [
-                       Variable("phi_hvac"),
-                       Variable("zone_temperature", unit=Units.DEGREE_CELSIUS),
-                   ]
-        return outputs
-
-    def _define_conditions(self) -> list:
-        conditions = []
-        return conditions
-
-    def _define_parameters(self) -> list:
-        parameters = [
-                           Variable("loss_factor", 0.0, Units.UNITLESS),
-                      ]
-        return parameters
+        self.zone_setpoint_heating = Variable('zone_setpoint_heating', 20.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint heating [°C]
+        self.zone_setpoint_cooling = Variable('zone_setpoint_cooling', 27.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint cooling [°C]
+        self.wwr                   = Variable('wwr', 0.2, Roles.INPUTS)  # window wall ration [-]
+        self.ach                   = Variable('ach', 0.5, Roles.INPUTS)  #
+        self.u_wall                = Variable('u_wall', 0.5, Roles.INPUTS)
+        self.u_roof                = Variable('u_roof', 0.3, Roles.INPUTS)
+        self.u_floor               = Variable('u_floor', 0.25, Roles.INPUTS)
+        self.u_window              = Variable('u_window', 2.5, Roles.INPUTS)
+        self.area_walls_t          = Variable('area_walls_t', 200.0, Roles.INPUTS)  # total wall area (windows+opac)
+        self.eta_recup             = Variable('eta_recup', 0.0, Roles.INPUTS)
+        self.area_floor            = Variable('area_floor', 50.0, Roles.INPUTS)
+        self.nb_floors             = Variable('nb_floors', 2, Roles.INPUTS)
+        self.trans_window          = Variable('trans_window', 0.7, Roles.INPUTS)
+        self.heating               = Variable('heating', True, Roles.INPUTS)
+        self.cooling               = Variable('cooling', False, Roles.INPUTS)
+        self.ext_temperature       = Variable('ext_temperature', 20, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.radiation             = Variable('radiation', 0, Roles.INPUTS)
+        self.phi_hvac              = Variable("phi_hvac", 0.0, Roles.OUTPUTS)
+        self.zone_temperature      = Variable("zone_temperature", 20, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
     def initialize(self) -> None:
         self.volume               = self.area_floor * self.nb_floors * 2.5

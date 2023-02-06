@@ -12,7 +12,10 @@ import pytest
 # ========================================
 
 from core.variable     import Variable
-from utils.enums_utils import Units
+from utils.enums_utils import (
+                                Roles,
+                                Units,
+                               )
 
 # ========================================
 # Constants
@@ -35,11 +38,11 @@ from utils.enums_utils import Units
 
 @pytest.mark.short_test
 def test_variable():
-    a = Variable("a")
+    a = Variable("a", 0, Roles.INPUTS)
     a.value = 42.2
-    b = Variable("b")
+    b = Variable("b", 0, Roles.INPUTS)
     b.value = 2
-    c = Variable("c")
+    c = Variable("c", 0, Roles.INPUTS)
     c.value = 2
 
     assert a + b == 44.2
@@ -72,7 +75,7 @@ def test_variable():
 
 @pytest.mark.short_test
 def test_unit_conversion():
-    a = Variable("a")
+    a = Variable("a", 0, Roles.INPUTS)
     a.value = 42.2
     a.unit = Units.JOULE
 

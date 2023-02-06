@@ -11,13 +11,16 @@ import time
 # ========================================
 
 from connectors.hydronics.fluid_flow import FluidFlowConnector
-from core.conditions                 import Conditions
 from core.project                    import Project
+from core.inputs                     import Inputs
 from core.parameters                 import Parameters
 from core.variable                   import Variable
 from models.hydronics.duct           import Duct
 from models.hydronics.simple_pump    import SimplePump
-from utils.enums_utils               import Units
+from utils.enums_utils               import (
+                                                Roles,
+                                                Units,
+                                             )
 
 # ========================================
 # Constants
@@ -38,20 +41,20 @@ from utils.enums_utils               import Units
 # Functions
 # ========================================
 
-def test_simple_pump():
+def test_pump():
 
     starting_time    = time.perf_counter()
 
     # Parameters
-    internal_diameter = Variable("internal_diameter", 0.009, Units.METER)
-    tube_length       = Variable("tube_length", 10.0, Units.METER)
+    internal_diameter = Variable("internal_diameter", 0.009, Roles.PARAMETERS, Units.METER)
+    tube_length       = Variable("tube_length", 10.0, Roles.PARAMETERS, Units.METER)
     parameters_duct_1 = Parameters().add(internal_diameter).add(tube_length)
-    efficiency        = Variable("efficiency", 0.25, Units.METER)
+    efficiency        = Variable("efficiency", 0.25, Roles.PARAMETERS, Units.METER)
     parameters_pump_1 = Parameters().add(efficiency)
     # Initial conditions
-    inlet_flow_rate   = Variable("inlet_flow_rate", 3.0 / 60.0, Units.KILOGRAM_PER_SECOND, "Flow rate of the pump")
-    inlet_pressure    = Variable("inlet_pressure", 10_000.0, Units.PASCAL, "Pressure drop")
-    conditions_pump_1 = Conditions().add(inlet_flow_rate).add(inlet_pressure)
+    inlet_flow_rate   = Variable("inlet_flow_rate", 3.0 / 60.0, Roles.INPUTS, Units.KILOGRAM_PER_SECOND, "Flow rate of the pump")
+    inlet_pressure    = Variable("inlet_pressure", 10_000.0, Roles.INPUTS, Units.PASCAL, "Pressure drop")
+    conditions_pump_1 = Inputs().add(inlet_flow_rate).add(inlet_pressure)
     # Create a project
     project           = Project("project_1")
     # Create a duct (from Duct model) with its parameters (from Parameters model) and initial conditions (from Conditions model)
@@ -63,7 +66,7 @@ def test_simple_pump():
     # Add duct_1 to project
     project.add(duct_1)
     # Create a pump (from Pump model)
-    pump_1 = SimplePump("pump_1", parameters = parameters_pump_1,  conditions = conditions_pump_1)
+    pump_1 = SimplePump("pump_1", inputs = conditions_pump_1, parameters = parameters_pump_1)
     project.add(pump_1)
     # Create a connector
     liquid_flow = FluidFlowConnector()
@@ -77,4 +80,4 @@ def test_simple_pump():
 
 
 if __name__ == "__main__":
-    test_simple_pump()
+    test_pump()

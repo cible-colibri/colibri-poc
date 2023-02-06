@@ -12,7 +12,10 @@ import typing
 # Internal imports
 # ========================================
 
-from utils.enums_utils import Units
+from utils.enums_utils import (
+                                Roles,
+                                Units,
+                               )
 
 # ========================================
 # Constants
@@ -34,9 +37,10 @@ SelfContainerVariable = typing.TypeVar("SelfContainerVariable", bound = "Contain
 
 class Variable:
 
-    def __init__(self, name: str, value: typing.Any = 0, unit: Units = Units.UNITLESS, description: str = "Sorry, no description yet.", linked_to: typing.List[SelfVariable] = None, model = None):
+    def __init__(self, name: str, value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "Sorry, no description yet.", linked_to: typing.List[SelfVariable] = None, model = None):
         self.name        = name
         self.value       = value
+        self.role        = role
         self.unit        = unit
         self.description = description
         self.linked_to   = linked_to
@@ -54,16 +58,17 @@ class Variable:
         if hasattr(self, "linked_to") and hasattr(self, "model"):
             if self.linked_to is not None:
                 sizing_variable = getattr(self.model, self.name)
-                for list_name, expandable_variable in sizing_variable.linked_to:
+                for expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
+                    list_name                = expandable_variable.role.value
                     for index in range(0, int(sizing_variable.value)):
-                        y = f"{expandable_variable_name}_{index + 1}"
-                        variable          = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
                         list_to_remove_from = getattr(self.model, list_name)
+                        variable            = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
                         list_to_remove_from.remove(variable)
                         del variable
-                for list_name, expandable_variable in sizing_variable.linked_to:
+                for expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
+                    list_name                = expandable_variable.role.value
                     for index in range(0, int(value)):
                         expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
                         variable = copy.deepcopy(expandable_variable)
@@ -98,16 +103,6 @@ class Variable:
     #for now variables are scalar only, but this may change quickly if Anthony comes up with another smart idea
     # def __matmul__(self, val2):
     #     return self.value / val2
-
-    """
-    Après on peut peut-être simplifier (Python  c'est pas mon point fort), mais il faudrait décider vite si on veut des variables partout (comme là) ou juste à la création du projet...enfin, je pousse te laisse regarder tranquillement demain
-    [02/02 15:10] KEILHOLZ Werner
-    Pour le = 4, ça va, le pb c'est V = Variable()V2 = Variable()V = V2
-    [02/02 15:10] KEILHOLZ Werner
-    et aussi If V > V2ouabs(V)...
-    [02/02 15:11] KEILHOLZ Werner
-    -> j'ai résolu tout ça, mais en échange de code compliqué 
-    """
 
     def __truediv__(self, val2):
         return operator.truediv(self.value, val2)
@@ -228,7 +223,7 @@ class Variable:
         --------
         >>> None
         """
-        string_representation = f"{self.__class__.__name__}({self.name}, {self.value}, {self.unit}, {self.description}, {self.linked_to})"
+        string_representation = f"{self.__class__.__name__}({self.name}, {self.value}, {self.role}, {self.unit}, {self.description}, {self.linked_to})"
         return string_representation
 
     # Return the object representation as a string

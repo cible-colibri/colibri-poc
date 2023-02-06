@@ -16,13 +16,13 @@ from matplotlib import pyplot as plt
 # Internal imports
 # ========================================
 
-from core.link            import Link
-from core.model           import Model
-from core.plot            import Plot
+from core.link               import Link
+from core.model              import Model
+from core.plot               import Plot
 from core.variable_connector import VariableConnector
-from utils.encorder_utils import NonCyclycEncoder
-from utils.enums_utils    import Schema
-from utils.files_utils    import write_json_file
+from utils.encorder_utils    import NonCyclycEncoder
+from utils.enums_utils       import Schema
+from utils.files_utils       import write_json_file
 
 # ========================================
 # Constants

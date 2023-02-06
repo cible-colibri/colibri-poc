@@ -11,10 +11,10 @@ import pandas
 # Internal imports
 # ========================================
 
-from core.file     import File
-from core.model    import Model
-from core.variable import Variable
-
+from core.file         import File
+from core.model        import Model
+from core.variable     import Variable
+from utils.enums_utils import Roles
 # ========================================
 # Constants
 # ========================================
@@ -31,97 +31,43 @@ from core.variable import Variable
 
 class Weather(Model):
 
-    # TODO: Define variables here, with information inside the Variable class about where it belongs (inputs, outputs, etc.), then
-    #       add them to the proper lists instead of starting from the list then setting the variables (as attributes)
-    #       The Model class will be less complex (_define_inputs, _define_outputs, etc.) will be removed, keeping only _define_variables
     def _define_variables(self) -> None:
-        self.year = None
-        self.month = None
-        self.day = None
-        self.hour = None
-        self.minute = None
-        self.datasource = None
-        self.temperature = None
-        self.DewPoint = None
-        self.RelHum = None
-        self.pressure = None
-        self.ExtHorzRad = None
-        self.ExtDirRad = None
-        self.HorzIRSky = None
-        self.GloHorzRad = None
-        self.direct_radiation = None
-        self.diffuse_radiation = None
-        self.GloHorzIllum = None
-        self.DirNormIllum = None
-        self.DifHorzIllum = None
-        self.ZenLum = None
-        self.wind_direction = None
-        self.wind_speed = None
-        self.TotSkyCvr = None
-        self.OpaqSkyCvr = None
-        self.Visibility = None
-        self.Ceiling = None
-        self.presweathobs = None
-        self.presweathcodes = None
-        self.precipwtr = None
-        self.aerosoloptdepth = None
-        self.snowdepth = None
-        self.dayslastsnow = None
-        self.albedo = None
-        self.rain = None
-        self.rain_hr = None
+        self.year              = Variable("year", 0, Roles.OUTPUTS)
+        self.month             = Variable("month", 0, Roles.OUTPUTS)
+        self.day               = Variable("day", 0, Roles.OUTPUTS)
+        self.hour              = Variable("hour", 0, Roles.OUTPUTS)
+        self.minute            = Variable("minute", 0, Roles.OUTPUTS)
+        self.datasource        = Variable("datasource", 0, Roles.OUTPUTS)
+        self.temperature       = Variable("temperature", 0, Roles.OUTPUTS)
+        self.DewPoint          = Variable("DewPoint", 0, Roles.OUTPUTS)
+        self.RelHum            = Variable("RelHum", 0, Roles.OUTPUTS)
+        self.pressure          = Variable("pressure", 0, Roles.OUTPUTS)
+        self.ExtHorzRad        = Variable("ExtHorzRad", 0, Roles.OUTPUTS)
+        self.ExtDirRad         = Variable("ExtDirRad", 0, Roles.OUTPUTS)
+        self.HorzIRSky         = Variable("HorzIRSky", 0, Roles.OUTPUTS)
+        self.GloHorzRad        = Variable("GloHorzRad", 0, Roles.OUTPUTS)
+        self.direct_radiation  = Variable("direct_radiation", 0, Roles.OUTPUTS)
+        self.diffuse_radiation = Variable("diffuse_radiation", 0, Roles.OUTPUTS)
+        self.GloHorzIllum      = Variable("GloHorzIllum", 0, Roles.OUTPUTS)
+        self.DirNormIllum      = Variable("DirNormIllum", 0, Roles.OUTPUTS)
+        self.DifHorzIllum      = Variable("DifHorzIllum", 0, Roles.OUTPUTS)
+        self.ZenLum            = Variable("ZenLum", 0, Roles.OUTPUTS)
+        self.wind_direction    = Variable("wind_direction", 0, Roles.OUTPUTS)
+        self.wind_speed        = Variable("wind_speed", 0, Roles.OUTPUTS)
+        self.TotSkyCvr         = Variable("TotSkyCvr", 0, Roles.OUTPUTS)
+        self.OpaqSkyCvr        = Variable("OpaqSkyCvr", 0, Roles.OUTPUTS)
+        self.Visibility        = Variable("Visibility", 0, Roles.OUTPUTS)
+        self.Ceiling           = Variable("Ceiling", 0, Roles.OUTPUTS)
+        self.presweathobs      = Variable("presweathobs", 0, Roles.OUTPUTS)
+        self.presweathcodes    = Variable("presweathcodes", 0, Roles.OUTPUTS)
+        self.precipwtr         = Variable("precipwtr", 0, Roles.OUTPUTS)
+        self.aerosoloptdepth   = Variable("aerosoloptdepth", 0, Roles.OUTPUTS)
+        self.snowdepth         = Variable("snowdepth", 0, Roles.OUTPUTS)
+        self.dayslastsnow      = Variable("dayslastsnow", 0, Roles.OUTPUTS)
+        self.albedo            = Variable("albedo", 0, Roles.OUTPUTS)
+        self.rain              = Variable("rain", 0, Roles.OUTPUTS)
+        self.rain_hr           = Variable("rain_hr", 0, Roles.OUTPUTS)
 
-    def _define_inputs(self) -> list:
-        inputs = []
-        return inputs
-
-    def _define_outputs(self) -> list:
-        outputs = [
-                       Variable("year"),
-                       Variable("month"),
-                       Variable("day"),
-                       Variable("hour"),
-                       Variable("minute"),
-                       Variable("datasource"),
-                       Variable("temperature"),
-                       Variable("DewPoint"),
-                       Variable("RelHum"),
-                       Variable("pressure"),
-                       Variable("ExtHorzRad"),
-                       Variable("ExtDirRad"),
-                       Variable("HorzIRSky"),
-                       Variable("GloHorzRad"),
-                       Variable("direct_radiation"),
-                       Variable("diffuse_radiation"),
-                       Variable("GloHorzIllum"),
-                       Variable("DirNormIllum"),
-                       Variable("DifHorzIllum"),
-                       Variable("ZenLum"),
-                       Variable("wind_direction"),
-                       Variable("wind_speed"),
-                       Variable("TotSkyCvr"),
-                       Variable("OpaqSkyCvr"),
-                       Variable("Visibility"),
-                       Variable("Ceiling"),
-                       Variable("presweathobs"),
-                       Variable("presweathcodes"),
-                       Variable("precipwtr"),
-                       Variable("aerosoloptdepth"),
-                       Variable("snowdepth"),
-                       Variable("dayslastsnow"),
-                       Variable("albedo"),
-                       Variable("rain"),
-                       Variable("rain_hr"),
-                   ]
-        return outputs
-
-    def _define_conditions(self) -> list:
-        conditions = []
-        return conditions
-
-    def _define_parameters(self) -> list:
-        parameters = []
-        return parameters
 
     def initialize(self) -> None:
         # TODO: Modify when we wil have a package structure

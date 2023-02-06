@@ -10,11 +10,12 @@ import pytest
 # Internal imports
 # ========================================
 
-from core.inputs   import Inputs
-from core.variable import (
-                              Variable,
-                              ContainerVariables,
-                          )
+from core.inputs       import Inputs
+from core.variable     import (
+                                  Variable,
+                                  ContainerVariables,
+                              )
+from utils.enums_utils import Roles
 
 # ========================================
 # Constants
@@ -37,14 +38,14 @@ from core.variable import (
 
 @pytest.mark.short_test
 def test_inputs():
-    variable_1 = Variable("variable_1", 2.5)
+    variable_1 = Variable("variable_1", 2.5, Roles.INPUTS)
     inputs = Inputs().add(variable_1)
     assert isinstance(inputs, Inputs)
     assert isinstance(inputs, ContainerVariables)
     assert hasattr(inputs, "add")
     assert hasattr(inputs, "variable_1")
     assert inputs.variable_1 is variable_1
-    assert inputs.__str__() == "Inputs().add(Variable(variable_1, 2.5, Units.UNITLESS, Sorry, no description yet., None))"
+    assert inputs.__str__() == "Inputs().add(Variable(variable_1, 2.5, Roles.INPUTS, Units.UNITLESS, Sorry, no description yet., None))"
     assert inputs.__repr__() == inputs.__str__()
 
 

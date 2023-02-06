@@ -10,8 +10,9 @@ import pytest
 # Internal imports
 # ========================================
 
-from core.model    import Model
-from core.variable import Variable
+from core.model        import Model
+from core.variable     import Variable
+from utils.enums_utils import Roles
 
 # ========================================
 # Constants
@@ -38,7 +39,7 @@ def test_models():
     class ModelChild(Model):
 
         def _define_variables(self) -> None:
-            pass
+            self.var_1 = Variable("var_1", 2, role = Roles.INPUTS)
 
         def check_units(self) -> None:
             pass
@@ -55,21 +56,8 @@ def test_models():
         def simulation_done(self, time_step: int = 0) -> None:
             pass
 
-        def _define_outputs(self) -> list:
-            pass
-
-        def _define_conditions(self) -> list:
-            pass
-
-        def _define_parameters(self) -> list:
-            pass
-
         def initialize(self) -> None:
             pass
-
-        def _define_inputs(self) -> list:
-            inputs = [Variable("var_1", 2)]
-            return inputs
 
     model = ModelChild("child")
     assert isinstance(model, ModelChild)
@@ -77,12 +65,12 @@ def test_models():
     assert isinstance(model.inputs, list)
     assert isinstance(model.outputs, list)
     assert isinstance(model.parameters, list)
-    assert isinstance(model.conditions, list)
     assert isinstance(model.get_variable("var_1"), Variable)
     assert model.var_1.value == 2
     model.var_1 = 4
     assert isinstance(model.get_variable("var_1"), Variable)
     assert model.var_1.value == 4
+    assert model.inputs[0] == model.var_1
     assert model.__str__() == "ModelChild(name = 'child')"
     assert model.__repr__() == model.__str__()
 
