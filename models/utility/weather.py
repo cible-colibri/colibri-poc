@@ -31,6 +31,46 @@ from core.variable import Variable
 
 class Weather(Model):
 
+    # TODO: Define variables here, with information inside the Variable class about where it belongs (inputs, outputs, etc.), then
+    #       add them to the proper lists instead of starting from the list then setting the variables (as attributes)
+    #       The Model class will be less complex (_define_inputs, _define_outputs, etc.) will be removed, keeping only _define_variables
+    def _define_variables(self) -> None:
+        self.year = None
+        self.month = None
+        self.day = None
+        self.hour = None
+        self.minute = None
+        self.datasource = None
+        self.temperature = None
+        self.DewPoint = None
+        self.RelHum = None
+        self.pressure = None
+        self.ExtHorzRad = None
+        self.ExtDirRad = None
+        self.HorzIRSky = None
+        self.GloHorzRad = None
+        self.direct_radiation = None
+        self.diffuse_radiation = None
+        self.GloHorzIllum = None
+        self.DirNormIllum = None
+        self.DifHorzIllum = None
+        self.ZenLum = None
+        self.wind_direction = None
+        self.wind_speed = None
+        self.TotSkyCvr = None
+        self.OpaqSkyCvr = None
+        self.Visibility = None
+        self.Ceiling = None
+        self.presweathobs = None
+        self.presweathcodes = None
+        self.precipwtr = None
+        self.aerosoloptdepth = None
+        self.snowdepth = None
+        self.dayslastsnow = None
+        self.albedo = None
+        self.rain = None
+        self.rain_hr = None
+
     def _define_inputs(self) -> list:
         inputs = []
         return inputs

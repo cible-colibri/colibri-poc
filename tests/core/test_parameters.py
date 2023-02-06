@@ -4,6 +4,7 @@
 # External imports
 # ========================================
 
+import pytest
 
 # ========================================
 # Internal imports
@@ -34,12 +35,10 @@ from core.variable   import (
 # Functions
 # ========================================
 
+@pytest.mark.short_test
 def test_parameters():
-    # Create variables
     variable_1 = Variable("variable_1", 2.5)
-    # Create parameters
     parameters = Parameters().add(variable_1)
-    # Test parameters
     assert isinstance(parameters, Parameters)
     assert isinstance(parameters, ContainerVariables)
     assert hasattr(parameters, "add")

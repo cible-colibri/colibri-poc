@@ -15,8 +15,8 @@ from core.conditions                 import Conditions
 from core.project                    import Project
 from core.parameters                 import Parameters
 from core.variable                   import Variable
-from models.hydronics.pump           import Pump
-from models.hydronics.pipe           import Pipe
+from models.hydronics.duct           import Duct
+from models.hydronics.simple_pump    import SimplePump
 from utils.enums_utils               import Units
 
 # ========================================
@@ -38,14 +38,14 @@ from utils.enums_utils               import Units
 # Functions
 # ========================================
 
-def test_project():
+def test_simple_pump():
 
     starting_time    = time.perf_counter()
 
     # Parameters
     internal_diameter = Variable("internal_diameter", 0.009, Units.METER)
     tube_length       = Variable("tube_length", 10.0, Units.METER)
-    parameters_pipe_1 = Parameters().add(internal_diameter).add(tube_length)
+    parameters_duct_1 = Parameters().add(internal_diameter).add(tube_length)
     efficiency        = Variable("efficiency", 0.25, Units.METER)
     parameters_pump_1 = Parameters().add(efficiency)
     # Initial conditions
@@ -54,21 +54,21 @@ def test_project():
     conditions_pump_1 = Conditions().add(inlet_flow_rate).add(inlet_pressure)
     # Create a project
     project           = Project("project_1")
-    # Create a pipe (from Pipe model) with its parameters (from Parameters model) and initial conditions (from Conditions model)
-    pipe_1            = Pipe("pipe_1", parameters_pipe_1)
-    # Set the parameters / characteristics of the pipe using the get_input method
-    pipe_1.get_input("inlet_flow_rate").value = 0.04
-    # Set the parameters / characteristics of the pipe using the attributes (which is a Variable object)
-    pipe_1.inlet_flow_rate.value = 0.05
-    # Add pipe_1 to project
-    project.add(pipe_1)
+    # Create a duct (from Duct model) with its parameters (from Parameters model) and initial conditions (from Conditions model)
+    duct_1            = Duct("duct_1", parameters = parameters_duct_1)
+    # Set the parameters / characteristics of the duct using the get_input method
+    duct_1.get_input("inlet_flow_rate").value = 0.04
+    # Set the parameters / characteristics of the duct using the attributes (which is a Variable object)
+    duct_1.inlet_flow_rate.value = 0.05
+    # Add duct_1 to project
+    project.add(duct_1)
     # Create a pump (from Pump model)
-    pump_1 = Pump("pump_1", parameters_pump_1,  conditions_pump_1)
+    pump_1 = SimplePump("pump_1", parameters = parameters_pump_1,  conditions = conditions_pump_1)
     project.add(pump_1)
     # Create a connector
     liquid_flow = FluidFlowConnector()
-    # Link pipe to pump
-    project.link(pipe_1, pump_1, liquid_flow)
+    # Link duct to pump
+    project.link(duct_1, pump_1, liquid_flow)
     # Save project as a json file
     # project.save_as_json(f"{project.name}.json")
     # Run project
@@ -77,4 +77,4 @@ def test_project():
 
 
 if __name__ == "__main__":
-    test_project()
+    test_simple_pump()

@@ -2,7 +2,6 @@ import os.path
 
 from core.model import Model
 from core.variable import Variable
-from core.variable_list import VariableList
 import ctypes as ctypes
 
 from models.plugins.trnsys_type import TrnsysType

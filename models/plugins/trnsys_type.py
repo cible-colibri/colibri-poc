@@ -2,7 +2,6 @@ import os.path
 
 from core.model import Model
 from core.variable import Variable
-from core.variable_list import VariableList
 import ctypes as ctypes
 
 class TrnsysType(Model):
@@ -17,12 +16,12 @@ class TrnsysType(Model):
 
         self.inputs.append(Variable("Number of inputs", 1))
         self.inputs.extend(
-            VariableList(self, "Number of inputs",
+            Variable(self, "Number of inputs", #List
                 [Variable("Input")]).expand())
 
         self.outputs.append(Variable("Number of outputs", 1))
         self.outputs.extend(
-            VariableList(self, "Number of outputs",
+            Variable(self, "Number of outputs", # List
                 [Variable("Output")]).expand())
 
     def call_trnsys(self, type):

@@ -5,6 +5,7 @@
 # ========================================
 
 import pathlib
+import pytest
 
 # ========================================
 # Internal imports
@@ -31,10 +32,9 @@ from core.file import File
 # Functions
 # ========================================
 
+@pytest.mark.short_test
 def test_file():
-    # Create file
     file = File("file", pathlib.Path(__file__))
-    # Test file
     assert isinstance(file, File)
     assert hasattr(file, "name")
     assert hasattr(file, "path")

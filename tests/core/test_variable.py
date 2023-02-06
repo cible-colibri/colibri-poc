@@ -11,7 +11,8 @@ import pytest
 # Internal imports
 # ========================================
 
-from core.variable import Variable
+from core.variable     import Variable
+from utils.enums_utils import Units
 
 # ========================================
 # Constants
@@ -32,6 +33,7 @@ from core.variable import Variable
 # Functions
 # ========================================
 
+@pytest.mark.short_test
 def test_variable():
     a = Variable("a")
     a.value = 42.2
@@ -68,32 +70,33 @@ def test_variable():
     # TODO: add tests for all operators
 
 
+@pytest.mark.short_test
 def test_unit_conversion():
     a = Variable("a")
     a.value = 42.2
-    a.unit = "J"
+    a.unit = Units.JOULE
 
-    a_kJ = a.convert("kJ")
+    a_kJ = a.convert(Units.KILO_JOULE)
     assert a_kJ == a.value / 1000
 
-    a.unit = "J"
-    a_kWh = a.convert("kWh")
-    assert a_kWh == pytest.approx( 1.17222e-5, 1e-4)
+    a.unit = Units.JOULE
+    a_kWh = a.convert(Units.KILO_WATT_HOUR)
+    assert a_kWh == pytest.approx(1.17222e-5, 1e-4)
 
-    a.unit = "kJ"
-    a_kWh = a.convert("kWh")
-    assert a_kWh == pytest.approx( 0.01172222, 1e-4)
+    a.unit = Units.KILO_JOULE
+    a_kWh = a.convert(Units.KILO_WATT_HOUR)
+    assert a_kWh == pytest.approx(0.01172222, 1e-4)
 
-    a.unit = "C"
-    a_F = a.convert("K")
+    a.unit = Units.DEGREE_CELSIUS
+    a_F = a.convert(Units.KELVIN)
     assert a_F == pytest.approx(315.35, 0.01)
 
-    a.unit = "C"
-    a_F = a.convert("F")
+    a.unit = Units.DEGREE_CELSIUS
+    a_F = a.convert(Units.DEGREE_FAHRENHEIT)
     assert a_F == pytest.approx(107.96, 0.01)
 
-    a.unit = "F"
-    a_F = a.convert("K")
+    a.unit = Units.DEGREE_FAHRENHEIT
+    a_F = a.convert(Units.KELVIN)
     assert a_F == pytest.approx(278.8167, 1e-4)
 
 

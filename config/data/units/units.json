@@ -1241,14 +1241,14 @@
       },
       "equivalent_units": [
         {
-          "name": "C",
+          "name": "°C",
           "description": "A unit of TEMPERATURE in the SI unit system:////K = C + 273.15//",
           "addition_factor": "-273.15",
           "multiplication_factor": "1.0",
           "si_code": "K"
         },
         {
-          "name": "F",
+          "name": "°F",
           "description": "A unit of TEMPERATURE in the inch-pound unit system:////F = 1.8 C + 32, K = C + 273.15//",
           "addition_factor": "-459.67",
           "multiplication_factor": "1.8",

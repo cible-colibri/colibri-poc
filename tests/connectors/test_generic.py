@@ -4,6 +4,7 @@
 # External imports
 # ========================================
 
+import pytest
 
 # ========================================
 # Internal imports
@@ -31,6 +32,7 @@ from core.variable_connector     import VariableConnector
 # Functions
 # ========================================
 
+@pytest.mark.short_test
 def test_generic():
     connector = GenericConnector()
     connector.add("from", "to")

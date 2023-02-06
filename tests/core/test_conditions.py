@@ -4,6 +4,7 @@
 # External imports
 # ========================================
 
+import pytest
 
 # ========================================
 # Internal imports
@@ -34,12 +35,10 @@ from core.variable   import (
 # Functions
 # ========================================
 
+@pytest.mark.short_test
 def test_conditions():
-    # Create variables
     variable_1 = Variable("variable_1", 2.5)
-    # Create conditions
     conditions = Conditions().add(variable_1)
-    # Test conditions
     assert isinstance(conditions, Conditions)
     assert isinstance(conditions, ContainerVariables)
     assert hasattr(conditions, "add")

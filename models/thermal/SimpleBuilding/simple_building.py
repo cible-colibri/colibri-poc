@@ -14,11 +14,7 @@ import matplotlib.pyplot as plt
 
 from core.model        import Model
 from core.variable     import Variable
-from utils.enums_utils import (
-                                FlowUnits,
-                                TemperatureUnits,
-                                Units,
-                               )
+from utils.enums_utils import Units
 
 # ========================================
 # Constants
@@ -36,10 +32,35 @@ from utils.enums_utils import (
 
 class SimpleBuilding(Model):
 
+    # TODO: Define variables here, with information inside the Variable class about where it belongs (inputs, outputs, etc.), then
+    #       add them to the proper lists instead of starting from the list then setting the variables (as attributes)
+    #       The Model class will be less complex (_define_inputs, _define_outputs, etc.) will be removed, keeping only _define_variables
+    def _define_variables(self) -> None:
+        self.zone_setpoint_heating = None
+        self.zone_setpoint_cooling = None
+        self.wwr = None
+        self.ach = None
+        self.u_wall = None
+        self.u_roo = None
+        self.u_floor = None
+        self.u_window = None
+        self.area_walls_t = None
+        self.eta_recup = None
+        self.area_floor = None
+        self.nb_floors = None
+        self.trans_window = None
+        self.heating = None
+        self.cooling = None
+        self.ext_temperature = None
+        self.radiation = None
+        self.phi_hvac = None
+        self.zone_temperature = None
+        self.loss_factor = None
+
     def _define_inputs(self) -> list:
         inputs = [
-                       Variable('zone_setpoint_heating', 20.0, unit=TemperatureUnits.DEGREE_CELSIUS),  # default setpoint heating [°C]
-                       Variable('zone_setpoint_cooling', 27.0, unit=TemperatureUnits.DEGREE_CELSIUS),  # default setpoint cooling [°C]
+                       Variable('zone_setpoint_heating', 20.0, unit=Units.DEGREE_CELSIUS),  # default setpoint heating [°C]
+                       Variable('zone_setpoint_cooling', 27.0, unit=Units.DEGREE_CELSIUS),  # default setpoint cooling [°C]
                        Variable('wwr', 0.2),  # window wall ration [-]
                        Variable('ach', 0.5),  #
                        Variable('u_wall', 0.5),
@@ -53,7 +74,7 @@ class SimpleBuilding(Model):
                        Variable('trans_window', 0.7),
                        Variable('heating', True),
                        Variable('cooling', False),
-                       Variable('ext_temperature', 20, unit=TemperatureUnits.DEGREE_CELSIUS),
+                       Variable('ext_temperature', 20, unit=Units.DEGREE_CELSIUS),
                        Variable('radiation', 0),
                   ]
         return inputs
@@ -61,7 +82,7 @@ class SimpleBuilding(Model):
     def _define_outputs(self) -> list:
         outputs = [
                        Variable("phi_hvac"),
-                       Variable("zone_temperature", unit=TemperatureUnits.DEGREE_CELSIUS),
+                       Variable("zone_temperature", unit=Units.DEGREE_CELSIUS),
                    ]
         return outputs
 
@@ -103,7 +124,7 @@ class SimpleBuilding(Model):
         radiation       = self.radiation
         zone_setpoint   = self.zone_setpoint_list[time_step]
         heating_season  = self.heating_season_list[time_step]
-        self.phi_hvac, self.zone_temperature = self.model(
+        self.phi_hvac, self.zone_temperature = _model(
                                                             self.volume,
                                                             zone_setpoint,
                                                             self.ach,
@@ -137,110 +158,110 @@ class SimpleBuilding(Model):
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
-        self._plot_building(1, self.zone_temperature_series, self.phi_hvac_series, self.ext_temperature_list, model_type='simplicity', to_plot=True)
-
-    # original function provided by the author of the model; keeping it as a separate function will simplify Cythonization
-    @staticmethod
-    def model(volume, zone_setpoint, ach, eta_recup, ext_temperature, u_window, area_windows, trans_window, area_walls,
-              u_wall,
-              u_roof, area_floor, u_floor, nb_floors, radiation, heating_season,
-              heating, cooling
-              ):
-        """
-        A simplified model to simulate the heating energy demand of a building
-
-        Args:
-            zone_setpoint (int): set point temperature of building hvac systems
-            ach (float): ventilation air change rate (m3/h)
-            area_floor (m2)
-            nb_floors
-            volume (m3)
-            trans_window (% ratio)
-            eta_recup (float): Heat recovery efficiency (% ratio)
-            ext_temperature (pandas.Series): timeseries hourly temperature values for a year period (°C)
-            u_window (float): thermal resistance value of windows (W/(m2.K))
-            area_windows (float): window surface area (m2)
-            area_walls (float): wall surface area (m2)
-            u_wall (float): thermal resistance value of walls (W/(m2.K))
-            u_roof (float): thermal resistance value of roof (W/(m2.K))
-            u_floor (float): thermal resistance value of floor (W/(m2.K))
-            radiation (pandas.Series): global horizontal radiation hourly values for a year period
-                (GloHorzRad in energyPlus weather file format) (W/m2)
-
-        Return:
-             (numpy.array): energy heating demand of building (Wh)
-             (numpy.array): Building temperature (°C)
-
-        Notes:
-            1. The simulation is designed to have a one-hour resolution, if another resolution is
-                required, some calculations may need to be adapted
-        """
-        ground_temperature = numpy.mean(ext_temperature)
-
-        # gains
-        blind_pos = numpy.clip(0.1 + (35 - (ext_temperature + 3)) / (32 - zone_setpoint), 0.1, 1)
-
-        phi_win_gain = area_windows * trans_window * radiation * 0.25 * blind_pos
-        phi_gains = area_floor * nb_floors * 10.  # 7 W/m2 0.7 useable floor area
-        # losses
-        ua_global = ach * volume / 3600. * 1.2 * 1006. * (
-                1 - eta_recup) + u_window * area_windows + area_walls * u_wall + area_floor * u_roof
-        ua_floor = area_floor * u_floor
-        phi_ventilation = ach * volume / 3600. * 1.2 * 1006. * (1 - eta_recup) * (ext_temperature - zone_setpoint)
-        phi_win_loss = u_window * area_windows * (ext_temperature - zone_setpoint)
-        phi_walls = area_walls * u_wall * (ext_temperature - zone_setpoint)
-        phi_roof = area_floor * u_roof * (ext_temperature - zone_setpoint)
-        phi_floor = area_floor * u_floor * (ground_temperature - zone_setpoint)
-        # heat balance
-        phi_hvac = phi_ventilation + phi_win_loss + phi_win_gain + phi_walls + phi_roof + phi_floor + phi_gains
-        # post treat for results
-        if heating:
-            p_h = [0, 1e9]
-        else:
-            p_h = [0, 0]
-        if cooling:
-            p_c = [-1e9, 0]
-        else:
-            p_c = [0, 0]
-
-        if hasattr(phi_hvac, "__len__"):
-            phi_hvac[heating_season] = numpy.clip(-phi_hvac[heating_season], p_h[0], p_h[1])  # heating demand
-            phi_hvac[heating_season == False] = numpy.clip(-phi_hvac[heating_season == False], p_c[0],
-                                                           p_c[1])  # cooling demandd
-        else:
-            if heating_season:
-                phi_hvac = numpy.clip(-phi_hvac, p_h[0], p_h[1])  # heating demand
-            if not heating_season:
-                phi_hvac = numpy.clip(-phi_hvac, p_c[0], p_c[1])  # cooling demandd
-
-        # temperature balance from all fluxes
-        zone_temperature = (
-                                   ua_global * ext_temperature + ua_floor * ground_temperature + phi_win_gain + phi_gains + phi_hvac) / (
-                                   ua_global + ua_floor)
-        if hasattr(phi_hvac, "__len__"):
-            zone_temperature = zone_temperature.rolling(12).mean().fillna(20)
-
-        return phi_hvac, zone_temperature
-
-    @staticmethod
-    def _plot_building(id, zone_temperatures, phi_hvacs, ext_temperature, model_type='simplicity', to_plot=False):
-        if to_plot:
-            fig1 = plt.figure()
-            ax1 = fig1.add_subplot(311)
-            ax1.plot(zone_temperatures, label='zone_temperature')
-            ax1.plot(ext_temperature, label='ext_temperature')
-            ax1.set_ylabel('Temperature [degC]')
-            ax1.set_title('Building ' + str(id))
-            ax1.set_ylim([0, 50])
-            ax2 = fig1.add_subplot(312, sharex=ax1)
-            ax2.plot(phi_hvacs, label='heating power')
-            ax2.set_ylabel('Load [W]')
-            ax3 = fig1.add_subplot(313, sharex=ax1)
-            ax3.plot(numpy.cumsum(phi_hvacs / 1000., axis=0), label='heating demand')
-            ax3.set_ylabel('Demand [kWh]')
-            ax3.set_xlabel('Time [h]')
-            plt.show()
+        _plot_building(1, self.zone_temperature_series, self.phi_hvac_series, self.ext_temperature_list, model_type='simplicity', to_plot=True)
 
 # ========================================
 # Functions
 # ========================================
+
+
+# original function provided by the author of the model; keeping it as a separate function will simplify Cythonization
+def _model(volume, zone_setpoint, ach, eta_recup, ext_temperature, u_window, area_windows, trans_window, area_walls,
+          u_wall,
+          u_roof, area_floor, u_floor, nb_floors, radiation, heating_season,
+          heating, cooling
+          ):
+    """
+    A simplified model to simulate the heating energy demand of a building
+
+    Args:
+        zone_setpoint (int): set point temperature of building hvac systems
+        ach (float): ventilation air change rate (m3/h)
+        area_floor (m2)
+        nb_floors
+        volume (m3)
+        trans_window (% ratio)
+        eta_recup (float): Heat recovery efficiency (% ratio)
+        ext_temperature (pandas.Series): timeseries hourly temperature values for a year period (°C)
+        u_window (float): thermal resistance value of windows (W/(m2.K))
+        area_windows (float): window surface area (m2)
+        area_walls (float): wall surface area (m2)
+        u_wall (float): thermal resistance value of walls (W/(m2.K))
+        u_roof (float): thermal resistance value of roof (W/(m2.K))
+        u_floor (float): thermal resistance value of floor (W/(m2.K))
+        radiation (pandas.Series): global horizontal radiation hourly values for a year period
+            (GloHorzRad in energyPlus weather file format) (W/m2)
+
+    Return:
+         (numpy.array): energy heating demand of building (Wh)
+         (numpy.array): Building temperature (°C)
+
+    Notes:
+        1. The simulation is designed to have a one-hour resolution, if another resolution is
+            required, some calculations may need to be adapted
+    """
+    ground_temperature = numpy.mean(ext_temperature)
+
+    # gains
+    blind_pos = numpy.clip(0.1 + (35 - (ext_temperature + 3)) / (32 - zone_setpoint), 0.1, 1)
+
+    phi_win_gain = area_windows * trans_window * radiation * 0.25 * blind_pos
+    phi_gains = area_floor * nb_floors * 10.  # 7 W/m2 0.7 useable floor area
+    # losses
+    ua_global = ach * volume / 3600. * 1.2 * 1006. * (
+            1 - eta_recup) + u_window * area_windows + area_walls * u_wall + area_floor * u_roof
+    ua_floor = area_floor * u_floor
+    phi_ventilation = ach * volume / 3600. * 1.2 * 1006. * (1 - eta_recup) * (ext_temperature - zone_setpoint)
+    phi_win_loss = u_window * area_windows * (ext_temperature - zone_setpoint)
+    phi_walls = area_walls * u_wall * (ext_temperature - zone_setpoint)
+    phi_roof = area_floor * u_roof * (ext_temperature - zone_setpoint)
+    phi_floor = area_floor * u_floor * (ground_temperature - zone_setpoint)
+    # heat balance
+    phi_hvac = phi_ventilation + phi_win_loss + phi_win_gain + phi_walls + phi_roof + phi_floor + phi_gains
+    # post treat for results
+    if heating:
+        p_h = [0, 1e9]
+    else:
+        p_h = [0, 0]
+    if cooling:
+        p_c = [-1e9, 0]
+    else:
+        p_c = [0, 0]
+
+    if hasattr(phi_hvac, "__len__"):
+        phi_hvac[heating_season] = numpy.clip(-phi_hvac[heating_season], p_h[0], p_h[1])  # heating demand
+        phi_hvac[heating_season == False] = numpy.clip(-phi_hvac[heating_season == False], p_c[0],
+                                                       p_c[1])  # cooling demandd
+    else:
+        if heating_season:
+            phi_hvac = numpy.clip(-phi_hvac, p_h[0], p_h[1])  # heating demand
+        if not heating_season:
+            phi_hvac = numpy.clip(-phi_hvac, p_c[0], p_c[1])  # cooling demandd
+
+    # temperature balance from all fluxes
+    zone_temperature = (
+                               ua_global * ext_temperature + ua_floor * ground_temperature + phi_win_gain + phi_gains + phi_hvac) / (
+                               ua_global + ua_floor)
+    if hasattr(phi_hvac, "__len__"):
+        zone_temperature = zone_temperature.rolling(12).mean().fillna(20)
+
+    return phi_hvac, zone_temperature
+
+
+def _plot_building(id, zone_temperatures, phi_hvacs, ext_temperature, model_type='simplicity', to_plot=False):
+    if to_plot:
+        fig1 = plt.figure()
+        ax1 = fig1.add_subplot(311)
+        ax1.plot(zone_temperatures, label='zone_temperature')
+        ax1.plot(ext_temperature, label='ext_temperature')
+        ax1.set_ylabel('Temperature [degC]')
+        ax1.set_title('Building ' + str(id))
+        ax1.set_ylim([0, 50])
+        ax2 = fig1.add_subplot(312, sharex=ax1)
+        ax2.plot(phi_hvacs, label='heating power')
+        ax2.set_ylabel('Load [W]')
+        ax3 = fig1.add_subplot(313, sharex=ax1)
+        ax3.plot(numpy.cumsum(phi_hvacs / 1000., axis=0), label='heating demand')
+        ax3.set_ylabel('Demand [kWh]')
+        ax3.set_xlabel('Time [h]')
+        plt.show()

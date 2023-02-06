@@ -33,7 +33,7 @@ import typing
 # ========================================
 
 # Read a json file and return its data
-def read_json_file(file_path: typing.Union[str, pathlib.Path], mode: str = 'r') -> dict:
+def read_json_file(file_path: typing.Union[str, pathlib.Path], mode: str = 'r', encoding: str = "utf-8") -> dict:
     """Read a json file and return its data
 
     Parameters
@@ -42,6 +42,8 @@ def read_json_file(file_path: typing.Union[str, pathlib.Path], mode: str = 'r') 
         Path to the file to be read
     mode : str ('r' by default)
         Mode in which the file is opened
+    encoding : str ('utf-8' by default)
+        Encoding to read the file
 
     Returns
     -------
@@ -57,7 +59,7 @@ def read_json_file(file_path: typing.Union[str, pathlib.Path], mode: str = 'r') 
     >>> None
     """
     file_path = str(pathlib.Path(file_path).absolute())
-    with open(file_path, mode) as _file_descriptor:
+    with open(file_path, mode, encoding = encoding) as _file_descriptor:
         data = json.load(_file_descriptor)
     return data
 

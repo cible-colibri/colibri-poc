@@ -42,8 +42,8 @@ class Variable:
         self.linked_to   = linked_to
         self.model       = model
 
-    def convert(self, target_unit_name):
-        return UNIT_CONVERTER.convert(self.value, self.unit, target_unit_name)
+    def convert(self, target_unit: Units) -> float:
+        return UNIT_CONVERTER.convert(self.value, self.unit, target_unit)
 
     @property
     def value(self) -> typing.Any:
@@ -57,6 +57,7 @@ class Variable:
                 for list_name, expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
                     for index in range(0, int(sizing_variable.value)):
+                        y = f"{expandable_variable_name}_{index + 1}"
                         variable          = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
                         list_to_remove_from = getattr(self.model, list_name)
                         list_to_remove_from.remove(variable)
@@ -97,6 +98,16 @@ class Variable:
     #for now variables are scalar only, but this may change quickly if Anthony comes up with another smart idea
     # def __matmul__(self, val2):
     #     return self.value / val2
+
+    """
+    Après on peut peut-être simplifier (Python  c'est pas mon point fort), mais il faudrait décider vite si on veut des variables partout (comme là) ou juste à la création du projet...enfin, je pousse te laisse regarder tranquillement demain
+    [02/02 15:10] KEILHOLZ Werner
+    Pour le = 4, ça va, le pb c'est V = Variable()V2 = Variable()V = V2
+    [02/02 15:10] KEILHOLZ Werner
+    et aussi If V > V2ouabs(V)...
+    [02/02 15:11] KEILHOLZ Werner
+    -> j'ai résolu tout ça, mais en échange de code compliqué 
+    """
 
     def __truediv__(self, val2):
         return operator.truediv(self.value, val2)
@@ -292,6 +303,31 @@ class ContainerVariables:
         """
         setattr(self, condition.name, condition)
         return self
+
+    # Return the ContainerVariables object's attributes (variables) in a list
+    def to_list(self) -> list:
+        """Return the ContainerVariables object's attributes (variables) in a list
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        list
+            List of ttributes (variables) in a list
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> variables = ContainerVariables()
+        >>> variables.add(Variable("1", 1.0)
+        >>> variables.to_list()
+        >>> [Variable(name='1', value=1.0, unit=<Units.UNITLESS: '-'>, description='Sorry, no description yet.']
+        """
+        return [attribute for attribute in self.__dict__.values()]
 
     # Return the string representation of the object
     def __str__(self) -> str:
