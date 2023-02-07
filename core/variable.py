@@ -61,18 +61,19 @@ class Variable:
                 for expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
                     list_name                = expandable_variable.role.value
+                    list_to_remove_from      = getattr(self.model, list_name)
                     for index in range(0, int(sizing_variable.value)):
-                        list_to_remove_from = getattr(self.model, list_name)
-                        variable            = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
+                        attribute = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
+                        variable  = [variable for variable in list_to_remove_from if variable.name == attribute.name][0]
                         list_to_remove_from.remove(variable)
-                        del variable
+                        delattr(self.model, variable.name)
                 for expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
                     list_name                = expandable_variable.role.value
+                    list_to_append_to        = getattr(self.model, list_name)
                     for index in range(0, int(value)):
                         expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
                         variable = copy.deepcopy(expandable_variable)
-                        list_to_append_to = getattr(self.model, list_name)
                         list_to_append_to.append(variable)
                         setattr(self.model, variable.name, variable)
         self._value = value

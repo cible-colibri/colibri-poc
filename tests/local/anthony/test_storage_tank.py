@@ -18,7 +18,6 @@ def storage_tank():
     project.add_plot("Weather", weather, "total_incident_solar_radiation_1")
     project.add_plot("Flat-plate collector", flat_plate_collector, "outlet_temperature")
     project.run()
-    print("toto")
 
 if __name__ == "__main__":
     storage_tank()

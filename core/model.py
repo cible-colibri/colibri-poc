@@ -98,22 +98,42 @@ class Model(abc.ABC):
         for attribute in attributes:
             if (attribute.role == Roles.INPUTS) and (attribute.name not in variable_names):
                 self.inputs.append(attribute)
+            elif (attribute.role == Roles.INPUTS) and (attribute.name in variable_names):
+                index              = [index for index, variable in enumerate(self.inputs) if variable.name == attribute.name][0]
+                value              = self.inputs[index].value
+                attribute.value    = value
+                self.inputs[index] = attribute
             elif (attribute.role == Roles.OUTPUTS) and (attribute.name not in variable_names):
                 self.outputs.append(attribute)
+            elif (attribute.role == Roles.OUTPUTS) and (attribute.name in variable_names):
+                index              = [index for index, variable in enumerate(self.outputs) if variable.name == attribute.name][0]
+                value              = self.outputs[index].value
+                attribute.value    = value
+                self.outputs[index] = attribute
             elif (attribute.role == Roles.PARAMETERS) and (attribute.name not in variable_names):
                 self.parameters.append(attribute)
+            elif (attribute.role == Roles.PARAMETERS) and (attribute.name in variable_names):
+                index              = [index for index, variable in enumerate(self.parameters) if variable.name == attribute.name][0]
+                value              = self.parameters[index].value
+                attribute.value    = value
+                self.parameters[index] = attribute
 
     def _expand_variables(self) -> None:
-        variables = copy.deepcopy(self.inputs) + copy.deepcopy(self.parameters)
+        variables = self.inputs + self.parameters
         for variable in variables:
             if variable.linked_to:
                 for expandable_variable in variable.linked_to:
                     list_name                = expandable_variable.role.value
                     expandable_variable_name = expandable_variable.name
                     for index in range(0, int(variable.value)):
-                        expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
-                        list_to_append_to        = getattr(self, list_name)
-                        list_to_append_to.append(copy.deepcopy(expandable_variable))
+                        new_variable      = copy.deepcopy(expandable_variable)
+                        new_variable.name = f"{expandable_variable_name}_{index + 1}"
+                        list_to_append_to = getattr(self, list_name)
+                        if any([variable for variable in list_to_append_to if variable.name == new_variable.name]):
+                            variable_index = [index for index, variable in enumerate(list_to_append_to) if variable.name == new_variable.name][0]
+                            list_to_append_to[variable_index] = new_variable
+                        else:
+                            list_to_append_to.append(new_variable)
 
     def save_time_step(self, time_step: int) -> None:
         for variable in self.outputs:
