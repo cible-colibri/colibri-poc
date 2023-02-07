@@ -28,7 +28,6 @@ import enum
 
 @enum.unique
 class Roles(enum.Enum):
-    CONDITIONS = "conditions"
     INPUTS     = "inputs"
     OUTPUTS    = "outputs"
     PARAMETERS = "parameters"
