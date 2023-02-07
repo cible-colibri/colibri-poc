@@ -5,6 +5,7 @@
 # ========================================
 
 import copy
+import numpy
 import operator
 import typing
 
@@ -203,6 +204,15 @@ class Variable:
 
     def __float__(self, other):
         return float(self.value)
+
+    def __index__(self):
+        return int(self.value)
+
+    def __array__(self):
+        return numpy.array(self.value)
+
+    def __iter__(self):
+        yield self.value
 
     # Return the string representation of the object
     def __str__(self) -> str:
