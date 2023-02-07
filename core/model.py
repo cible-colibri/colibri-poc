@@ -13,8 +13,8 @@ import numbers
 # ========================================
 
 from core.inputs       import Inputs
-from core.outputs      import Outputs
 from core.parameters   import Parameters
+from core.outputs      import Outputs
 from core.variable     import Variable
 from utils.enums_utils import Roles
 
@@ -32,7 +32,49 @@ from utils.enums_utils import Roles
 # Classes
 # ========================================
 
-class Model(abc.ABC):
+class MetaModel(abc.ABCMeta):
+    def __call__(cls, *args, **kwargs):
+        instance = type.__call__(cls, *args, **kwargs)
+        cls._define_variables(instance)
+        cls._add_attributes_to_internal_lists(instance)
+        instance._expand_variables()
+        return instance
+
+    @staticmethod
+    def _define_variables(instance):
+        instance.inputs     = [] if hasattr(instance, Roles.INPUTS.value) is False else instance.inputs
+        instance.outputs    = [] if hasattr(instance, Roles.OUTPUTS.value) is False else instance.outputs
+        instance.parameters = [] if hasattr(instance, Roles.PARAMETERS.value) is False else instance.parameters
+
+    @staticmethod
+    def _add_attributes_to_internal_lists(instance) -> None:
+        attributes     = [attribute for _, attribute in instance.__dict__.items() if isinstance(attribute, Variable)]
+        variable_names = [variable.name for variable in instance.inputs + instance.outputs + instance.parameters]
+        for attribute in attributes:
+            if (attribute.role == Roles.INPUTS) and (attribute.name not in variable_names):
+                instance.inputs.append(attribute)
+            elif (attribute.role == Roles.INPUTS) and (attribute.name in variable_names):
+                index              = [index for index, variable in enumerate(instance.inputs) if variable.name == attribute.name][0]
+                value              = instance.inputs[index].value
+                attribute.value    = value
+                instance.inputs[index] = attribute
+            elif (attribute.role == Roles.OUTPUTS) and (attribute.name not in variable_names):
+                instance.outputs.append(attribute)
+            elif (attribute.role == Roles.OUTPUTS) and (attribute.name in variable_names):
+                index              = [index for index, variable in enumerate(instance.outputs) if variable.name == attribute.name][0]
+                value              = instance.outputs[index].value
+                attribute.value    = value
+                instance.outputs[index] = attribute
+            elif (attribute.role == Roles.PARAMETERS) and (attribute.name not in variable_names):
+                instance.parameters.append(attribute)
+            elif (attribute.role == Roles.PARAMETERS) and (attribute.name in variable_names):
+                index              = [index for index, variable in enumerate(instance.parameters) if variable.name == attribute.name][0]
+                value              = instance.parameters[index].value
+                attribute.value    = value
+                instance.parameters[index] = attribute
+
+
+class Model(metaclass=MetaModel):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name       = name
@@ -40,12 +82,6 @@ class Model(abc.ABC):
         self.inputs     = [] if inputs is None else inputs.to_list()
         self.outputs    = [] if outputs is None else outputs.to_list()
         self.parameters = [] if parameters is None else parameters.to_list()
-        self._define_variables()
-        self._add_attributes_to_internal_lists()
-        self._expand_variables()
-
-    def _define_variables(self) -> None:
-        raise NotImplementedError("Please, implement me...")
 
     @abc.abstractmethod
     def initialize(self) -> None:
@@ -91,32 +127,6 @@ class Model(abc.ABC):
             if variable.name == name:
                 return variable
         return None
-
-    def _add_attributes_to_internal_lists(self) -> None:
-        attributes     = [attribute for _, attribute in self.__dict__.items() if isinstance(attribute, Variable)]
-        variable_names = [variable.name for variable in self.inputs + self.outputs + self.parameters]
-        for attribute in attributes:
-            if (attribute.role == Roles.INPUTS) and (attribute.name not in variable_names):
-                self.inputs.append(attribute)
-            elif (attribute.role == Roles.INPUTS) and (attribute.name in variable_names):
-                index              = [index for index, variable in enumerate(self.inputs) if variable.name == attribute.name][0]
-                value              = self.inputs[index].value
-                attribute.value    = value
-                self.inputs[index] = attribute
-            elif (attribute.role == Roles.OUTPUTS) and (attribute.name not in variable_names):
-                self.outputs.append(attribute)
-            elif (attribute.role == Roles.OUTPUTS) and (attribute.name in variable_names):
-                index              = [index for index, variable in enumerate(self.outputs) if variable.name == attribute.name][0]
-                value              = self.outputs[index].value
-                attribute.value    = value
-                self.outputs[index] = attribute
-            elif (attribute.role == Roles.PARAMETERS) and (attribute.name not in variable_names):
-                self.parameters.append(attribute)
-            elif (attribute.role == Roles.PARAMETERS) and (attribute.name in variable_names):
-                index              = [index for index, variable in enumerate(self.parameters) if variable.name == attribute.name][0]
-                value              = self.parameters[index].value
-                attribute.value    = value
-                self.parameters[index] = attribute
 
     def _expand_variables(self) -> None:
         variables = self.inputs + self.parameters

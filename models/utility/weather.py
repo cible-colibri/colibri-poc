@@ -12,9 +12,16 @@ import pandas
 # ========================================
 
 from core.file         import File
+from core.inputs       import Inputs
 from core.model        import Model
+from core.parameters   import Parameters
+from core.outputs      import Outputs
 from core.variable     import Variable
-from utils.enums_utils import Roles
+from utils.enums_utils import (
+                                Roles,
+                                Units,
+                               )
+
 # ========================================
 # Constants
 # ========================================
@@ -31,14 +38,19 @@ from utils.enums_utils import Roles
 
 class Weather(Model):
 
-    def _define_variables(self) -> None:
+    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+        self.name              = name
+        self.project           = None
+        self.inputs            = [] if inputs is None else inputs.to_list()
+        self.outputs           = [] if outputs is None else outputs.to_list()
+        self.parameters        = [] if parameters is None else parameters.to_list()
         self.year              = Variable("year", 0, Roles.OUTPUTS)
         self.month             = Variable("month", 0, Roles.OUTPUTS)
         self.day               = Variable("day", 0, Roles.OUTPUTS)
         self.hour              = Variable("hour", 0, Roles.OUTPUTS)
         self.minute            = Variable("minute", 0, Roles.OUTPUTS)
         self.datasource        = Variable("datasource", 0, Roles.OUTPUTS)
-        self.temperature       = Variable("temperature", 0, Roles.OUTPUTS)
+        self.temperature       = Variable("temperature", 0, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
         self.DewPoint          = Variable("DewPoint", 0, Roles.OUTPUTS)
         self.RelHum            = Variable("RelHum", 0, Roles.OUTPUTS)
         self.pressure          = Variable("pressure", 0, Roles.OUTPUTS)
@@ -67,7 +79,6 @@ class Weather(Model):
         self.albedo            = Variable("albedo", 0, Roles.OUTPUTS)
         self.rain              = Variable("rain", 0, Roles.OUTPUTS)
         self.rain_hr           = Variable("rain_hr", 0, Roles.OUTPUTS)
-
 
     def initialize(self) -> None:
         # TODO: Modify when we wil have a package structure

@@ -9,7 +9,10 @@
 # Internal imports
 # ========================================
 
+from core.inputs       import Inputs
 from core.model        import Model
+from core.parameters   import Parameters
+from core.outputs      import Outputs
 from core.variable     import Variable
 from utils.enums_utils import (
                                 Roles,
@@ -32,7 +35,12 @@ from utils.enums_utils import (
 
 class FlatPlateCollector(Model):
 
-    def _define_variables(self) -> None:
+    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+        self.name                           = name
+        self.project                        = None
+        self.inputs                         = [] if inputs is None else inputs.to_list()
+        self.outputs                        = [] if outputs is None else outputs.to_list()
+        self.parameters                     = [] if parameters is None else parameters.to_list()
         self.inlet_flow_rate                = Variable("inlet_flow_rate", 100.0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
         self.inlet_temperature              = Variable("inlet_temperature", 40.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.outside_air_temperature        = Variable("outside_air_temperature", 20.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
