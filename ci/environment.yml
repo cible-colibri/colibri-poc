@@ -1,0 +1,6 @@
+name : colibrisuce
+dependencies :
+    - python=3.10
+    - pandas
+    - matplotlib
+    - pytest

@@ -15,6 +15,35 @@ Design goals are (in order)
 - open: it should be able to use most existing models implemented for tools like MATLAB, TRN-suce, Modellica, ...  
 - automatic testing: test cases that make it unbreakable even by very motivated idiots
 
+## Installation
+
+### Python
+We use Python 3.10 and a couple of packages. A good way to create an environment is to use conda.
+
+### Conda
+
+Install `Anaconda distribution <https://www.anaconda.com/distribution/>`_ or `Miniconda3 distribution <https://docs.conda.io/en/latest/miniconda.html>`_. The path to miniconda installation will be added to Windows environmental variables. The `*` represents a number corresponding to the version of miniconda installed. Restarting the computer is necessary to take into account the new paths.
+
+
+### Creating the conda environment
+
+Open a command line tool in the dimosim root folder, enter the ``ci`` folder, and then run:
+
+    conda env create -f environment.yml
+
+Activate the environment you just created like this:
+
+    conda activate colibrisuce
+
+For more information on conda environments, please visit https://conda.io/docs/using/envs.html.
+
+
+### PyCharm
+
+Pycharms is the IDE used for development, the community version is free. 
+It can be downloaded here `Pycharm <https://www.jetbrains.com/fr-fr/pycharm/download/#section=windows>`_
+
+
 ## FAQ
 
 ### It is written in Python, will it be slow?
