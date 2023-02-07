@@ -76,13 +76,13 @@ class FlatPlateCollector(Model):
             eta = 0
         # Compute fluid temperature at the flat-plate solar collector's outlet
         if (eta > 0) and ((cp * m_dot_in) > 0):
-            self.outlet_temperature.value = theta_in + ((eta * self.area.value * g_total) / (cp * m_dot_in))
+            self.outlet_temperature = theta_in + ((eta * self.area * g_total) / (cp * m_dot_in))
         else:
-            self.outlet_temperature.value = theta_in
+            self.outlet_temperature = theta_in
         # Set the mass flow rate at the outlet equal to the mass flow rate at the inlet
-        self.outlet_flow_rate.value   = m_dot_in
+        self.outlet_flow_rate = m_dot_in
         import random
-        self.outlet_temperature.value = random.randint(0, 50)
+        self.outlet_temperature = random.randint(0, 50)
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")

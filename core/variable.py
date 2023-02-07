@@ -63,7 +63,7 @@ class Variable:
                     expandable_variable_name = expandable_variable.name
                     list_name                = expandable_variable.role.value
                     list_to_remove_from      = getattr(self.model, list_name)
-                    for index in range(0, int(sizing_variable.value)):
+                    for index in range(0, int(sizing_variable)):
                         attribute = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
                         variable  = [variable for variable in list_to_remove_from if variable.name == attribute.name][0]
                         list_to_remove_from.remove(variable)
@@ -199,7 +199,7 @@ class Variable:
     #  - augmented assignment methods (__iadd__ et al)
     #  - ALL type Conversion methods (__int__ et al)
 
-    def __int__(self, other):
+    def __int__(self):
         return int(self.value)
 
     def __float__(self, other):
@@ -208,8 +208,11 @@ class Variable:
     def __index__(self):
         return int(self.value)
 
-    def __array__(self):
-        return numpy.array(self.value)
+    # Required for numpy.exp(variable), but
+    # create problems with self.zone_setpoint_list[self.heating_season == False] = self.zone_setpoint_cooling
+    # if implemented as follows (_array__() takes 1 positional argument but 2 were given)
+    #def __array__(self):
+    #    return numpy.array(self.value)
 
     def __iter__(self):
         yield self.value

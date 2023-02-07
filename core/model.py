@@ -135,7 +135,7 @@ class Model(metaclass=MetaModel):
                 for expandable_variable in variable.linked_to:
                     list_name                = expandable_variable.role.value
                     expandable_variable_name = expandable_variable.name
-                    for index in range(0, int(variable.value)):
+                    for index in range(0, int(variable)):
                         new_variable      = copy.deepcopy(expandable_variable)
                         new_variable.name = f"{expandable_variable_name}_{index + 1}"
                         list_to_append_to = getattr(self, list_name)

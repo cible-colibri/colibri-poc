@@ -75,7 +75,7 @@ class StorageTank(Model):
                                                     )
 
     def initialize(self) -> None:
-        self._node_temperatures = numpy.ones(self.number_of_nodes.value) * self.initial_temperature.value
+        self._node_temperatures = numpy.ones(self.number_of_nodes) * self.initial_temperature
 
     def check_units(self) -> None:
         pass
