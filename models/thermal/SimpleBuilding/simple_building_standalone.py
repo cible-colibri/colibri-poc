@@ -1,8 +1,12 @@
 # SimpleBuilding en standalone pour mésurer l'overhead de l'environnement
+import time
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# Save starting time
+starting_time = time.perf_counter()
 
 
 def plot_building(id, zone_temperatures, phi_hvacs, ext_temperature, model_type='simplicity', to_plot=False):
@@ -113,7 +117,7 @@ def model(zone_setpoint,ach,eta_recup,ext_temperature,u_window,area_windows,area
     return phi_hvac, zone_temperature
 
 # load weather data from epw
-epw_path = "C:\home\source\colibrisuce\data\weather\EnergyPlus\Paris.epw"
+epw_path = "C:\home\source\colibrisuce\config\data\weather\epw\Paris.epw"
 radiation_list, ext_temperature_list = import_epw_weather(epw_path)
 
 # thermal zone parameter declaration
@@ -146,7 +150,7 @@ heating_on[0:48] = True
 heating_season_list = heating_on
 if cooling:  # replace setpoint for cooling in setpoint_list
     zone_setpoint_list[heating_season == False] = zone_setpoint_cooling
-matrix_calculation = False
+matrix_calculation = True
 
 if matrix_calculation:
     zone_setpoint = zone_setpoint_list
@@ -164,3 +168,5 @@ else:
                                            area_walls, u_wall, u_roof, u_floor, radiation,heating_season)
 
 plot_building(1, zone_temperature, phi_hvac, ext_temperature_list, model_type='simplicity', to_plot=True)
+
+print(f"Simulation time: {(time.perf_counter() - starting_time):3.2f} seconds")

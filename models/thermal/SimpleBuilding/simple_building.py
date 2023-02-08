@@ -113,11 +113,6 @@ class SimpleBuilding(Model):
                                                             self.cooling,
                                                          )
 
-    def simulation_done(self, time_step: int = 0):
-        print(f"{self.name}:")
-        for output in self.outputs:
-            print(f"{output.name}={getattr(self, output.name)}")
-
     def iteration_done(self, time_step: int = 0):
         pass
 
