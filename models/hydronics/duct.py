@@ -43,13 +43,16 @@ class Duct(Model):
         self.inputs              = [] if inputs is None else inputs.to_list()
         self.outputs             = [] if outputs is None else outputs.to_list()
         self.parameters          = [] if parameters is None else parameters.to_list()
+
         self.loss_coefficient    = Variable("loss_coefficient", 3.0, role=Roles.INPUTS, unit=Units.KILO_JOULE_PER_HOUR)
         self.cp_fluid            = Variable("cp_fluid", 4.186, role=Roles.INPUTS, unit=Units.JOULE_PER_GRAM_PER_DEGREE_CELCIUS)
         self.inlet_flow_rate     = Variable("inlet_flow_rate", 100, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
         self.inlet_temperature   = Variable("inlet_temperature", 40, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.outside_temperature = Variable("outside_temperature", 20, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+
         self.outlet_flow_rate    = Variable("outlet_flow_rate", 0.0, role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
         self.outlet_temperature  = Variable("outlet_temperature", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+
         self.loss_factor         = Variable("loss_factor", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self) -> None:

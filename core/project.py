@@ -90,14 +90,18 @@ class Project:
     def _add_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> None:
         if not self.is_eligible_link(from_model, from_variable, to_model, to_variable):
             raise ValueError(f"Sorry, but we cannot link {from_model}.{from_variable} to {to_model}.{to_variable}.")
-        link = Link(from_model, from_variable, to_model, to_variable)
-        self.links.append(link)
+        if not self.is_linked(from_model, from_variable, to_model, to_variable):
+            link = Link(from_model, from_variable, to_model, to_variable)
+            self.links.append(link)
 
-    def is_eligible_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> None:
+    def is_eligible_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
+        return hasattr(from_model, from_variable) and hasattr(to_model, to_variable)
+
+    def is_linked(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
         for link in self.links:
             if (link.from_model == from_model) and (link.to_model == to_model) and (link.from_variable == from_variable) and (link.to_variable == to_variable):
-                return False
-        return hasattr(from_model, from_variable) and hasattr(to_model, to_variable)
+                return True
+        return False
 
     def add_plot(self, name: str, model: Model, variable_name: str) -> None:
         plot = Plot(name, model, variable_name)
