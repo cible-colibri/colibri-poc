@@ -396,7 +396,7 @@ class Boundary(Scheme):
 class DataSet():
     '''Create a new full COLIBRI input dataset'''
 
-    def __init__(self, assist_mode = True, logs = True):
+    def __init__(self, assist_mode = True, logs = True, geojson = None):
         '''
         Create a COLIBRI DataSet class
         Parameters
@@ -405,19 +405,55 @@ class DataSet():
             Allows you to activate or not the input help in case of missing fields. If not, no help will be provided and missing values ​​will be set to default values ​​when they exist
         logs : bool,
             If True, log print are enable. If False, logs print are disable.
+        geojson : dict (optional),
+            Allows to load an existing COLIBRI geojson file to initiate the DataSet
         '''
-        self.building_land = {}
-        self.nodes_collection = {}
-        self.boundary_collection = {}
-        self.archetype_collection = {}
-        self.logs = logs
 
-        self.list_archetype_type = [name.replace("_types_scheme","") for name in dir(archetype_schemes) if name.endswith('_scheme')]
-        self.list_node_type = [name.replace("_scheme","") for name in dir(node_schemes) if name.endswith('_scheme')]
-        self.list_object_type = [name.replace("_scheme","") for name in dir(object_schemes) if name.endswith('_scheme')]
-        self.id_list = [] #a way to be sure that all id stay unique inside DataSet
+        if geojson is not None:
+            try:
+                #TODO : quicktest to see if it is a correct colibri geojson more precise than a try/except ?
+
+                self.building_land = geojson["building_land"]
+                self.nodes_collection = geojson["nodes_collection"]
+                self.boundary_collection = geojson["boundary_collection"]
+                self.archetype_collection = geojson["archetype_collection"]
+
+                self.id_list = []
+                for boundary_id in self.boundary_collection.keys():
+                    self.id_list.append(boundary_id)
+                    if self.boundary_collection[boundary_id]["segments"] is None: #means it is not a 3D project
+                        self.d3_model = False
+                        break
+                    else:
+                        self.d3_model = True
+
+                for node_type in self.nodes_collection.keys():
+                    for node_id in self.nodes_collection[node_type].keys():
+                        self.id_list.append(node_id)
+
+                for archetype_type in self.archetype_collection.keys():
+                    for archetype_id in self.archetype_collection[archetype_type].keys():
+                        self.id_list.append(archetype_id)
+
+            except Exception as e:
+                raise ValueError(f"Error in loading json as COLIBRI json.\n It seems that the given geojson is not a COLIBRI geojson :\n {e}")
+
+        else:
+
+            self.building_land = {}
+            self.nodes_collection = {}
+            self.boundary_collection = {}
+            self.archetype_collection = {}
+            self.id_list = [] #a way to be sure that all id stay unique inside DataSet
+            self.d3_model = True #By default, DataSet is set as a 3D representation of the building. If 3D info are not given, it will be set as False (1D model)
+
+        self.list_archetype_type = [name.replace("_types_scheme", "") for name in dir(archetype_schemes) if
+                                    name.endswith('_scheme')]
+        self.list_node_type = [name.replace("_scheme", "") for name in dir(node_schemes) if name.endswith('_scheme')]
+        self.list_object_type = [name.replace("_scheme", "") for name in dir(object_schemes) if
+                                 name.endswith('_scheme')]
+        self.logs = logs
         self.assist_mode = assist_mode
-        self.d3_model = True #By default, DataSet is set as a 3D representation of the building. If 3D info are not given, it will be set as False (1D model)
 
     def generate_json(self):
         '''
@@ -1119,4 +1155,16 @@ class DataSet():
         '''Complete doc of DataSet class'''
         for name, func in inspect.getmembers(self, inspect.ismethod):
             print(f"{name} : {func.__doc__}")
+
+if __name__ == '__main__':
+
+    from pkg_resources import resource_filename
+    import json
+    geojson_path = resource_filename('datamodel', 'examples/house_1.json')
+
+    with open(geojson_path, encoding='utf-8') as json_file:
+        geojson = json.load(json_file)
+
+    model = DataSet(geojson = geojson)
+
 
