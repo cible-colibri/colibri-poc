@@ -26,139 +26,139 @@
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_mur_salon_ouest_et_mur_salon_nord": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_mur_salon_nord_et_mur_salon_est": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_mur_salon_est_et_mur_salon_cuisine": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_mur_cuisine_nord_et_mur_cuisine_est": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_mur_cuisine_est_et_mur_cuisine_sud": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_mur_cuisine_sud_et_mur_salon_sud": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.5
+                "length": 2.5
             },
             "j_plafond_mur_salon_ouest": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 4.0
+                "length": 4.0
             },
             "j_plafond_mur_salon_nord": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             },
             "j_plafond_mur_salon_est": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plafond_salon_mur_cuisine": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plancher_mur_salon_ouest": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 4.0
+                "length": 4.0
             },
             "j_plancher_mur_salon_nord": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             },
             "j_plancher_mur_salon_est": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plancher_mur_salon_sud": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             },
             "j_mur_salon_cuisine_plafond": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plafond_mur_cuisine_nord": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             },
             "j_plafond_mur_cuisine_est": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plafond_mur_cuisine_sud": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             },
             "j_mur_salon_cuisine_plancher": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plancher_mur_cuisine_nord": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             },
             "j_plancher_mur_cuisine_est": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 2.0
+                "length": 2.0
             },
             "j_plancher_mur_cuisine_sud": {
                 "node_type": "linear_junction",
                 "binding_mode": "virtual",
                 "psi": 0.5,
-                "lenght": 6.0
+                "length": 6.0
             }
         }
     },
@@ -190,7 +190,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_sud_et_mur_salon_ouest"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_sud_plafond",
@@ -205,7 +205,7 @@
                         ]
                     ],
                     "junction": null,
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_mur_salon_sud_et_mur_cuisine_sud",
@@ -223,7 +223,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_sud_et_mur_salon_sud"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_sud_plancher",
@@ -241,7 +241,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_sud"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -273,7 +273,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_ouest_et_mur_salon_nord"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_ouest_plafond",
@@ -291,7 +291,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_salon_ouest"
                     },
-                    "lenght": 4.0
+                    "length": 4.0
                 },
                 {
                     "id": "s_mur_salon_ouest_et_mur_salon_sud",
@@ -309,7 +309,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_sud_et_mur_salon_ouest"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_ouest_plancher",
@@ -327,7 +327,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_ouest"
                     },
-                    "lenght": 4.0
+                    "length": 4.0
                 }
             ],
             "object_collection": [
@@ -380,7 +380,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_nord_et_mur_salon_est"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_nord_plafond",
@@ -398,7 +398,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_salon_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_mur_salon_nord_et_mur_salon_ouest",
@@ -416,7 +416,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_ouest_et_mur_salon_nord"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_nord_plancher",
@@ -434,7 +434,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -466,7 +466,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_est_et_mur_salon_cuisine"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_est_plafond",
@@ -484,7 +484,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_salon_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_mur_salon_est_et_mur_salon_nord",
@@ -502,7 +502,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_nord_et_mur_salon_est"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_est_plancher",
@@ -520,7 +520,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 }
             ],
             "object_collection": []
@@ -552,7 +552,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_sud_et_mur_salon_sud"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_cuisine_plafond",
@@ -570,7 +570,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_cuisine_plafond"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_mur_salon_cuisine_et_mur_salon_est",
@@ -588,7 +588,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_est_et_mur_salon_cuisine"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_salon_cuisine_plancher",
@@ -606,7 +606,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_cuisine_plancher"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 }
             ],
             "object_collection": [
@@ -649,7 +649,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_nord_et_mur_cuisine_est"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_cuisine_nord_plafond",
@@ -667,7 +667,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_cuisine_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_mur_cuisine_nord_et_mur_salon_est",
@@ -685,7 +685,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_est_et_mur_salon_cuisine"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_cuisine_nord_plancher",
@@ -703,7 +703,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_cuisine_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": [
@@ -746,7 +746,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_est_et_mur_cuisine_sud"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_cuisine_est_plafond",
@@ -764,7 +764,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_cuisine_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_mur_cuisine_est_et_mur_cuisine_nord",
@@ -782,7 +782,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_nord_et_mur_cuisine_est"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_cuisine_est_plancher",
@@ -800,7 +800,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_cuisine_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 }
             ],
             "object_collection": [
@@ -843,7 +843,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_sud_et_mur_salon_sud"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_cuisine_sud_plafond",
@@ -861,7 +861,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_cuisine_sud"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_mur_cuisine_sud_et_mur_cuisine_est",
@@ -879,7 +879,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_cuisine_est_et_mur_cuisine_sud"
                     },
-                    "lenght": 2.5
+                    "length": 2.5
                 },
                 {
                     "id": "s_mur_cuisine_sud_plancher",
@@ -897,7 +897,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_cuisine_sud"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -929,7 +929,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_salon_ouest"
                     },
-                    "lenght": 4.0
+                    "length": 4.0
                 },
                 {
                     "id": "s_plafond_mur_salon_nord",
@@ -947,7 +947,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_salon_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_plafond_mur_salon_est",
@@ -965,7 +965,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_salon_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plafond_salon_mur_cuisine",
@@ -983,7 +983,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_cuisine_plafond"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plafond_mur_salon_sud",
@@ -998,7 +998,7 @@
                         ]
                     ],
                     "junction": null,
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -1030,7 +1030,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_ouest"
                     },
-                    "lenght": 4.0
+                    "length": 4.0
                 },
                 {
                     "id": "s_plancher_mur_salon_nord",
@@ -1048,7 +1048,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_plancher_mur_salon_est",
@@ -1066,7 +1066,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plancher_mur_salon_cuisine",
@@ -1084,7 +1084,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_cuisine_plancher"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plancher_mur_salon_sud",
@@ -1102,7 +1102,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_salon_sud"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -1134,7 +1134,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_cuisine_plafond"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plafond_mur_cuisine_nord",
@@ -1152,7 +1152,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_cuisine_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_plafond_mur_cuisine_est",
@@ -1170,7 +1170,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_cuisine_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plafond_mur_cuisine_sud",
@@ -1188,7 +1188,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plafond_mur_cuisine_sud"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -1220,7 +1220,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_mur_salon_cuisine_plancher"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plancher_mur_cuisine_nord",
@@ -1238,7 +1238,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_cuisine_nord"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 },
                 {
                     "id": "s_plancher_mur_cuisine_est",
@@ -1256,7 +1256,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_cuisine_est"
                     },
-                    "lenght": 2.0
+                    "length": 2.0
                 },
                 {
                     "id": "s_plancher_mur_cuisine_sud",
@@ -1274,7 +1274,7 @@
                         "nodes_type": "linear_junction",
                         "nodes_id": "j_plancher_mur_cuisine_sud"
                     },
-                    "lenght": 6.0
+                    "length": 6.0
                 }
             ],
             "object_collection": []
@@ -1470,15 +1470,15 @@
         "window_types": {
             "typical_window": {
                 "label": "fenetre 1 vantail",
-                "x_lenght": 0.6,
-                "y_lenght": 0.8
+                "x_length": 0.6,
+                "y_length": 0.8
             }
         },
         "door_types": {
             "typical_door": {
                 "label": "porte classique",
-                "x_lenght": 0.6,
-                "y_lenght": 0.8
+                "x_length": 0.6,
+                "y_length": 0.8
             }
         }
     }

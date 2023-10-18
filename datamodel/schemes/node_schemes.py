@@ -143,7 +143,7 @@ linear_junction_scheme = {
     "info" : "A linear junction is used when boundaries are in contact on a segment."
              "\n It can be used for thermal bridges calculation for example and also to understand the 3D structure of the project",
     "parameters" : {
-        "lenght": {
+        "length": {
             "info": "Lenght of contact between the boundaries",
             "format" : "float",
             "min" : 0,
@@ -177,7 +177,7 @@ linear_junction_scheme = {
         "node_type" : "linear_junction",
         "binding_mode" : None,
         "psi" : None,
-        "lenght" : None
+        "length" : None
     }
 }
 

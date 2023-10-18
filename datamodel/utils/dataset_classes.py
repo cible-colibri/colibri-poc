@@ -632,14 +632,14 @@ class DataSet():
         )
         self.d3_model = False
 
-    def calculate_segment_lenght(self, point1, point2):
+    def calculate_segment_length(self, point1, point2):
         '''Calculate euclidian distance between two point [x,y]'''
         x1, y1 = point1
         x2, y2 = point2
 
-        segment_lenght = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+        segment_length = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
-        return segment_lenght
+        return segment_length
 
     def create_segment_and_area_from_coordinates(self, ordered_coordinates_list = None, ordered_name_list = None):
         '''
@@ -702,7 +702,7 @@ class DataSet():
             else:
                 if len(ordered_name_list) != len(ordered_coordinates_list):
                     raise ValueError("The list of segment name is not complete compared to the list of points provided."
-                                     "\nIt needs to have the same lenght because nb_segment = nb_points in any closed form.")
+                                     "\nIt needs to have the same length because nb_segment = nb_points in any closed form.")
                 else:
                     segment_id = ordered_name_list[i]
 
@@ -711,7 +711,7 @@ class DataSet():
                     "id" : segment_id,
                     "points" : [point1,point2],
                     "junction" : None,
-                    "lenght" : self.calculate_segment_lenght(point1, point2)
+                    "length" : self.calculate_segment_length(point1, point2)
                 }
             )
 
@@ -946,7 +946,7 @@ class DataSet():
     def link_boundaries(self, boundary_list, segment_list_id : None, **inputs):
         '''
         Link multiple boundaries through a linear junction and a common segment.
-        By construction of boundary, the connected segments have necessary the same lenght
+        By construction of boundary, the connected segments have necessary the same length
         Parameters
         ----------
         boundary_list : list,
@@ -987,8 +987,8 @@ class DataSet():
                     choose_segment = segment
                     break
             if len(segment_list)>0 : #a first segment have already been set
-                if choose_segment["lenght"] != segment_list[0]["lenght"]:
-                    raise ValueError(f"Joint segment MUST HAVE the same lenght. {segment_list[0]['lenght']} meters excepted, {choose_segment['id']} is {choose_segment['lenght']} meters long")
+                if choose_segment["length"] != segment_list[0]["length"]:
+                    raise ValueError(f"Joint segment MUST HAVE the same length. {segment_list[0]['length']} meters excepted, {choose_segment['id']} is {choose_segment['length']} meters long")
             try:
                 segment_list.append(choose_segment)
             except:
@@ -996,12 +996,12 @@ class DataSet():
 
         if inputs is None:
             inputs={}
-        elif "lenght" in inputs.keys():
-            if inputs["lenght"] != segment_list[0]["lenght"]:
-                warnings.warn(f"The given lenght in inputs {inputs['lenght']} is not compatible with the lenght of segments choosen : {segment_list[0]['lenght']}. We keep the segment lenght : {segment_list[0]['lenght']}")
+        elif "length" in inputs.keys():
+            if inputs["length"] != segment_list[0]["length"]:
+                warnings.warn(f"The given length in inputs {inputs['length']} is not compatible with the length of segments choosen : {segment_list[0]['length']}. We keep the segment length : {segment_list[0]['length']}")
 
         #create linear junction
-        inputs["lenght"] = segment_list[0]["lenght"]
+        inputs["length"] = segment_list[0]["length"]
 
         if "id" not in inputs.keys():
             inputs["id"] = input(
@@ -1112,7 +1112,7 @@ class DataSet():
 
             # object
             comment += f"COLIBRI archetype (where object properties are factorized) : \n"
-            schemes = [getattr(archetype_schemes, name + "types_scheme") for name in self.list_archetype_type]
+            schemes = [getattr(archetype_schemes, name + "_types_scheme") for name in self.list_archetype_type]
             for scheme in schemes:
                 comment += f"- {scheme['type']} : {scheme['info']} \n"
             comment += "\n-----------------------------"

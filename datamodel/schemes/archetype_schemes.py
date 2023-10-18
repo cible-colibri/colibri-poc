@@ -83,7 +83,7 @@ layer_types_scheme = {
                 "max": 5,
                 "unit" : "W/(m.K)",
                 "choices" : None,
-                "default" : 1.75 #
+                "default" : 1.75
             },
         "specific_heat" : {
                 "info" : "specific heat capacity of a layer also known as C",
@@ -440,8 +440,8 @@ window_types_scheme = {
                 "choices" : None,
                 "default" : None
                    },
-            "x_lenght" : {
-                "info" : "lenght of the window block",
+            "x_length" : {
+                "info" : "length of the window block",
                 "format" : "string",
                 "min" : 0,
                 "max": 30,
@@ -449,7 +449,7 @@ window_types_scheme = {
                 "choices" : None,
                 "default" : 0.6
                    },
-            "y_lenght" : {
+            "y_length" : {
                 "info" : "height of the window block",
                 "format" : "string",
                 "min" : 0,
@@ -462,8 +462,8 @@ window_types_scheme = {
     },
     "structure" : {
         "label" : None,
-        "x_lenght" : None,
-        "y_lenght" : None
+        "x_length" : None,
+        "y_length" : None
     }
 }
 
@@ -480,8 +480,8 @@ door_types_scheme = {
                 "choices" : None,
                 "default" : None
                    },
-            "x_lenght" : {
-                "info" : "lenght of the door block",
+            "x_length" : {
+                "info" : "length of the door block",
                 "format" : "string",
                 "min" : 0,
                 "max": 30,
@@ -489,7 +489,7 @@ door_types_scheme = {
                 "choices" : None,
                 "default" : 0.6
                    },
-            "y_lenght" : {
+            "y_length" : {
                 "info" : "height of the door block",
                 "format" : "string",
                 "min" : 0,
@@ -502,7 +502,7 @@ door_types_scheme = {
     },
     "structure" : {
         "label" : None,
-        "x_lenght" : None,
-        "y_lenght" : None
+        "x_length" : None,
+        "y_length" : None
     }
 }

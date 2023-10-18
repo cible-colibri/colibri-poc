@@ -125,9 +125,9 @@ boundary_scheme = {
             "info": "Collection of segment forming the edges of the boundary or in case of a non 3D description linears of interest for modeling."
                     "Important : coordinates needs to be set in CLOCKWISE order regarding side_1 of the boundary"
                     "The coordinates of segments are set in a 2D plane (boundaries are always planar) with a relative reference point, where the first point of the boundary is designated as x:0, y:0."
-                    "In case of a non use of 3D, 'points' key is set to None and only 'lenght' is used."
-                    "Examples :[ {'id' : 'arrete_1'', 'points' : [[x1,y1],[x2,y2]], 'lenght' : 10, 'junction' : {'nodes_type' : 'linear_junction','nodes_id' : 'junction_64'} ]"
-                    "Search for 'points', 'lenght', 'junction' to know more...",
+                    "In case of a non use of 3D, 'points' key is set to None and only 'length' is used."
+                    "Examples :[ {'id' : 'arrete_1'', 'points' : [[x1,y1],[x2,y2]], 'length' : 10, 'junction' : {'nodes_type' : 'linear_junction','nodes_id' : 'junction_64'} ]"
+                    "Search for 'points', 'length', 'junction' to know more...",
             "format" : "list",
             "min" : None,
             "max": None,
@@ -144,8 +144,8 @@ boundary_scheme = {
             "choices" : None,
             "default" : []
         },
-        "lenght" : {
-            "info": "lenght of a given segment of the boundary",
+        "length" : {
+            "info": "length of a given segment of the boundary",
             "format" : "float",
             "min" : 0,
             "max": None,
