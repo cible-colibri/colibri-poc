@@ -369,7 +369,6 @@ class Archetype(Scheme):
 
         self.initiate_data(inputs)
 
-
 class Boundary(Scheme):
     '''Create a boundary object'''
 
@@ -525,7 +524,9 @@ class DataSet():
 
         needs_label = False
         if inputs is not None:
-            if "label" not in inputs:
+            if "label" in inputs:
+                label = inputs["label"]
+            else:
                 needs_label = True
         else:
             needs_label = True
@@ -1110,7 +1111,7 @@ class DataSet():
                 comment += f"- {scheme['type']} : {scheme['info']} \n"
             comment += "\n-----------------------------"
 
-            # object
+            # archetype
             comment += f"COLIBRI archetype (where object properties are factorized) : \n"
             schemes = [getattr(archetype_schemes, name + "_types_scheme") for name in self.list_archetype_type]
             for scheme in schemes:
@@ -1133,6 +1134,8 @@ class DataSet():
             if object_type is not None:
                 if object_type == "archetype":
                     types_to_try = [Archetype]
+                elif object_type == "object" and type_name == "boundary":
+                    types_to_try = [Boundary]
                 elif object_type == "object":
                     types_to_try = [Object]
                 elif object_type == "node":
@@ -1146,7 +1149,10 @@ class DataSet():
                 try:
                     return Type(type_name, logs = False).describe(parameter_name)
                 except Exception:
-                    pass
+                    try:
+                        return Type(logs=False).describe(parameter_name)
+                    except Exception:
+                        pass
 
             # If all tentatives have failed
             raise ValueError(f"{type_name} or {parameter_name} doesn't exist in current COLIBRI dataset")

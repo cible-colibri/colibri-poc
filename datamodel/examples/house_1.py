@@ -1,9 +1,9 @@
-from datamodel.utils import dataset_classes as sc
+from datamodel.utils import dataset_classes as dsc
 from unittest.mock import patch
 import json
 
 #create house_1 COLIBRI DataSet
-house_1 = sc.DataSet()
+house_1 = dsc.DataSet()
 
 with patch('builtins.input', return_value='default to all'): #we apply default value for any parameter not fixed when DataSet "ask" question to user for missing data
 

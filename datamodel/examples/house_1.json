@@ -1409,6 +1409,20 @@
                 "service_life": 50
             }
         },
+        "window_types": {
+            "typical_window": {
+                "label": "fenetre 1 vantail",
+                "x_length": 0.6,
+                "y_length": 0.8
+            }
+        },
+        "door_types": {
+            "typical_door": {
+                "label": "porte classique",
+                "x_length": 0.6,
+                "y_length": 0.8
+            }
+        },
         "boundary_types": {
             "mur_exterieur_1": {
                 "label": "Mur exterieur",
@@ -1465,20 +1479,6 @@
                         "type_id": "ba_13"
                     }
                 ]
-            }
-        },
-        "window_types": {
-            "typical_window": {
-                "label": "fenetre 1 vantail",
-                "x_length": 0.6,
-                "y_length": 0.8
-            }
-        },
-        "door_types": {
-            "typical_door": {
-                "label": "porte classique",
-                "x_length": 0.6,
-                "y_length": 0.8
             }
         }
     }
