@@ -1,0 +1,11 @@
+stages:
+  - validation
+
+validate_schemes:
+  stage: validation
+  image: python:3.11
+  script:
+    - pip install -r requirements.txt
+    - python datamodel/utils/schemes_validator.py
+  only:
+    - master
