@@ -9,16 +9,40 @@ default:
 
 stages:
   - schemes_validation
+  - push_to_main
 
 
 variables:
-  STARTING_IMAGE_URL: python:3.11.4-slim-bookworm
+  JOB_IMAGE_URL: $DOCKER_GRP/python:3.11.6-slim-bookworm
+  GITLAB_PROJECT_URL: scm.cstb.fr/dee/colibri.git
+  GITLAB_PUSH_BRANCH_NAME: main
 
 
 job_schemes_validation:
   stage: schemes_validation
-  image: $STARTING_IMAGE_URL
+  image: $JOB_IMAGE_URL
   script:
-    - pip install -r requirements.txt
-    - pip install ${CI_PROJECT_DIR}
-    - python $CI_PROJECT_DIR/datamodel/utils/schemes_validator.py
+    - pip3 install --no-cache-dir -r $CI_PROJECT_DIR/requirements.txt
+    - pip3 install $CI_PROJECT_DIR
+    - python3 $CI_PROJECT_DIR/colibri/datamodel/utils/schemes_validator.py
+
+
+job_push_to_main:
+  stage: push_to_main
+  image: $JOB_IMAGE_URL
+  script:
+    # Update
+    - apt-get update
+    # Add git
+    - apt-get install -y git
+    - git config --global user.name "${GITLAB_USER_EMAIL}"
+    - git config --global user.email "${GITLAB_USER_NAME}"
+    - ls -la
+    # Clone directory to copy (using the python script) the json configuration files only (leave the xslx and .py in this repository)
+    - git clone --branch $GITLAB_PUSH_BRANCH_NAME https://gitlab-ci-token:$CI_JOB_TOKEN@$GITLAB_PROJECT_URL
+    - ls -la
+    # Commit all modifications, then push them to renoptim/backend
+    # - cd ./$RENOPTIM_BACKEND_PROJECT_NAME
+    # - git add .
+    # - git commit -m "[CONFIGURATION] Mise à jour des fichiers de configuration (json) pour le projet renoptim/backend"
+    # - git push -o ci.skip https://$PAT_NAME:$PAT_VALUE@$RENOPTIM_BACKEND_GITLAB_PROJECT_URL $CI_COMMIT_BRANCH
