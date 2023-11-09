@@ -42,8 +42,9 @@ job_push_to_main:
     - mkdir /tmp/main_branch_directory
     - cd /tmp/main_branch_directory
     - git clone --branch $GITLAB_PUSH_BRANCH_NAME https://gitlab-ci-token:$CI_JOB_TOKEN@$GITLAB_PROJECT_URL
+    - cd $GITLAB_PROJECT_NAME
+    - cp -r $CI_PROJECT_DIR .
     # Commit all modifications, then push them to the main branch
-    - cp -r $CI_PROJECT_DIR /tmp/main_branch_directory/$GITLAB_PROJECT_NAME
     - git add .
     # - git commit -m "[CONFIGURATION] Mise à jour des fichiers de configuration (json) pour le projet renoptim/backend"
     # - git push -o ci.skip https://$PAT_NAME:$PAT_VALUE@$RENOPTIM_BACKEND_GITLAB_PROJECT_URL $CI_COMMIT_BRANCH
