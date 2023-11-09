@@ -611,7 +611,7 @@
             ],
             "object_collection": [
                 {
-                    "id": "win_4",
+                    "id": "door_1",
                     "type": "door",
                     "type_id": "typical_door",
                     "on_side": "side_1_to_side_2",
@@ -712,7 +712,7 @@
                     "type": "window",
                     "type_id": "typical_window",
                     "on_side": "side_2_to_side_1",
-                    "x_relative_position": 4,
+                    "x_relative_position": 3.4,
                     "y_relative_position": 1,
                     "z_relative_position": 0,
                     "junctions": []

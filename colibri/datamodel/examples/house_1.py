@@ -186,7 +186,7 @@ with patch('builtins.input', return_value='default to all'): #we apply default v
 
     house_1.add_object_to_boundary(boundary_id="mur_cuisine_nord_1", type_name="window",
                                    object_archetype_id="typical_window",
-                                   id="win_3", x_relative_position=4, y_relative_position=1, on_side="side_2_to_side_1") #Notes : you see on the plan that windows are incorporated differently than for win_1 and win_2, therefore on_side = "side_2_to_side_1"
+                                   id="win_3", x_relative_position=3.4, y_relative_position=1, on_side="side_2_to_side_1") #Notes : you see on the plan that windows are incorporated differently than for win_1 and win_2, therefore on_side = "side_2_to_side_1"
     house_1.add_object_to_boundary(boundary_id="mur_cuisine_est_1", type_name="window",
                                    object_archetype_id="typical_window",
                                    id="win_4", x_relative_position=0.4, y_relative_position=1, on_side="side_2_to_side_1")
@@ -194,7 +194,7 @@ with patch('builtins.input', return_value='default to all'): #we apply default v
     #doors
     house_1.add_object_to_boundary(boundary_id="mur_salon_cuisine", type_name="door",
                                    object_archetype_id="typical_door",
-                                   id="win_4", x_relative_position=0.6, y_relative_position=0,
+                                   id="door_1", x_relative_position=0.6, y_relative_position=0,
                                    on_side="side_1_to_side_2")
 
     #endregion
