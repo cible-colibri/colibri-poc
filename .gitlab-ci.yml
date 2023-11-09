@@ -20,7 +20,5 @@ job_schemes_validation:
   image: $STARTING_IMAGE_URL
   script:
     - pip install -r requirements.txt
-    - pip install .
-    - python ./datamodel/utils/schemes_validator.py
-  only:
-    - master
+    - pip install ${CI_PROJECT_DIR}
+    - python $CI_PROJECT_DIR/datamodel/utils/schemes_validator.py
