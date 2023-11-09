@@ -1,1 +1,0 @@
-recursive-include colibri *.csv *.json *.PNG *.png *.pynb *.yaml *.yml
