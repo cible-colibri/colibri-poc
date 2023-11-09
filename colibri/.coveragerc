@@ -1,0 +1,12 @@
+[run]
+omit=
+	*/__init__.py
+	*/__project_information__.py
+	setup.py
+	
+[report]
+show_missing=True
+fail_under=75
+exclude_lines =
+    if __name__ == .__main__.:
+    \.\.\.
