@@ -5,14 +5,16 @@ Module which ensures that the different schemes (archetype, node, object respect
 # ========================================
 # External imports
 # ========================================
+
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
-import json
 
 # ========================================
 # Internal imports
 # ========================================
+
 from datamodel.schemes import archetype_schemes, object_schemes, node_schemes
+
 # ========================================
 # Constants
 # ========================================
@@ -28,6 +30,8 @@ from datamodel.schemes import archetype_schemes, object_schemes, node_schemes
 # ========================================
 # Functions
 # ========================================
+
+
 def validate_json(json_data, schema):
     try:
         validate(instance=json_data, schema=schema)
@@ -35,9 +39,11 @@ def validate_json(json_data, schema):
     except ValidationError as ve:
         print("JSON is invalid.")
         raise ve
+
 # ========================================
 # Schemes
 # ========================================
+
 
 json_scheme_schema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -91,6 +97,3 @@ for json_scheme in list_node_scheme:
         validate(instance=object_json, schema=json_scheme_schema)
     except ValidationError as ve:
         raise ValueError(f"{json_scheme} does not respect COLIBRI node scheme schema in node_schemes.py. Please fix it according to json schema in schemes/schemes_validator.py : {ve}")
-
-
-

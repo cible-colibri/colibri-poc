@@ -1,11 +1,25 @@
-stages:
-  - validation
 
-validate_schemes:
-  stage: validation
-  image: python:3.11
+default:
+  image: docker:20.10
+  services:
+    - docker:20.10-dind
+  tags:
+    - docker
+
+
+stages:
+  - schemes_validation
+
+
+variables:
+  STARTING_IMAGE_URL: python:3.11.4-slim-bookworm
+
+
+job_schemes_validation:
+  stage: schemes_validation
+  image: $STARTING_IMAGE_URL
   script:
     - pip install -r requirements.txt
-    - python datamodel/utils/schemes_validator.py
+    - python ./datamodel/utils/schemes_validator.py
   only:
     - master
