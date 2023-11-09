@@ -1,22 +1,26 @@
-""" Module that create utils class for manipulating COLIBRI V1 datamodel : create, add, connect objects based on archetype_scheme and object_scheme.
-"""
-
 # -*- coding: utf-8 -*-
+"""
+Module that create utils class for manipulating COLIBRI V1 datamodel : create, add, connect objects based on archetype_scheme and object_scheme.
+"""
 
 # ========================================
 # External imports
 # ========================================
-import importlib
+
 import copy
 import warnings
 import random
 import ast
 import inspect
 import math
+
 # ========================================
 # Internal imports
 # ========================================
-from datamodel.schemes import archetype_schemes, object_schemes, node_schemes
+
+from colibri.datamodel.schemes import object_schemes
+from colibri.datamodel.schemes import archetype_schemes, node_schemes
+
 # ========================================
 # Constants
 # ========================================

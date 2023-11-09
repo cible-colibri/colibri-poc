@@ -1,8 +1,9 @@
-""" Module that provides the schema of archetypes for each type according to the partitioning of the Colibri JDDP V1 model.
+# -*- coding: utf-8 -*-
+"""
+Module that provides the schema of archetypes for each type according to the partitioning of the Colibri JDDP V1 model.
 Ultimately, these schemas will result from the concatenation of the needeed parameters of each module used in the chosen Colibri assembly
 (so we are waiting for the partitioning of the calculation into modules in order to achieve this functionality).
 """
-# -*- coding: utf-8 -*-
 
 # ========================================
 # External imports

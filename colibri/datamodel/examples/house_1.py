@@ -1,4 +1,4 @@
-from datamodel.utils import dataset_classes as dsc
+from colibri.datamodel.utils import dataset_classes as dsc
 from unittest.mock import patch
 import json
 

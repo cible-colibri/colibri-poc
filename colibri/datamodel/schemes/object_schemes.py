@@ -1,8 +1,9 @@
-""" Module that provides the schema for each building object (global structure, boundary description, etc.).
+# -*- coding: utf-8 -*-
+"""
+Module that provides the schema for each building object (global structure, boundary description, etc.).
 These schemas are independent of the choice of calculation modules (parameters) but determine the geometrical and topological descriptions
 of building elements. Therefore, the COLIBRI data model always retains these schemas.
 """
-# -*- coding: utf-8 -*-
 
 # ========================================
 # External imports

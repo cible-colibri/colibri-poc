@@ -1,7 +1,8 @@
-""" Module that provides the schema for each node element of the building (space, linear_junction...).
+# -*- coding: utf-8 -*-
+"""
+Module that provides the schema for each node element of the building (space, linear_junction...).
 The COLIBRI data model always retains these schemas.
 """
-# -*- coding: utf-8 -*-
 
 # ========================================
 # External imports

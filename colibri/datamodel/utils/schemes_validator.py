@@ -1,6 +1,7 @@
-'''
+# -*- coding: utf-8 -*-
+"""
 Module which ensures that the different schemes (archetype, node, object respect the correct format)
-'''
+"""
 
 # ========================================
 # External imports
@@ -13,7 +14,9 @@ from jsonschema.exceptions import ValidationError
 # Internal imports
 # ========================================
 
-from datamodel.schemes import archetype_schemes, object_schemes, node_schemes
+from colibri.datamodel.schemes import object_schemes
+from colibri.datamodel.schemes import archetype_schemes, node_schemes
+
 
 # ========================================
 # Constants
@@ -31,7 +34,6 @@ from datamodel.schemes import archetype_schemes, object_schemes, node_schemes
 # Functions
 # ========================================
 
-
 def validate_json(json_data, schema):
     try:
         validate(instance=json_data, schema=schema)
@@ -43,7 +45,6 @@ def validate_json(json_data, schema):
 # ========================================
 # Schemes
 # ========================================
-
 
 json_scheme_schema = {
     "$schema": "http://json-schema.org/draft-07/schema#",
