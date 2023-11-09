@@ -46,7 +46,7 @@ job_push_to_main:
     - cp -r $CI_PROJECT_DIR .
     # Commit all modifications, then push them to the main branch
     - git add .
-    # - git commit -m "[CONFIGURATION] Mise à jour des fichiers de configuration (json) pour le projet renoptim/backend"
-    # - git push -o ci.skip https://$PAT_NAME:$PAT_VALUE@$RENOPTIM_BACKEND_GITLAB_PROJECT_URL $CI_COMMIT_BRANCH
+    - git commit -m "[MERGE] Merge 1-edit-main into main"
+    - git push origin $GITLAB_PUSH_BRANCH_NAME
   only:
     - 1-edit-main
