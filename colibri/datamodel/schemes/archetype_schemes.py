@@ -93,7 +93,7 @@ layer_types_scheme = {
                 "max": 8000,
                 "unit" : "J/kg",
                 "choices" : None,
-                "default" : 0.9 #
+                "default" : 900 #concrete
             },
         "density" : {
                 "info" : "density of a layer",
