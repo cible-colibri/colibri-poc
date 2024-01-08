@@ -1306,7 +1306,7 @@
             "isolant_1": {
                 "label": "isolant 15cm pour mur verticaux",
                 "thermal_conductivity": 0.035,
-                "specific_heat": 1.03,
+                "specific_heat": 1030,
                 "density": 25,
                 "thickness": 0.15,
                 "constitutive_materials": [
@@ -1327,7 +1327,7 @@
             "isolant_toiture": {
                 "label": "isolant 10cm pour toiture",
                 "thermal_conductivity": 0.035,
-                "specific_heat": 1.03,
+                "specific_heat": 1030,
                 "density": 25,
                 "thickness": 0.1,
                 "constitutive_materials": [
@@ -1348,7 +1348,7 @@
             "isolant_plancher": {
                 "label": "isolant 5cm pour plancher",
                 "thermal_conductivity": 0.035,
-                "specific_heat": 1.03,
+                "specific_heat": 1030,
                 "density": 25,
                 "thickness": 0.05,
                 "constitutive_materials": [
@@ -1369,7 +1369,7 @@
             "vide_10": {
                 "label": "vide 10cm",
                 "thermal_conductivity": 0.025,
-                "specific_heat": 1,
+                "specific_heat": 1000,
                 "density": 1.293,
                 "thickness": 0.1,
                 "constitutive_materials": [
@@ -1390,7 +1390,7 @@
             "ba_13": {
                 "label": "BA13",
                 "thermal_conductivity": 0.25,
-                "specific_heat": 1,
+                "specific_heat": 1000,
                 "density": 850,
                 "thickness": 0.013,
                 "constitutive_materials": [

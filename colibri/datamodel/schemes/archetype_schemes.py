@@ -89,9 +89,9 @@ layer_types_scheme = {
         "specific_heat" : {
                 "info" : "specific heat capacity of a layer also known as C",
                 "format" : "float",
-                "min" : 0.1,
-                "max": 8,
-                "unit" : "kJ/kg",
+                "min" : 100,
+                "max": 8000,
+                "unit" : "J/kg",
                 "choices" : None,
                 "default" : 0.9 #
             },

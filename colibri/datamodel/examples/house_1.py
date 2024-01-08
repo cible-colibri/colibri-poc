@@ -12,15 +12,15 @@ with patch('builtins.input', return_value='default to all'): #we apply default v
     # To know all properties use sc.Scheme("layer").describe() or sc.Scheme("layer").describe("SPECIFIC PARAMETER NAME")
     house_1.add_archetype("layer", archetype_id = "beton_1", label = "béton 20cm", thickness = 0.2) #default thermal value are already set to concrete values
     house_1.add_archetype("layer", archetype_id = "isolant_1", label = "isolant 15cm pour mur verticaux", thickness = 0.15,
-                          thermal_conductivity = 0.035, specific_heat= 1.030, density = 25, material_type = "insulation", constitutive_material_type = "rock wood")
+                          thermal_conductivity = 0.035, specific_heat= 1030, density = 25, material_type = "insulation", constitutive_material_type = "rock wood")
     house_1.add_archetype("layer", archetype_id="isolant_toiture", label="isolant 10cm pour toiture", thickness=0.1,
-                          thermal_conductivity=0.035, specific_heat=1.030, density=25, material_type="insulation", constitutive_material_type="rock wood")
+                          thermal_conductivity=0.035, specific_heat=1030, density=25, material_type="insulation", constitutive_material_type="rock wood")
     house_1.add_archetype("layer", archetype_id="isolant_plancher", label="isolant 5cm pour plancher", thickness=0.05,
-                          thermal_conductivity=0.035, specific_heat=1.030, density=25, material_type="insulation", constitutive_material_type="rock wood")
+                          thermal_conductivity=0.035, specific_heat=1030, density=25, material_type="insulation", constitutive_material_type="rock wood")
     house_1.add_archetype("layer", archetype_id="vide_10", label="vide 10cm", thickness=0.1,
-                          thermal_conductivity=0.025, specific_heat=1, density=1.293, material_type="insulation", constitutive_material_type="air")
+                          thermal_conductivity=0.025, specific_heat=1000, density=1.293, material_type="insulation", constitutive_material_type="air")
     house_1.add_archetype("layer", archetype_id="ba_13", label="BA13", thickness=0.013,
-                          thermal_conductivity=0.25, specific_heat=1, density=850, material_type="plaster",
+                          thermal_conductivity=0.25, specific_heat=1000, density=850, material_type="plaster",
                           constitutive_material_type="plaster")
 
     ##boundary type (walls, roof, floor...)
