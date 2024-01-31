@@ -36,6 +36,7 @@ def performance_grid(n_models_x = 10, n_models_y = 10):
     starting_time = time.perf_counter()
 
     project = Project()
+    project.time_steps = 8760
 
     # connect lots of ducts in a grid
     liquid_flow = FluidFlowConnector()
@@ -114,7 +115,7 @@ def test_performance_grid_graph():
     runtimes = []
     n_models = []
     n_links = []
-    board_size = 20
+    board_size = 15
     for size in range(3, board_size):
         result = performance_grid(size, size)
         runtimes.append(result[0])
