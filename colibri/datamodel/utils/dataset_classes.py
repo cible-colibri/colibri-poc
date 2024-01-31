@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Module that create utils class for manipulating COLIBRI V1 datamodel : create, add, connect objects based on archetype_scheme and object_scheme.
+Module that creates utils classes for manipulating COLIBRI V1 datamodel : create, add, connect objects based on archetype_scheme and object_scheme.
 """
 
 # ========================================
