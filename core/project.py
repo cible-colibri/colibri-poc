@@ -5,6 +5,8 @@
 # ========================================
 
 import json
+from typing import Union
+
 import numpy
 import pathlib
 import typing
@@ -72,7 +74,7 @@ class Project:
     def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
         ...
 
-    def link(self, *args: tuple[Model, str, Model, str] | tuple[Model, Model, VariableConnector]) -> None:
+    def link(self, *args: Union[tuple[Model, str, Model, str], tuple[Model, Model, VariableConnector]]) -> None:
         if any([arg for arg in args if isinstance(arg,  VariableConnector)]):
             from_model, to_model, connector = args
             self.link_with_connector(from_model, to_model, connector)
