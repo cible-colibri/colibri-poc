@@ -93,7 +93,7 @@ class Weather(Model):
     def check_units(self) -> None:
         pass
 
-    def run(self, time_step: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0):
         for variable in self.outputs:
             setattr(self, variable.name, self.climate_data[variable.name][time_step])
 

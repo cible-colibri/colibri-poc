@@ -93,7 +93,7 @@ class Model(metaclass=MetaModel):
         raise NotImplementedError("Please, implement me...")
 
     @abc.abstractmethod
-    def run(self, time_step: int = 0) -> None:
+    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         raise NotImplementedError("Please, implement me...")
 
     @abc.abstractmethod
@@ -148,8 +148,7 @@ class Model(metaclass=MetaModel):
     def save_time_step(self, time_step: int) -> None:
         for variable in self.outputs:
             # TODO: Check if we need this: if isinstance(value.value, numbers.Number): Yes, we do, but it's weird
-            if isinstance(variable.value, numbers.Number):
-                getattr(self, variable.name + "_series")[time_step] = variable.value
+            getattr(self, variable.name + "_series")[time_step] = variable.value
 
     def __setattr__(self, name, value):
         if hasattr(self, name):

@@ -59,7 +59,7 @@ class FlatPlateCollector(Model):
     def check_units(self) -> None:
         pass
 
-    def run(self, time_step: int = 0) -> None:
+    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         # Rename variables from physics point of view
         a_0         = self.optical_efficiency
         a_1         = self.linear_loss_coefficient

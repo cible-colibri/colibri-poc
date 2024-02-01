@@ -66,21 +66,29 @@ class Project:
     def get_models(self, cls):
         return [model for model in self.models if self.models[0].__class__.__name__ == cls]
 
-    @typing.overload
-    def link(self, *args: tuple[Model, str, Model, str]) -> None:
-        ...
+    #@typing.overload
+    #def link(self, *args: tuple[Model, str, Model, str]) -> None:
+    #    ...
 
-    @typing.overload
-    def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
-        ...
+    #@typing.overload
+    #def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
+    #    ...
 
-    def link(self, *args: Union[tuple[Model, str, Model, str], tuple[Model, Model, VariableConnector]]) -> None:
-        if any([arg for arg in args if isinstance(arg,  VariableConnector)]):
-            from_model, to_model, connector = args
-            self.link_with_connector(from_model, to_model, connector)
+    def link(self, model_1, arg_2, *connection):
+        if len(connection) ==2:
+            model_2 = connection[0]
+            variable_2 = connection[1]
+            if not self.is_eligible_link(model_1, arg_2, model_2, variable_2):
+                raise ValueError(f"Cannot link {model_1}.{arg_2} to {model_2}.{variable_2}")
+            link = Link(model_1, arg_2, model_2, variable_2)
+            self.links.append(link)
         else:
-            from_model, from_variable, to_model, to_variable = args
-            self.link_with_variable_names(from_model, from_variable, to_model, to_variable)
+            connector = connection[0]
+            for c in connector.connections:
+                if not self.is_eligible_link(model_1, c[0], arg_2, c[1]):
+                    raise ValueError(f"Cannot link {model_1}.{c[0]} to {arg_2}.{c[1]}")
+                link = Link(model_1, c[0], arg_2, c[1])
+                self.links.append(link)
 
     def link_with_connector(self, from_model: Model, to_model: Model, connector: VariableConnector) -> None:
         for from_variable, to_variable in connector.connections:
@@ -146,7 +154,7 @@ class Project:
                 if self.verbose:
                     print(f"Iteration {n_iteration}")
                 self._has_converged = True
-                self._run_models(time_step)
+                self._run_models(time_step, n_iteration)
                 self._substitute_links_values()
                 # check for convergence limit
                 if n_iteration > self.n_max_iterations:
@@ -167,7 +175,7 @@ class Project:
     def _initialize_series(self) -> None:
         for model in self.models:
             for variable in model.outputs:
-                setattr(model, variable.name + '_series', numpy.ones(self.time_steps))
+                setattr(model, variable.name + '_series', [0] * self.time_steps)
 
     def _initialize_models(self) -> None:
         for model in self.models:
@@ -188,11 +196,11 @@ class Project:
                 elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
                     self._has_converged = False
 
-    def _run_models(self, time_step: int) -> None:
+    def _run_models(self, time_step: int, n_iteration: int) -> None:
         for model in self.models:
             if self.verbose:
                 print(f"Computing: {model.name}")
-            model.run(time_step)
+            model.run(time_step, n_iteration)
 
     def _end_iteration(self, time_step: int) -> None:
         for model in self.models:

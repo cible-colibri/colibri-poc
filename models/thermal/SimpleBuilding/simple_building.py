@@ -87,7 +87,7 @@ class SimpleBuilding(Model):
     def check_units(self) -> None:
         pass
 
-    def run(self, time_step: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0):
         ext_temperature = self.ext_temperature
         radiation       = self.radiation
         zone_setpoint   = self.zone_setpoint_list[time_step]

@@ -54,7 +54,7 @@ class SimplePump(Model):
     def check_units(self) -> None:
         pass
 
-    def run(self, time_step: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0):
         self.outlet_flow_rate = self.inlet_flow_rate
         self.outlet_temperature = self.inlet_temperature
         self.outlet_pressure = 42

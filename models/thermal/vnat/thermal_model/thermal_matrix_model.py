@@ -17,6 +17,24 @@ class Th_Model(Model):
     def __init__(self, name):
         self.name = name
 
+    def check_units(self):
+        pass
+
+    def initialize(self):
+        pass
+
+    def iteration_done(self):
+        pass
+
+    def run(self):
+        pass
+
+    def simulation_done(self):
+        pass
+
+    def timestep_done(self):
+        pass
+
     def init_thermal_model(self, project_dict, weather_data, latitude, longitude, time_zone, int_gains_trigger=1, infiltration_trigger=1, n_steps = 8760, dt=3600):
 
         #################################################################################

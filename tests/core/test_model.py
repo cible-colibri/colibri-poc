@@ -44,7 +44,7 @@ def test_models():
         def check_units(self) -> None:
             pass
 
-        def run(self, time_step: int = 0) -> None:
+        def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
             pass
 
         def iteration_done(self, time_step: int = 0) -> None:

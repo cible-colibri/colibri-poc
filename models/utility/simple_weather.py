@@ -113,7 +113,7 @@ class SimpleWeather(Model):
     def check_units(self) -> None:
         pass
 
-    def run(self, time_step: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0):
         if time_step > 155:
             print("toto")
         for surface_index in range(1, self.number_of_surfaces.value + 1):
