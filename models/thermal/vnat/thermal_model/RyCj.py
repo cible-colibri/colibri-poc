@@ -2,7 +2,7 @@ import numpy as np
 from numpy import eye
 from scipy.linalg import expm, inv
 epsilon = 1e-15
-from vnat.test_cases.data_model import rho_ref, cp_air_ref
+from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
 
 
 def set_U_from_index(U, index_inputs, label, value_to_set, add=False):

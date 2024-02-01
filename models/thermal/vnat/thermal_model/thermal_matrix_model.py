@@ -2,17 +2,18 @@ import numpy as np
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from vnat.thermal_model.building_import import import_project, import_spaces, import_boundaries
-from vnat.thermal_model.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
+from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces, import_boundaries
+from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
     set_U_from_index, get_states_from_index
-from vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
-from vnat.thermal_model.weather_model import import_epw_weather, solar_processor
-from vnat.test_cases.data_model import rho_ref, cp_air_ref
-from vnat.thermal_model.bestest_cases import bestest_configs
-from vnat.thermal_model.results_handling import initialise_results
+from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
+from models.thermal.vnat.thermal_model.weather_model import import_epw_weather, solar_processor
+from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
+from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
+from models.thermal.vnat.thermal_model.results_handling import initialise_results
 
+from core.model import Model
 
-class Th_Model:
+class Th_Model(Model):
     def __init__(self, name):
         self.name = name
 

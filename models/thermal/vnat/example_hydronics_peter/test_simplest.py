@@ -1,11 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from vnat.example_hydronics_peter.pressure_functions import print_results, gen_pressure_system, generate_AA_BB_pressure_system, \
+from models.thermal.vnat.example_hydronics_peter.pressure_functions import print_results, gen_pressure_system, generate_AA_BB_pressure_system, \
     plot_grid, plot_convergence, calc_velocity, balancing, size_tubes
-from vnat.example_hydronics_peter.tests import press_tests
-from vnat.example_hydronics_peter.pump_functions import pump, pump_chars
-from vnat.example_hydronics_peter.constants import tube_base
-from vnat.example_hydronics_peter.constants import p_visc
+from models.thermal.vnat.example_hydronics_peter.tests import press_tests
+from models.thermal.models.thermal.vnat.example_hydronics_peter.pump_functions import pump, pump_chars
+from models.thermal.vnat.example_hydronics_peter.constants import tube_base
+from models.thermal.vnat.example_hydronics_peter.constants import p_visc
 
 
 def launch(choice=0, material=0, singular_share=0.5, random_length=False, nominal_flowrate=3./3.6, plot=['velocity'],

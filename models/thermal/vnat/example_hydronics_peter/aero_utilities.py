@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.linalg import inv
-from vnat.test_cases.data_model import flow_paths, nodes
-from vnat.test_aero.test_0 import construct_connectivity_matrix
-import vnat.test_aero.connection_functions as cf
+from models.thermal.vnat.test_cases.data_model import flow_paths, nodes
+from models.thermal.vnat.test_aero.test_0 import construct_connectivity_matrix
+import models.thermal.vnat.test_aero.connection_functions as cf
 
 
 def construct_nodes(nodes, flow_paths):

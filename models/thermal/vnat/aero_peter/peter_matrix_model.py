@@ -2,10 +2,10 @@ import numpy as np
 import copy
 import math
 import time
-from vnat.test_cases.data_model import rho_ref, t_ext, t_ref, p_ref, Rs_air, t_ref_K, g
-from vnat.aero_peter.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
+from models.thermal.vnat.test_cases.data_model import rho_ref, t_ext, t_ref, p_ref, Rs_air, t_ref_K, g
+from models.thermal.vnat.aero_peter.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
     construct_CCi, gen_pressure_system, generate_AA_BB_pressure_system
-import vnat.test_aero.connection_functions as cf
+import models.thermal.vnat.test_aero.connection_functions as cf
 
 
 def matrix_model(t_final, nodes, flow_paths, model, apply_dp, dynamic_test):

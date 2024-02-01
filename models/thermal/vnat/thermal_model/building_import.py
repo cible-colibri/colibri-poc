@@ -5,7 +5,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import namedtuple
-from vnat.thermal_model.RyCj import gen_wall_model, estimate_hrad
+from models.thermal.vnat.thermal_model.RyCj import gen_wall_model, estimate_hrad
 
 main_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 

@@ -1,9 +1,9 @@
 import numpy as np
 import time
-# from vnat.test_cases.data_model import flow_paths, nodes, rho_ref, t_ref, model, t_ext
-from vnat.test_cases.data_model import rho_ref, t_ref, t_ext
+# from models.thermal.vnat.test_cases.data_model import flow_paths, nodes, rho_ref, t_ref, model, t_ext
+from models.thermal.vnat.test_cases.data_model import rho_ref, t_ref, t_ext
 from scipy import optimize
-from vnat.test_aero.models import bilan_total
+from models.thermal.vnat.test_aero.models import bilan_total
 import math
 
 

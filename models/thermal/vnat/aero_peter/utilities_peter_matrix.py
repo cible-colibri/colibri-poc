@@ -1,8 +1,8 @@
 import numpy as np
 import copy
 from scipy.linalg import inv
-import vnat.test_aero.connection_functions as cf
-from vnat.test_cases.data_model import rho_ref, t_ext, t_ref, p_ref, Rs_air, t_ref_K, g
+import models.thermal.vnat.test_aero.connection_functions as cf
+from models.thermal.vnat.test_cases.data_model import rho_ref, t_ext, t_ref, p_ref, Rs_air, t_ref_K, g
 
 
 def construct_nodes_sep(nodes):

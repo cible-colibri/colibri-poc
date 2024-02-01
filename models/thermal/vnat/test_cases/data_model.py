@@ -1,7 +1,7 @@
 import json
 import os
 import numpy as np
-from vnat.test_cases.random_graph import random_network
+from models.thermal.vnat.test_cases.random_graph import random_network
 
 rho_ref = 1.204785775
 t_ref = 20.

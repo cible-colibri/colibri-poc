@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import inv
-from vnat.example_hydronics_peter.constants import p_visc
+from models.thermal.vnat.example_hydronics_peter.constants import p_visc
 
 
 def balancing(balancing_valve_position_list, substation_flowrate_nominal, substation_flowrate_actual,

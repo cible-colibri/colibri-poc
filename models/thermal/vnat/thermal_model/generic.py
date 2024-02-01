@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from vnat.thermal_model.RyCj import set_U_from_index, get_states_from_index
+from models.thermal.vnat.thermal_model.RyCj import set_U_from_index, get_states_from_index
 
 
 def store_results(t, my_T, my_weather):

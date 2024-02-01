@@ -1,6 +1,6 @@
 import numpy as np
 import time
-from vnat.test_aero.generic_functions import interpolate_function
+from models.thermal.vnat.test_aero.generic_functions import interpolate_function
 
 
 def door_calculate_kb(section=2, discharge_coefficient=0.6, opening=1):

@@ -1,5 +1,5 @@
 import numpy as np
-import vnat.test_aero.connection_functions as cf
+import models.thermal.vnat.test_aero.connection_functions as cf
 import random
 
 def bilan_total(x, n_pressure, nodes, n_special, flow_paths, rho_ref, t_ref, calc_type='solve'):

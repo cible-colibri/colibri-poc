@@ -2,16 +2,16 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from vnat.thermal_model.building_import import import_project
-from vnat.thermal_model.RyCj import get_states_from_index
-from vnat.thermal_model.controls import operation_mode
-from vnat.thermal_model.weather_model import Weather
-from vnat.thermal_model.bestest_cases import bestest_configs
-from vnat.thermal_model.thermal_matrix_model import Th_Model
-from vnat.thermal_model.generic import convergence_plot, print_results, plot_results, store_results
-from vnat.aero_peter.matrix_aero import P_Model
-from vnat.test_cases.data_model_coupling_Temp_Press import nodes, flow_paths
-from vnat.test_cases.boundary_conditions import boundary_matrix
+from models.thermal.vnat.thermal_model.building_import import import_project
+from models.thermal.vnat.thermal_model.RyCj import get_states_from_index
+from models.thermal.vnat.thermal_model.controls import operation_mode
+from models.thermal.vnat.thermal_model.weather_model import Weather
+from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
+from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
+from models.thermal.vnat.thermal_model.generic import convergence_plot, print_results, plot_results, store_results
+from models.thermal.vnat.aero_peter.matrix_aero import P_Model
+from models.thermal.vnat.test_cases.data_model_coupling_Temp_Press import nodes, flow_paths
+from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
 
 
 def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw'):

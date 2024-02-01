@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import optimize
-from vnat.thermal_model.RyCj import runStateSpace, set_U_from_index, get_states_from_index
+from models.thermal.vnat.thermal_model.RyCj import runStateSpace, set_U_from_index, get_states_from_index
 
 
 def calculate_ventilation_losses(flow_array, internal_temperatures_dict, outdoor_temperature, efficiency_heat_recovery, ventilation_specific_flow_array):

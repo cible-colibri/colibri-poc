@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-from vnat.test_aero.francois_simplified_model import simplified_model
-from vnat.test_aero.francois_mathis_model import pymathis_model
-from vnat.test_cases.data_model import set_test
-from vnat.test_cases.boundary_conditions import boundary_matrix
-from vnat.aero_peter.matrix_aero import P_Model
+from models.thermal.vnat.test_aero.francois_simplified_model import simplified_model
+from models.thermal.vnat.test_aero.francois_mathis_model import pymathis_model
+from models.thermal.vnat.test_cases.data_model import set_test
+from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
+from models.thermal.vnat.aero_peter.matrix_aero import P_Model
 
 t_final = 168
 plot_flows = True
@@ -30,7 +30,7 @@ sim_time = []
 
 # Generate or load test case
 flow_paths, nodes = set_test(model, apply_buoyancy)
-# from vnat.test_cases.data_model_coupling_Temp_Press import nodes, flow_paths
+# from models.thermal.vnat.test_cases.data_model_coupling_Temp_Press import nodes, flow_paths
 boundary_matrix(nodes, t_final, dynamic_test, apply_disturbance)
 
 if 0 in tests:

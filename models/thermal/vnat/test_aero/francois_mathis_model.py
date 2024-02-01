@@ -1,6 +1,6 @@
 import os
 import time
-from vnat.test_cases.data_model import t_ext
+from models.thermal.vnat.test_cases.data_model import t_ext
 import pymathis.pymathis as pm
 import numpy as np
 import math

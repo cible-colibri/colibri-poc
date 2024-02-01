@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from vnat.test_cases.data_model import flow_paths, nodes
+from models.thermal.vnat.test_cases.data_model import flow_paths, nodes
 import networkx as nx
 
 
