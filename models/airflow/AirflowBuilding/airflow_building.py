@@ -63,6 +63,10 @@ class AirflowBuilding(Model):
             elif self.case < 900:
                 file_name = 'house_bestest_600.json'
 
+        from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces  # bad
+        project_dict = import_project(file_name)
+        self.Space_list = import_spaces(project_dict)
+
         #################################################################################
         #   initialise weather data
         #################################################################################
@@ -90,7 +94,7 @@ class AirflowBuilding(Model):
 
         if my_P.pressure_model:
             try:
-                my_P.matrix_model_init(n_steps, flow_paths, nodes, my_T.Space_list)
+                my_P.matrix_model_init(n_steps, flow_paths, nodes, self.Space_list)
             except:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
@@ -106,8 +110,12 @@ class AirflowBuilding(Model):
         my_P.found = []  # for convergence plot of pressure model
         self.my_P = my_P
 
+        self.air_temperature_dictionary = []
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
+
+        # pass inputs to model
+        self.my_P.air_temperature_dictionary = self.air_temperature_dictionary.value
 
         niter_max = 0  # maximum number of internal (th-p) iterations
 
@@ -131,7 +139,7 @@ class AirflowBuilding(Model):
                     self.my_P.niter += 1
 
             self.flow_rates = self.my_P.matrix_model_send_to_thermal(
-                self.my_T.Space_list)  # send flow rate values to thermal model
+                self.Space_list)  # send flow rate values to thermal model
 
         self.my_P.found.append(np.sum(self.my_P.pressures))  # for convergence plotting
 

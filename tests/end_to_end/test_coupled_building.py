@@ -28,6 +28,7 @@ def test_coupled_building(file_name='house_1_1.json', weather_file='725650TYCST.
 
     airflow_building = AirflowBuilding("air flow model")
     airflow_building.case = 0
+    project.add(airflow_building)
 
     # *** if we want to connect an external controller for the blinds (pilots one variable)
     project.link(multizone_building, "air_temperature_dictionary", airflow_building, "air_temperature_dictionary")
@@ -36,7 +37,6 @@ def test_coupled_building(file_name='house_1_1.json', weather_file='725650TYCST.
     project.run()
 
     print_results(multizone_building.my_T)
-    print(multizone_building.air_temperatures) # all air node temperatures for the current (last) timestep with units and description
-    print(multizone_building.air_temperatures_series[-1]) # all air node temperatures of the last timestep (just the values)
+    print(multizone_building.air_temperatures) # all air node temperatures for the current (last) timestep
 
 

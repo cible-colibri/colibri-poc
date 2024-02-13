@@ -188,7 +188,7 @@ class Project:
             setattr(link.to_model, link.to_variable, value_out)
             if self.verbose:
                 print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
-            if self.iterate:
+            if self.iterate and not (hasattr(value_out, '__len__') or hasattr(value_out, '__len__')):
                 if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
                     self._has_converged = False
                 elif value_out == 0:

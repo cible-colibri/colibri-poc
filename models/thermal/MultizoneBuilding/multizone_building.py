@@ -97,6 +97,9 @@ class MultizoneBuilding(Model):
 
         my_T.found = []  # for convergence plot of thermal model
 
+        self.air_temperature_dictionary = self.my_T.send_to_pressure()
+        self.flow_rates = []
+
         #################################################################################
         #   Create thermal building model
         #################################################################################
@@ -104,6 +107,10 @@ class MultizoneBuilding(Model):
         my_T.init_thermal_model(project_dict, my_weather.weather_data, my_weather.latitude, my_weather.longitude, my_weather.time_zone, int_gains_trigger, infiltration_trigger, n_steps, dt)
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
+
+        # pass inputs to model
+        self.my_T.air_temperature_dictionary = self.air_temperature_dictionary.value
+        self.my_T.flow_array = self.flow_rates.value
 
         niter_max = 0  # maximum number of internal (th-p) iterations
 
@@ -126,11 +133,9 @@ class MultizoneBuilding(Model):
             converged = False  # set to True at each time step, before iterating
             self.my_T.found = []
 
-        self.air_temperature_dictionary = self.my_T.send_to_pressure()  # send temperature values to pressure model
+        self.my_T.air_temperature_dictionary = self.my_T.send_to_pressure()  # send temperature values to pressure model
 
         # Thermal model
-        self.my_T.air_temperature_dictionary = self.air_temperature_dictionary # refactor
-        self.my_T.flow_array = self.flow_rates
         self.my_T.calc_thermal_building_model_iter(time_step, self.my_weather)
         self.my_T.calc_convergence(threshold=1e-3)
 
