@@ -32,7 +32,7 @@ from models.thermal.vnat.thermal_model.generic import convergence_plot, print_re
 from models.thermal.vnat.aero_peter.matrix_aero import P_Model
 from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
 
-class DetailedBuilding(Model):
+class MultizoneBuilding(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
@@ -43,7 +43,8 @@ class DetailedBuilding(Model):
 
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
-        self.air_temperatures = Variable("air_temperatures", value = 20, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="The operative temperature for each airnode")
+        self.air_temperature_dictionary = Variable("air_temperature_dictionary", 0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
+        self.flow_rates = Variable("flow_rates", value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
 
     def initialize(self) -> None:
@@ -94,68 +95,13 @@ class DetailedBuilding(Model):
 
         self.my_T = my_T
 
-        #################################################################################
-        #   Create pressure building model
-        #################################################################################
-        # pressure model
-        boundary_matrix(my_weather, nodes, n_steps, dynamic_test=1,
-                        apply_disturbance=[24, 0])  # sets external pressures
-        my_P = P_Model('my_pressure_model')
-        if self.case == 0:  # Colibri house
-            my_P.pressure_model = True
-        else:  # bestest, no pressure calculation
-            my_P.pressure_model = False
-
-        if my_P.pressure_model:
-            try:
-                my_P.matrix_model_init(n_steps, flow_paths, nodes, my_T.Space_list)
-            except:
-                raise ValueError(
-                    'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
-            my_P.converged = False
-            my_P.solver = 1  # 0=pingpong, 1=fully iterative
-
-        else:  # simulate without pressure model
-            my_P.flow_paths = my_P.nodes = my_P.flow_array = []
-            my_P.pressures = 0
-            my_P.pressures_last = 0
-            my_P.converged = True
-
-        self.my_P = my_P
-
         my_T.found = []  # for convergence plot of thermal model
-        my_P.found = []  # for convergence plot of pressure model
 
         #################################################################################
         #   Create thermal building model
         #################################################################################
         my_T = Th_Model('myhouse')
         my_T.init_thermal_model(project_dict, my_weather.weather_data, my_weather.latitude, my_weather.longitude, my_weather.time_zone, int_gains_trigger, infiltration_trigger, n_steps, dt)
-
-        #################################################################################
-        #   Create pressure building model
-        #################################################################################
-        # pressure model
-        boundary_matrix(my_weather, nodes, n_steps, dynamic_test=1, apply_disturbance=[24, 0])  # sets external pressures
-        my_P = P_Model('my_pressure_model')
-        if self.case == 0:  # Colibri house
-            my_P.pressure_model = True
-        else:  # bestest, no pressure calculation
-            my_P.pressure_model = False
-
-        if my_P.pressure_model:
-            try:
-                my_P.matrix_model_init(n_steps, flow_paths, nodes, my_T.Space_list)
-            except:
-                raise ValueError('Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
-            my_P.converged = False
-            my_P.solver = 1  # 0=pingpong, 1=fully iterative
-
-        else:  # simulate without pressure model
-            my_P.flow_paths = my_P.nodes = my_P.flow_array = []
-            my_P.pressures = 0
-            my_P.pressures_last = 0
-            my_P.converged = True
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
@@ -177,46 +123,27 @@ class DetailedBuilding(Model):
             self.my_T.blind_position = self.blind_position.value  # open = 1 np.clip(results['spaces_air'][:, t-1] < 25., 0.15, 1.)
 
             # reset parameters for next time step
-            self.my_P.niter = 0
             converged = False  # set to True at each time step, before iterating
             self.my_T.found = []
-            self.my_P.found = []
 
-        self.my_T.air_temperature_dictionary = self.my_T.send_to_pressure()  # send temperature values to pressure model
-
-        # Pressure model
-        if self.my_P.pressure_model:
-            self.my_P.temperatures_update(self.my_T.air_temperature_dictionary)
-            if self.my_P.solver == 1:  # iterative together with thermal model
-                self.my_P.matrix_model_calc(time_step, n_iteration)
-                self.my_P.matrix_model_check_convergence(n_iteration, niter_max)
-            else:  # ping pong
-                while (not self.my_P.converged or self.my_P.niter >= niter_max) & (n_iteration == 0):
-                    self.my_P.matrix_model_calc(time_step, n_iteration)
-                    self.my_P.matrix_model_check_convergence(n_iteration, niter_max)
-                    self.my_P.niter += 1
-
-            self.my_P.flow_array = self.my_P.matrix_model_send_to_thermal(
-                self.my_T.Space_list)  # send flow rate values to thermal model
+        self.air_temperature_dictionary = self.my_T.send_to_pressure()  # send temperature values to pressure model
 
         # Thermal model
-        self.my_T.flow_array = self.my_P.flow_array
+        self.my_T.air_temperature_dictionary = self.air_temperature_dictionary # refactor
+        self.my_T.flow_array = self.flow_rates
         self.my_T.calc_thermal_building_model_iter(time_step, self.my_weather)
         self.my_T.calc_convergence(threshold=1e-3)
 
         self.my_T.found.append(np.sum(self.my_T.hvac_flux))  # for convergence plotting
-        self.my_P.found.append(np.sum(self.my_P.pressures))  # for convergence plotting
 
         # save flux for next time step as initial guess
         self.my_T.hvac_flux_0 = self.my_T.hvac_flux  # for next time step, start with last value
-        self.my_P.pressures_last = self.my_P.pressures  # for next time step, start with last value
 
         self.air_temperatures = self.my_T.air_temperatures
 
     def iteration_done(self, time_step: int = 0):
         self.my_T.states_0 = self.my_T.states
         store_results(time_step, self.my_T, self.my_weather)
-        self.my_P.matrix_model_set_results(time_step)
 
     def timestep_done(self, time_step: int = 0):
         pass

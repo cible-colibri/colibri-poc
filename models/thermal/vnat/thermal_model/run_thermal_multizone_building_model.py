@@ -125,11 +125,11 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
 
         while not converged:  # iterative loop
 
-            my_T.internal_temperatures_dict = my_T.send_to_pressure()  # send temperature values to pressure model
+            my_T.air_temperature_dictionary = my_T.send_to_pressure()  # send temperature values to pressure model
 
             # Pressure model
             if my_P.pressure_model:
-                my_P.temperatures_update(my_T.internal_temperatures_dict)
+                my_P.temperatures_update(my_T.air_temperature_dictionary)
                 if my_P.solver == 1:  # iterative together with thermal model
                     my_P.matrix_model_calc(t, niter)
                     my_P.matrix_model_check_convergence(niter, niter_max)

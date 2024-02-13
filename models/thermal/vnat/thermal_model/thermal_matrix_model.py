@@ -146,7 +146,7 @@ class Th_Model(Model):
                                                           self.radiative_share_sensor, self.max_heating_power,
                                                           self.max_cooling_power, self.ventilation_gain_multiplier, ventilation_gain_coefficient,
                                                           self.efficiency_heat_recovery, self.convective_internal_gains,
-                                                          self.radiative_internal_gains, self.internal_temperatures_dict,
+                                                          self.radiative_internal_gains, self.air_temperature_dictionary,
                                                           self.flow_array)
 
         # now apply the hvac_flux and simulate the building a last time to obtain all results
@@ -157,7 +157,7 @@ class Th_Model(Model):
             self.ventilation_gains = (exterior_temperature_act - air_temperatures) * ventilation_gain_coefficient
         else:
             # with flow matrix and airflow calculation
-            self.ventilation_gains = calculate_ventilation_losses(self.flow_array, self.internal_temperatures_dict, exterior_temperature_act, self.efficiency_heat_recovery, self.ventilation_gain_multiplier)
+            self.ventilation_gains = calculate_ventilation_losses(self.flow_array, self.air_temperature_dictionary, exterior_temperature_act, self.efficiency_heat_recovery, self.ventilation_gain_multiplier)
 
         # set heat flux from controller for "official building simulation"
         self.convective_gains = self.hvac_flux * (1 - self.radiative_share_hvac) + self.ventilation_gains + self.convective_internal_gains

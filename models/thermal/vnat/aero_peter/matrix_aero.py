@@ -207,9 +207,9 @@ class P_Model:
         return flow_array
 
 
-    def temperatures_update(self, internal_temperatures_dict):
+    def temperatures_update(self, air_temperature_dictionary):
         # internal temperatures
-        for temperature in internal_temperatures_dict:
+        for temperature in air_temperature_dictionary:
             for node in self.nodes:
                 if node == temperature:
-                    self.nodes[node]['temperature'] = internal_temperatures_dict[temperature]
+                    self.nodes[node]['temperature'] = air_temperature_dictionary[temperature]
