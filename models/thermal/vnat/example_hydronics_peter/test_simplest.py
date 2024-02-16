@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from models.thermal.vnat.example_hydronics_peter.pressure_functions import print_results, gen_pressure_system, generate_AA_BB_pressure_system, \
     plot_grid, plot_convergence, calc_velocity, balancing, size_tubes
 from models.thermal.vnat.example_hydronics_peter.tests import press_tests
-from models.thermal.models.thermal.vnat.example_hydronics_peter.pump_functions import pump, pump_chars
+from models.thermal.vnat.example_hydronics_peter.pump_functions import pump, pump_chars
 from models.thermal.vnat.example_hydronics_peter.constants import tube_base
 from models.thermal.vnat.example_hydronics_peter.constants import p_visc
 

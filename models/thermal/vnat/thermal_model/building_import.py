@@ -62,7 +62,7 @@ def import_boundaries(project_dict):
         for layer_type in boundary_type['layers']:
             for param in bound_param_list:
                 if param == 'discret':
-                    value = int(np.random.random()*10)  # in general, 1 node per layer is enough
+                    value = 2  # in general, 1 node per layer is enough - i.e. in addition to the internal layers each wall has surface layers on each surface
                 else:
                     value = layer_list[layer_type['type_id']][param]
                 getattr(Boundary, param).append(value)
@@ -104,7 +104,6 @@ def import_boundaries(project_dict):
                     Window.absorption = window['absorption']
                 else:
                     Window.absorption = 0.08
-
 
                 Window_list.append(Window)
                 Boundary.area -= Window.area

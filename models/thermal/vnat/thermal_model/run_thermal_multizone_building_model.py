@@ -23,6 +23,7 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
     case = 0
     if case == 0:  # custom test
         file_name = 'house_1.json'
+        # file_name = 'house_100m2.json'
         epw_file = 'Paris.epw'  # old weather file
         time_zone = 'Europe/Paris'
     else:
@@ -33,6 +34,8 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
             file_name = 'house_bestest_900.json'
         elif case < 900:
             file_name = 'house_bestest_600.json'
+        epw_file = 'Paris.epw'  # old weather file
+        time_zone = 'Europe/Paris'
 
     #################################################################################
     #   initialise weather data
@@ -91,7 +94,7 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
     #################################################################################
     #       simulation parameters
     #################################################################################
-    niter_max = 0  # maximum number of iterations
+    niter_max = 100  # maximum number of iterations
     to_plot = True
     plot_convergence = False
     my_T.found = []  # for convergence plot of thermal model
@@ -108,13 +111,13 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
         #################################################################################
         # calculate operation mode based on the results of the last time step
         my_T.air_temperatures = get_states_from_index(my_T.states, my_T.index_states, 'spaces_air')
-        my_T.op_mode, my_T.setpoint = operation_mode(my_T.air_temperatures, my_weather.rolling_external_temperature[t], my_T.setpoint_heating, my_T.setpoint_cooling, my_T.n_spaces, my_T.free_float)
+        my_T.op_mode, my_T.setpoint = operation_mode(my_T.air_temperatures, my_weather.rolling_external_temperature[t], my_T.setpoint_heating, my_T.setpoint_cooling, my_T.n_spaces, my_T.op_modes)
 
         # blind control
         my_T.blind_position = 1.  # open = 1 np.clip(results['spaces_air'][:, t-1] < 25., 0.15, 1.)
 
         # reset parameters for next time step
-        niter = 0  # set number of iteration to 0 at each time step
+        niter = 100  # set number of iteration to 0 at each time step
         my_P.niter = 0
         converged = False  # set to True at each time step, before iterating
         my_T.found = []
@@ -125,11 +128,17 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
 
         while not converged:  # iterative loop
 
-            my_T.air_temperature_dictionary = my_T.send_to_pressure()  # send temperature values to pressure model
+            # myPhanie.run()
+            # my_T.run()
+            # my_P.run()
+            # if (my_T.converged & my_P.converged & my_Phanie.converged) or (niter >= niter_max):
+            #     converged = True
+
+            my_T.internal_temperatures_dict = my_T.send_to_pressure()  # send temperature values to pressure model
 
             # Pressure model
             if my_P.pressure_model:
-                my_P.temperatures_update(my_T.air_temperature_dictionary)
+                my_P.temperatures_update(my_T.internal_temperatures_dict)
                 if my_P.solver == 1:  # iterative together with thermal model
                     my_P.matrix_model_calc(t, niter)
                     my_P.matrix_model_check_convergence(niter, niter_max)
@@ -151,7 +160,7 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
 
             if (my_T.converged & my_P.converged) or (niter >= niter_max):
                 converged = True
-                my_T.states_0 = my_T.states
+                my_T.states_last = my_T.states
                 convergence_plot(my_T.found, t, niter, 'Thermal', plot_convergence)
                 convergence_plot(my_P.found, t, niter, 'Pressure', plot_convergence)
                 store_results(t, my_T, my_weather)
@@ -161,16 +170,18 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
                 niter += 1
 
             # save flux for next time step as initial guess
-            my_T.hvac_flux_0 = my_T.hvac_flux  # for next time step, start with last value
+            my_T.hvac_flux_last = my_T.hvac_flux  # for next time step, start with last value
             my_P.pressures_last = my_P.pressures  # for next time step, start with last value
 
 
+    my_T.results['av_outdoor_heating_temperature'] = np.mean(my_T.results['outdoor_temperatures'][0][my_T.results['hvac_flux'][0]>0.1])
     print('###################################################################')
     print('Simulation time: ', np.round(time.time() - start, 3), 's')
     print('###################################################################')
 
     print_results(my_T)
-#    plot_results(my_T.results, to_plot)
+    print('average ambient heating season temperature : ', my_T.results['av_outdoor_heating_temperature'])
+    plot_results(my_T.results, to_plot)
 
 if __name__ == '__main__':
     simulate_project()

@@ -4,36 +4,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces, import_boundaries
 from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
-    set_U_from_index, get_states_from_index
+    set_U_from_index, get_states_from_index, get_u_values
 from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
 from models.thermal.vnat.thermal_model.weather_model import import_epw_weather, solar_processor
 from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.results_handling import initialise_results
 
-from core.model import Model
 
-class Th_Model(Model):
+class Th_Model:
     def __init__(self, name):
         self.name = name
-
-    def check_units(self):
-        pass
-
-    def initialize(self):
-        pass
-
-    def iteration_done(self):
-        pass
-
-    def run(self):
-        pass
-
-    def simulation_done(self):
-        pass
-
-    def timestep_done(self):
-        pass
 
     def init_thermal_model(self, project_dict, weather_data, latitude, longitude, time_zone, int_gains_trigger=1, infiltration_trigger=1, n_steps = 8760, dt=3600):
 
@@ -49,6 +30,9 @@ class Th_Model(Model):
         # function to define radiative shares of wall surfaces inside a thermal zone
         get_rad_shares(Boundary_list, Window_list, Space_list)
 
+        # calculate global u-values for final balances of outputs (not for calculation)
+        get_u_values(Space_list)
+
         # create A and B matrices
         A, B, self.index_states, self.index_inputs = generate_A_and_B(Space_list, Boundary_list, Window_list)
 
@@ -60,7 +44,7 @@ class Th_Model(Model):
         self.n_states = np.shape(B)[0]
         self.U = np.zeros(self.n_inputs)
         self.states = np.zeros(self.n_states) + 20.  # states in order: boundary nodes, window nodes, air nodes, mean radiant nodes
-        self.states_0 = np.zeros(self.n_states) + 20.  # states in order: boundary nodes, window nodes, air nodes, mean radiant nodes
+        self.states_last = np.zeros(self.n_states) + 20.  # states in order: boundary nodes, window nodes, air nodes, mean radiant nodes
 
         # generate global dict where results can be saved
         self.results, self.res_list = initialise_results(self.index_states, Space_list, Boundary_list, n_steps)
@@ -80,13 +64,15 @@ class Th_Model(Model):
         self.radiative_share_sensor = 0.0  # this is where you control on
         self.setpoint_heating = 20.
         self.setpoint_cooling = 27.
-        self.free_float = False
+        self.op_modes = ['heating', 'cooling']
 
         # HVAC system parameters
         self.radiative_share_hvac = 0.0  # radiative share of heat emission of emitter
         self.max_heating_power = 10000.
         self.max_cooling_power = 10000.
-        self.hvac_flux_0 = np.zeros(self.n_spaces)
+        self.hvac_flux_last = np.zeros(self.n_spaces)
+        self.window_losses = np.zeros(self.n_spaces)
+        self.wall_losses = np.zeros(self.n_spaces)
 
         # internal gains
         self.int_gains_trigger = int_gains_trigger
@@ -100,7 +86,7 @@ class Th_Model(Model):
         # ventilation parameters
         self.infiltration_trigger = infiltration_trigger
         self.air_change_rate = infiltration_trigger * 0.41
-        self.efficiency_heat_recovery = 0.  # exhaust ventilation, no heat recovery
+        self.efficiency_heat_recovery = 0.0  # exhaust ventilation, no heat recovery
         self.ventilation_gain_multiplier = np.zeros(self.n_spaces)
         for i, space in enumerate(Space_list):
             self.ventilation_gain_multiplier[i] = space.volume * rho_ref * cp_air_ref
@@ -127,11 +113,12 @@ class Th_Model(Model):
         # set heat fluxes from internal gains and solar transmission
         self.convective_internal_gains = self.internal_gains_array * (1. - self.radiative_share_internal_gains)
         self.radiative_internal_gains = self.solar_transmitted_flux_matrix[:, t] * self.blind_position + self.internal_gains_array * self.radiative_share_internal_gains
+        ext_temperature_operative = exterior_temperature_act * (1 - self.f_sky) + sky_temperature_act * self.f_sky
 
         self.U = np.zeros(self.n_inputs)
         set_U_from_index(self.U, self.index_inputs, 'ground_temperature', ground_temperature_const)
         set_U_from_index(self.U, self.index_inputs, 'exterior_air_temperature', exterior_temperature_act)
-        set_U_from_index(self.U, self.index_inputs, 'exterior_radiant_temperature', exterior_temperature_act * (1 - self.f_sky) + sky_temperature_act * self.f_sky)
+        set_U_from_index(self.U, self.index_inputs, 'exterior_radiant_temperature', ext_temperature_operative)
         set_U_from_index(self.U, self.index_inputs, 'radiative_gain_boundary_external', self.solar_bound_arriving_flux_matrix[:, t] * self.boundary_absorption_array)
 
         # ventilation preprocessing
@@ -141,7 +128,7 @@ class Th_Model(Model):
 
         # space heating control
         self.hvac_flux = space_temperature_control_simple(self.op_mode, self.setpoint, self.Ad, self.Bd, self.states,
-                                                          self.U, self.hvac_flux_0, self.index_states,
+                                                          self.U, self.hvac_flux_last, self.index_states,
                                                           self.index_inputs, self.radiative_share_hvac,
                                                           self.radiative_share_sensor, self.max_heating_power,
                                                           self.max_cooling_power, self.ventilation_gain_multiplier, ventilation_gain_coefficient,
@@ -151,7 +138,7 @@ class Th_Model(Model):
 
         # now apply the hvac_flux and simulate the building a last time to obtain all results
         # recalculate ventilation losses
-        if len(self.flow_array) == 0:  # without pressure calculation, only use air change rates for all rooms
+        if self.flow_array == 0 or len(self.flow_array) == 0:  # without pressure calculation, only use air change rates for all rooms
             # update coefficient for flow x cp x dT
             air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
             self.ventilation_gains = (exterior_temperature_act - air_temperatures) * ventilation_gain_coefficient
@@ -166,7 +153,13 @@ class Th_Model(Model):
         set_U_from_index(self.U, self.index_inputs, 'space_radiative_gain', self.radiative_gains)
 
         # apply corrected flux to the model
-        self.states = runStateSpace(self.Ad, self.Bd, self.states_0, self.U)
+        self.states = runStateSpace(self.Ad, self.Bd, self.states_last, self.U)
+        # for outputs
+        self.window_gains = self.solar_transmitted_flux_matrix[:, t]
+        # for i, space in enumerate(self.Space_list):
+        #     self.window_losses[i] = space.u_window * space.window_area * (ext_temperature_operative - air_temperatures[i])
+        #     self.wall_losses[i] = space.u_wall * space.wall_area * (ext_temperature_operative - air_temperatures[i])
+
 
     def send_to_pressure(self):
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
@@ -176,4 +169,4 @@ class Th_Model(Model):
         return temperatures_dict
 
     def calc_convergence(self, threshold=1e-3):
-        self.converged = np.sum(np.abs(self.hvac_flux - self.hvac_flux_0)) <= threshold
+        self.converged = np.sum(np.abs(self.hvac_flux - self.hvac_flux_last)) <= threshold

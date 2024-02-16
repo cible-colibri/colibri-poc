@@ -12,8 +12,9 @@ class Weather:
         self.weather_data, self.latitude, self.longitude, self.solar_direct, self.solar_diffuse, self.ext_temperature = import_epw_weather(epw_file)
         self.ground_temperature = self.weather_data['ground_temperature']
         self.sky_temperature = self.weather_data['sky_temperature']
-        self.rolling_external_temperature = self.ext_temperature.rolling(168).mean()
-        self.rolling_external_temperature[0:168] = self.rolling_external_temperature[169]
+        time_window = 48
+        self.rolling_external_temperature = self.ext_temperature.rolling(time_window).mean()
+        self.rolling_external_temperature[0:time_window] = self.rolling_external_temperature[time_window:2 * time_window]
         self.time_zone = tz
 
         #################################################################################
@@ -21,9 +22,9 @@ class Weather:
 def ground_temperature_kusuda(air_temperature, ground_diffusivity, depth):
 
     if len(air_temperature) != 8760:
-        t_window_ground = 168 * 4
-        ground_temperature = air_temperature.rolling(t_window_ground).mean()
-        ground_temperature[0:t_window_ground] = ground_temperature[t_window_ground:2 * t_window_ground]
+        time_window = 168 * 4
+        ground_temperature = air_temperature.rolling(time_window).mean()
+        ground_temperature[0:time_window] = ground_temperature[time_window:2 * time_window]
 
     else:
         ext_temperature_smoothed = air_temperature.rolling(int(24. * 30.5)).mean().fillna(method='bfill')

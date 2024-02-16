@@ -17,8 +17,8 @@ def test_detailed_building(file_name='house_1_1.json', weather_file='725650TYCST
     # Create a project
     project = Project()
 
-    project.iterate = False
-    project.n_max_iterations = 1
+    project.iterate = True
+    project.n_max_iterations = 10
     project.time_steps = 8760
 
     detailed_building = DetailedBuilding("Chez Peter")

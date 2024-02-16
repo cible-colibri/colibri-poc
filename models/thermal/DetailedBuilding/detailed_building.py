@@ -213,6 +213,9 @@ class DetailedBuilding(Model):
 
         self.air_temperatures = self.my_T.air_temperatures
 
+    def converged(self):
+        return self.my_P.converged and self.my_T.converged
+
     def iteration_done(self, time_step: int = 0):
         self.my_T.states_0 = self.my_T.states
         store_results(time_step, self.my_T, self.my_weather)

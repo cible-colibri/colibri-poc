@@ -49,8 +49,8 @@ class P_Model:
         self.FFb_act = np.ones((self.n_syst_nodes, self.n_bound_nodes)) * self.nominal_flowrate  # initial flow rate is nominal one in all segments
 
         # initial states of Network
-        self.pressures = np.zeros(self.n_syst_nodes)             # initial node pressures to 0
-        self.pressures_last = np.zeros(self.n_syst_nodes) + 20.  # set a different pressure for previous time step
+        self.pressures = np.zeros((self.n_syst_nodes,1))             # initial node pressures to 0
+        self.pressures_last = np.zeros((self.n_syst_nodes,1)) + 20.  # set a different pressure for previous time step
 
         # initialise results
         self.pressure_results = np.zeros((t_final, self.n_syst_nodes))
@@ -136,7 +136,7 @@ class P_Model:
         # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         # save data as in test Francois
         if self.pressure_model:
-            self.pressure_results[t, :] = self.pressures[:, 0]
+            self.pressure_results[t, :] = self.pressures[:,0]
             # write pressures in nodes dict
             i = 0
             for node in self.nodes:
@@ -144,7 +144,7 @@ class P_Model:
                     if t == 0:
                         self.nodes[node]['pressure_list'] = np.zeros(self.t_final)
 
-                    self.nodes[node]['pressure_list'][t] = self.pressures[i, 0]
+                    self.nodes[node]['pressure_list'][t] = self.pressures[i,0]
                     i += 1
 
             # write results of flow rates in flow_paths dict
@@ -207,9 +207,9 @@ class P_Model:
         return flow_array
 
 
-    def temperatures_update(self, air_temperature_dictionary):
+    def temperatures_update(self, internal_temperatures_dict):
         # internal temperatures
-        for temperature in air_temperature_dictionary:
+        for temperature in internal_temperatures_dict:
             for node in self.nodes:
                 if node == temperature:
-                    self.nodes[node]['temperature'] = air_temperature_dictionary[temperature]
+                    self.nodes[node]['temperature'] = internal_temperatures_dict[temperature]

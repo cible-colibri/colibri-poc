@@ -161,9 +161,11 @@ class Project:
                     self._has_converged    = True
                     self.n_non_convergence = self.n_non_convergence + 1
                     self.non_convergence_times.append(time_step)
-                self._end_iteration(time_step)
-                self._save_model_data(time_step)
                 n_iteration = n_iteration + 1
+                if not self.iterate:
+                    self._has_converged = True
+            self._end_iteration(time_step)
+            self._save_model_data(time_step)
             self._end_time_step(time_step)
         print("Simulation summary")
         print("==================")
@@ -188,7 +190,11 @@ class Project:
             setattr(link.to_model, link.to_variable, value_out)
             if self.verbose:
                 print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
-            if self.iterate and not (hasattr(value_out, '__len__') or hasattr(value_out, '__len__')):
+            if (not link.to_model.converged()):
+                self._has_converged = False
+            elif (not link.from_model.converged()):
+                    self._has_converged = False
+            elif self.iterate and not (hasattr(value_out, '__len__') or hasattr(value_out, '__len__')):
                 if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
                     self._has_converged = False
                 elif value_out == 0:

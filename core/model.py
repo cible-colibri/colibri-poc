@@ -108,6 +108,9 @@ class Model(metaclass=MetaModel):
     def simulation_done(self, time_step: int = 0) -> None:
         raise NotImplementedError("Please, implement me...")
 
+    def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
+        return None
+
     def get_variable(self, name: str) -> Variable:
         variables = self.inputs + self.outputs + self.parameters
         return self._get_variable(name, variables)

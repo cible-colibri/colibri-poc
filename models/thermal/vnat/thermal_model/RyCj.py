@@ -52,21 +52,31 @@ def get_rad_shares(Boundary_list, Window_list, Space_list):
             if obj.side_1 == space.label:  # this side is in contact with the current space
                 if env_type != 'floor':
                     space.envelope_area += obj.area
-                space.envelope_list[obj.label] = {'type': env_type, 'area': obj.area, 'side': 'side_1'}
+                if obj.side_2 == 'exterior':
+                    u_value = obj.u_value
+                else:
+                    u_value = 0.
+                space.envelope_list[obj.label] = {'type': env_type, 'area': obj.area, 'side': 'side_1', 'u_value': u_value}
             if obj.side_2 == space.label:  # this side is in contact with the current space
                 if env_type != 'floor':
                     space.envelope_area += obj.area
-                space.envelope_list[obj.label] = {'type': env_type, 'area': obj.area, 'side': 'side_2'}
+                if obj.side_1 == 'exterior':
+                    u_value = obj.u_value
+                else:
+                    u_value = 0.
+                space.envelope_list[obj.label] = {'type': env_type, 'area': obj.area, 'side': 'side_2', 'u_value': u_value}
         for obj in Window_list:  # look which boundary is in contact with the current space
             # if it is an internal wall in a space, both sides are accounted for (very simplified)
             if obj.side_1 == space.label:  # this side is in contact with the current space
                 space.envelope_area += obj.area
                 space.envelope_list[obj.label] = {'type': 'window', 'area': obj.area, 'side': 'side_1',
-                                                  'boundary_name': obj.bound_name, 'transmittance': obj.transmittance}
+                                                  'boundary_name': obj.bound_name, 'transmittance': obj.transmittance,
+                                                  'u_value': obj.u_value}
             if obj.side_2 == space.label:  # this side is in contact with the current space
                 space.envelope_area += obj.area
                 space.envelope_list[obj.label] = {'type': 'window', 'area': obj.area, 'side': 'side_1',
-                                                  'boundary_name': obj.bound_name, 'transmittance': obj.transmittance}
+                                                  'boundary_name': obj.bound_name, 'transmittance': obj.transmittance,
+                                                  'u_value': obj.u_value}
 
     # no go through again and associate radiative distribution shares
     floor_rad_share = 0.642  # bestest value ...
@@ -85,6 +95,28 @@ def get_rad_shares(Boundary_list, Window_list, Space_list):
             checker += space.envelope_list[env]['radiative_share']
         if np.abs(checker - 1) > 1e-5:
             raise ValueError('radiative share calculation is wrong. The sum of all shares should be equal to 1, but is ', checker)
+
+
+def get_u_values(Space_list):
+    u_wall = 0.
+    wall_area = 0.
+    u_window = 0.
+    window_area = 0.
+    for obj in Space_list:
+        for env in obj.envelope_list:
+            element = obj.envelope_list[env]
+            if element['type'] != 'window':
+                u_wall += element['u_value'] * element['area']
+                wall_area += element['area']
+            else:
+                u_window += element['u_value'] * element['area']
+                window_area += element['area']
+        u_wall /= wall_area
+        u_window /= window_area
+        obj.u_wall = u_wall
+        obj.u_window = u_window
+        obj.wall_area = wall_area
+        obj.window_area = window_area
 
 
 def gen_wall_model(boundary):

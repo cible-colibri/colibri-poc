@@ -16,6 +16,14 @@ def store_results(t, my_T, my_weather):
             my_T.results['ground_temperature'][0, t] = my_weather.ground_temperature[t]
         elif res == 'hvac_flux':
             my_T.results['hvac_flux'][0:len(my_T.Space_list), t] = my_T.hvac_flux
+        elif res == 'ventilation_gains':
+            my_T.results['ventilation_gains'][0:len(my_T.Space_list), t] = my_T.ventilation_gains * (my_T.ventilation_gains < 0.) * (my_T.op_mode[0] == 'heating')
+        elif res == 'window_losses':
+            my_T.results['window_losses'][0:len(my_T.Space_list), t] = my_T.window_losses * (my_T.window_losses < 0.) * (my_T.op_mode[0] == 'heating')
+        elif res == 'window_gains':
+            my_T.results['window_gains'][0:len(my_T.Space_list), t] = my_T.window_gains * (my_T.op_mode[0] == 'heating')
+        elif res == 'wall_losses':
+            my_T.results['wall_losses'][0:len(my_T.Space_list), t] = my_T.wall_losses * (my_T.wall_losses < 0.) * (my_T.op_mode[0] == 'heating')
         elif 'solar' in res:
             pass
         else:
@@ -57,6 +65,7 @@ def plot_results(results, to_plot):
         plt.plot(results['ground_temperature'].T)
         plt.ylabel('Temp [°C]')
         plt.ylim([-15, 30])
+        # plt.xlim([5000, 6000])
         plt.grid()
         plt.legend(['direct outdoor_temperatures', 'ground_temperature'])
         plt.title('Outdoor temperatures')
@@ -73,14 +82,14 @@ def plot_results(results, to_plot):
         plt.plot(results['spaces_air'].T)
         plt.plot(results['spaces_mean_radiant'].T)
         plt.ylabel('Temp [°C]')
-        plt.ylim([10, 40])
+        plt.ylim([10, 35])
         plt.grid()
         plt.legend(['Setpoint', 'air_temperature', 'radiant_temperature'])
         plt.title('Space air and mean radiant temperatures')
         ax4 = plt.subplot(3, 2, 4,  sharex=ax1)
         plt.plot(results['windows'].T)
         plt.ylabel('Temp [°C]')
-        plt.ylim([-10, 40])
+        plt.ylim([-10, 35])
         plt.grid()
         plt.title('Window surface temperatures')
         ax5 = plt.subplot(3, 2, 5,  sharex=ax1)
@@ -106,3 +115,20 @@ def plot_results(results, to_plot):
         plt.title('Hvac power')
         plt.suptitle('All temperatures in house.json')
         plt.show()
+
+        plt.figure()
+        plt.plot(results['wall_losses'].T, 'k')
+        plt.plot(results['window_losses'].T, 'r')
+        plt.plot(results['ventilation_gains'].T, 'b')
+        plt.plot(results['window_gains'].T, 'g')
+        plt.legend(['Wall losses', 'Window losses', 'Ventilation losses', 'Window gains'])
+        plt.show()
+        window_losses = np.sum(results['window_losses'])/1000.
+        wall_losses = np.sum(results['wall_losses']) / 1000.
+        ventilation_losses = np.sum(results['ventilation_gains']) / 1000.
+        window_gains = np.sum(results['window_gains']) / 1000.
+        losses = window_losses + wall_losses + ventilation_losses
+        window_loss_share = np.round(window_losses / losses * 100., 1)
+        wall_loss_share = np.round(wall_losses / losses * 100., 1)
+        ventilation_loss_share = np.round(ventilation_losses / losses * 100., 1)
+        print('Walls : ', wall_loss_share, 'Windows : ', window_loss_share, 'Ventilation : ', ventilation_loss_share)

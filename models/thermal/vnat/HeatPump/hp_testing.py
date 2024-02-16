@@ -9,3 +9,6 @@ cop_nom = {'sink': 35, 'source': 7, 'cop': 3.94}
 
 #index_source =
 #for i in range(3):  # go towards up
+
+# modulation
+# f_cop_min = LRmin * phi_compr_100 * flr_min / (phi_th_100 * LRmin - phi_aux * flr_min)

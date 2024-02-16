@@ -123,7 +123,7 @@ class AirflowBuilding(Model):
 
             # reset parameters for next time step
             self.my_P.niter = 0
-            converged = False  # set to True at each time step, before iterating
+            self.my_P.converged = False  # set to True at each time step, before iterating
             self.my_P.found = []
 
         # Pressure model
@@ -145,6 +145,10 @@ class AirflowBuilding(Model):
 
         # save flux for next time step as initial guess
         self.my_P.pressures_last = self.my_P.pressures  # for next time step, start with last value
+
+
+    def converged(self):
+        return self.my_P.converged
 
     def iteration_done(self, time_step: int = 0):
         self.my_P.matrix_model_set_results(time_step)

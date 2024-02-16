@@ -1,7 +1,7 @@
 import numpy as np
 from models.thermal.vnat.example_hydronics_peter.pressure_functions import calc_tube
 from models.thermal.vnat.example_hydronics_peter.constants import tube_base
-from models.thermal.models.thermal.vnat.example_hydronics_peter.pump_functions import pump, pump_chars
+from models.thermal.vnat.example_hydronics_peter.pump_functions import pump, pump_chars
 import matplotlib.pyplot as plt
 import time
 

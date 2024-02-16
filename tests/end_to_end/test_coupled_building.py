@@ -19,6 +19,8 @@ def test_coupled_building(file_name='house_1_1.json', weather_file='725650TYCST.
     project.iterate = True
     project.n_max_iterations = 10
     project.time_steps = 8760
+    project.verbose = False
+
 
     multizone_building = MultizoneBuilding("thermal model")
     multizone_building.blind_position = 1 # 1 = open
@@ -37,6 +39,9 @@ def test_coupled_building(file_name='house_1_1.json', weather_file='725650TYCST.
     project.run()
 
     print_results(multizone_building.my_T)
-    print(multizone_building.air_temperatures) # all air node temperatures for the current (last) timestep
+    # kitchen_temperatures = [x['kitchen_1'] for x in multizone_building.air_temperature_dictionary_series]
+    # import matplotlib.pyplot as plt
+    # plt.plot(kitchen_temperatures)
+    # plt.show()
 
 

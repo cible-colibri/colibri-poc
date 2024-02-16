@@ -1,10 +1,4 @@
-from datetime import time
-
-import numpy
 import numpy as np
-import pandas
-import matplotlib.pyplot as plt
-
 
 # ========================================
 # Internal imports
@@ -15,22 +9,19 @@ from core.model        import Model
 from core.parameters   import Parameters
 from core.outputs      import Outputs
 from core.variable     import Variable
-from models.thermal.vnat.test_cases.data_model_coupling_Temp_Press import nodes, flow_paths
 from utils.enums_utils import (
                                 Roles,
                                 Units,
                                )
 
-import matplotlib.pyplot as plt
 from models.thermal.vnat.thermal_model.building_import import import_project
 from models.thermal.vnat.thermal_model.RyCj import get_states_from_index
 from models.thermal.vnat.thermal_model.controls import operation_mode
 from models.thermal.vnat.thermal_model.weather_model import Weather
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
-from models.thermal.vnat.thermal_model.generic import convergence_plot, print_results, plot_results, store_results
-from models.thermal.vnat.aero_peter.matrix_aero import P_Model
-from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
+from models.thermal.vnat.thermal_model.generic import store_results
+
 
 class MultizoneBuilding(Model):
 
@@ -100,16 +91,9 @@ class MultizoneBuilding(Model):
         self.air_temperature_dictionary = self.my_T.send_to_pressure()
         self.flow_rates = []
 
-        #################################################################################
-        #   Create thermal building model
-        #################################################################################
-        my_T = Th_Model('myhouse')
-        my_T.init_thermal_model(project_dict, my_weather.weather_data, my_weather.latitude, my_weather.longitude, my_weather.time_zone, int_gains_trigger, infiltration_trigger, n_steps, dt)
-
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
         # pass inputs to model
-        self.my_T.air_temperature_dictionary = self.air_temperature_dictionary.value
         self.my_T.flow_array = self.flow_rates.value
 
         niter_max = 0  # maximum number of internal (th-p) iterations
@@ -124,13 +108,14 @@ class MultizoneBuilding(Model):
                                                                    self.my_weather.rolling_external_temperature[time_step],
                                                                    self.my_T.setpoint_heating,
                                                                    self.my_T.setpoint_cooling, self.my_T.n_spaces,
-                                                                   self.my_T.free_float)
+                                                                   self.my_T.op_modes)
+
 
             # blind control
             self.my_T.blind_position = self.blind_position.value  # open = 1 np.clip(results['spaces_air'][:, t-1] < 25., 0.15, 1.)
 
             # reset parameters for next time step
-            converged = False  # set to True at each time step, before iterating
+            self.my_T.converged = False  # set to True at each time step, before iterating
             self.my_T.found = []
 
         self.my_T.air_temperature_dictionary = self.my_T.send_to_pressure()  # send temperature values to pressure model
@@ -144,7 +129,10 @@ class MultizoneBuilding(Model):
         # save flux for next time step as initial guess
         self.my_T.hvac_flux_0 = self.my_T.hvac_flux  # for next time step, start with last value
 
-        self.air_temperatures = self.my_T.air_temperatures
+        self.air_temperature_dictionary = self.my_T.air_temperature_dictionary
+
+    def converged(self):
+        return self.my_T.converged
 
     def iteration_done(self, time_step: int = 0):
         self.my_T.states_0 = self.my_T.states
