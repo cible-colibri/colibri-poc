@@ -114,6 +114,9 @@ class AirflowBuilding(Model):
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
+        if not self.my_P.pressure_model:
+            return
+
         # pass inputs to model
         self.my_P.air_temperature_dictionary = self.air_temperature_dictionary.value
 

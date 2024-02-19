@@ -324,12 +324,12 @@ def generate_A_and_B(Space_list, Boundary_list, Window_list):
                     # surface exchange with external air node, fill in B only
                     # convective coefficients
                     h_conv = estimate_hconv('opaque', obj.tilt, ext=True)
-                    print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
+                    #print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
                     i_to_air = index_inputs['exterior_air_temperature']['start_index'] + bound_nb  # index for air temperature of each boundary is equal to the number of boundary
                     B[i, i_to_air] += h_conv * obj.area
                     # long wave radiation coefficients
                     h_rad = estimate_hrad(obj.emissivity[0], 10.0, 0.0)  # radiant coefficient at external surface towards outside
-                    print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
+                    #print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
                     i_to_mr = index_inputs['exterior_radiant_temperature']['start_index'] + bound_nb  # index for mean radiant external temperature of each boundary is equal to the number of boundary
                     B[i, i_to_mr] += h_rad * obj.area
                     # flux indexing ans scaling (applied at the end of this function, to allow calculation of diagonal of A)
@@ -350,14 +350,14 @@ def generate_A_and_B(Space_list, Boundary_list, Window_list):
                 else:  # internal air space, fill inside A only
                     # search corresponding air node index
                     h_conv = estimate_hconv('opaque', obj.tilt)
-                    print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
+                    #print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
                     i_to_air_node = list(i_dict).index(side+'__air')
                     A[i, i_to_air_node] += h_conv * obj.area
                     A[i_to_air_node, i] += h_conv * obj.area
 
                     # search corresponding air node index
                     h_rad = estimate_hrad(obj.emissivity[0], 20.0, 20.0)
-                    print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
+                    #print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
                     i_to_mr_node = list(i_dict).index(side + '__mr')
                     A[i, i_to_mr_node] += h_rad * obj.area
                     A[i_to_mr_node, i] += h_rad * obj.area
@@ -399,12 +399,12 @@ def generate_A_and_B(Space_list, Boundary_list, Window_list):
                 # surface exchange with external air node, fill in B only
                 # convective coefficients
                 h_conv = estimate_hconv('window', obj.tilt, ext=True)  # perhaps values for single 6, double 4.5 and triple glazing? 3
-                print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
+                #print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
                 i_to_air = index_inputs['exterior_air_temperature']['start_index'] + obj.bound_nb  # index for air temperature of each boundary is equal to the number of boundary
                 B[i, i_to_air] += h_conv * obj.area
                 # long wave radiation coefficients
                 h_rad  = estimate_hrad(obj.emissivity[0], 10.0, 0.0)  # radiant coefficient at external surface towards outside
-                print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
+                #print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
                 i_to_mr = index_inputs['exterior_radiant_temperature']['start_index'] + obj.bound_nb  # index for mean radiant external temperature of each boundary is equal to the number of boundary
                 B[i, i_to_mr] += h_rad * obj.area
                 # flux indexing (applied at the end of this function, to allow calculation of diagonal of A)
@@ -416,13 +416,13 @@ def generate_A_and_B(Space_list, Boundary_list, Window_list):
                 # search corresponding air node index
                 # convective heat exchange coefficients
                 h_conv = estimate_hconv('window', obj.tilt)  # Todo: window h_conv depends on glazing type and temperature difference, different to walls
-                print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
+                #print('Boundary: ', obj.label, 'surface : ', side, 'hconv : ', h_conv)
                 i_to_air_node = list(i_dict).index(side+'__air')
                 A[i, i_to_air_node] += h_conv * obj.area
                 A[i_to_air_node, i] += h_conv * obj.area
                 # long wave radiation coefficients
                 h_rad = estimate_hrad(obj.emissivity[1], 20.0, 20.0)
-                print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
+                #print('Boundary: ', obj.label, 'surface : ', side, 'hrad : ', h_rad)
                 i_to_mr_node = list(i_dict).index(side + '__mr')
                 A[i, i_to_mr_node] += h_rad * obj.area
                 A[i_to_mr_node, i] += h_rad * obj.area

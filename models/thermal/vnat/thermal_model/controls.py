@@ -3,16 +3,16 @@ from scipy import optimize
 from models.thermal.vnat.thermal_model.RyCj import runStateSpace, set_U_from_index, get_states_from_index
 
 
-def calculate_ventilation_losses(flow_array, internal_temperatures_dict, outdoor_temperature, efficiency_heat_recovery, ventilation_specific_flow_array):
-    ventilation_losses = np.zeros(len(internal_temperatures_dict))
-    for i, space in enumerate(internal_temperatures_dict):
+def calculate_ventilation_losses(flow_array, air_temperature_temperatures_dict, outdoor_temperature, efficiency_heat_recovery, ventilation_specific_flow_array):
+    ventilation_losses = np.zeros(len(air_temperature_temperatures_dict))
+    for i, space in enumerate(air_temperature_temperatures_dict):
         for flow_path in flow_array:
             if (flow_path[1] == space) & (flow_path[2] > 0):  # flow rate which gets in
                 ventilation_gain_coefficient = 1006. * 1.2 * flow_path[2] / 3600.
                 if 'BC' in flow_path[0]:  # flow comes from outside
-                    ventilation_losses[i] = (outdoor_temperature - internal_temperatures_dict[space]) * ventilation_gain_coefficient * (1. - efficiency_heat_recovery)
+                    ventilation_losses[i] = (outdoor_temperature - air_temperature_temperatures_dict[space]) * ventilation_gain_coefficient * (1. - efficiency_heat_recovery)
                 else:
-                    ventilation_losses[i] = (internal_temperatures_dict[flow_path[0]] - internal_temperatures_dict[space]) * ventilation_gain_coefficient
+                    ventilation_losses[i] = (air_temperature_temperatures_dict[flow_path[0]] - air_temperature_temperatures_dict[space]) * ventilation_gain_coefficient
     return ventilation_losses
 
 

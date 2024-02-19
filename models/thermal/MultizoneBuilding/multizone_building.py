@@ -20,7 +20,7 @@ from models.thermal.vnat.thermal_model.controls import operation_mode
 from models.thermal.vnat.thermal_model.weather_model import Weather
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
-from models.thermal.vnat.thermal_model.generic import store_results
+from models.thermal.vnat.thermal_model.generic import store_results, convergence_plot
 
 
 class MultizoneBuilding(Model):
@@ -127,7 +127,7 @@ class MultizoneBuilding(Model):
         self.my_T.found.append(np.sum(self.my_T.hvac_flux))  # for convergence plotting
 
         # save flux for next time step as initial guess
-        self.my_T.hvac_flux_0 = self.my_T.hvac_flux  # for next time step, start with last value
+        self.my_T.hvac_flux_last = self.my_T.hvac_flux  # for next time step, start with last value
 
         self.air_temperature_dictionary = self.my_T.air_temperature_dictionary
 
@@ -135,6 +135,7 @@ class MultizoneBuilding(Model):
         return self.my_T.converged
 
     def iteration_done(self, time_step: int = 0):
+        #convergence_plot(self.my_T.found, time_step, 1, 'Thermal', True)
         self.my_T.states_0 = self.my_T.states
         store_results(time_step, self.my_T, self.my_weather)
 

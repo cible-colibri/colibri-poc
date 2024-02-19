@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import time
 from models.thermal.vnat.test_aero.francois_simplified_model import simplified_model
 from models.thermal.vnat.test_aero.francois_mathis_model import pymathis_model

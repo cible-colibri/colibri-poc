@@ -93,7 +93,7 @@ class Th_Model:
 
         self.not_converged = True
         self.iter_max = 3
-        self.plot_convergence = False
+        self.plot_convergence = True
         self.found = []
         self.switch = 0
 

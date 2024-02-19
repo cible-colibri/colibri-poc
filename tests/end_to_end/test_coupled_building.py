@@ -17,7 +17,7 @@ def test_coupled_building(file_name='house_1_1.json', weather_file='725650TYCST.
     project = Project()
 
     project.iterate = True
-    project.n_max_iterations = 10
+    project.n_max_iterations = 100
     project.time_steps = 8760
     project.verbose = False
 
