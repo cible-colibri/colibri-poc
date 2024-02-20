@@ -81,7 +81,7 @@ class Weather(Model):
         self.rain_hr           = Variable("rain_hr", 0, Roles.OUTPUTS)
 
     def initialize(self) -> None:
-        # TODO: Modify when we wil have a package structure
+        # TODO: Modify when we will have a package structure
         colibrisuce_path   = pathlib.Path(__file__).parents[2]
         print(colibrisuce_path)
         epw_file_path      = colibrisuce_path / "config" / "data" / "weather" / "epw" / "Paris.epw"

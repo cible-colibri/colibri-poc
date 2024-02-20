@@ -1,11 +1,5 @@
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-
 from core.project import Project
-from models.airflow.AirflowBuilding.airflow_building import AirflowBuilding
-
-from models.thermal.MultizoneBuilding.multizone_building import MultizoneBuilding
+from models.thermal.vnat.aero_peter.matrix_aero import P_Model
 from models.thermal.vnat.thermal_model.generic import convergence_plot, print_results, plot_results, store_results
 from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
 
@@ -30,13 +24,13 @@ def test_coupled_building(file_name='house_1_1.json', weather_file='725650TYCST.
 
     project.add(multizone_building)
 
-    airflow_building = AirflowBuilding("air flow model")
+    airflow_building = P_Model("air flow model")
     airflow_building.case = 0
     project.add(airflow_building)
 
     # *** if we want to connect an external controller for the blinds (pilots one variable)
-    project.link(multizone_building, "air_temperature_dictionary_output", airflow_building, "air_temperature_dictionary")
-    project.link(airflow_building, "flow_rates", multizone_building , "flow_rates_input")
+    project.link(multizone_building, "air_temperature_dictionary_output", airflow_building, "air_temperature_dictionary_input")
+    project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
 
     project.run()
 
