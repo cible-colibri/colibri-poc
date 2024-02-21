@@ -1,10 +1,4 @@
-from datetime import time
-
-import numpy
 import numpy as np
-import pandas
-import matplotlib.pyplot as plt
-
 
 # ========================================
 # Internal imports
@@ -21,14 +15,13 @@ from utils.enums_utils import (
                                 Units,
                                )
 
-import matplotlib.pyplot as plt
 from models.thermal.vnat.thermal_model.building_import import import_project
 from models.thermal.vnat.thermal_model.RyCj import get_states_from_index
 from models.thermal.vnat.thermal_model.controls import operation_mode
-from models.thermal.vnat.thermal_model.weather_model import Weather
+from models.utility.weather import Weather
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
-from models.thermal.vnat.thermal_model.generic import convergence_plot, print_results, plot_results, store_results
+from models.thermal.vnat.thermal_model.generic import store_results
 from models.thermal.vnat.aero_peter.matrix_aero import P_Model
 from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
 

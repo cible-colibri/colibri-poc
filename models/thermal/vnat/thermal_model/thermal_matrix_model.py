@@ -1,7 +1,4 @@
 import numpy as np
-import time
-import numpy as np
-import matplotlib.pyplot as plt
 
 from core.inputs import Inputs
 from core.model import Model
@@ -13,7 +10,7 @@ from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_eu
     set_U_from_index, get_states_from_index, get_u_values
 from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
 from models.thermal.vnat.thermal_model.generic import store_results
-from models.thermal.vnat.thermal_model.weather_model import import_epw_weather, solar_processor, Weather
+from models.utility.weather import solar_processor, Weather
 from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.results_handling import initialise_results
@@ -28,6 +25,7 @@ class Th_Model(Model):
         self.outputs               = [] if outputs is None else outputs.to_list()
         self.parameters            = [] if parameters is None else parameters.to_list()
 
+        self.building_file = Variable("building_file", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building file")
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
 
@@ -35,35 +33,21 @@ class Th_Model(Model):
         self.flow_rates_input = Variable("flow_rates", value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
     def initialize(self) -> None:
-        # bestest case
-        if self.case == 0:  # custom test
-            file_name = 'house_1.json'
-            epw_file = 'Paris.epw'  # old weather file
-            time_zone = 'Europe/Paris'
-        else:
-            epw_file = 'DRYCOLDTMY.epw'  # old weather file
-            # epw_file = '725650TYCST.epw'  # new weather file after update of standard in 2020
-            time_zone = 'America/Denver'
-            if self.case >= 900:
-                file_name = 'house_bestest_900.json'
-            elif self.case < 900:
-                file_name = 'house_bestest_600.json'
 
         #################################################################################
-        #   initialise weather data
+        #   get weather data
         #################################################################################
-        my_weather = Weather('my_weather')
-        my_weather.init_weather(epw_file, time_zone)
+        my_weather = self.project.get_models('Weather')[0]
         self.my_weather = my_weather
 
         #################################################################################
         #   Import project data
         #################################################################################
         # import data from json building description file
-        project_dict = import_project(file_name)
+        project_dict = import_project(self.building_file.value)
         # adapt to bestest cases if necessary
         if self.case > 0:  # Bestest
-            project_dict, int_gains_trigger, infiltration_trigger = bestest_configs(project_dict, case)
+            project_dict, int_gains_trigger, infiltration_trigger = bestest_configs(project_dict, self.case)
         else:
             int_gains_trigger = infiltration_trigger = 1.
 

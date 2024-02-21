@@ -7,11 +7,10 @@ import matplotlib.pyplot as plt
 from collections import namedtuple
 from models.thermal.vnat.thermal_model.RyCj import gen_wall_model, estimate_hrad
 
-main_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 
 
 def import_project(file_name):
-    f = open(main_dir + '/test_cases/' + file_name)
+    f = open(file_name)
     return json.load(f)
 
 

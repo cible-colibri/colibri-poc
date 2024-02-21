@@ -2,7 +2,7 @@
 import numpy as np
 
 from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
-from models.thermal.vnat.test_cases.data_model import rho_ref, t_ext, t_ref, p_ref, Rs_air, t_ref_K, g
+from models.thermal.vnat.test_cases.data_model import rho_ref, t_ext, p_ref, Rs_air, t_ref_K, g
 from models.thermal.vnat.aero_peter.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
     construct_CCi, gen_pressure_system, generate_AA_BB_pressure_system
 import models.thermal.vnat.test_aero.connection_functions as cf
@@ -13,7 +13,6 @@ from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
-from models.thermal.vnat.thermal_model.weather_model import Weather
 from utils.enums_utils import Roles, Units
 
 class P_Model(Model):
@@ -24,6 +23,7 @@ class P_Model(Model):
         self.outputs               = [] if outputs is None else outputs.to_list()
         self.parameters            = [] if parameters is None else parameters.to_list()
 
+        self.building_file = Variable("building_file", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building file")
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.air_temperature_dictionary_input = Variable("air_temperature_dictionary", 0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
         self.pressures_output = Variable("pressures", value = 0, role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
@@ -32,29 +32,15 @@ class P_Model(Model):
         self.my_weather = None
 
     def initialize(self) -> None:
-        # bestest case
-        if self.case == 0:  # custom test
-            file_name = 'house_1.json'
-            epw_file = 'Paris.epw'  # old weather file
-            time_zone = 'Europe/Paris'
-        else:
-            epw_file = 'DRYCOLDTMY.epw'  # old weather file
-            # epw_file = '725650TYCST.epw'  # new weather file after update of standard in 2020
-            time_zone = 'America/Denver'
-            if self.case >= 900:
-                file_name = 'house_bestest_900.json'
-            elif self.case < 900:
-                file_name = 'house_bestest_600.json'
 
         from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces  # bad
-        project_dict = import_project(file_name)
+        project_dict = import_project(self.building_file.value)
         self.Space_list = import_spaces(project_dict)
 
         #################################################################################
         #   initialise weather data
         #################################################################################
-        my_weather = Weather('my_weather')
-        my_weather.init_weather(epw_file, time_zone)
+        my_weather = self.project.get_models('Weather')[0]
         self.my_weather = my_weather
 
         #################################################################################
@@ -69,10 +55,6 @@ class P_Model(Model):
         # pressure model
         boundary_matrix(my_weather, nodes, n_steps, dynamic_test=1,
                         apply_disturbance=[24, 0])  # sets external pressures
-        if self.case == 0:  # Colibri house
-            self.pressure_model = True
-        else:  # bestest, no pressure calculation
-            self.pressure_model = False
 
         if self.pressure_model:
             try:
