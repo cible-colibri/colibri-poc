@@ -28,6 +28,23 @@ def import_spaces(project_dict):
     return Space_list
 
 
+def import_emitters(project_dict):
+    space_list = project_dict['nodes_collection']['space_collection']
+    Emitter_list = []
+    emitter_param_list = ['radiative_share','time_constant']
+    for space in space_list:
+        for obj in space_list[space]['object_collection']:
+            if obj['type'] == 'emitter':
+                emitter = project_dict['archetype_collection']['emitter_types'][obj['type_id']]
+                Emitter = namedtuple('Emitter', emitter_param_list)
+                Emitter.label = obj['id']
+                Emitter.zone_name = space
+                for i in Emitter._fields:
+                    setattr(Emitter, i, emitter[i])
+                Emitter_list.append(Emitter)
+    return Emitter_list
+
+
 def import_boundaries(project_dict):
     boundary_list       = project_dict['boundary_collection']
     boundary_type_list  = project_dict['archetype_collection']['boundary_types']
@@ -61,7 +78,7 @@ def import_boundaries(project_dict):
         for layer_type in boundary_type['layers']:
             for param in bound_param_list:
                 if param == 'discret':
-                    value = 2  # in general, 1 node per layer is enough - i.e. in addition to the internal layers each wall has surface layers on each surface
+                    value = 1  # in general, 1 node per layer is enough - i.e. in addition to the internal layers each wall has surface layers on each surface
                 else:
                     value = layer_list[layer_type['type_id']][param]
                 getattr(Boundary, param).append(value)

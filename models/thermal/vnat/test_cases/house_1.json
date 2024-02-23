@@ -9,7 +9,18 @@
                 "reference_area": 20.9,
                 "altitude": 0,
                 "use": "living room",
-                "air_permeability": 1.3
+                "air_permeability": 1.3,
+                "object_collection": [
+                {
+                    "id": "emitter_1",
+                    "type": "emitter",
+                    "type_id": "electric_convector",
+                    "x_relative_position": 1,
+                    "y_relative_position": 1,
+                    "z_relative_position": 0,
+                    "junctions": []
+                }
+                ]
             },
             "kitchen_1": {
                 "label": "cuisine",
@@ -18,7 +29,19 @@
                 "reference_area": 9.52,
                 "altitude": 0,
                 "use": "kitchen",
-                "air_permeability": 1.3
+                "air_permeability": 1.3,
+                "object_collection": [
+                {
+                    "id": "emitter_2",
+                    "type": "emitter",
+                    "type_id": "electric_convector",
+                    "x_relative_position": 1,
+                    "y_relative_position": 1,
+                    "z_relative_position": 0,
+                    "junctions": []
+                }
+
+                ]
             }
         },
         "linear_junction_collection": {
@@ -1479,6 +1502,13 @@
                 "label": "porte classique",
                 "x_length": 0.6,
                 "y_length": 0.8
+            }
+        },
+        "emitter_types": {
+            "electric_convector": {
+                "label": "electric convector standard",
+                "radiative_share": 0.5,
+                "time_constant": 3600
             }
         }
     }

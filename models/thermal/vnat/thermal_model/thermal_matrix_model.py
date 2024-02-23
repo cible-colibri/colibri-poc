@@ -5,7 +5,8 @@ from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
-from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces, import_boundaries
+from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces, import_boundaries, \
+    import_emitters
 from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
     set_U_from_index, get_states_from_index, get_u_values
 from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
@@ -31,6 +32,8 @@ class Th_Model(Model):
 
         self.air_temperature_dictionary_output = Variable("air_temperature_dictionary", 0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
         self.flow_rates_input = Variable("flow_rates", value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
+        # results to save
+        self.heat_flux = Variable("hvac_flux", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux")
 
     def initialize(self) -> None:
 
@@ -108,13 +111,14 @@ class Th_Model(Model):
 
         # return outputs
         self.air_temperature_dictionary_output = self.air_temperature_dictionary
+        self.heat_flux = self.hvac_flux
 
     def converged(self):
         return self.has_converged
 
     def iteration_done(self, time_step: int = 0):
         #convergence_plot(self.my_T.found, time_step, 1, 'Thermal', True)
-        self.states_0 = self.states
+        self.states_last = self.states
         store_results(time_step, self, self.my_weather)
 
     def timestep_done(self, time_step: int = 0):
@@ -136,6 +140,7 @@ class Th_Model(Model):
         # load data into lists of dicts with boundaries, windows and spaces
         Boundary_list, Window_list = import_boundaries(project_dict)
         Space_list = import_spaces(project_dict)
+        self.Emitter_list = import_emitters(project_dict)
         self.n_spaces = len(Space_list)
 
         # function to define radiative shares of wall surfaces inside a thermal zone
@@ -238,9 +243,17 @@ class Th_Model(Model):
         ventilation_gain_coefficient = self.ventilation_gain_multiplier * self.air_change_rate * (1. - self.efficiency_heat_recovery) / 3600.
 
         # space heating control
+        emitter_radiative_share = np.zeros(len(self.Space_list))
+        for i, space in enumerate(self.Space_list):
+            emitter = [emitter for emitter in self.project.get_models('ElectricEmitter_Model') if emitter.zone_name.value == space.label]
+            if len(emitter) == 0:
+                emitter_radiative_share[i] = 0.
+            else:
+                emitter_radiative_share[i] = emitter[0].radiative_share.value
+
         self.hvac_flux = space_temperature_control_simple(self.op_mode, self.setpoint, self.Ad, self.Bd, self.states,
                                                           self.U, self.hvac_flux_last, self.index_states,
-                                                          self.index_inputs, self.radiative_share_hvac,
+                                                          self.index_inputs, emitter_radiative_share,
                                                           self.radiative_share_sensor, self.max_heating_power,
                                                           self.max_cooling_power, self.ventilation_gain_multiplier, ventilation_gain_coefficient,
                                                           self.efficiency_heat_recovery, self.convective_internal_gains,

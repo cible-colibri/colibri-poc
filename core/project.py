@@ -64,7 +64,7 @@ class Project:
 
     # TODO: Rename get_models_from_class?
     def get_models(self, cls):
-        return [model for model in self.models if self.models[0].__class__.__name__ == cls]
+        return [model for model in self.models if model.__class__.__name__ == cls]
 
     #@typing.overload
     #def link(self, *args: tuple[Model, str, Model, str]) -> None:
