@@ -5,13 +5,11 @@ from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
-from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces, import_boundaries, \
-    import_emitters
 from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
     set_U_from_index, get_states_from_index, get_u_values
 from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
 from models.thermal.vnat.thermal_model.generic import store_results
-from models.utility.weather import solar_processor, Weather
+from models.utility.weather import solar_processor
 from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.results_handling import initialise_results
@@ -26,7 +24,6 @@ class Th_Model(Model):
         self.outputs               = [] if outputs is None else outputs.to_list()
         self.parameters            = [] if parameters is None else parameters.to_list()
 
-        self.building_file = Variable("building_file", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building file")
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
 
@@ -40,14 +37,14 @@ class Th_Model(Model):
         #################################################################################
         #   get weather data
         #################################################################################
-        my_weather = self.project.get_models('Weather')[0]
+        my_weather = self.project.get_weather()
         self.my_weather = my_weather
 
         #################################################################################
         #   Import project data
         #################################################################################
         # import data from json building description file
-        project_dict = import_project(self.building_file.value)
+        project_dict = self.project.building_data.project_dict
         # adapt to bestest cases if necessary
         if self.case > 0:  # Bestest
             project_dict, int_gains_trigger, infiltration_trigger = bestest_configs(project_dict, self.case)
@@ -71,12 +68,11 @@ class Th_Model(Model):
         self.air_temperature_dictionary = self.send_to_pressure()
         self.flow_rates = []
 
+
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
         # pass inputs to model
         self.flow_array = self.flow_rates_input.value
-
-        niter_max = 0  # maximum number of internal (th-p) iterations
 
         if n_iteration == 1:
             #################################################################################
@@ -113,7 +109,7 @@ class Th_Model(Model):
         self.air_temperature_dictionary_output = self.air_temperature_dictionary
         self.heat_flux = self.hvac_flux
 
-    def converged(self):
+    def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
         return self.has_converged
 
     def iteration_done(self, time_step: int = 0):
@@ -138,9 +134,10 @@ class Th_Model(Model):
         #################################################################################
 
         # load data into lists of dicts with boundaries, windows and spaces
-        Boundary_list, Window_list = import_boundaries(project_dict)
-        Space_list = import_spaces(project_dict)
-        self.Emitter_list = import_emitters(project_dict)
+        Boundary_list = self.project.building_data.boundary_list
+        Window_list = self.project.building_data.window_list
+        Space_list = self.project.building_data.space_list
+        self.Emitter_list = self.project.building_data.emitter_list
         self.n_spaces = len(Space_list)
 
         # function to define radiative shares of wall surfaces inside a thermal zone
@@ -294,3 +291,34 @@ class Th_Model(Model):
 
     def calc_convergence(self, threshold=1e-3):
         self.has_converged = np.sum(np.abs(self.hvac_flux - self.hvac_flux_last)) <= threshold
+
+
+    def create_emitters(self):
+        # TODO:
+        '''
+        I have set only 1 emitter model with all vectorised.
+        this is not a good choice, especially in case of mixed emitter types in a building.
+        Best would probably be that for each room there is an emitter model and the inputs and outputs are linked to an array ('Emitter' Class for example).
+        '''
+        project = self.project
+
+        if not project:
+            raise Exception('Project not defined - add me to a project first, so I can create emitters with links')
+
+        emitter_list = project.building_data.emitter_list
+        radiative_share = []
+        time_constant = []
+        zone_name = []
+        from models.emitters.electric_emitter import ElectricEmitter_Model
+        electric_convector = ElectricEmitter_Model('my_convector')
+        for i, emitter in enumerate(emitter_list):
+            zone_name.append(emitter.zone_name)
+            radiative_share.append(emitter.radiative_share)
+            time_constant.append(emitter.time_constant)
+        setattr(electric_convector, 'zone_name', zone_name)
+        setattr(electric_convector, 'radiative_share', radiative_share)
+        setattr(electric_convector, 'time_constant', time_constant)
+
+        project.add(electric_convector)
+        project.link(self, "heat_flux", electric_convector, "heat_demand")
+

@@ -26,12 +26,4 @@ Find another name for "linked_to" in variable.py (line 48)? Options:
     - expands
     - indexes
 
-Models
-======
 
-The SimpleBuilding model (line 68) should use an interface (e.g., hasattr(climate_date)) rather than depends on the model's type/class (Weather) for flexibility
-
-.. code-block::
-
-    weather = self.project.get_models('Weather')[0]
-    weather.climate_data['temperature']

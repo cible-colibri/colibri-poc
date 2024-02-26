@@ -36,36 +36,16 @@ class AirflowBuilding(Model):
         self.my_weather = None
 
     def initialize(self) -> None:
-        # bestest case
-        if self.case == 0:  # custom test
-            file_name = 'house_1.json'
-            epw_file = 'Paris.epw'  # old weather file
-            time_zone = 'Europe/Paris'
-        else:
-            epw_file = 'DRYCOLDTMY.epw'  # old weather file
-            # epw_file = '725650TYCST.epw'  # new weather file after update of standard in 2020
-            time_zone = 'America/Denver'
-            if self.case >= 900:
-                file_name = 'house_bestest_900.json'
-            elif self.case < 900:
-                file_name = 'house_bestest_600.json'
-
-        from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces  # bad
-        project_dict = import_project(file_name)
-        self.Space_list = import_spaces(project_dict)
 
         #################################################################################
-        #   initialise weather data
+        #   get weather data
         #################################################################################
-        my_weather = Weather('my_weather')
-        my_weather.init_weather(epw_file, time_zone)
-        self.my_weather = my_weather
+        my_weather = self.project.get_weather()
 
         #################################################################################
         #   Simulation parameters
         #################################################################################
         n_steps = len(my_weather.sky_temperature)
-        dt = 3600
 
         #################################################################################
         #   Create pressure building model
@@ -81,8 +61,8 @@ class AirflowBuilding(Model):
 
         if my_P.pressure_model:
             try:
-                my_P.matrix_model_init(n_steps, flow_paths, nodes, self.Space_list)
-            except:
+                my_P.matrix_model_init(n_steps, flow_paths, nodes, self.project.building_data.space_list)
+            except Exception:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
             my_P.converged = False
@@ -99,7 +79,7 @@ class AirflowBuilding(Model):
 
         self.air_temperature_dictionary = []
 
-    def run(self, time_step: int = 0, n_iteration: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
 
         if not self.my_P.pressure_model:
             return
@@ -137,7 +117,7 @@ class AirflowBuilding(Model):
         self.my_P.pressures_last = self.my_P.pressures  # for next time step, start with last value
 
 
-    def converged(self):
+    def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
         return self.my_P.converged
 
     def iteration_done(self, time_step: int = 0):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import time
 import numpy as np
-from models.thermal.vnat.thermal_model.building_import import import_project
+from data.Building.building_import import import_project
 from models.thermal.vnat.thermal_model.RyCj import get_states_from_index
 from models.thermal.vnat.thermal_model.controls import operation_mode
 from models.utility.weather import Weather
@@ -13,7 +13,7 @@ from models.thermal.vnat.test_cases.data_model_coupling_Temp_Press import nodes,
 from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
 
 
-def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw'):
+def simulate_project(file_name='house_1_1.json'):
 
     # simulation start timer
     start = time.time()
@@ -79,7 +79,7 @@ def simulate_project(file_name='house_1_1.json', weather_file='725650TYCST.epw')
     if my_P.pressure_model:
         try:
             my_P.matrix_model_init(n_steps, flow_paths, nodes, my_T.Space_list)
-        except:
+        except Exception:
             raise ValueError('Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
         my_P.converged = False
         my_P.solver = 1  # 0=pingpong, 1=fully iterative

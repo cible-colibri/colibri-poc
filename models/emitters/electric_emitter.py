@@ -5,7 +5,6 @@ from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
-from models.thermal.vnat.thermal_model.building_import import import_project, import_emitters
 from utils.enums_utils import Roles, Units
 
 
@@ -17,7 +16,6 @@ class ElectricEmitter_Model(Model):
         self.outputs               = [] if outputs is None else outputs.to_list()
         self.parameters            = [] if parameters is None else parameters.to_list()
 
-        self.building_file = Variable("building_file", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building file")
         # self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.zone_name = Variable("zone_name", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="zone_name")
         self.efficiency = Variable("efficiency", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter efficiency")
@@ -32,11 +30,11 @@ class ElectricEmitter_Model(Model):
 
         self.electric_load = 0.
 
-    def run(self, time_step: int = 0, n_iteration: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
 
         self.electric_load = self.heat_demand.value * self.efficiency
 
-    def converged(self):
+    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         return True #self.has_converged
 
     def iteration_done(self, time_step: int = 0):

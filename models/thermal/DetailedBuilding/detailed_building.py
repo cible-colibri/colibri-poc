@@ -15,7 +15,6 @@ from utils.enums_utils import (
                                 Units,
                                )
 
-from models.thermal.vnat.thermal_model.building_import import import_project
 from models.thermal.vnat.thermal_model.RyCj import get_states_from_index
 from models.thermal.vnat.thermal_model.controls import operation_mode
 from models.utility.weather import Weather
@@ -65,7 +64,7 @@ class DetailedBuilding(Model):
         #   Import project data
         #################################################################################
         # import data from json building description file
-        project_dict = import_project(file_name)
+        project_dict = self.project.building_data.project_dict
         # adapt to bestest cases if necessary
         if self.case > 0:  # Bestest
             project_dict, int_gains_trigger, infiltration_trigger = bestest_configs(project_dict, case)
@@ -102,7 +101,7 @@ class DetailedBuilding(Model):
         if my_P.pressure_model:
             try:
                 my_P.matrix_model_init(n_steps, flow_paths, nodes, my_T.Space_list)
-            except:
+            except Exception:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
             my_P.converged = False
@@ -139,7 +138,7 @@ class DetailedBuilding(Model):
         if my_P.pressure_model:
             try:
                 my_P.matrix_model_init(n_steps, flow_paths, nodes, my_T.Space_list)
-            except:
+            except Exception:
                 raise ValueError('Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
             my_P.converged = False
             my_P.solver = 1  # 0=pingpong, 1=fully iterative
@@ -171,7 +170,6 @@ class DetailedBuilding(Model):
 
             # reset parameters for next time step
             self.my_P.niter = 0
-            converged = False  # set to True at each time step, before iterating
             self.my_T.found = []
             self.my_P.found = []
 
@@ -206,7 +204,7 @@ class DetailedBuilding(Model):
 
         self.air_temperatures = self.my_T.air_temperatures
 
-    def converged(self):
+    def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
         return self.my_P.converged and self.my_T.converged
 
     def iteration_done(self, time_step: int = 0):

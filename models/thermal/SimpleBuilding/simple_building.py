@@ -73,7 +73,7 @@ class SimpleBuilding(Model):
         # this demonstrates how to create a link to a different model (the weather data model) :
         # this model (the SimpleBuilding) cannot run without it!
         # it is recommended to reduce such dependencies to the minimum
-        weather                   = self.project.get_models('Weather')[0]
+        weather = self.project.get_weather()
         self.ext_temperature_list = weather.climate_data['temperature']
         self.zone_setpoint_list   = numpy.zeros(len(self.ext_temperature_list)) + self.zone_setpoint_heating
         self.heating_season       = numpy.empty(len(self.ext_temperature_list))

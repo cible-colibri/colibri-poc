@@ -23,7 +23,6 @@ class P_Model(Model):
         self.outputs               = [] if outputs is None else outputs.to_list()
         self.parameters            = [] if parameters is None else parameters.to_list()
 
-        self.building_file = Variable("building_file", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building file")
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.air_temperature_dictionary_input = Variable("air_temperature_dictionary", 0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
         self.pressures_output = Variable("pressures", value = 0, role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
@@ -33,21 +32,18 @@ class P_Model(Model):
 
     def initialize(self) -> None:
 
-        from models.thermal.vnat.thermal_model.building_import import import_project, import_spaces  # bad
-        project_dict = import_project(self.building_file.value)
-        self.Space_list = import_spaces(project_dict)
+        self.Space_list = self.project.building_data.space_list
 
         #################################################################################
         #   initialise weather data
         #################################################################################
-        my_weather = self.project.get_models('Weather')[0]
+        my_weather = self.project.get_weather()
         self.my_weather = my_weather
 
         #################################################################################
         #   Simulation parameters
         #################################################################################
         n_steps = len(my_weather.sky_temperature)
-        dt = 3600
 
         #################################################################################
         #   Create pressure building model
@@ -59,7 +55,7 @@ class P_Model(Model):
         if self.pressure_model:
             try:
                 self.matrix_model_init(n_steps, flow_paths, nodes, self.Space_list)
-            except:
+            except Exception:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
             self.has_converged = False
@@ -79,9 +75,6 @@ class P_Model(Model):
 
         if not self.pressure_model:
             return
-
-        # pass inputs to model
-        self.air_temperature_dictionary = self.air_temperature_dictionary
 
         niter_max = 0  # maximum number of internal (th-p) iterations
 
@@ -116,7 +109,7 @@ class P_Model(Model):
         self.pressures_output = self.pressures
         self.flow_rates_output = self.flow_rates
 
-    def converged(self):
+    def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
         return self.has_converged
 
     def iteration_done(self, time_step: int = 0):

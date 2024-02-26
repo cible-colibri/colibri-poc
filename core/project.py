@@ -22,6 +22,7 @@ from core.link               import Link
 from core.model              import Model
 from core.plot               import Plot
 from core.variable_connector import VariableConnector
+from data.Building.building_data import BuildingData
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file
@@ -50,6 +51,8 @@ class Project:
         self._plots = dict()
         self._set_project_parameters()
         self._has_converged = None
+        self.time_step = 0
+        self.n_iteration = 0
 
     def add(self, model: Model) -> None:
         self.models.append(model)
@@ -65,6 +68,19 @@ class Project:
     # TODO: Rename get_models_from_class?
     def get_models(self, cls):
         return [model for model in self.models if model.__class__.__name__ == cls]
+
+    def add_building_data(self, building_file: pathlib.Path):
+        building_data = BuildingData(building_file)
+        self.building_data = building_data
+
+    def get_weather(self):
+        weather_models = self.get_models('Weather')
+        if len(weather_models) == 1:
+            return weather_models[0]
+        elif len(weather_models) > 1:
+            raise Exception("More than one weather model in project, don't know which one to choose.")
+        else:
+            raise Exception("No weather model in project, but some models need one.")
 
     #@typing.overload
     #def link(self, *args: tuple[Model, str, Model, str]) -> None:
@@ -145,31 +161,31 @@ class Project:
         self._initialize_series()
         self._initialize_models()
         # Run the simulation (for each time step)
-        for time_step in range(0, self.time_steps):
+        for self.time_step in range(0, self.time_steps):
             if self.verbose:
-                print(f"### step {time_step}")
-            n_iteration = 1
+                print(f"### step {self.time_step}")
+            self.n_iteration = 1
             self._has_converged = False
             while not self._has_converged:
                 if self.verbose:
-                    print(f"Iteration {n_iteration}")
+                    print(f"Iteration {self.n_iteration}")
                 self._has_converged = True
-                self._run_models(time_step, n_iteration)
+                self._run_models(self.time_step, self.n_iteration)
                 self._substitute_links_values()
                 # check for convergence limit
-                if n_iteration > self.n_max_iterations:
+                if self.n_iteration > self.n_max_iterations:
                     self._has_converged    = True
                     self.n_non_convergence = self.n_non_convergence + 1
-                    self.non_convergence_times.append(time_step)
-                n_iteration = n_iteration + 1
+                    self.non_convergence_times.append(self.time_step)
+                self.n_iteration = self.n_iteration + 1
                 if not self.iterate:
                     self._has_converged = True
-            self._end_iteration(time_step)
-            self._save_model_data(time_step)
-            self._end_time_step(time_step)
+            self._end_iteration(self.time_step)
+            self._save_model_data(self.time_step)
+            self._end_time_step(self.time_step)
         print("Simulation summary")
         print("==================")
-        self._end_simulation(time_step)
+        self._end_simulation(self.time_step)
         print(f"{self.n_non_convergence} timesteps have convergence problems")
         print(f"Simulation time: {(time.perf_counter() - starting_time):3.2f} seconds")
         self.plot()
@@ -190,9 +206,9 @@ class Project:
             setattr(link.to_model, link.to_variable, value_out)
             if self.verbose:
                 print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
-            if (not link.to_model.converged()):
+            if (not link.to_model.converged(self.time_step, self.n_iteration)):
                 self._has_converged = False
-            elif (not link.from_model.converged()):
+            elif (not link.from_model.converged(self.time_step, self.n_iteration)):
                     self._has_converged = False
             elif self.iterate and not (hasattr(value_out, '__len__') or hasattr(value_out, '__len__')):
                 if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):

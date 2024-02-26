@@ -80,7 +80,7 @@ class StorageTank(Model):
     def check_units(self) -> None:
         pass
 
-    def run(self, time_step: int = 0, n_iteration: int = 0):
+    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         self.outlet_flow_rate_1      = self.inlet_flow_rate_1
         self.outlet_flow_rate_2      = self.inlet_flow_rate_2
         self.outlet_temperature_1    = self.inlet_temperature_1

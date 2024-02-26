@@ -2,10 +2,8 @@ import os
 import pathlib
 
 from core.project import Project
-from models.emitters.electric_emitter import ElectricEmitter_Model
 from models.thermal.vnat.aero_peter.matrix_aero import P_Model
-from models.thermal.vnat.thermal_model.building_import import import_emitters, import_project
-from models.thermal.vnat.thermal_model.generic import convergence_plot, print_results, plot_results, store_results
+from models.thermal.vnat.thermal_model.generic import print_results, plot_results
 from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
 from models.utility.weather import Weather
 
@@ -44,17 +42,17 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
     weather.time_zone = time_zone
     project.add(weather)
 
+    project.add_building_data(building_file)
+
     # thermal model
     multizone_building = Th_Model("thermal model")
     multizone_building.blind_position = 1 # 1 = open
-    multizone_building.building_file = building_file
     multizone_building.case = case
     project.add(multizone_building)
-
+    multizone_building.create_emitters()
 
     # air flow model
     airflow_building = P_Model("air flow model")
-    airflow_building.building_file = building_file
     airflow_building.case = case
     project.add(airflow_building)
 
@@ -67,31 +65,6 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
     project.link(multizone_building, "air_temperature_dictionary_output", airflow_building, "air_temperature_dictionary_input")
     project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
 
-    # Emitter model
-
-    # TODO:
-    '''
-    I have set only 1 emitter model with all vectorised.
-    this is not a good choice, especially in case of mixed emitter types in a building.
-    Best would probably be that for each room there is an emitter model and the inputs and outputs are linked to an array ('Emitter' Class for example).   
-    '''
-    # very ugly and temporary solution
-    project_dict = import_project(building_file)
-    emitter_list = import_emitters(project_dict)
-    radiative_share = []
-    time_constant = []
-    zone_name = []
-    electric_convector = ElectricEmitter_Model('my_convector')
-    for i, emitter in enumerate(emitter_list):
-        zone_name.append(emitter.zone_name)
-        radiative_share.append(emitter.radiative_share)
-        time_constant.append(emitter.time_constant)
-    setattr(electric_convector, 'zone_name', zone_name)
-    setattr(electric_convector, 'radiative_share', radiative_share)
-    setattr(electric_convector, 'time_constant', time_constant)
-
-    project.add(electric_convector)
-    project.link(multizone_building, "heat_flux", electric_convector, "heat_demand")
 
     project.run()
 
