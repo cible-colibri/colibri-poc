@@ -240,13 +240,9 @@ class Th_Model(Model):
         ventilation_gain_coefficient = self.ventilation_gain_multiplier * self.air_change_rate * (1. - self.efficiency_heat_recovery) / 3600.
 
         # space heating control
-        emitter_radiative_share = np.zeros(len(self.Space_list))
-        for i, space in enumerate(self.Space_list):
-            emitter = [emitter for emitter in self.project.get_models('ElectricEmitter_Model') if emitter.zone_name.value == space.label]
-            if len(emitter) == 0:
-                emitter_radiative_share[i] = 0.
-            else:
-                emitter_radiative_share[i] = emitter[0].radiative_share.value
+        # vectorize emitter_radiative_share
+        emitter_list = [self.project.get_model_by_name(s.label+"_emitter") for s in self.Space_list]
+        emitter_radiative_share = np.array([emitters[0].radiative_share.value if emitters else 0 for emitters in emitter_list])
 
         self.hvac_flux = space_temperature_control_simple(self.op_mode, self.setpoint, self.Ad, self.Bd, self.states,
                                                           self.U, self.hvac_flux_last, self.index_states,
@@ -258,6 +254,11 @@ class Th_Model(Model):
                                                           self.flow_array)
 
         # now apply the hvac_flux and simulate the building a last time to obtain all results
+
+        # set heat_flux for emitter - TODO: one of the Gurus (Enora, Peter) please check if this is the right spot to do this
+        for emitter, flux in zip([found_emitters[0] for found_emitters in emitter_list if found_emitters], self.hvac_flux):
+            emitter.heat_demand = flux
+
         # recalculate ventilation losses
         if self.flow_array == 0 or len(self.flow_array) == 0:  # without pressure calculation, only use air change rates for all rooms
             # update coefficient for flow x cp x dT
@@ -294,31 +295,33 @@ class Th_Model(Model):
 
 
     def create_emitters(self):
-        # TODO:
-        '''
-        I have set only 1 emitter model with all vectorised.
-        this is not a good choice, especially in case of mixed emitter types in a building.
-        Best would probably be that for each room there is an emitter model and the inputs and outputs are linked to an array ('Emitter' Class for example).
-        '''
+        # this will ultimately be a 'create system' function
+
         project = self.project
 
         if not project:
-            raise Exception('Project not defined - add me to a project first, so I can create emitters with links')
+            raise Exception('Project not defined - add me to a project first, so I can create systems with links')
 
         emitter_list = project.building_data.emitter_list
-        radiative_share = []
+        emitter_types = project.building_data.project_dict['archetype_collection']['emitter_types']
         time_constant = []
-        zone_name = []
-        from models.emitters.electric_emitter import ElectricEmitter_Model
-        electric_convector = ElectricEmitter_Model('my_convector')
         for i, emitter in enumerate(emitter_list):
-            zone_name.append(emitter.zone_name)
-            radiative_share.append(emitter.radiative_share)
-            time_constant.append(emitter.time_constant)
-        setattr(electric_convector, 'zone_name', zone_name)
-        setattr(electric_convector, 'radiative_share', radiative_share)
-        setattr(electric_convector, 'time_constant', time_constant)
+            type_id = emitter.type_id
+            emitter_type = self.project.building_data.project_dict['archetype_collection']['emitter_types'][type_id]
+            emitter_cls = emitter_type['model']
+            zone_name = emitter.zone_name
+            emitter_name = zone_name + '_emitter'
+            electric_convector = Model.model_class_factory(emitter_cls, emitter_name)
+            electric_convector.zone_name = zone_name
+            electric_convector.radiative_share = emitter.radiative_share
+            electric_convector.time_constant = time_constant
 
-        project.add(electric_convector)
-        project.link(self, "heat_flux", electric_convector, "heat_demand")
+            project.add(electric_convector)
+
+            # On ne peut pas faire cela, car heat_flux serait un vecteur et heat_demand un scalaire.
+            # On choisi de ramasser les objets par leur type / nom dans le modèle du bâtiment pour l'instant,
+            # ce qui crée des liens implicites; sinon, il faudrait un concept de modèle concentrateur entre l'emetteru et le bâtiment
+            # (le concentrateur transformerait les valeurs en vecteur)
+            #project.link(self, "heat_flux", electric_convector, "heat_demand")
+
 

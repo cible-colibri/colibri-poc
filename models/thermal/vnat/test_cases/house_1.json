@@ -1507,6 +1507,7 @@
         "emitter_types": {
             "electric_convector": {
                 "label": "electric convector standard",
+                "model": "ElectricEmitter",
                 "radiative_share": 0.5,
                 "time_constant": 3600
             }

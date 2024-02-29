@@ -69,6 +69,9 @@ class Project:
     def get_models(self, cls):
         return [model for model in self.models if model.__class__.__name__ == cls]
 
+    def get_model_by_name(self, name):
+        return [model for model in self.models if model.name == name]
+
     def add_building_data(self, building_file: pathlib.Path):
         building_data = BuildingData(building_file)
         self.building_data = building_data

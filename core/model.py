@@ -153,6 +153,20 @@ class Model(metaclass=MetaModel):
             # TODO: Check if we need this: if isinstance(value.value, numbers.Number): Yes, we do, but it's weird
             getattr(self, variable.name + "_series")[time_step] = variable.value
 
+    # allow to create models for a list of modules (["models.emitters.electric_emitter"])
+    # this list can be extended each time a new system model is authored
+    # only systems from this list will be created automatically
+    @staticmethod
+    def model_class_factory(class_name, instance_name):
+        import importlib
+        for module_name in ["models.emitters.electric_emitter"]:
+            module = importlib.import_module(module_name)
+            if not module is None and hasattr(module, class_name):
+                cls = getattr(module, class_name)
+                return cls(instance_name)
+
+        return None
+
     def __setattr__(self, name, value):
         if hasattr(self, name):
             variable = getattr(self, name)

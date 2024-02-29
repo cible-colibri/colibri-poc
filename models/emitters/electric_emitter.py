@@ -8,7 +8,7 @@ from core.variable import Variable
 from utils.enums_utils import Roles, Units
 
 
-class ElectricEmitter_Model(Model):
+class ElectricEmitter(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None

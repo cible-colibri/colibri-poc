@@ -24,7 +24,9 @@ class BuildingData():
                     emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
                     Emitter = namedtuple('Emitter', emitter_param_list)
                     Emitter.label = obj['id']
+                    Emitter.type = obj['type']
                     Emitter.zone_name = space
+                    Emitter.type_id = obj['type_id']
                     for i in Emitter._fields:
                         setattr(Emitter, i, emitter[i])
                     Emitter_list.append(Emitter)
