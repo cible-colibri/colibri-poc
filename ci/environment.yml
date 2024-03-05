@@ -4,3 +4,8 @@ dependencies :
     - pandas
     - matplotlib
     - pytest
+    - scipy
+    - networkx
+    - ephem
+    - pip:
+        - pvlib
