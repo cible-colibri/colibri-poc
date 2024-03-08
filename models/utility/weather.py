@@ -214,6 +214,7 @@ def solar_processor(weather_data, latitude, longitude, Boundary_list, Space_list
                         direct_transmission = transmission_coeff * direct_radiation_on_plane
                         diffuse_transmission = 0.894 * window_transmission_factor * diffuse_radiation_on_plane  # [Brau88]
                         solar_transmitted_flux_matrix[i, :] += (direct_transmission + diffuse_transmission) * space.envelope_list[env]['area']
+        i += 1
 
     return solar_bound_arriving_flux_matrix, solar_transmitted_flux_matrix
 

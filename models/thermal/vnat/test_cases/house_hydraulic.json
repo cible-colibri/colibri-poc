@@ -13,7 +13,7 @@
                 {
                     "id": "emitter_1",
                     "type": "emitter",
-                    "type_id": "electric_convector",
+                    "type_id": "hydro_convector",
                     "x_relative_position": 1,
                     "y_relative_position": 1,
                     "z_relative_position": 0,
@@ -303,9 +303,9 @@
             }
         },
         "emitter_types": {
-            "electric_convector": {
-                "label": "electric convector standard",
-                "model": "ElectricEmitter",
+            "hydro_convector": {
+                "label": "hydraulic radiator standard",
+                "model": "HydroEmitter",
                 "radiative_share": 0.5,
                 "time_constant": 3600
             }

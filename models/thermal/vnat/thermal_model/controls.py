@@ -16,7 +16,7 @@ def calculate_ventilation_losses(flow_array, air_temperature_temperatures_dict, 
     return ventilation_losses
 
 
-def search_heatflux_spaces(hvac_flux, op_mode, setpoint, Ad, Bd, states_last, U, index_states, index_inputs, rad_share_hvac, radiative_share_sensor, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array):
+def search_heatflux_spaces(hvac_flux_vec, op_mode, setpoint, Ad, Bd, states_last, U, index_states, index_inputs, rad_share_hvac, radiative_share_sensor, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array):
 
     # calculate ventilation losses
     outdoor_temperature = U[1]
@@ -29,9 +29,9 @@ def search_heatflux_spaces(hvac_flux, op_mode, setpoint, Ad, Bd, states_last, U,
     ventilation_gains = calculate_ventilation_losses(flow_array, internal_temperatures_dict, outdoor_temperature)
 
     # apply current heat flux sent from solver
-    convective_gains = hvac_flux * (1 - rad_share_hvac) + ventilation_gains + convective_internal_gains
+    convective_gains = hvac_flux_vec * (1 - rad_share_hvac) + ventilation_gains + convective_internal_gains
     set_U_from_index(U, index_inputs, 'space_convective_gain', convective_gains)
-    radiative_gains = hvac_flux * rad_share_hvac + radiative_internal_gains
+    radiative_gains = hvac_flux_vec * rad_share_hvac + radiative_internal_gains
     set_U_from_index(U, index_inputs, 'space_radiative_gain', radiative_gains)
 
     # calculate building states
@@ -45,23 +45,26 @@ def search_heatflux_spaces(hvac_flux, op_mode, setpoint, Ad, Bd, states_last, U,
     return diff
 
 
-def operation_mode(indoor_temperature, outdoor_temperature, setpoint_heating, setpoint_cooling, n_spaces, op_modes):
+def operation_mode(indoor_temperature, outdoor_temperature, setpoint_heating_vec, setpoint_cooling_vec, n_spaces, op_modes):
     op_mode = [None] * n_spaces
     setpoint = np.zeros(n_spaces)
-    threshold = (setpoint_heating + setpoint_cooling) / 2.
+
+    #TODO: changer en faisant des mask sur les array beaucoup plus rapide et efficace
+    #TODO: transformer le heating/cooling en int
     for i in range(n_spaces):
+        threshold = (setpoint_heating_vec[i] + setpoint_cooling_vec[i]) / 2.
         ref_temperature = indoor_temperature[i]
         if (ref_temperature <= threshold) and (outdoor_temperature < 15.):
             if 'heating' in op_modes:
                 op_mode[i] = 'heating'
-                setpoint[i] = setpoint_heating
+                setpoint[i] = setpoint_heating_vec[i]
             else:
                 op_mode[i] = 'free_float'
                 setpoint[i] = np.nan
         elif (ref_temperature > threshold) and (outdoor_temperature > 16.):
             if 'cooling' in op_modes:
                 op_mode[i] = 'cooling'
-                setpoint[i] = setpoint_cooling
+                setpoint[i] = setpoint_cooling_vec[i]
             else:
                 op_mode[i] = 'free_float'
                 setpoint[i] = np.nan
@@ -71,20 +74,21 @@ def operation_mode(indoor_temperature, outdoor_temperature, setpoint_heating, se
 
     return op_mode, setpoint
 
-# def space_temperature_control(mode, setpoint, Ad, Bd, states_0, U, hvac_flux_0, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, max_heating_power, max_cooling_power, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array):
+# def space_temperature_control(mode, setpoint, Ad, Bd, states_0, U, hvac_flux_vec_0, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, max_heating_power, max_cooling_power, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array):
 #     # does not work anymore with the new function for hybrid mode in building
 #     # calculate hvac heat flux
 #     if mode == 'heating':
-#         hvac_flux = optimize.fsolve(search_heatflux_spaces, hvac_flux_0, args=(mode, setpoint, Ad, Bd, states_0, U, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array), xtol=1.e-3)
-#         heat_flux = np.clip(hvac_flux, 0., max_heating_power)
+#         hvac_flux_vec = optimize.fsolve(search_heatflux_spaces, hvac_flux_vec_0, args=(mode, setpoint, Ad, Bd, states_0, U, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array), xtol=1.e-3)
+#         heat_flux = np.clip(hvac_flux_vec, 0., max_heating_power)
 #     elif mode == 'cooling':
-#         hvac_flux = optimize.fsolve(search_heatflux_spaces, hvac_flux_0, args=(mode, setpoint, Ad, Bd, states_0, U, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array), xtol=1.e-3)
-#         heat_flux = np.clip(hvac_flux, -max_cooling_power, 0.)
+#         hvac_flux_vec = optimize.fsolve(search_heatflux_spaces, hvac_flux_vec_0, args=(mode, setpoint, Ad, Bd, states_0, U, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, ventilation_specific_flow_array, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array), xtol=1.e-3)
+#         heat_flux = np.clip(hvac_flux_vec, -max_cooling_power, 0.)
 #     else:
-#         heat_flux = hvac_flux_0 * 0.
+#         heat_flux = hvac_flux_vec_0 * 0.
 #     return heat_flux
 
-def space_temperature_control_simple(op_mode, setpoint, Ad, Bd, states_last, U, hvac_flux_last, index_states, index_inputs, radiative_share_hvac, radiative_share_sensor, max_heating_power, max_cooling_power, ventilation_specific_flow_array, ventilation_gain_coefficient, efficiency_heat_recovery, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array):
+def space_temperature_control_simple(op_mode, setpoint, Ad, Bd, states_last, U, hvac_flux_vec_last, index_states, index_inputs, radiative_share_hvac,
+                                     radiative_share_sensor, max_heating_power, max_cooling_power, ventilation_specific_flow_array, ventilation_gain_coefficient, efficiency_heat_recovery, convective_internal_gains, radiative_internal_gains, internal_temperatures_dict, flow_array):
 
     outdoor_temperature = U[1]
     space_air_temperature = get_states_from_index(states_last, index_states, 'spaces_air')
@@ -100,9 +104,9 @@ def space_temperature_control_simple(op_mode, setpoint, Ad, Bd, states_last, U, 
 
     for i in range(n_spaces):  # set minimum and maximum heating or cooling power
         if op_mode[i] == 'heating':
-            phi_inj[i, :] = [0., max_heating_power]
+            phi_inj[i, :] = [0., max_heating_power[i]]
         elif op_mode[i] == 'cooling':
-            phi_inj[i, :] = [-max_cooling_power, 0.]
+            phi_inj[i, :] = [-max_cooling_power[i], 0.]
         else:
             phi_inj[i, :] = [0., 0.]
 

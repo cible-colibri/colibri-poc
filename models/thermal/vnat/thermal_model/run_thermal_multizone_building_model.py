@@ -122,7 +122,7 @@ def simulate_project(file_name='house_1_1.json'):
         my_T.found = []
         my_P.found = []
 
-        # my_T.hvac_flux_0 = my_T.hvac_flux_0*0.  # for next time step, start with last value
+        # my_T.hvac_flux_vec_0 = my_T.hvac_flux_vec_0*0.  # for next time step, start with last value
         # my_P.pressures_last = my_P.pressures_last*0.  # for next time step, start with last value
 
         while not converged:  # iterative loop
@@ -133,7 +133,7 @@ def simulate_project(file_name='house_1_1.json'):
             # if (my_T.converged & my_P.converged & my_Phanie.converged) or (niter >= niter_max):
             #     converged = True
 
-            my_T.air_temperature_dictionary = my_T.send_to_pressure()  # send temperature values to pressure model
+            my_T.air_temperature_dictionary = my_T.reformat_for_pressure()  # send temperature values to pressure model
 
             # Pressure model
             if my_P.pressure_model:
@@ -154,7 +154,7 @@ def simulate_project(file_name='house_1_1.json'):
             my_T.calc_thermal_building_model_iter(t, my_weather)
             my_T.calc_convergence(threshold=1e-3)
 
-            my_T.found.append(np.sum(my_T.hvac_flux))  # for convergence plotting
+            my_T.found.append(np.sum(my_T.hvac_flux_vec))  # for convergence plotting
             my_P.found.append(np.sum(my_P.pressures))  # for convergence plotting
 
             if (my_T.converged & my_P.converged) or (niter >= niter_max):
@@ -169,11 +169,11 @@ def simulate_project(file_name='house_1_1.json'):
                 niter += 1
 
             # save flux for next time step as initial guess
-            my_T.hvac_flux_last = my_T.hvac_flux  # for next time step, start with last value
+            my_T.hvac_flux_vec_last = my_T.hvac_flux_vec  # for next time step, start with last value
             my_P.pressures_last = my_P.pressures  # for next time step, start with last value
 
 
-    my_T.results['av_outdoor_heating_temperature'] = np.mean(my_T.results['outdoor_temperatures'][0][my_T.results['hvac_flux'][0]>0.1])
+    my_T.results['av_outdoor_heating_temperature'] = np.mean(my_T.results['outdoor_temperatures'][0][my_T.results['hvac_flux_vec'][0]>0.1])
     print('###################################################################')
     print('Simulation time: ', np.round(time.time() - start, 3), 's')
     print('###################################################################')

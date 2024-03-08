@@ -43,18 +43,19 @@ class P_Model(Model):
         #################################################################################
         #   Simulation parameters
         #################################################################################
-        n_steps = len(my_weather.sky_temperature)
+
+        self.n_steps = len(my_weather.sky_temperature)
 
         #################################################################################
         #   Create pressure building model
         #################################################################################
         # pressure model
-        boundary_matrix(my_weather, nodes, n_steps, dynamic_test=1,
+        boundary_matrix(my_weather, nodes, self.n_steps, dynamic_test=1,
                         apply_disturbance=[24, 0])  # sets external pressures
 
         if self.pressure_model:
             try:
-                self.matrix_model_init(n_steps, flow_paths, nodes, self.Space_list)
+                self.matrix_model_init(self.n_steps, flow_paths, nodes, self.Space_list)
             except Exception:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')

@@ -9,7 +9,7 @@ def initialise_results(index_states, Space_list, Boundary_list, n_steps, results
     results['ground_temperature'] = np.zeros((1, n_steps))
     results['solar_direct'] = np.zeros((1, n_steps))
     results['solar_diffuse'] = np.zeros((1, n_steps))
-    results['hvac_flux'] = np.zeros((len(Space_list), n_steps))
+    results['hvac_flux_vec'] = np.zeros((len(Space_list), n_steps))
     results['setpoint'] = np.zeros((len(Space_list), n_steps))
     results['window_losses'] = np.zeros((len(Space_list), n_steps))
     results['wall_losses'] = np.zeros((len(Space_list), n_steps))
@@ -18,7 +18,7 @@ def initialise_results(index_states, Space_list, Boundary_list, n_steps, results
 
     # define here which variables you want to save and plot (if empty list, all variables will be saved)
     if results_definition == 'all':
-        res_list = ['outdoor_temperatures', 'ground_temperature', 'solar_direct', 'solar_diffuse', 'hvac_flux',
+        res_list = ['outdoor_temperatures', 'ground_temperature', 'solar_direct', 'solar_diffuse', 'hvac_flux_vec',
                     'spaces_air', 'spaces_mean_radiant', 'windows', 'boundaries',
                     'window_losses', 'window_gains', 'wall_losses', 'ventilation_gains']
     elif results_definition == 'custom':

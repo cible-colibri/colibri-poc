@@ -159,7 +159,7 @@ class Model(metaclass=MetaModel):
     @staticmethod
     def model_class_factory(class_name, instance_name):
         import importlib
-        for module_name in ["models.emitters.electric_emitter"]:
+        for module_name in ["models.emitters.electric_emitter", "models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
             module = importlib.import_module(module_name)
             if not module is None and hasattr(module, class_name):
                 cls = getattr(module, class_name)

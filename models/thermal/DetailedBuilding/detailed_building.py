@@ -24,6 +24,8 @@ from models.thermal.vnat.thermal_model.generic import store_results
 from models.thermal.vnat.aero_peter.matrix_aero import P_Model
 from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
 
+#TODO: do not work anymore, and do not need to initialize models -> automatic
+
 class DetailedBuilding(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):

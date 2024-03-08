@@ -61,6 +61,7 @@ class Units(enum.Enum):
     UNITLESS                                = "-"
     WATT                                    = "W"
     WATT_HOUR                               = "Wh"
+    WATT_PER_KELVIN                         = "W/K"
     WATT_PER_SQUARE_METER                   = "W/m²"
     WATT_PER_SQUARE_METER_PER_KELVIN        = "W/(m².K)"
     WATT_PER_SQUARE_METER_PER_SQUARE_KELVIN = "W/(m².K²)"

@@ -23,12 +23,14 @@ class BuildingData():
                 if obj['type'] == 'emitter':
                     emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
                     Emitter = namedtuple('Emitter', emitter_param_list)
+
+                    for key, param in obj.items():
+                        setattr(Emitter, key, param)
+                    for key, param in emitter.items():
+                        setattr(Emitter, key, param)
+
                     Emitter.label = obj['id']
-                    Emitter.type = obj['type']
                     Emitter.zone_name = space
-                    Emitter.type_id = obj['type_id']
-                    for i in Emitter._fields:
-                        setattr(Emitter, i, emitter[i])
                     Emitter_list.append(Emitter)
 
         self.emitter_list = Emitter_list

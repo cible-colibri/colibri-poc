@@ -14,8 +14,8 @@ def store_results(t, my_T, my_weather):
             my_T.results['outdoor_temperatures'][0:len(my_T.Boundary_list), t] = my_weather.ext_temperature[t]
         elif res == 'ground_temperature':
             my_T.results['ground_temperature'][0, t] = my_weather.ground_temperature[t]
-        elif res == 'hvac_flux':
-            my_T.results['hvac_flux'][0:len(my_T.Space_list), t] = my_T.hvac_flux
+        elif res == 'hvac_flux_vec':
+            my_T.results['hvac_flux_vec'][0:len(my_T.Space_list), t] = my_T.hvac_flux_vec
         elif res == 'ventilation_gains':
             my_T.results['ventilation_gains'][0:len(my_T.Space_list), t] = my_T.ventilation_gains * (my_T.ventilation_gains < 0.) * (my_T.op_mode[0] == 'heating')
         elif res == 'window_losses':
@@ -41,8 +41,8 @@ def convergence_plot(found, t, it, name_plot, to_plot=False):
 def print_results(my_T):
 
     print('###################################################################')
-    h_power = my_T.results['hvac_flux'] * (my_T.results['hvac_flux'] >= 0)
-    c_power = my_T.results['hvac_flux'] * (my_T.results['hvac_flux'] < 0)
+    h_power = my_T.results['hvac_flux_vec'] * (my_T.results['hvac_flux_vec'] >= 0)
+    c_power = my_T.results['hvac_flux_vec'] * (my_T.results['hvac_flux_vec'] < 0)
     h_energy = h_power.cumsum(axis=1)/1000.
     c_energy = c_power.cumsum(axis=1) / 1000.
 
@@ -59,61 +59,63 @@ def print_results(my_T):
 
 def plot_results(my_T, to_plot=False):
     if to_plot:
-        plt.figure()
-        ax1 = plt.subplot(3, 2, 1)
-        plt.plot(my_T.results['outdoor_temperatures'].T)
-        plt.plot(my_T.results['ground_temperature'].T)
-        plt.ylabel('Temp [°C]')
-        plt.ylim([-15, 30])
+
+        fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
+        ax1.plot(my_T.results['outdoor_temperatures'].T)
+        ax1.plot(my_T.results['ground_temperature'].T)
+        ax1.set_ylabel('Temp [°C]')
         # plt.xlim([5000, 6000])
         plt.grid()
         plt.legend(['direct outdoor_temperatures', 'ground_temperature'])
-        plt.title('Outdoor temperatures')
-        ax2 = plt.subplot(3, 2, 2, sharex=ax1)
-        plt.plot(my_T.results['solar_direct'].T)
-        plt.plot(my_T.results['solar_diffuse'].T)
-        plt.ylabel('flux [W]')
-        plt.ylim([0, 1000.])
+        ax1.set_title('Outdoor temperatures')
+
+        ax2.plot(my_T.results['solar_direct'].T)
+        ax2.plot(my_T.results['solar_diffuse'].T)
+        ax2.set_ylabel('flux [W]')
         plt.grid()
         plt.legend(['direct normal', 'diffuse_horizontal'])
-        plt.title('Solar radiation')
-        ax3 = plt.subplot(3, 2, 3, sharex=ax1)
-        plt.plot(my_T.results['setpoint'].T, 'k--')
-        plt.plot(my_T.results['spaces_air'].T)
-        plt.plot(my_T.results['spaces_mean_radiant'].T)
-        plt.ylabel('Temp [°C]')
-        plt.ylim([10, 35])
+        ax2.set_title('Solar radiation')
+
+        plt.suptitle('External conditions')
+
+        fig, (ax3, ax4, ax5) = plt.subplots(3, 1, sharex='all')
+
+        ax3.plot(my_T.results['spaces_mean_radiant'].T)
+        ax3.plot(my_T.results['spaces_air'].T)
+        ax3.plot(my_T.results['setpoint'].T, 'k--')
+        ax3.set_ylabel('Temp [°C]')
         plt.grid()
         plt.legend(['Setpoint', 'air_temperature', 'radiant_temperature'])
-        plt.title('Space air and mean radiant temperatures')
-        ax4 = plt.subplot(3, 2, 4,  sharex=ax1)
-        plt.plot(my_T.results['windows'].T)
-        plt.ylabel('Temp [°C]')
-        plt.ylim([-10, 35])
+        ax3.set_title('Space air and mean radiant temperatures')
+
+        ax4.plot(my_T.results['windows'].T)
+        ax4.set_ylabel('Temp [°C]')
         plt.grid()
-        plt.title('Window surface temperatures')
-        ax5 = plt.subplot(3, 2, 5,  sharex=ax1)
-        plt.plot(my_T.results['boundaries'].T)
-        plt.xlabel('Time [h]')
-        plt.ylabel('Temp [°C]')
-        plt.ylim([-10, 40])
+        ax4.set_title('Window surface temperatures')
+
+        ax5.plot(my_T.results['boundaries'].T)
+        ax5.set_xlabel('Time [h]')
+        ax5.set_ylabel('Temp [°C]')
         plt.grid()
-        plt.title('Wall node temperatures')
-        ax6 = plt.subplot(3, 2, 6,  sharex=ax1)
-        h_power = my_T.results['hvac_flux'] * (my_T.results['hvac_flux'] >=0)
-        c_power = my_T.results['hvac_flux'] * (my_T.results['hvac_flux'] < 0)
-        plt.plot(h_power.T)
-        plt.plot(c_power.T)
+        ax5.set_title('Wall node temperatures')
+
+        plt.suptitle('All temperatures in house.json')
+
+        fig, ax = plt.subplots()
+        h_power = my_T.results['hvac_flux_vec'] * (my_T.results['hvac_flux_vec'] >=0)
+        c_power = my_T.results['hvac_flux_vec'] * (my_T.results['hvac_flux_vec'] < 0)
+        ax.plot(h_power.T)
+        ax.plot(c_power.T)
         h_energy = h_power.cumsum(axis=1)/1000.
         c_energy = c_power.cumsum(axis=1) / 1000.
-        plt.plot(h_energy.T)
-        plt.plot(c_energy.T)
-        plt.xlabel('Time [h]')
-        plt.ylabel('Flux [W]')
-        plt.ylim([-8000, 6000.])
+        ax.plot(h_energy.T)
+        ax.plot(c_energy.T)
+        ax.set_xlabel('Time [h]')
+        ax.set_ylabel('Flux [W]')
         plt.grid()
         plt.title('Hvac power')
-        plt.suptitle('All temperatures in house.json')
+
+
         plt.show()
 
         # plt.figure()
