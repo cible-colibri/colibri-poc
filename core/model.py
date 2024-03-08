@@ -157,7 +157,7 @@ class Model(metaclass=MetaModel):
     # this list can be extended each time a new system model is authored
     # only systems from this list will be created automatically
     @staticmethod
-    def model_class_factory(class_name, instance_name):
+    def model_factory(class_name, instance_name):
         import importlib
         for module_name in ["models.emitters.electric_emitter", "models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
             module = importlib.import_module(module_name)

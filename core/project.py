@@ -65,8 +65,7 @@ class Project:
             return models[0]
         return None
 
-    # TODO: Rename get_models_from_class?
-    def get_models(self, cls):
+    def get_models_from_class(self, cls):
         return [model for model in self.models if model.__class__.__name__ == cls]
 
     def get_model_by_name(self, name):
@@ -77,7 +76,7 @@ class Project:
         self.building_data = building_data
 
     def get_weather(self):
-        weather_models = self.get_models('Weather')
+        weather_models = self.get_models_from_class('Weather')
         if len(weather_models) == 1:
             return weather_models[0]
         elif len(weather_models) > 1:

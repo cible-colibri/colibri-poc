@@ -5,6 +5,7 @@ from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
+from models.emitters.hydro_emitter import HydroEmitter
 from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
     set_U_from_index, get_states_from_index, get_u_values
 from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
@@ -119,13 +120,12 @@ class Th_Model(Model):
                 emit = self.project.get_model_by_name(space.label + "_emitter")  # TODO: get by class ? -> create Space class
                 if len(emit) > 0:
                     #TODO: créer un paramètre hydraulique. Est-ce que c'est à faire ici ce truc ??
-                    if hasattr(emit[0], "nominal_heating_supply_temperature"):
+                    if emit is HydroEmitter:
                         if self.op_mode[i] == 'cooling':
                             emit[0].temperature_in = emit[0].nominal_cooling_supply_temperature.value
                         elif self.op_mode[i] == 'heating':
                             emit[0].temperature_in = emit[0].nominal_heating_supply_temperature.value
                         else:
-                            x=2
                             emit[0].temperature_in = emit[0].temperature_out.value  #TODO: last, pas last ? Pas initialisé en tout cas
 
         self.air_temperature_dictionary = self.reformat_for_pressure()  # send temperature values to pressure model
@@ -288,7 +288,7 @@ class Th_Model(Model):
         for i, space in enumerate(self.Space_list):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
-                if hasattr(emit[0], 'nominal_heating_supply_temperature'):  #TODO: suppose ideal
+                if emit is HydroEmitter:  #TODO: suppose ideal
                     thermal_output_max = emit[0].nominal_UA * (emit[0].temperature_in - air_temperatures[i])
                     self.max_heating_power_vec[i] = max(0., thermal_output_max)
                     self.max_cooling_power_vec[i] = abs(min(0., thermal_output_max))
@@ -368,13 +368,13 @@ class Th_Model(Model):
             emitter_cls = emitter_type['model']
             zone_name = emitter.zone_name
             emitter_name = zone_name + '_emitter'
-            emitter_class = Model.model_class_factory(emitter_cls, emitter_name)
-            emitter_class.zone_name = zone_name
+            emitter_instance = Model.model_factory(emitter_cls, emitter_name)
+            emitter_instance.zone_name = zone_name
             for param in emitter._fields:
                 if hasattr(emitter, param):
-                    setattr(emitter_class, param, getattr(emitter, param))
+                    setattr(emitter_instance, param, getattr(emitter, param))
 
-            project.add(emitter_class)
+            project.add(emitter_instance)
 
             # On ne peut pas faire cela, car heat_flux_vec serait un vecteur et heat_demand un scalaire.
             # On choisi de ramasser les objets par leur type / nom dans le modèle du bâtiment pour l'instant,

@@ -17,8 +17,6 @@ from utils.unit_utils import get_unit_converter
 
 # Solar constant of the Earth [W/m²]
 SOLAR_CONSTANT_OF_THE_EARTH = 1367.0
-# Object to convert from one unit to another (containing all unit conversion factors)
-UNIT_CONVERTER              = get_unit_converter()
 
 CP_AIR = 1006.
 CP_WATER = 4186.  # [J/kg.K]
@@ -30,6 +28,8 @@ g = 9.81
 p_ref = 101300
 Rs_air = 287
 
+# Object to convert from one unit to another (containing all unit conversion factors)
+UNIT_CONVERTER              = get_unit_converter()
 
 
 # ========================================
