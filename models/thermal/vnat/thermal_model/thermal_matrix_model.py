@@ -355,7 +355,7 @@ class Th_Model(Model):
 
     def create_emitters(self):
         # this will ultimately be a 'create system' function
-
+        #TODO: on l'enlève du coup vu que c'est fait au niveau de BuildingData ? Ou y a des fonctions différentes ?
         project = self.project
 
         if not project:

@@ -87,6 +87,11 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
     ax2.set_xlabel('h')
     plt.show()
 
+    #TODO: todo avec des questions un peu générales
+    # - Comment gérer les liens entre les objets ? Ou plus précisément comment récupérer les objets liés (amont et aval) d'un objet en particulier ?
+    # - Comment relier les inputs/outputs ? Avec une fonction dédiée appelée à chaque fois avant les run ? Pour l'instant c'est dans ThModel qu'on impose les temperatures in/out de hydroemitter et la heat_demand -> pas très modulaire
+    # - Faire des classes génériques de type "Emitter" pour faciliter les connexions et la récupération des objets. Mais comment détecter les différences de type émetteur hydraulique ou non ?
+
 
     # kitchen_temperatures = [x['kitchen_1'] for x in multizone_building.air_temperature_dictionary_series]
 
