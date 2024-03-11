@@ -3,9 +3,9 @@ import pathlib
 
 from pkg_resources import resource_filename
 from core.project import Project
-from models.airflow.AirflowBuilding.matrix_aero import P_Model
+from models.airflow.AirflowBuilding.P_Model import P_Model
 from models.thermal.vnat.thermal_model.generic import print_results, plot_results
-from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
+from models.thermal.vnat.thermal_model.Th_Model import Th_Model
 from models.utility.weather import Weather
 
 
