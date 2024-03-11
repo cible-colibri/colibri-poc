@@ -1,8 +1,9 @@
 import os
 import pathlib
 
+from pkg_resources import resource_filename
 from core.project import Project
-from models.thermal.vnat.aero_peter.matrix_aero import P_Model
+from models.airflow.AirflowBuilding.matrix_aero import P_Model
 from models.thermal.vnat.thermal_model.generic import print_results, plot_results
 from models.thermal.vnat.thermal_model.thermal_matrix_model import Th_Model
 from models.utility.weather import Weather
@@ -10,8 +11,8 @@ from models.utility.weather import Weather
 
 def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.epw'):
 
-    main_dir = pathlib.Path(__file__).parents[2]
-    building_path = os.path.join(main_dir, 'models', 'thermal', 'vnat', 'test_cases')
+    main_dir = resource_filename('models', 'thermal')
+    building_path = os.path.join(main_dir, 'vnat', 'test_cases')
     case = 1
     # bestest case
     if case == 0:  # custom test

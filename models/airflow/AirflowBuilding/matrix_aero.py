@@ -2,10 +2,10 @@
 import numpy as np
 
 from models.thermal.vnat.test_cases.boundary_conditions import boundary_matrix
-from models.thermal.vnat.test_cases.data_model import rho_ref, t_ext, p_ref, Rs_air, t_ref_K, g
-from models.thermal.vnat.aero_peter.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
+from config.constants import *
+from models.airflow.AirflowBuilding import connection_functions
+from models.airflow.AirflowBuilding.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
     construct_CCi, gen_pressure_system, generate_AA_BB_pressure_system
-import models.thermal.vnat.test_aero.connection_functions as cf
 from models.thermal.vnat.test_cases.data_model_coupling_Temp_Press import nodes, flow_paths
 
 from core.inputs import Inputs
@@ -202,7 +202,7 @@ class P_Model(Model):
                                 connection = self.flow_paths[self.U_fan_indexer[f][0]]['connection']
                                 flowrate = self.FFb_act[id_to, id_from]
                                 sign = self.U_fan_indexer[f][4]
-                                dp_corr += sign * cf.fan_mechanical_calculate_dploss(flowrate=flowrate * 3600 / rho_ref,
+                                dp_corr += sign * connection_functions.fan_mechanical_calculate_dploss(flowrate=flowrate * 3600 / rho_ref,
                                                                                      dplaw=connection['pressure_curve'])
                     self.nodes[node]['pressure'] += dp_corr
                     self.U_pressure[i, 0] = self.nodes[node]['pressure']  # set boundary pressures in U_pressure array

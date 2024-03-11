@@ -1,5 +1,6 @@
 import numpy as np
 
+from config.constants import rho_ref, cp_air_ref
 from core.inputs import Inputs
 from core.model import Model
 from core.outputs import Outputs
@@ -11,7 +12,6 @@ from models.thermal.vnat.thermal_model.RyCj import generate_A_and_B, generate_eu
 from models.thermal.vnat.thermal_model.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
 from models.thermal.vnat.thermal_model.generic import store_results
 from models.utility.weather import solar_processor
-from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
 from models.thermal.vnat.thermal_model.bestest_cases import bestest_configs
 from models.thermal.vnat.thermal_model.results_handling import initialise_results
 from utils.enums_utils import Roles, Units

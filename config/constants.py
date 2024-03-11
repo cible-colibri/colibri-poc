@@ -27,6 +27,8 @@ t_ext = -20
 g = 9.81
 p_ref = 101300
 Rs_air = 287
+cp_air_ref = 1006.
+
 
 # Object to convert from one unit to another (containing all unit conversion factors)
 UNIT_CONVERTER              = get_unit_converter()

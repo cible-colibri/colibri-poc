@@ -1,8 +1,8 @@
 import numpy as np
 import copy
 from scipy.linalg import inv
-import models.thermal.vnat.test_aero.connection_functions as cf
-from models.thermal.vnat.test_cases.data_model import rho_ref, t_ext, t_ref, p_ref, Rs_air, t_ref_K, g
+from config.constants import *
+from models.airflow.AirflowBuilding import connection_functions
 
 
 def construct_nodes_sep(nodes):
@@ -119,12 +119,12 @@ def construct_CCi(flow_paths, boundary_nodes_names, system_nodes_names):
         # calculation of kb value
         connection = flow_paths[flow_path]['connection']
         if connection['connection_type'] == 'door':
-            kb = cf.door_calculate_kb(section=connection['section'], discharge_coefficient=connection['discharge_coefficient'], opening=1)
+            kb = connection_functions.door_calculate_kb(section=connection['section'], discharge_coefficient=connection['discharge_coefficient'], opening=1)
             # exchange coefficient before multiplying with flow rate
             value = np.abs(kb ** (1/connection['n']) / rho_ref)
             n_flow = connection['n']
         elif 'grille' in connection['connection_type']:  # outlet or inlet_grille, same equations
-            kb = cf.grille_calculate_kb(dp0=connection['dp0'], rho0=connection['rho0'], flow0=connection['flow0'], n=connection['n'], opening=1)
+            kb = connection_functions.grille_calculate_kb(dp0=connection['dp0'], rho0=connection['rho0'], flow0=connection['flow0'], n=connection['n'], opening=1)
             # exchange coefficient before multiplying with flow rate
             value = np.abs(kb ** (1/connection['n']) / rho_ref)
             # np.sign(dp_flow[j]) * kb * abs(rho_ref * dp_flow[j]) ** connection['n']
@@ -132,7 +132,7 @@ def construct_CCi(flow_paths, boundary_nodes_names, system_nodes_names):
         elif 'duct_dtu' in connection['connection_type']:
             # exchange coefficient before multiplying with flow rate
             nominal_flowrate = 50  # no impact if the function is used with type="c_lin"
-            value = np.abs(cf.duct_dtu_calculate_dploss(flowrate=nominal_flowrate, rho=rho_ref, section=connection['section'], h_diam=connection['h_diam'], length=connection['length'], coefK=connection['coefK'], dzeta=connection['dzeta'], calc_mode='c_lin'))
+            value = np.abs(connection_functions.duct_dtu_calculate_dploss(flowrate=nominal_flowrate, rho=rho_ref, section=connection['section'], h_diam=connection['h_diam'], length=connection['length'], coefK=connection['coefK'], dzeta=connection['dzeta'], calc_mode='c_lin'))
             n_flow = 0.5
         elif 'flow' in connection['connection_type']:
             value = 1  # keep 0 values in CCa and CCb since flow rate is calculated in the fan models and imposed directly as FAN flow rates.

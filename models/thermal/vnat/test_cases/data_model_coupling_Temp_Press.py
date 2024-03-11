@@ -1,4 +1,4 @@
-from models.thermal.vnat.test_cases.data_model import rho_ref, cp_air_ref
+from config.constants import rho_ref
 
 flow_paths = {'B0': {'path': ['BC0', 'living_room_1'], 'z': 0,
                      'connection': {'connection_type': 'inlet_grille', 'dp0': 20, 'rho0': rho_ref, 'flow0': 30,
