@@ -4,6 +4,8 @@ import pathlib
 from pkg_resources import resource_filename
 from core.project import Project
 from models.airflow.AirflowBuilding.P_Model import P_Model
+from models.emitters.emitter import Emitter
+from models.emitters.hydro_emitter import HydroEmitter
 from models.thermal.vnat.thermal_model.generic import print_results, plot_results
 from models.thermal.vnat.thermal_model.Th_Model import Th_Model
 from models.utility.weather import Weather
@@ -13,7 +15,7 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
 
     main_dir = resource_filename('models', 'thermal')
     building_path = os.path.join(main_dir, 'vnat', 'test_cases')
-    case = 1
+    case = 2
     # bestest case
     if case == 0:  # custom test
         file_name = 'house_1.json'
@@ -48,6 +50,7 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
     weather.time_zone = time_zone
     project.add(weather)
 
+    #TODO: ça créé la structure de données automatiquement mais pas le type de modélisation (pas Model ou DataClass en fonction du type de modèle thermique utilisé par ex)
     project.add_building_data(building_file)
 
     # thermal model
@@ -55,18 +58,26 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
     multizone_building.blind_position = 0 # 1 = open
     multizone_building.case = case
     project.add(multizone_building)
-    multizone_building.create_emitters()
 
     # air flow model
     airflow_building = P_Model("air flow model")
     airflow_building.case = case
     project.add(airflow_building)
 
+    #TODO: soit on met dans le json la classe des objets, si rien n'est spécifié on utilisé la classe RT par défaut
+    project.create_envelop()
+    project.create_systems()
+
     if case == 0:  # Colibri house
         airflow_building.pressure_model = True
     else:  # bestest, no pressure calculation
         airflow_building.pressure_model = False
 
+    # TODO: fichier link avec tout en dur pour faire tout automatiquement
+    #  Faire des classes "génériques" pour avoir les entrées fixées par types de classes (Enveloppe thermique, Emetteur hydraulique,
+    #  Emetteur direct, Emetteur plancher chauffant, Générateur...): soit scalaire, soit vecteur mais par classe. Entre 2 classes on ne peut pas avoir 2 types de sorties (vecteur/scalaires)
+    #  Sous quelle forme faire les liens ? On laisse choisir les modèles ? Pas de dict car peut contenir des variables avec des unités différentes (ou sinon homogène avec un type de variable),
+    #  faire plutôt type vecteur
     # *** if we want to connect an external controller for the blinds (pilots one variable)
     project.link(multizone_building, "air_temperature_dictionary_output", airflow_building, "air_temperature_dictionary_input")
     project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
@@ -78,14 +89,16 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
 
     #TODO: attention, on peut récupérer des objets à différents endroits, mais ce ne sont pas les "vrais objets" par ex Emitter_list n'est pas mis à jour
     # où trouver les inputs ? Il faudrait aller chercher l'objet d'avant ? la galère... en post pro faut pouvoir y accéder facilement
-    emitter = project.models[2]
+    emitter = project.get_models_from_class(Emitter)[0]
     import matplotlib.pyplot as plt
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
     ax1.plot(emitter.phi_radiative_series, label='phi radiative')
     ax1.set_ylabel('Phi radiative [w]')
-    ax2.plot(emitter.temperature_out_series, label='temperature out')
-    ax2.set_ylabel('Temperature out of the emitter [degC]')
-    ax2.set_xlabel('h')
+
+    if isinstance(emitter, HydroEmitter):
+        ax2.plot(emitter.temperature_out_series, label='temperature out')
+        ax2.set_ylabel('Temperature out of the emitter [degC]')
+        ax2.set_xlabel('h')
     plt.show()
 
     #TODO: todo avec des questions un peu générales

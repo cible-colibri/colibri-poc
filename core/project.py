@@ -14,6 +14,7 @@ import time
 
 from matplotlib import pyplot as plt
 
+from core.Building import Building
 # ========================================
 # Internal imports
 # ========================================
@@ -23,6 +24,7 @@ from core.model              import Model
 from core.plot               import Plot
 from core.variable_connector import VariableConnector
 from data.Building.building_data import BuildingData
+from models.utility.weather import Weather
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file
@@ -66,7 +68,7 @@ class Project:
         return None
 
     def get_models_from_class(self, cls):
-        return [model for model in self.models if model.__class__.__name__ == cls]
+        return [model for model in self.models if isinstance(model,cls)]
 
     def get_model_by_name(self, name):
         return [model for model in self.models if model.name == name]
@@ -76,7 +78,7 @@ class Project:
         self.building_data = building_data
 
     def get_weather(self):
-        weather_models = self.get_models_from_class('Weather')
+        weather_models = self.get_models_from_class(Weather)
         if len(weather_models) == 1:
             return weather_models[0]
         elif len(weather_models) > 1:
@@ -345,3 +347,11 @@ class Project:
         """
         object_representation = self.__str__()
         return object_representation
+
+    def create_envelop(self):
+        for building in self.get_models_from_class(Building):
+            building.create_envelop()
+
+    def create_systems(self):
+        for building in self.get_models_from_class(Building):
+            building.create_systems()

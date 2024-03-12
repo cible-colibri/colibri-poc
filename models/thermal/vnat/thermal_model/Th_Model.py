@@ -1,6 +1,7 @@
 import numpy as np
 
 from config.constants import rho_ref, cp_air_ref
+from core.Building import Building
 from core.inputs import Inputs
 from core.model import Model
 from core.outputs import Outputs
@@ -17,7 +18,7 @@ from models.thermal.vnat.thermal_model.results_handling import initialise_result
 from utils.enums_utils import Roles, Units
 
 
-class Th_Model(Model):
+class Th_Model(Building):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None
@@ -353,14 +354,14 @@ class Th_Model(Model):
         self.has_converged = np.sum(np.abs(self.hvac_flux_vec - self.hvac_flux_vec_last)) <= threshold
 
 
-    def create_emitters(self):
-        # this will ultimately be a 'create system' function
-        #TODO: on l'enlève du coup vu que c'est fait au niveau de BuildingData ? Ou y a des fonctions différentes ?
+    def create_systems(self):
+
         project = self.project
 
         if not project:
             raise Exception('Project not defined - add me to a project first, so I can create systems with links')
 
+        # create emitters
         emitter_list = project.building_data.emitter_list
         for i, emitter in enumerate(emitter_list):
             type_id = emitter.type_id
@@ -383,3 +384,7 @@ class Th_Model(Model):
             #project.link(self, "heat_flux_vec", electric_convector, "heat_demand")
 
 
+    def create_envelop(self):
+        # for this, matrix based model, no models for walls, layers etc. are created
+        # it used the data model directly to compute the matrices
+        pass

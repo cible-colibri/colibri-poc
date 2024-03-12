@@ -5,26 +5,18 @@ from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
+from models.emitters.emitter import Emitter
 from utils.enums_utils import Roles, Units
 from config.constants import CP_WATER
 
 #TODO: faire une classe générique Emitter pour faciliter les associations automatiques
 # Bien voir comment faire les liens entre objets/model pour faciliter la gestions des données au niveau initialisation
 
-class HydroEmitter(Model):
+class HydroEmitter(Emitter):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        self.name                  = name
-        self.project               = None
-        self.inputs                = [] if inputs is None else inputs.to_list()
-        self.outputs               = [] if outputs is None else outputs.to_list()
-        self.parameters            = [] if parameters is None else parameters.to_list()
+        super(HydroEmitter, self).__init__(name, inputs, outputs, parameters)
 
-        # self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
-        self.zone_name = Variable("zone_name", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="zone_name")
-        self.radiative_share = Variable("radiative_share", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="radiative_share")
-        self.time_constant = Variable("time_constant", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter time constant")
-        self.nominal_heating_power = Variable("nominal_heating_power", 0, role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal heating power")
-        self.nominal_cooling_power = Variable("nominal_cooling_power", 0, role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal cooling power")
+        # parameters
         self.nominal_UA = Variable("nominal_UA", 0, role=Roles.PARAMETERS, unit=Units.WATT_PER_KELVIN, description="Nominal exchange coefficient at design conditions")
         self.nominal_flow_rate = Variable("nominal_flow_rate", 0, role=Roles.PARAMETERS, unit=Units.KILOGRAM_PER_SECOND, description="Nominal flow rate")
         self.deltaT_fluid_nom = Variable("deltaT_fluid_nom", 0, role=Roles.PARAMETERS, unit=Units.KELVIN, description="Nominal temperature difference between supply and return")
@@ -32,17 +24,11 @@ class HydroEmitter(Model):
         self.nominal_cooling_supply_temperature = Variable("nominal_cooling_supply_temperature", 0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Nominal supply temperature for cooling")
 
         # input
-        self.heat_demand   = Variable("heat_demand", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="heat_demand - positive=heating, negative=cooling")
         self.temperature_in = Variable("temperature_in", 0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="Temperature going in the emitter")
         self.flow_rate = Variable("flow_rate", 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="Flow rate going through the emitter")
-        #TODO: input or output or both ? for now nominal
 
-        # results to save
+        # outputs
         self.temperature_out = Variable("temperature_out", 0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="Temperature going out of the emitter")
-        self.phi_radiative = Variable("phi_radiative", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Radiative part of thermal output")
-        self.phi_convective = Variable("phi_convective", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Convective part of thermal output")
-        self.phi_latent = Variable("phi_latent", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Latent part of thermal output")
-
 
     def initialize(self) -> None:
         #TODO: for now imposed in the Thmodel...........
