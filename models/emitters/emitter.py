@@ -25,7 +25,7 @@ class Emitter(Model):
         self.time_constant = Variable("time_constant", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter time constant")
 
         # inputs
-        self.heat_demand = Variable("heat_demand", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="heat_demand - positive=heating, negative=cooling")
+        self.heat_demand = Variable("heat_demand", np.zeros(100), role=Roles.INPUTS, unit=Units.UNITLESS, description="heat_demand - positive=heating, negative=cooling")
 
         # outputs
         self.phi_radiative = Variable("phi_radiative", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Radiative part of thermal output")

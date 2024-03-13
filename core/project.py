@@ -110,6 +110,24 @@ class Project:
                 link = Link(model_1, c[0], arg_2, c[1])
                 self.links.append(link)
 
+    def link_to_vector(self, model_1, var_1, model_2, var_2, index_2):
+        if not self.is_eligible_link(model_1, var_1, model_2, var_2):
+            raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
+        link = Link(model_1, var_1, model_2, var_2, None, index_2)
+        self.links.append(link)
+
+    def link_from_vector(self, model_1, var_1, index_1, model_2, var_2):
+        if not self.is_eligible_link(model_1, var_1, model_2, var_2):
+            raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
+        link = Link(model_1, var_1, model_2, var_2, index_1, None)
+        self.links.append(link)
+
+    def link_vector_to_vector(self, model_1, var_1, index_1, model_2, var_2, index_2):
+        if not self.is_eligible_link(model_1, var_1, model_2, var_2):
+            raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
+        link = Link(model_1, var_1, model_2, var_2, index_1, index_2)
+        self.links.append(link)
+
     def link_with_connector(self, from_model: Model, to_model: Model, connector: VariableConnector) -> None:
         for from_variable, to_variable in connector.connections:
             self._add_link(from_model, from_variable, to_model, to_variable)
@@ -205,9 +223,22 @@ class Project:
 
     def _substitute_links_values(self):
         for link in self.links:
-            value_in  = getattr(link.to_model, link.to_variable).value
-            value_out = getattr(link.from_model, link.from_variable).value
-            setattr(link.to_model, link.to_variable, value_out)
+            if link.index_to is None:
+                value_in = getattr(link.to_model, link.to_variable).value
+            else:
+                value_in = getattr(link.to_model, link.to_variable).value[link.index_from]
+
+            if link.index_from is None:
+                value_out = getattr(link.from_model, link.from_variable).value
+            else:
+                value_out = getattr(link.from_model, link.from_variable).value[link.index_to]
+
+            if link.index_to is None:
+                setattr(link.to_model, link.to_variable, value_out)
+            else:
+                target_var = getattr(link.to_model, link.to_variable) # TODO: test
+                target_var.value[link.index_to] = value_out
+
             if self.verbose:
                 print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
             if (not link.to_model.converged(self.time_step, self.n_iteration)):

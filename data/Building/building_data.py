@@ -37,5 +37,9 @@ class BuildingData():
 
         self.boundary_list, self.window_list = import_boundaries(self.project_dict)
 
-
+    def get_zone_index(self, zone_name):
+        for index, space in enumerate(self.space_list):
+            if space.label == zone_name:
+                return index
+        return None
 
