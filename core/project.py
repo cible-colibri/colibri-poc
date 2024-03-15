@@ -12,6 +12,7 @@ import pathlib
 import typing
 import time
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 from core.Building import Building
@@ -237,6 +238,8 @@ class Project:
                 setattr(link.to_model, link.to_variable, value_out)
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test
+                if target_var.value.size < link.index_to + 1:
+                    target_var.value = np.resize(target_var.value, link.index_to + 1)
                 target_var.value[link.index_to] = value_out
 
             if self.verbose:

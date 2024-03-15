@@ -31,16 +31,16 @@ class Th_Model(Building):
 
         # inputs
         self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
-        self.phi_radiative = Variable("phi_radiative", np.zeros(100), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
-        self.phi_convective = Variable("phi_convective", np.zeros(100), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
-        self.phi_latent = Variable("phi_latent", np.zeros(100), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
+        self.phi_radiative = Variable("phi_radiative", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
+        self.phi_convective = Variable("phi_convective", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
+        self.phi_latent = Variable("phi_latent", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
 
         # outputs
         self.air_temperature_dictionary_output = Variable("air_temperature_dictionary", 0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
         self.flow_rates_input = Variable("flow_rates", value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         # results to save
-        self.heat_flux_vec = Variable("hvac_flux_vec", np.zeros(100), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
+        self.heat_flux_vec = Variable("hvac_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
 
     def initialize(self) -> None:
 
