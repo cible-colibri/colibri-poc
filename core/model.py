@@ -38,6 +38,10 @@ class MetaModel(abc.ABCMeta):
         cls._define_variables(instance)
         cls._add_attributes_to_internal_lists(instance)
         instance._expand_variables()
+
+        for v in instance.inputs + instance.outputs + instance.parameters:
+            v.model = cls
+
         return instance
 
     @staticmethod
