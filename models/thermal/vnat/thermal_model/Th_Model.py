@@ -124,7 +124,7 @@ class Th_Model(Building):
             self.found = []
 
             # impose supply temperature from generator based on op mode
-            for i, space in enumerate(self.Space_list):
+            for i, space in enumerate(self.project.building_data.space_list):
                 emit = self.project.get_model_by_name(space.label + "_emitter")  # TODO: get by class ? -> create Space class
                 if len(emit) > 0:
                     #TODO: créer un paramètre hydraulique. Est-ce que c'est à faire ici ce truc ??
@@ -178,21 +178,16 @@ class Th_Model(Building):
         #   initialise thermal model
         #################################################################################
 
-        # load data into lists of dicts with boundaries, windows and spaces
-        self.Boundary_list = self.project.building_data.boundary_list
-        self.Window_list = self.project.building_data.window_list
-        self.Space_list = self.project.building_data.space_list
-        self.Emitter_list = self.project.building_data.emitter_list
-        self.n_spaces = len(self.Space_list)
+        self.n_spaces = len(self.project.building_data.space_list)
 
         # function to define radiative shares of wall surfaces inside a thermal zone
-        get_rad_shares(self.Boundary_list, self.Window_list, self.Space_list)
+        get_rad_shares(self.project.building_data.boundary_list, self.project.building_data.window_list, self.project.building_data.space_list)
 
         # calculate global u-values for final balances of outputs (not for calculation)
-        get_u_values(self.Space_list)
+        get_u_values(self.project.building_data.space_list)
 
         # create A and B matrices
-        A, B, self.index_states, self.index_inputs = generate_A_and_B(self.Space_list, self.Boundary_list, self.Window_list)
+        A, B, self.index_states, self.index_inputs = generate_A_and_B(self.project.building_data.space_list, self.project.building_data.boundary_list, self.project.building_data.window_list)
 
         # convert matrices to euler exponential
         self.Ad, self.Bd = generate_euler_exp_Ad_Bd(A, B, self.dt, label='None')
@@ -206,14 +201,14 @@ class Th_Model(Building):
 
         # generate global dict where results can be saved
         #TODO: mettre dans la définition de la classe ? Mais pb connaissance de la taille des vecteurs
-        self.results, self.res_list = initialise_results(self.index_states, self.Space_list, self.Boundary_list, self.n_steps)
+        self.results, self.res_list = initialise_results(self.index_states, self.project.building_data.space_list, self.project.building_data.boundary_list, self.n_steps)
 
         # create solar radiation matrix for all boundaries
-        self.solar_bound_arriving_flux_matrix, self.solar_transmitted_flux_matrix = solar_processor(weather_data, latitude, longitude, self.Boundary_list, self.Space_list, time_zone)
+        self.solar_bound_arriving_flux_matrix, self.solar_transmitted_flux_matrix = solar_processor(weather_data, latitude, longitude, self.project.building_data.boundary_list, self.project.building_data.space_list, time_zone)
 
         # radiative parameters
-        self.boundary_absorption_array = np.zeros(len(self.Boundary_list))
-        for i, bound in enumerate(self.Boundary_list):
+        self.boundary_absorption_array = np.zeros(len(self.project.building_data.boundary_list))
+        for i, bound in enumerate(self.project.building_data.boundary_list):
             if bound.side_1 == 'exterior':
                 self.boundary_absorption_array[i] = 1 - bound.albedo[0]
             else:
@@ -235,7 +230,7 @@ class Th_Model(Building):
         self.max_heating_power_vec = np.zeros(self.n_spaces)  # #TODO: update each time step for hydronic
         self.max_cooling_power_vec = np.zeros(self.n_spaces)  # #TODO: update each time step for hydronic
 
-        for i, space in enumerate(self.Space_list):
+        for i, space in enumerate(self.project.building_data.space_list):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
                 self.radiative_share_hvac_vec[i] = emit[0].radiative_share.value  #TODO: quid si plusieurs émetteurs mais pas du même mode ?
@@ -248,7 +243,7 @@ class Th_Model(Building):
         self.radiative_share_internal_gains = 0.6
         self.space_floor_area_array = np.zeros(self.n_spaces)
         for i in range(self.n_spaces):
-            self.space_floor_area_array[i] = 1. #Space_list[i].reference_area (if gains are given in W/m2
+            self.space_floor_area_array[i] = 1. #self.project.building_data.space_list[i].reference_area (if gains are given in W/m2
         self.internal_gains_vec = self.internal_gains * self.space_floor_area_array
 
         # ventilation parameters
@@ -256,7 +251,7 @@ class Th_Model(Building):
         self.air_change_rate = infiltration_trigger * 0.41
         self.efficiency_heat_recovery = 0.0  # exhaust ventilation, no heat recovery
         self.ventilation_gain_multiplier = np.zeros(self.n_spaces)
-        for i, space in enumerate(self.Space_list):
+        for i, space in enumerate(self.project.building_data.space_list):
             self.ventilation_gain_multiplier[i] = space.volume * rho_ref * cp_air_ref
 
         self.not_converged = True
@@ -293,7 +288,7 @@ class Th_Model(Building):
 
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
         # emitter preprocessing
-        for i, space in enumerate(self.Space_list):
+        for i, space in enumerate(self.project.building_data.space_list):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
                 if emit is HydroEmitter:  #TODO: suppose ideal
@@ -317,8 +312,8 @@ class Th_Model(Building):
         # now apply the hvac_flux_vec and simulate the building a last time to obtain all results
 
         # set heat_flux for emitter - TODO: one of the Gurus (Enora, Peter) please check if this is the right spot to do this
-        #TODO: chelou, si on change emitter_list en self.Emitter_list ça ne passe plus, le self.Emitter_list n'a pas été mis à jour avec l'initialisation et tout j'ai l'impression
-        emitter_list = [self.project.get_model_by_name(s.label + "_emitter") for s in self.Space_list]
+
+        emitter_list = [self.project.get_model_by_name(s.label + "_emitter") for s in self.project.building_data.space_list]
         for emitter, flux in zip([found_emitters[0] for found_emitters in emitter_list if found_emitters], self.hvac_flux_vec):
             emitter.heat_demand = flux
 
@@ -345,7 +340,7 @@ class Th_Model(Building):
 
         #TODO: idem voir si dans une classe Space on veut y associer des résultats ou pas, si oui à chaque pas de temps ? en assessment en reprenant l'ensemble des matrices calculees ?
 
-        # for i, space in enumerate(self.Space_list):
+        # for i, space in enumerate(self.project.building_data.space_list):
         #     self.window_losses[i] = space.u_window * space.window_area * (ext_temperature_operative - air_temperatures[i])
         #     self.wall_losses[i] = space.u_wall * space.wall_area * (ext_temperature_operative - air_temperatures[i])
 
@@ -353,7 +348,7 @@ class Th_Model(Building):
     def reformat_for_pressure(self):
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
         temperatures_dict = {}
-        for i, space in enumerate(self.Space_list):
+        for i, space in enumerate(self.project.building_data.space_list):
             temperatures_dict[space.label] = air_temperatures[i]
         return temperatures_dict
 
@@ -369,8 +364,7 @@ class Th_Model(Building):
             raise Exception('Project not defined - add me to a project first, so I can create systems with links')
 
         # create emitters
-        emitter_list = project.building_data.emitter_list
-        for i, emitter in enumerate(emitter_list):
+        for i, emitter in enumerate(project.building_data.emitter_list):
             type_id = emitter.type_id
             emitter_type = self.project.building_data.project_dict['archetype_collection']['emitter_types'][type_id]
             emitter_cls = emitter_type['model']

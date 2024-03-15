@@ -11,19 +11,19 @@ def store_results(t, my_T, my_weather):
     my_T.results['setpoint'][:, t] = my_T.setpoint
     for res in my_T.res_list:
         if res == 'outdoor_temperatures':
-            my_T.results['outdoor_temperatures'][0:len(my_T.Boundary_list), t] = my_weather.ext_temperature[t]
+            my_T.results['outdoor_temperatures'][0:len(my_T.project.building_data.boundary_list), t] = my_weather.ext_temperature[t]
         elif res == 'ground_temperature':
             my_T.results['ground_temperature'][0, t] = my_weather.ground_temperature[t]
         elif res == 'hvac_flux_vec':
-            my_T.results['hvac_flux_vec'][0:len(my_T.Space_list), t] = my_T.hvac_flux_vec
+            my_T.results['hvac_flux_vec'][0:my_T.n_spaces, t] = my_T.hvac_flux_vec
         elif res == 'ventilation_gains':
-            my_T.results['ventilation_gains'][0:len(my_T.Space_list), t] = my_T.ventilation_gains * (my_T.ventilation_gains < 0.) * (my_T.op_mode[0] == 'heating')
+            my_T.results['ventilation_gains'][0:my_T.n_spaces, t] = my_T.ventilation_gains * (my_T.ventilation_gains < 0.) * (my_T.op_mode[0] == 'heating')
         elif res == 'window_losses':
-            my_T.results['window_losses'][0:len(my_T.Space_list), t] = my_T.window_losses * (my_T.window_losses < 0.) * (my_T.op_mode[0] == 'heating')
+            my_T.results['window_losses'][0:my_T.n_spaces, t] = my_T.window_losses * (my_T.window_losses < 0.) * (my_T.op_mode[0] == 'heating')
         elif res == 'window_gains':
-            my_T.results['window_gains'][0:len(my_T.Space_list), t] = my_T.window_gains * (my_T.op_mode[0] == 'heating')
+            my_T.results['window_gains'][0:my_T.n_spaces, t] = my_T.window_gains * (my_T.op_mode[0] == 'heating')
         elif res == 'wall_losses':
-            my_T.results['wall_losses'][0:len(my_T.Space_list), t] = my_T.wall_losses * (my_T.wall_losses < 0.) * (my_T.op_mode[0] == 'heating')
+            my_T.results['wall_losses'][0:my_T.n_spaces, t] = my_T.wall_losses * (my_T.wall_losses < 0.) * (my_T.op_mode[0] == 'heating')
         elif 'solar' in res:
             pass
         else:
