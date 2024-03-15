@@ -22,9 +22,6 @@ class Th_Model(Building):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None
-        self.inputs                = [] if inputs is None else inputs.to_list()
-        self.outputs               = [] if outputs is None else outputs.to_list()
-        self.parameters            = [] if parameters is None else parameters.to_list()
 
         # parameters
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")

@@ -14,9 +14,6 @@ class Emitter(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None
-        self.inputs                = [] if inputs is None else inputs.to_list()
-        self.outputs               = [] if outputs is None else outputs.to_list()
-        self.parameters            = [] if parameters is None else parameters.to_list()
 
         self.zone_name = Variable("zone_name", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="zone_name")
         self.radiative_share = Variable("radiative_share", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="radiative_share")
