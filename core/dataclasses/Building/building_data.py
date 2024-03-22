@@ -41,13 +41,14 @@ class BuildingData():
                 setattr(space, 'constant_internal_gains', reference_area * gains_m2)
 
         # get emitters data
+        # get emitters data
         emitter_list = []
-        emitter_param_list = ['radiative_share', 'time_constant']
         for space in space_list:
             for obj in space_list[space]['object_collection']:
                 if obj['type'] == 'emitter':
                     emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
-                    Emitter = namedtuple('Emitter', emitter_param_list)
+                    list_param = list(obj.keys()) + list(emitter.keys())
+                    Emitter = namedtuple('Emitter', list_param)
 
                     for key, param in obj.items():
                         setattr(Emitter, key, param)
