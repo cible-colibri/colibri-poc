@@ -17,9 +17,10 @@ class Emitter(Model):
 
         self.zone_name = Variable("zone_name", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="zone_name")
         self.radiative_share = Variable("radiative_share", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="radiative_share")
-        self.nominal_heating_power = Variable("nominal_heating_power", 0, role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal heating power")
-        self.nominal_cooling_power = Variable("nominal_cooling_power", 0, role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal cooling power")
+        self.nominal_heating_power = Variable("nominal_heating_power", 10000., role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal heating power")
+        self.nominal_cooling_power = Variable("nominal_cooling_power", 10000., role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal cooling power")
         self.time_constant = Variable("time_constant", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter time constant")
+        self.mode = Variable("mode", "reversible", role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter emission mode (heating, cooling, reversible)")
 
         # inputs
         self.heat_demand = Variable("heat_demand", np.array(()), role=Roles.INPUTS, unit=Units.UNITLESS, description="heat_demand - positive=heating, negative=cooling")
@@ -28,8 +29,6 @@ class Emitter(Model):
         self.phi_radiative = Variable("phi_radiative", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Radiative part of thermal output")
         self.phi_convective = Variable("phi_convective", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Convective part of thermal output")
         self.phi_latent = Variable("phi_latent", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="Latent part of thermal output")
-
-
 
     @abc.abstractmethod
     def initialize(self) -> None:

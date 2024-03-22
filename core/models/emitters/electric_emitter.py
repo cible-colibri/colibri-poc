@@ -21,8 +21,6 @@ class ElectricEmitter(Emitter):
         self.electric_load = Variable("electric_load", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="electric_load")
 
     def initialize(self) -> None:
-        self.nominal_heating_power = 10000.
-        self.nominal_cooling_power = 10000.
 
         self.electric_load = 0.
         self.phi_radiative = 0.

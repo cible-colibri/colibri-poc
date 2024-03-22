@@ -16,11 +16,13 @@ class HydroEmitter(Emitter):
         super(HydroEmitter, self).__init__(name, inputs, outputs, parameters)
 
         # parameters
-        self.nominal_UA = Variable("nominal_UA", 0, role=Roles.PARAMETERS, unit=Units.WATT_PER_KELVIN, description="Nominal exchange coefficient at design conditions")
-        self.nominal_flow_rate = Variable("nominal_flow_rate", 0, role=Roles.PARAMETERS, unit=Units.KILOGRAM_PER_SECOND, description="Nominal flow rate")
-        self.deltaT_fluid_nom = Variable("deltaT_fluid_nom", 0, role=Roles.PARAMETERS, unit=Units.KELVIN, description="Nominal temperature difference between supply and return")
-        self.nominal_heating_supply_temperature = Variable("nominal_heating_supply_temperature", 0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Nominal supply temperature for heating")
-        self.nominal_cooling_supply_temperature = Variable("nominal_cooling_supply_temperature", 0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Nominal supply temperature for cooling")
+        self.nominal_UA = Variable("nominal_UA", 330., role=Roles.PARAMETERS, unit=Units.WATT_PER_KELVIN, description="Nominal exchange coefficient at design conditions")
+        self.nominal_flow_rate = Variable("nominal_flow_rate", 0.24, role=Roles.PARAMETERS, unit=Units.KILOGRAM_PER_SECOND, description="Nominal flow rate")
+        self.deltaT_fluid_nom = Variable("deltaT_fluid_nom", 10., role=Roles.PARAMETERS, unit=Units.KELVIN, description="Nominal temperature difference between supply and return")
+        self.nominal_heating_supply_temperature = Variable("nominal_heating_supply_temperature", 50., role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Nominal supply temperature for heating")
+        self.nominal_cooling_supply_temperature = Variable("nominal_cooling_supply_temperature", 5., role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Nominal supply temperature for cooling")
+        self.default_heating_set_point = Variable("default_set_point", 20., role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Default set point use for the nominal_UA calculation (P / (Tsupply - Tsetpoint))")
+        self.default_cooling_set_point = Variable("default_set_point", 27., role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description="Default set point use for the nominal_UA calculation (P / (Tsupply - Tsetpoint))")
 
         # input
         self.temperature_in = Variable("temperature_in", 0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="Temperature going in the emitter")
