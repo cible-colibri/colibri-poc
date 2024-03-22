@@ -1,3 +1,4 @@
+import json
 import os
 
 from pkg_resources import resource_filename
@@ -8,12 +9,13 @@ from core.models.emitters.hydro_emitter import HydroEmitter
 from core.models.thermal.DetailedBuilding.generic import print_results, plot_results
 from core.models.thermal.DetailedBuilding.Th_Model import Th_Model
 from core.models.utility.weather import Weather
+from tests.data.bestest_cases import bestest_configs
 
 
 def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.epw'):
 
     building_path = resource_filename('tests', 'data')
-    case = 2
+    case = 390
     # bestest case
     if case == 0:  # custom test
         file_name = 'house_1.json'
@@ -33,6 +35,12 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
         file_name = 'house_hydraulic.json'
 
     building_file = os.path.join(building_path, file_name)
+
+    # adapt to bestest cases if necessary
+    if case > 100:  # Bestest
+        with open(building_file, 'r') as f:
+            building_file = json.load(f)
+        building_file = bestest_configs(building_file, case)
 
     # Create a project
     project = Project()

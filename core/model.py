@@ -170,6 +170,24 @@ class Model(metaclass=MetaModel):
 
         return None
 
+    def set_default_parameters(self, default_parameters):
+        """
+        This will apply the parameters in `default_parameters` that do not already exist in self.
+
+        Args:
+            default_parameters (dict): a dict of parameter names and values
+        """
+
+        param_dict = {}
+        for param, val in default_parameters.items():
+            if hasattr(self, param) and getattr(self, param) is not None:
+                param_dict[param] = getattr(self, param)
+            else:
+                param_dict[param] = copy.deepcopy(val)
+
+        for arg_name, value in list(param_dict.items()):
+            setattr(self, arg_name, value)
+
     def __setattr__(self, name, value):
         if hasattr(self, name):
             variable = getattr(self, name)

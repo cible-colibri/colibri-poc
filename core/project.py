@@ -67,12 +67,12 @@ class Project:
         return None
 
     def get_models_from_class(self, cls):
-        return [model for model in self.models if isinstance(model,cls)]
+        return [model for model in self.models if isinstance(model, cls)]
 
     def get_model_by_name(self, name):
         return [model for model in self.models if model.name == name]
 
-    def add_building_data(self, building_file: pathlib.Path):
+    def add_building_data(self, building_file: str):
         building_data = BuildingData(building_file)
         self.building_data = building_data
 

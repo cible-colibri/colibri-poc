@@ -42,56 +42,60 @@ class Th_Model(Building):
     def initialize(self) -> None:
 
         #TODO: do a default parameters dict ? -> plus simple pour tester que l'imposition de valeurs fixes réparties un peu partout dans le code...
-        default_dict = {'setpoint_heating' : 20., 'setpoint_cooling' : 27., 'radiative_share_sensor' : 0.0, 'dt' : 3600,
-                        'f_sky' : 0.5, 'max_heating_power':10000., 'max_cooling_power': 10000.,
-                        'radiative_share_internal_gains':0.6, 'constant_internal_gains':200, 'air_change_rate':0.41, 'iter_max': 3}
+        default_dict = {'radiative_share_sensor': 0.0,  # this is where you control on
+                        'dt': 3600,  # time step of the simulation #TODO: associate to the project ?
+                        'f_sky': 0.5,
+                        'radiative_share_internal_gains': 0.6,
+                        'iter_max': 3,
+                        'plot_convergence': True}
+
+        self.set_default_parameters(default_dict)
 
         #################################################################################
         #   get weather data
         #################################################################################
+
         my_weather = self.project.get_weather()
         self.my_weather = my_weather
-
-        #################################################################################
-        #   Import project data
-        #################################################################################
-
-        # import data from json building description file
-        project_dict = self.project.building_data.project_dict
-        # adapt to bestest cases if necessary
-        if self.case > 0:  # Bestest
-            project_dict, int_gains_trigger, infiltration_trigger = bestest_configs(project_dict, self.case)
-        else:
-            int_gains_trigger = infiltration_trigger = 1.
 
         #################################################################################
         #   Simulation parameters
         #################################################################################
 
+        #TODO: passer en paramètre au niveau projet ?
         self.n_steps = len(my_weather.sky_temperature)
-        self.dt = 3600
 
         #################################################################################
         #   Create thermal building model
         #################################################################################
 
-        self.init_thermal_model(project_dict, my_weather.weather_data, my_weather.latitude, my_weather.longitude,
-                                my_weather.time_zone, int_gains_trigger, infiltration_trigger)
-
-        self.found = []  # for convergence plot of thermal model
-        self.air_temperature_dictionary = self.reformat_for_pressure()
-        self.flow_rates = []
+        self.init_thermal_model(my_weather.weather_data, my_weather.latitude, my_weather.longitude, my_weather.time_zone)
+        self.init_systems_parameters()
 
         #################################################################################
         #   Get control parameters
         #################################################################################
 
-        # controls parameters
-        self.radiative_share_sensor = 0.0  # this is where you control on
-        #TODO: associate setpoints to spaces (create object ??)
-        self.setpoint_heating_vec = 20. * np.ones(self.n_spaces)
-        self.setpoint_cooling_vec = 27. * np.ones(self.n_spaces)
-        self.op_modes = ['heating', 'cooling']
+        self.setpoint_heating_vec = np.zeros(self.n_spaces)
+        self.setpoint_cooling_vec = np.zeros(self.n_spaces)
+        op_modes = []
+        for i, space in enumerate(self.project.building_data.space_list):
+            self.setpoint_heating_vec[i] = getattr(space, 'set_point_heating')
+            self.setpoint_cooling_vec[i] = getattr(space, 'set_point_cooling')
+            op_modes += getattr(space, 'op_modes')
+
+        self.op_modes = np.unique(op_modes)
+
+        #################################################################################
+        #   Initialize parameters
+        #################################################################################
+
+        self.found = []  # for convergence plot of thermal model
+        self.air_temperature_dictionary = self.reformat_for_pressure()
+        self.flow_rates = []
+        self.not_converged = True
+        self.found = []
+        self.switch = 0
 
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
@@ -169,7 +173,7 @@ class Th_Model(Building):
     def check_units(self) -> None:
         pass
 
-    def init_thermal_model(self, project_dict, weather_data, latitude, longitude, time_zone, int_gains_trigger, infiltration_trigger):
+    def init_thermal_model(self, weather_data, latitude, longitude, time_zone):
 
         #################################################################################
         #   initialise thermal model
@@ -212,10 +216,19 @@ class Th_Model(Building):
                 self.boundary_absorption_array[i] = 1 - bound.albedo[1]
         self.f_sky = 0.5  # coefficient to connect the mean radiant temperature around the building f_sky = 0 --> Tmr = Tair, 1 --> Tmr=Fsky
 
-        # HVAC system parameters
-        # self.radiative_share_hvac = 0.0  # radiative share of heat emission of emitter
-        # self.max_heating_power = 10000.
-        # self.max_cooling_power = 10000.
+        # internal gains
+        self.radiative_share_internal_gains = 0.6
+        self.internal_gains_vec = np.zeros(self.n_spaces)
+        for i, space in enumerate(self.project.building_data.space_list):
+            self.internal_gains_vec[i] = getattr(space, 'constant_internal_gains')
+
+    def init_systems_parameters(self):
+
+        #################################################################################
+        #   initialise thermal model
+        #################################################################################
+
+        # Heating and cooling system parameters
         self.hvac_flux_vec_last = np.zeros(self.n_spaces)
         self.window_losses = np.zeros(self.n_spaces)
         self.wall_losses = np.zeros(self.n_spaces)
@@ -230,32 +243,17 @@ class Th_Model(Building):
         for i, space in enumerate(self.project.building_data.space_list):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
-                self.radiative_share_hvac_vec[i] = emit[0].radiative_share.value  #TODO: quid si plusieurs émetteurs mais pas du même mode ?
+                self.radiative_share_hvac_vec[i] = emit[0].radiative_share.value  #TODO: quid si plusieurs émetteurs mais pas du même mode ? ou pas du même radiative share ? (ex: poële + plancher chauffant)
                 self.max_heating_power_vec[i] = emit[0].nominal_heating_power.value
                 self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power.value
 
-        # internal gains  #TODO: link per space
-        self.int_gains_trigger = int_gains_trigger
-        self.internal_gains = int_gains_trigger * 200.
-        self.radiative_share_internal_gains = 0.6
-        self.space_floor_area_array = np.zeros(self.n_spaces)
-        for i in range(self.n_spaces):
-            self.space_floor_area_array[i] = 1. #self.project.building_data.space_list[i].reference_area (if gains are given in W/m2
-        self.internal_gains_vec = self.internal_gains * self.space_floor_area_array
-
         # ventilation parameters
-        self.infiltration_trigger = infiltration_trigger
-        self.air_change_rate = infiltration_trigger * 0.41
+        self.air_change_rate = 0.0
         self.efficiency_heat_recovery = 0.0  # exhaust ventilation, no heat recovery
         self.ventilation_gain_multiplier = np.zeros(self.n_spaces)
         for i, space in enumerate(self.project.building_data.space_list):
             self.ventilation_gain_multiplier[i] = space.volume * rho_ref * cp_air_ref
-
-        self.not_converged = True
-        self.iter_max = 3  #TODO: pass in parametrisation
-        self.plot_convergence = True
-        self.found = []
-        self.switch = 0
+            self.air_change_rate += space.air_change_rate
 
     def calc_thermal_building_model_iter(self, t, weather):
 
@@ -341,7 +339,6 @@ class Th_Model(Building):
         #     self.window_losses[i] = space.u_window * space.window_area * (ext_temperature_operative - air_temperatures[i])
         #     self.wall_losses[i] = space.u_wall * space.wall_area * (ext_temperature_operative - air_temperatures[i])
 
-
     def reformat_for_pressure(self):
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
         temperatures_dict = {}
@@ -351,7 +348,6 @@ class Th_Model(Building):
 
     def calc_convergence(self, threshold=1e-3):
         self.has_converged = np.sum(np.abs(self.hvac_flux_vec - self.hvac_flux_vec_last)) <= threshold
-
 
     def create_systems(self):
 
