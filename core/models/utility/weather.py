@@ -20,6 +20,9 @@ class Weather(Model):
         self.inputs            = [] if inputs is None else inputs.to_list()
         self.outputs           = [] if outputs is None else outputs.to_list()
         self.parameters        = [] if parameters is None else parameters.to_list()
+
+        self.constant_ground_temperature = Variable("constant_ground_temperature", None, Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description='Impose a constant ground temperature if the parameter is not None')
+
         self.year              = Variable("year", 0, Roles.OUTPUTS)
         self.month             = Variable("month", 0, Roles.OUTPUTS)
         self.day               = Variable("day", 0, Roles.OUTPUTS)
@@ -57,8 +60,14 @@ class Weather(Model):
         self.rain_hr           = Variable("rain_hr", 0, Roles.OUTPUTS)
 
     def initialize(self):
+
         self.weather_data, self.latitude, self.longitude, self.solar_direct, self.solar_diffuse, self.ext_temperature = import_epw_weather(self.weather_file)
-        self.ground_temperature = self.weather_data['ground_temperature']
+
+        if self.constant_ground_temperature.value is not None:
+            self.ground_temperature = self.constant_ground_temperature.value * np.ones(self.weather_data['ground_temperature'].shape)
+        else:
+            self.ground_temperature = self.weather_data['ground_temperature']
+
         self.sky_temperature = self.weather_data['sky_temperature']
         time_window = 48
         self.rolling_external_temperature = self.ext_temperature.rolling(time_window).mean()
@@ -66,10 +75,7 @@ class Weather(Model):
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
         pass
-        #for variable in self.outputs:
-        #    setattr(self, variable.name, self.climate_data[variable.name][time_step])
 
-        #################################################################################
     def simulation_done(self, time_step: int = 0):
         pass
 
