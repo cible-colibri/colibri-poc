@@ -57,6 +57,7 @@ class Units(enum.Enum):
     KILOGRAM_PER_SECOND                     = "kg/s"
     METER                                   = "m"
     PASCAL                                  = "Pa"
+    SECOND                                  = "s"
     SQUARE_METER                            = "m²"
     UNITLESS                                = "-"
     WATT                                    = "W"
