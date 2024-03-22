@@ -5,6 +5,7 @@
 # ========================================
 
 import pathlib
+import os
 import pytest
 
 # ========================================
@@ -37,7 +38,7 @@ from utils.files_utils import read_json_file
 def test_data():
     # TODO: Modify when we wil have a package structure
     colibrisuce_path = resource_filename('config', 'data')
-    units_file_path  = colibrisuce_path / "units" / "units.json"
+    units_file_path  = os.path.join(colibrisuce_path, "units/units.json")
     units            = read_json_file(units_file_path)
     assert isinstance(units, dict)
     assert isinstance(units["dimensions"], list)

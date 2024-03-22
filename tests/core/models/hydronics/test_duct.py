@@ -10,8 +10,7 @@ import pytest
 # Internal imports
 # ========================================
 
-from core.connectors.hydronics.fluid_flow import FluidFlowConnector
-from core.project                    import Project
+from core.model            import Model
 from core.models.hydronics.duct import Duct
 
 # ========================================
@@ -34,24 +33,20 @@ from core.models.hydronics.duct import Duct
 # ========================================
 
 @pytest.mark.short_test
-def test_project():
-
-    # Create a project
-    project = Project()
-    # Create ducts
-    duct_1 = Duct("duct_1")
-    duct_2 = Duct("duct_2")
-    duct_3 = Duct("duct_3")
-    # Add ducts
-    project.add(duct_1)
-    project.add(duct_2)
-    project.add(duct_3)
-    # Create a connector
-    liquid_flow = FluidFlowConnector()
-    # Link ducts
-    project.link(duct_1, duct_2, liquid_flow)
-    project.link(duct_2, "inlet_temperature", duct_3, "outlet_temperature")
-    project.link(duct_2, "inlet_flow_rate", duct_3, "outlet_flow_rate")
+def test_duct():
+    duct = Duct("duct_1")
+    assert isinstance(duct, Duct)
+    assert isinstance(duct, Model)
+    duct.initialize()
+    duct.check_units()
+    time_step = 0
+    duct.run(time_step)
+    duct.simulation_done(time_step)
+    duct.iteration_done(time_step)
+    duct.timestep_done(time_step)
+    duct.simulation_done(time_step)
+    assert duct.__str__() == "Duct(name = 'duct_1')"
+    assert duct.__repr__() == duct.__str__()
 
 if __name__ == "__main__":
-    test_project()
+    test_duct()

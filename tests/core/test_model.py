@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from core.model        import Model
-from core.variable     import Variable
+from core.variables.variable import Variable
 from utils.enums_utils import Roles
 
 # ========================================

@@ -6,16 +6,15 @@
 
 import abc
 import copy
-import numbers
 
 # ========================================
 # Internal imports
 # ========================================
 
-from core.inputs       import Inputs
-from core.parameters   import Parameters
-from core.outputs      import Outputs
-from core.variable     import Variable
+from core.templates.inputs import Inputs
+from core.templates.parameters import Parameters
+from core.templates.outputs import Outputs
+from core.variables.variable import Variable
 from utils.enums_utils import Roles
 
 # ========================================
@@ -163,7 +162,7 @@ class Model(metaclass=MetaModel):
     @staticmethod
     def model_factory(class_name, instance_name):
         import importlib
-        for module_name in ["models.emitters.electric_emitter", "models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
+        for module_name in ["core.models.emitters.electric_emitter", "core.models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
             module = importlib.import_module(module_name)
             if not module is None and hasattr(module, class_name):
                 cls = getattr(module, class_name)

@@ -5,9 +5,7 @@
 # ========================================
 
 import json
-from typing import Union
 
-import numpy
 import pathlib
 import typing
 import time
@@ -20,12 +18,12 @@ from core.Building import Building
 # Internal imports
 # ========================================
 
-from core.link               import Link
+from core.dataclasses.link import Link
 from core.model              import Model
-from core.plot               import Plot
-from core.variable_connector import VariableConnector
-from data.Building.building_data import BuildingData
-from models.utility.weather import Weather
+from core.dataclasses.plot import Plot
+from core.variables.variable_connector import VariableConnector
+from core.dataclasses.Building.building_data import BuildingData
+from core.models.utility.weather import Weather
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file

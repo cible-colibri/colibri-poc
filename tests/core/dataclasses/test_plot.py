@@ -10,8 +10,7 @@ import pytest
 # Internal imports
 # ========================================
 
-from core.connectors.hydronics.fluid_flow import FluidFlowConnector
-from core.project                    import Project
+from core.dataclasses.plot import Plot
 from core.models.hydronics.duct import Duct
 
 # ========================================
@@ -34,24 +33,16 @@ from core.models.hydronics.duct import Duct
 # ========================================
 
 @pytest.mark.short_test
-def test_project():
-
-    # Create a project
-    project = Project()
-    # Create ducts
+def test_plot():
     duct_1 = Duct("duct_1")
-    duct_2 = Duct("duct_2")
-    duct_3 = Duct("duct_3")
-    # Add ducts
-    project.add(duct_1)
-    project.add(duct_2)
-    project.add(duct_3)
-    # Create a connector
-    liquid_flow = FluidFlowConnector()
-    # Link ducts
-    project.link(duct_1, duct_2, liquid_flow)
-    project.link(duct_2, "inlet_temperature", duct_3, "outlet_temperature")
-    project.link(duct_2, "inlet_flow_rate", duct_3, "outlet_flow_rate")
+    plot = Plot("plot_1", duct_1, "outlet_temparature")
+    assert isinstance(plot, Plot)
+    assert hasattr(plot, "name")
+    assert hasattr(plot, "model")
+    assert hasattr(plot, "variable_name")
+    assert plot.__str__() == "Plot(name='plot_1', model=Duct(name = 'duct_1'), variable_name='outlet_temparature')"
+    assert plot.__repr__() == plot.__str__()
+
 
 if __name__ == "__main__":
-    test_project()
+    test_plot()
