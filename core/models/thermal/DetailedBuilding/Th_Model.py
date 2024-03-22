@@ -25,6 +25,11 @@ class Th_Model(Building):
 
         # parameters
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
+        self.radiative_share_sensor = Variable("radiative_share_sensor", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Radiative share between Tair and Tmr for operative temperature control. 1 = Tmr, 0=Tair")
+        self.dt = Variable("dt", 3600, role=Roles.PARAMETERS, unit=Units.SECOND, description="Time step for the simulation ") #TODO: associate to the project instead of ThModel ?
+        self.f_sky = Variable("f_sky", 0.5, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Coefficient to connect the mean radiant temperature around the building f_sky = 0 --> Tmr = Tair, 1 --> Tmr=Fsky")
+        self.radiative_share_internal_gains = Variable("radiative_share_internal_gains", 0.6, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Radiative share for internal gains")
+        self.iter_max = Variable("iter_max", 3, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Number maximal of iteration")
 
         # inputs
         self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
@@ -40,16 +45,6 @@ class Th_Model(Building):
         self.heat_flux_vec = Variable("hvac_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
 
     def initialize(self) -> None:
-
-        #TODO: do a default parameters dict ? -> plus simple pour tester que l'imposition de valeurs fixes réparties un peu partout dans le code...
-        default_dict = {'radiative_share_sensor': 0.0,  # this is where you control on
-                        'dt': 3600,  # time step of the simulation #TODO: associate to the project ?
-                        'f_sky': 0.5,
-                        'radiative_share_internal_gains': 0.6,
-                        'iter_max': 3,
-                        'plot_convergence': True}
-
-        self.set_default_parameters(default_dict)
 
         #################################################################################
         #   get weather data
@@ -96,7 +91,6 @@ class Th_Model(Building):
         self.not_converged = True
         self.found = []
         self.switch = 0
-
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
@@ -214,10 +208,8 @@ class Th_Model(Building):
                 self.boundary_absorption_array[i] = 1 - bound.albedo[0]
             else:
                 self.boundary_absorption_array[i] = 1 - bound.albedo[1]
-        self.f_sky = 0.5  # coefficient to connect the mean radiant temperature around the building f_sky = 0 --> Tmr = Tair, 1 --> Tmr=Fsky
 
         # internal gains
-        self.radiative_share_internal_gains = 0.6
         self.internal_gains_vec = np.zeros(self.n_spaces)
         for i, space in enumerate(self.project.building_data.space_list):
             self.internal_gains_vec[i] = getattr(space, 'constant_internal_gains')
@@ -261,9 +253,7 @@ class Th_Model(Building):
         exterior_temperature_act = weather.ext_temperature[t]
         sky_temperature_act = weather.sky_temperature[t]
         ext_temperature_radiant = exterior_temperature_act * (1 - self.f_sky) + sky_temperature_act * self.f_sky
-
-        # rolling_exterior_temperature_act = weather.rolling_external_temperature[t]
-        ground_temperature_const = 10.  #TODO: mettre dans weather
+        ground_temperature_const = weather.ground_temperature[t]
 
         # set heat fluxes from internal gains and solar transmission
         self.convective_internal_gains_vec = self.internal_gains_vec * (1. - self.radiative_share_internal_gains)
