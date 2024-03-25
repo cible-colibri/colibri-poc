@@ -6,7 +6,7 @@ from core.templates.parameters import Parameters
 from core.variables.variable import Variable
 from core.models.emitters.emitter import Emitter
 from utils.enums_utils import Roles, Units
-from config.constants import CP_WATER
+from core.constants import CP_WATER
 
 #TODO: faire une classe générique Emitter pour faciliter les associations automatiques
 # Bien voir comment faire les liens entre objets/model pour faciliter la gestions des données au niveau initialisation

@@ -2,7 +2,7 @@
 import numpy as np
 
 from core.models.airflow.AirflowBuilding.boundary_conditions import boundary_matrix
-from config.constants import *
+from core.constants import *
 from core.models.airflow.AirflowBuilding import connection_functions
 from core.models.airflow.AirflowBuilding.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
     construct_CCi, gen_pressure_system, generate_AA_BB_pressure_system

@@ -1,6 +1,6 @@
 import numpy as np
 
-from config.constants import rho_ref, cp_air_ref
+from core.constants import rho_ref, cp_air_ref
 from core.Building import Building
 from core.templates.inputs import Inputs
 from core.model import Model
@@ -13,7 +13,6 @@ from core.models.thermal.DetailedBuilding.RyCj import generate_A_and_B, generate
 from core.models.thermal.DetailedBuilding.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
 from core.models.thermal.DetailedBuilding.generic import store_results
 from core.models.utility.weather import solar_processor
-from tests.data.bestest_cases import bestest_configs
 from core.models.thermal.DetailedBuilding.results_handling import initialise_results
 from utils.enums_utils import Roles, Units
 

@@ -5,7 +5,6 @@
 # ========================================
 
 import copy
-import numpy
 import operator
 import typing
 
@@ -22,7 +21,7 @@ from utils.enums_utils import (
 # Constants
 # ========================================
 
-from config.constants import UNIT_CONVERTER
+from core.constants import UNIT_CONVERTER
 
 # ========================================
 # Variables
