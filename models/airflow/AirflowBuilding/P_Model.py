@@ -15,7 +15,7 @@ from core.parameters import Parameters
 from core.variable import Variable
 from utils.enums_utils import Roles, Units
 
-class Pressure_Building(Model):
+class P_Model(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None

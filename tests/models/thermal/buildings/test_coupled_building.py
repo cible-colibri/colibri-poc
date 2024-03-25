@@ -3,11 +3,11 @@ import pathlib
 
 from pkg_resources import resource_filename
 from core.project import Project
-from models.airflow.AirflowBuilding.Pressure_Building import Pressure_Building
+from models.airflow.AirflowBuilding.P_Model import P_Model
 from models.emitters.emitter import Emitter
 from models.emitters.hydro_emitter import HydroEmitter
 from models.thermal.vnat.thermal_model.generic import print_results, plot_results
-from models.thermal.vnat.thermal_model.Thermal_Building import Thermal_Building
+from models.thermal.vnat.thermal_model.Th_Model import Th_Model
 from models.utility.weather import Weather
 
 
@@ -54,13 +54,13 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
     project.add_building_data(building_file)
 
     # thermal model
-    multizone_building = Thermal_Building("thermal model")
+    multizone_building = Th_Model("thermal model")
     multizone_building.blind_position = 0 # 1 = open
     multizone_building.case = case
     project.add(multizone_building)
 
     # air flow model
-    airflow_building = Pressure_Building("air flow model")
+    airflow_building = P_Model("air flow model")
     airflow_building.case = case
     project.add(airflow_building)
 
