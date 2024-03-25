@@ -1,7 +1,7 @@
 import numpy as np
 import copy
 from scipy.linalg import inv
-from data.constants import *
+from config.constants import *
 from models.airflow.AirflowBuilding import connection_functions
 
 

@@ -19,7 +19,7 @@ from utils.enums_utils import Units
 # Constants
 # ========================================
 
-from data.constants import SOLAR_CONSTANT_OF_THE_EARTH
+from config.constants import SOLAR_CONSTANT_OF_THE_EARTH
 
 # ========================================
 # Variables

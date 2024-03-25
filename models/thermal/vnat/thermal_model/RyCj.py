@@ -2,7 +2,7 @@ import numpy as np
 from numpy import eye
 from scipy.linalg import expm, inv
 epsilon = 1e-15
-from data.constants import *
+from config.constants import *
 
 
 def set_U_from_index(U, index_inputs, label, value_to_set, add=False):

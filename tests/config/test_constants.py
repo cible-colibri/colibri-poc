@@ -20,7 +20,7 @@ from utils.unit_utils import (
 # Constants
 # ========================================
 
-from data.constants import (
+from config.constants import (
                                 SOLAR_CONSTANT_OF_THE_EARTH,
                                 UNIT_CONVERTER,
                               )

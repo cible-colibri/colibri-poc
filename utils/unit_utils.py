@@ -244,8 +244,10 @@ def get_unit_converter() -> UnitConverter:
     --------
     >>> None
     """
-    colibrisuce_path = resource_filename('data', 'units')
-    units_file_path = os.path.join(colibrisuce_path, 'units.json')
+    # TODO: Modify when we wil have a package structure
+    colibrisuce_path = resource_filename('config', 'data')
+    # units_file_path  = colibrisuce_path / "units" / "units.json"
+    units_file_path = os.path.join(colibrisuce_path, 'units', 'units.json')
     units            = read_json_file(units_file_path, )
     unit_converter   = UnitConverter(**units)
     return unit_converter

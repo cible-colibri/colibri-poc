@@ -1,6 +1,6 @@
 import numpy as np
 
-from data.constants import rho_ref, cp_air_ref
+from config.constants import rho_ref, cp_air_ref
 from core.Building import Building
 from core.inputs import Inputs
 from core.model import Model
