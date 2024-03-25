@@ -3,11 +3,11 @@ import os
 
 from pkg_resources import resource_filename
 from core.project import Project
-from core.models.airflow.AirflowBuilding.P_Model import P_Model
+from core.models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
 from core.models.emitters.emitter import Emitter
 from core.models.emitters.hydro_emitter import HydroEmitter
 from core.models.thermal.DetailedBuilding.generic import print_results, plot_results
-from core.models.thermal.DetailedBuilding.Th_Model import Th_Model
+from core.models.thermal.DetailedBuilding.Thermal_Building import Thermal_Building
 from core.models.utility.weather import Weather
 from tests.data.bestest_cases import bestest_configs
 
@@ -61,13 +61,13 @@ def test_coupled_building():
     project.add_building_data(building_file)
 
     # thermal model
-    multizone_building = Th_Model("thermal model")
+    multizone_building = Thermal_Building("thermal model")
     multizone_building.blind_position = 1 # 1 = open
     multizone_building.case = case
     project.add(multizone_building)
 
     # air flow model
-    airflow_building = P_Model("air flow model")
+    airflow_building = Airflow_Building("air flow model")
     airflow_building.case = case
     project.add(airflow_building)
 

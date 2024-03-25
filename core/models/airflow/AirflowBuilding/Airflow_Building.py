@@ -15,7 +15,7 @@ from core.templates.parameters import Parameters
 from core.variables.variable import Variable
 from utils.enums_utils import Roles, Units
 
-class P_Model(Model):
+class Airflow_Building(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None

@@ -17,9 +17,9 @@ from core.models.thermal.DetailedBuilding.results_handling import initialise_res
 from utils.enums_utils import Roles, Units
 
 
-class Th_Model(Building):
+class Thermal_Building(Building):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        super(Th_Model, self).__init__(name, inputs, outputs, parameters)
+        super(Thermal_Building, self).__init__(name, inputs, outputs, parameters)
 
         self.name                  = name
         self.project               = None
