@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+
 # ========================================
 # External imports
 # ========================================
@@ -35,8 +35,8 @@ from utils.files_utils import read_json_file
 
 @pytest.mark.short_test
 def test_data():
-    colibrisuce_path = resource_filename('data', 'units')
-    units_file_path  = os.path.join(colibrisuce_path, "units.json")
+    colibrisuce_path = resource_filename('data')
+    units_file_path  = colibrisuce_path / "units" / "units.json"
     units            = read_json_file(units_file_path)
     assert isinstance(units, dict)
     assert isinstance(units["dimensions"], list)
