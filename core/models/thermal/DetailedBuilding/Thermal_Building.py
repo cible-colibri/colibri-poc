@@ -34,9 +34,9 @@ class Thermal_Building(Building):
 
         # inputs
         self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
-        self.phi_radiative = Variable("phi_radiative", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
-        self.phi_convective = Variable("phi_convective", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
-        self.phi_latent = Variable("phi_latent", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
+        self.phi_radiative_vec = Variable("phi_radiative_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
+        self.phi_convective_vec = Variable("phi_convective_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
+        self.phi_latent_vec = Variable("phi_latent_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
 
         # outputs
         self.air_temperature_dictionary_output = Variable("air_temperature_dictionary", 0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
@@ -372,9 +372,9 @@ class Thermal_Building(Building):
             project.add(emitter_instance)
 
             # emitter -> building
-            project.link_to_vector(emitter_instance, 'phi_radiative', self, 'phi_radiative', i)
-            project.link_to_vector(emitter_instance, 'phi_convective', self, 'phi_convective', i)
-            project.link_to_vector(emitter_instance, 'phi_latent', self, 'phi_latent', i)
+            project.link_to_vector(emitter_instance, 'phi_radiative', self, 'phi_radiative_vec', i)
+            project.link_to_vector(emitter_instance, 'phi_convective', self, 'phi_convective_vec', i)
+            project.link_to_vector(emitter_instance, 'phi_latent', self, 'phi_latent_vec', i)
 
             # building -> emitter
             project.link_from_vector(self, 'heat_flux_vec', zone_index, emitter_instance, 'heat_demand')

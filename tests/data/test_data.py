@@ -36,9 +36,8 @@ from utils.files_utils import read_json_file
 
 @pytest.mark.short_test
 def test_data():
-    # TODO: Modify when we wil have a package structure
-    data_path = resource_filename('data')
-    units_file_path  = os.path.join(data_path, "units", "units.json")
+    units_path = resource_filename('data', 'units')
+    units_file_path  = os.path.join(units_path, "units.json")
     units            = read_json_file(units_file_path)
     assert isinstance(units, dict)
     assert isinstance(units["dimensions"], list)
