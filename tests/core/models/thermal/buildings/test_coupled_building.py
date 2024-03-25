@@ -12,10 +12,10 @@ from core.models.utility.weather import Weather
 from tests.data.bestest_cases import bestest_configs
 
 
-def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.epw'):
+def test_coupled_building():
 
     building_path = resource_filename('tests', 'data')
-    case = 390
+    case = 600
     # bestest case
     if case == 0:  # custom test
         file_name = 'house_1.json'
@@ -52,6 +52,7 @@ def test_coupled_building(file_name='house_1.json', weather_file='725650TYCST.ep
 
     # weather
     weather = Weather("weather")
+    weather.constant_ground_temperature = 10.
     weather.weather_file = weather_file
     weather.time_zone = time_zone
     project.add(weather)

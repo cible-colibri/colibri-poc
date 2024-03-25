@@ -33,9 +33,6 @@ class ElectricEmitter(Emitter):
         self.phi_radiative = self.heat_demand.value * self.radiative_share
         self.phi_convective = self.heat_demand.value * (1 - self.radiative_share)
 
-    def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        return True #self.has_converged
-
     def iteration_done(self, time_step: int = 0):
         self.electric_load_last = self.electric_load
 

@@ -12,6 +12,8 @@ from utils.enums_utils import Roles, Units
 
 class Emitter(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+        super(Emitter, self).__init__(name, inputs, outputs, parameters)
+
         self.name                  = name
         self.project               = None
 

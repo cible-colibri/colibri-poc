@@ -20,6 +20,8 @@ from utils.enums_utils import Roles, Units
 
 class Th_Model(Building):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+        super(Th_Model, self).__init__(name, inputs, outputs, parameters)
+
         self.name                  = name
         self.project               = None
 
@@ -92,6 +94,15 @@ class Th_Model(Building):
         self.found = []
         self.switch = 0
 
+        #################################################################################
+        #   Initialize outputs
+        #################################################################################
+
+        self.phi_radiative = np.zeros(self.n_spaces)
+        self.phi_convective = np.zeros(self.n_spaces)
+        self.phi_latent = np.zeros(self.n_spaces)
+        self.heat_flux_vec = np.zeros(self.n_spaces)
+
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
         # pass inputs to model
@@ -143,9 +154,6 @@ class Th_Model(Building):
 
         self.found.append(np.sum(self.hvac_flux_vec))  # for convergence plotting
 
-        # save flux for next time step as initial guess
-        self.hvac_flux_vec_last = self.hvac_flux_vec  # for next time step, start with last value
-
         # return outputs
         self.air_temperature_dictionary_output = self.air_temperature_dictionary
         self.heat_flux_vec = self.hvac_flux_vec
@@ -156,6 +164,8 @@ class Th_Model(Building):
     def iteration_done(self, time_step: int = 0):
         #convergence_plot(self.my_T.found, time_step, 1, 'Thermal', True)
         self.states_last = self.states
+        self.hvac_flux_vec_last = self.hvac_flux_vec  # for next time step, start with last value
+
         store_results(time_step, self, self.my_weather)
 
     def timestep_done(self, time_step: int = 0):
@@ -298,9 +308,9 @@ class Th_Model(Building):
 
         # set heat_flux for emitter - TODO: one of the Gurus (Enora, Peter) please check if this is the right spot to do this
 
-        emitter_list = [self.project.get_model_by_name(s.label + "_emitter") for s in self.project.building_data.space_list]
-        for emitter, flux in zip([found_emitters[0] for found_emitters in emitter_list if found_emitters], self.hvac_flux_vec):
-            emitter.heat_demand = flux
+        # emitter_list = [self.project.get_model_by_name(s.label + "_emitter") for s in self.project.building_data.space_list]
+        # for emitter, flux in zip([found_emitters[0] for found_emitters in emitter_list if found_emitters], self.hvac_flux_vec):
+        #     emitter.heat_demand = flux
 
         # recalculate ventilation losses
         if self.flow_array == 0 or len(self.flow_array) == 0:  # without pressure calculation, only use air change rates for all rooms
