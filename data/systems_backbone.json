@@ -1,0 +1,46 @@
+{
+  "link": {
+    "Thermal_Building" :
+    {
+      "Pressure_Building": {
+        "air_temperature_dictionary_output": "air_temperature_dictionary_input"
+      },
+      "Emitter" : {
+        "heat_flux_vec" : ["heat_demand", "space"]
+      }
+    },
+
+    "Pressure_Building" :
+    {
+      "Thermal_Building": {
+        "flow_rates_output": "flow_rates_input"
+      }
+    },
+
+    "Emitter" : {
+      "Thermal_Building": {
+        "phi_radiative": ["phi_radiative_vec", "space"],
+        "phi_convective": ["phi_convective_vec", "space"],
+        "phi_latent": ["phi_latent_vec", "space"]
+      }
+    },
+    "HydroEmitter" : {
+      "HydroDistribution": {
+        "temperature_out": ["temperature_in_vec", "space"]
+      }
+    },
+
+    "HydroDistribution" : {
+      "Emitter": {
+        "flow_rate_vec": ["flow_rate", "space"],
+        "temperature_vec": ["temperature_in", "space"]
+      }
+    },
+
+    "HydroDistribution" : {
+      "HydroEmitter": {
+        "temperature_out_vec": ["temperature_in", "space"]
+      }
+    }
+  }
+}
