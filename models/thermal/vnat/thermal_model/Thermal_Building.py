@@ -18,7 +18,7 @@ from models.thermal.vnat.thermal_model.results_handling import initialise_result
 from utils.enums_utils import Roles, Units
 
 
-class Th_Model(Building):
+class Thermal_Building(Building):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
         self.project               = None
