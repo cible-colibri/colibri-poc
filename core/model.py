@@ -39,7 +39,7 @@ class MetaModel(abc.ABCMeta):
         instance._expand_variables()
 
         for v in instance.inputs + instance.outputs + instance.parameters:
-            v.model = cls
+            v.model = instance
 
         return instance
 

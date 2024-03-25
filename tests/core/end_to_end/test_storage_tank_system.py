@@ -65,8 +65,7 @@ def test_storage_tank_system():
     #project.link("duct-1", "flow", "duct-2", "flow")
     # Create a storage tank
     storage_tank_1 = StorageTank("storage_tank_1")
-    # Expand variable list to 2
-    #TODO: pb quand y a linked_to au niveau de la variable quand on veut imposer la valeur
+    # Expand variable list to 3
     storage_tank_1.number_of_nodes = 3
     storage_tank_1.height_node_1 = 0.5
     storage_tank_1.height_node_2 = 0.5

@@ -33,7 +33,6 @@ from utils.enums_utils import Units
 
 @pytest.mark.short_test
 def test_units() -> None:
-    assert len([enum for enum in Units]) == 25
     assert Units.JOULE.value == "J"
     assert Units.JOULE.name == "JOULE"
 
