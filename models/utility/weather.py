@@ -134,14 +134,14 @@ def sun_heigh_etc(weather_data, latitude, longitude, tz='America/Denver'):
 
 
 def import_epw_weather(epf_file):
-    main_dir = resource_filename('config', 'data')
+    main_dir = resource_filename('data', 'weather')
     EPW_vars = ('year', 'month', 'day', 'hour', 'minute', 'datasource', 'temperature', 'DewPoint',
                 'RelHum', 'pressure', 'ExtHorzRad', 'ExtDirRad', 'HorzIRSky', 'GloHorzRad', 'direct_radiation',
                 'diffuse_radiation', 'GloHorzIllum', 'DirNormIllum', 'DifHorzIllum',
                 'ZenLum', 'wind_direction', 'wind_speed', 'TotSkyCvr', 'OpaqSkyCvr', 'Visibility', 'Ceiling',
                 'presweathobs', 'presweathcodes', 'precipwtr', 'aerosoloptdepth', 'snowdepth',
                 'dayslastsnow', 'albedo', 'rain', 'rain_hr')
-    weather_file = os.path.join(main_dir, 'weather', 'epw', epf_file)
+    weather_file = os.path.join(main_dir, 'epw', epf_file)
     weather_data    = pd.read_csv(weather_file, skiprows=8, header=None, names=EPW_vars)
     latitude, longitude = tuple(pd.read_csv(weather_file, header=None, nrows=1).loc[:, 6:7].values.flatten().tolist())
     solar_direct    = weather_data['direct_radiation']

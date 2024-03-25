@@ -35,8 +35,7 @@ from utils.files_utils import read_json_file
 
 @pytest.mark.short_test
 def test_data():
-    # TODO: Modify when we wil have a package structure
-    colibrisuce_path = resource_filename('config', 'data')
+    colibrisuce_path = resource_filename('data')
     units_file_path  = colibrisuce_path / "units" / "units.json"
     units            = read_json_file(units_file_path)
     assert isinstance(units, dict)

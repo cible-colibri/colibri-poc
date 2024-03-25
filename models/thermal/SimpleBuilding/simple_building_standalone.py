@@ -117,7 +117,7 @@ def model(zone_setpoint,ach,eta_recup,ext_temperature,u_window,area_windows,area
     return phi_hvac, zone_temperature
 
 # load weather data from epw
-epw_path = "C:\home\source\colibrisuce\config\data\weather\epw\Paris.epw"
+epw_path = "/data/weather\epw\Paris.epw"
 radiation_list, ext_temperature_list = import_epw_weather(epw_path)
 
 # thermal zone parameter declaration

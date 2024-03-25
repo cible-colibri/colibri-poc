@@ -1,13 +1,12 @@
 import numpy as np
 
 from core.inputs import Inputs
-from core.model import Model
 from core.outputs import Outputs
 from core.parameters import Parameters
 from core.variable import Variable
 from models.emitters.emitter import Emitter
 from utils.enums_utils import Roles, Units
-from config.constants import CP_WATER
+from data.constants import CP_WATER
 
 #TODO: faire une classe générique Emitter pour faciliter les associations automatiques
 # Bien voir comment faire les liens entre objets/model pour faciliter la gestions des données au niveau initialisation
