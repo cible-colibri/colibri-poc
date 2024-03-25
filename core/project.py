@@ -230,7 +230,7 @@ class Project:
             if link.index_from is None:
                 value_out = getattr(link.from_model, link.from_variable).value
             else:
-                value_out = getattr(link.from_model, link.from_variable).value[link.index_to]
+                value_out = getattr(link.from_model, link.from_variable).value[link.index_from]
 
             if link.index_to is None:
                 setattr(link.to_model, link.to_variable, value_out)
