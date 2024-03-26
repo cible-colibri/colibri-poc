@@ -1,4 +1,4 @@
-name : colibrisuce
+name : colibri
 dependencies :
     - python=3.10
     - pandas
@@ -7,5 +7,6 @@ dependencies :
     - scipy
     - networkx
     - ephem
+    - pip
     - pip:
         - pvlib
