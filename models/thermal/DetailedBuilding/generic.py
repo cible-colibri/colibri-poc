@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from core.models.thermal.DetailedBuilding.RyCj import get_states_from_index
+from models.thermal.DetailedBuilding.RyCj import get_states_from_index
 
 
 def store_results(t, my_T, my_weather):

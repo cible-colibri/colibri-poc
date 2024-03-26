@@ -3,12 +3,12 @@ import os
 
 from pkg_resources import resource_filename
 from core.project import Project
-from core.models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
-from core.models.emitters.emitter import Emitter
-from core.models.emitters.hydro_emitter import HydroEmitter
-from core.models.thermal.DetailedBuilding.generic import print_results, plot_results
-from core.models.thermal.DetailedBuilding.Thermal_Building import Thermal_Building
-from core.models.utility.weather import Weather
+from models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
+from models.emitters.emitter import Emitter
+from models.emitters.hydro_emitter import HydroEmitter
+from models.thermal.DetailedBuilding.generic import print_results, plot_results
+from models.thermal.DetailedBuilding.Thermal_Building import Thermal_Building
+from models.utility.weather import Weather
 from tests.data.bestest_cases import bestest_configs
 
 

@@ -23,7 +23,7 @@ from core.model              import Model
 from core.dataclasses.plot import Plot
 from core.variables.variable_connector import VariableConnector
 from core.dataclasses.Building.building_data import BuildingData
-from core.models.utility.weather import Weather
+from models.utility.weather import Weather
 from utils.encorder_utils    import NonCyclycEncoder
 from utils.enums_utils       import Schema
 from utils.files_utils       import write_json_file

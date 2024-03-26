@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from core.model            import Model
-from core.models.hydronics.duct import Duct
+from models.hydronics.duct import Duct
 
 # ========================================
 # Constants

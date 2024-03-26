@@ -4,7 +4,7 @@ from core.templates.inputs import Inputs
 from core.templates.outputs import Outputs
 from core.templates.parameters import Parameters
 from core.variables.variable import Variable
-from core.models.emitters.emitter import Emitter
+from models.emitters.emitter import Emitter
 from utils.enums_utils import Roles, Units
 from core.constants import CP_WATER
 

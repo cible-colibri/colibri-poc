@@ -12,7 +12,7 @@ import os
 # ========================================
 
 from core.project           import Project
-from core.models.utility.weather import Weather
+from models.utility.weather import Weather
 from utils import data_path
 
 

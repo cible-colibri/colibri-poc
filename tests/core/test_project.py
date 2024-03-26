@@ -12,7 +12,7 @@ import pytest
 
 from core.connectors.hydronics.fluid_flow import FluidFlowConnector
 from core.project                    import Project
-from core.models.hydronics.duct import Duct
+from models.hydronics.duct import Duct
 
 # ========================================
 # Constants

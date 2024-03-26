@@ -2,7 +2,7 @@ import numpy as np
 import copy
 from scipy.linalg import inv
 from core.constants import *
-from core.models.airflow.AirflowBuilding import connection_functions
+from models.airflow.AirflowBuilding import connection_functions
 
 
 def construct_nodes_sep(nodes):

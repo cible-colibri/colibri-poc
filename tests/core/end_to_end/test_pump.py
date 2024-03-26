@@ -15,8 +15,8 @@ from core.project                    import Project
 from core.templates.inputs import Inputs
 from core.templates.parameters import Parameters
 from core.variables.variable import Variable
-from core.models.hydronics.duct import Duct
-from core.models.hydronics.simple_pump import SimplePump
+from models.hydronics.duct import Duct
+from models.hydronics.simple_pump import SimplePump
 from utils.enums_utils               import (
                                                 Roles,
                                                 Units,

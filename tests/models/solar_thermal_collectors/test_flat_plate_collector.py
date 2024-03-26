@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from core.model                                           import Model
-from core.models.solar_thermal_collectors.flat_plate_collector import FlatPlateCollector
+from models.solar_thermal_collectors.flat_plate_collector import FlatPlateCollector
 
 # ========================================
 # Constants

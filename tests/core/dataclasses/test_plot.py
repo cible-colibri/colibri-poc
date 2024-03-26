@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from core.dataclasses.plot import Plot
-from core.models.hydronics.duct import Duct
+from models.hydronics.duct import Duct
 
 # ========================================
 # Constants

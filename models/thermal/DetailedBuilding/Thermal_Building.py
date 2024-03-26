@@ -7,13 +7,13 @@ from core.model import Model
 from core.templates.outputs import Outputs
 from core.templates.parameters import Parameters
 from core.variables.variable import Variable
-from core.models.emitters.hydro_emitter import HydroEmitter
-from core.models.thermal.DetailedBuilding.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
+from models.emitters.hydro_emitter import HydroEmitter
+from models.thermal.DetailedBuilding.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
     set_U_from_index, get_states_from_index, get_u_values
-from core.models.thermal.DetailedBuilding.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
-from core.models.thermal.DetailedBuilding.generic import store_results
-from core.models.utility.weather import solar_processor
-from core.models.thermal.DetailedBuilding.results_handling import initialise_results
+from models.thermal.DetailedBuilding.controls import operation_mode, space_temperature_control_simple, calculate_ventilation_losses
+from models.thermal.DetailedBuilding.generic import store_results
+from models.utility.weather import solar_processor
+from models.thermal.DetailedBuilding.results_handling import initialise_results
 from utils.enums_utils import Roles, Units
 
 

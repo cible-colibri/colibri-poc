@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from core.model                   import Model
-from core.models.hydronics.simple_pump import SimplePump
+from models.hydronics.simple_pump import SimplePump
 
 # ========================================
 # Constants

@@ -13,8 +13,8 @@ import time
 
 from utils import data_path
 from core.project import Project
-from core.models.thermal.SimpleBuilding.simple_building import SimpleBuilding
-from core.models.utility.weather import Weather
+from models.thermal.SimpleBuilding.simple_building import SimpleBuilding
+from models.utility.weather import Weather
 
 # ========================================
 # Constants

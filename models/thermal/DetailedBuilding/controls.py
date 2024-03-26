@@ -1,5 +1,5 @@
 import numpy as np
-from core.models.thermal.DetailedBuilding.RyCj import runStateSpace, set_U_from_index, get_states_from_index
+from models.thermal.DetailedBuilding.RyCj import runStateSpace, set_U_from_index, get_states_from_index
 
 
 def calculate_ventilation_losses(flow_array, air_temperature_temperatures_dict, outdoor_temperature, efficiency_heat_recovery, ventilation_specific_flow_array):

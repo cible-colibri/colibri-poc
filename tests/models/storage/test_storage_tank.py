@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from core.model                  import Model
-from core.models.storage.storage_tank import StorageTank
+from models.storage.storage_tank import StorageTank
 
 # ========================================
 # Constants

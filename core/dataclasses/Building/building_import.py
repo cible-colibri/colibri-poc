@@ -2,7 +2,7 @@
 import json
 import numpy as np
 from collections import namedtuple
-from core.models.thermal.DetailedBuilding.RyCj import gen_wall_model
+from models.thermal.DetailedBuilding.RyCj import gen_wall_model
 
 
 def import_project(file_name):
