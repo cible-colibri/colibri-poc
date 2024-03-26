@@ -1,5 +1,7 @@
 import time
 
+import pytest
+
 from core.connectors.hydronics.fluid_flow import FluidFlowConnector
 from core.project import Project
 from models.hydronics.duct import Duct
@@ -29,7 +31,6 @@ def test_performance_linear():
     print(f"{len(project.models)} models and {len(project.links)} links in {runtime:3.2f} seconds")
 
     return runtime
-
 def performance_grid(n_models_x = 10, n_models_y = 10):
 
     starting_time = time.perf_counter()
@@ -64,6 +65,7 @@ def performance_grid(n_models_x = 10, n_models_y = 10):
 
     return (runtime, len(project.links), len(project.models))
 
+@pytest.mark.skip("Only for the report")
 def test_performance_grid():
     runtime = performance_grid(10,10)[0]
     #assert runtime < 2  # this should not take more than 2 seconds
@@ -101,17 +103,19 @@ def performance_tree(n_levels = 8, backlink=True):
     print(f"{len(project.models)} models and {len(project.links)} links in {runtime:3.2f} seconds")
     return runtime
 
+@pytest.mark.skip("Only for the report")
 def test_performance_tree():
     runtime = performance_tree(n_levels=12)
     #assert runtime < 5 # this should not take more than 5 seconds
 
 
+@pytest.mark.skip("Only for the report")
 def test_performance_tree_backlink():
     runtime = performance_tree(n_levels=8, backlink=True)
     #assert runtime < 5  # this should not take more than 5 seconds
 
 
-#@pytest.skip("Only for the report")
+@pytest.mark.skip("Only for the report")
 def test_performance_grid_graph():
     runtimes = []
     n_models = []

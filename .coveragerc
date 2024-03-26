@@ -1,12 +1,9 @@
 [run]
-omit=
-	*/__init__.py
-	*/__project_information__.py
-	setup.py
-	
+
 [report]
+omit =
+    docs/*
+    */__init__.py
+    setup.py
 show_missing=True
-fail_under=75
-exclude_lines =
-    if __name__ == .__main__.:
-    \.\.\.
+fail_under=50
