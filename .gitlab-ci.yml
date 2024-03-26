@@ -12,7 +12,7 @@ test_job:
   stage: test
   image: continuumio/miniconda3
   before_script:
-    - conda env create -f environment.yml
+    - conda env create -f ci/environment.yml
     - conda activate colibri
   script:
     - pytest --cov=colibrisuce tests/
