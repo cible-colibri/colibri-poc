@@ -138,7 +138,7 @@ def sun_heigh_etc(weather_data, latitude, longitude, tz='America/Denver'):
 
 
 def import_epw_weather(epf_file):
-    weather_dir = resource_filename('data', 'weather')
+    weather_dir = resource_filename('colibri', os.path.join('data', 'weather'))
     EPW_vars = ('year', 'month', 'day', 'hour', 'minute', 'datasource', 'temperature', 'DewPoint',
                 'RelHum', 'pressure', 'ExtHorzRad', 'ExtDirRad', 'HorzIRSky', 'GloHorzRad', 'direct_radiation',
                 'diffuse_radiation', 'GloHorzIllum', 'DirNormIllum', 'DifHorzIllum',

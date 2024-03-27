@@ -9,12 +9,12 @@ from colibri.models.emitters.hydro_emitter import HydroEmitter
 from colibri.models.thermal.DetailedBuilding.generic import print_results, plot_results
 from colibri.models.thermal.DetailedBuilding.Thermal_Building import Thermal_Building
 from colibri.models.utility.weather import Weather
-from tests.data.bestest_cases import bestest_configs
+from colibri.tests.data.bestest_cases import bestest_configs
 
 
 def test_coupled_building():
 
-    building_path = resource_filename('tests', 'data')
+    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
     case = 600
     # bestest case
     if case == 0:  # custom test

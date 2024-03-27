@@ -56,7 +56,6 @@ def read_json_file(file_path: typing.Union[str, pathlib.Path], mode: str = 'r', 
 
     Examples
     --------
-    >>> None
     """
     file_path = str(pathlib.Path(file_path).absolute())
     with open(file_path, mode, encoding = encoding) as _file_descriptor:

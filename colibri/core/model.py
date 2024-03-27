@@ -162,7 +162,7 @@ class Model(metaclass=MetaModel):
     @staticmethod
     def model_factory(class_name, instance_name):
         import importlib
-        for module_name in ["models.emitters.electric_emitter", "models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
+        for module_name in ["colibri.models.emitters.electric_emitter", "colibri.models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
             module = importlib.import_module(module_name)
             if not module is None and hasattr(module, class_name):
                 cls = getattr(module, class_name)

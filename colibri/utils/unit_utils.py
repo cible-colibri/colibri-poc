@@ -243,7 +243,7 @@ def get_unit_converter() -> UnitConverter:
     --------
     >>> None
     """
-    units_path = resource_filename('data', 'units')
+    units_path = resource_filename('colibri', os.path.join('data', 'units'))
     units_file_path = os.path.join(units_path, 'units.json')
     units            = read_json_file(units_file_path, )
     unit_converter   = UnitConverter(**units)

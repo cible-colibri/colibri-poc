@@ -35,7 +35,7 @@ from colibri.utils.files_utils import read_json_file
 
 @pytest.mark.short_test
 def test_data():
-    units_path = resource_filename('data', 'units')
+    units_path = resource_filename('colibri', os.path.join('data', 'units'))
     units_file_path  = os.path.join(units_path, "units.json")
     units            = read_json_file(units_file_path)
     assert isinstance(units, dict)
