@@ -230,8 +230,9 @@ class Project:
             else:
                 value_out = getattr(link.from_model, link.from_variable).value[link.index_from]
 
-            if link.index_to is None:
-                setattr(link.to_model, link.to_variable, value_out)
+            if link.index_to is None or isinstance(value_out, dict):
+                to_variable = getattr(link.to_model, link.to_variable)
+                to_variable.value = value_out
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test
                 if target_var.value.size < link.index_to + 1:
@@ -240,9 +241,11 @@ class Project:
 
             if self.verbose:
                 print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
-            if (not link.to_model.converged(self.time_step, self.n_iteration)):
+            from_model_converged = link.from_model.converged(self.time_step, self.n_iteration)
+            to_model_converged = link.to_model.converged(self.time_step, self.n_iteration)
+            if (not to_model_converged is None and not to_model_converged):
                 self._has_converged = False
-            elif (not link.from_model.converged(self.time_step, self.n_iteration)):
+            elif (not from_model_converged is None and not from_model_converged):
                     self._has_converged = False
             elif self.iterate and not (hasattr(value_out, '__len__') or hasattr(value_out, '__len__')):
                 if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
