@@ -199,7 +199,7 @@ class Project:
                 self.n_iteration = self.n_iteration + 1
                 if not self.iterate:
                     self._has_converged = True
-            self._end_iteration(self.time_step)
+                self._end_iteration(self.time_step)
             self._save_model_data(self.time_step)
             self._end_time_step(self.time_step)
         print("Simulation summary")
