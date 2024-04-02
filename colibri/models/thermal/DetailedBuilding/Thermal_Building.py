@@ -149,7 +149,7 @@ class Thermal_Building(Building):
 
         # Thermal model
         self.calc_thermal_building_model_iter(time_step, self.my_weather)
-        self.calc_convergence(threshold=1e-3)
+        self.calc_convergence(threshold=1e-1)
 
         self.found.append(np.sum(self.hvac_flux_vec))  # for convergence plotting
 
@@ -165,10 +165,10 @@ class Thermal_Building(Building):
         self.states_last = self.states
         self.hvac_flux_vec_last = self.hvac_flux_vec  # for next time step, start with last value
 
-        store_results(time_step, self, self.my_weather)
+
 
     def timestep_done(self, time_step: int = 0):
-        pass
+        store_results(time_step, self, self.my_weather)
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
@@ -346,7 +346,7 @@ class Thermal_Building(Building):
         return temperatures_dict
 
     def calc_convergence(self, threshold=1e-3):
-        self.has_converged = np.sum(np.abs(self.hvac_flux_vec - self.hvac_flux_vec_last)) <= threshold
+        self.has_converged = np.max(np.abs(self.hvac_flux_vec - self.hvac_flux_vec_last)) <= threshold
 
     def create_systems(self):
 

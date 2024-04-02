@@ -221,22 +221,23 @@ class Project:
     def _substitute_links_values(self):
         for link in self.links:
             if link.index_to is None:
-                value_in = getattr(link.to_model, link.to_variable).value
+                value_in = getattr(link.to_model, link.to_variable).value # link to a scalar
             else:
-                value_in = getattr(link.to_model, link.to_variable).value[link.index_from]
+                value_in = getattr(link.to_model, link.to_variable).value[link.index_from] # link to a vector
 
             if link.index_from is None:
-                value_out = getattr(link.from_model, link.from_variable).value
+                value_out = getattr(link.from_model, link.from_variable).value # link from a scalar
             else:
-                value_out = getattr(link.from_model, link.from_variable).value[link.index_from]
+                value_out = getattr(link.from_model, link.from_variable).value[link.index_from] # link from a vector
 
             if link.index_to is None or isinstance(value_out, dict):
                 to_variable = getattr(link.to_model, link.to_variable)
-                to_variable.value = value_out
+                to_variable.value = value_out # link scalar
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test
                 if target_var.value.size < link.index_to + 1:
-                    target_var.value = np.resize(target_var.value, link.index_to + 1)
+                    target_var.value = np.resize(target_var.value, link.index_to + 1) # resize target vector
+                value_in = target_var.value[link.index_to]
                 target_var.value[link.index_to] = value_out
 
             if self.verbose:
@@ -247,7 +248,7 @@ class Project:
                 self._has_converged = False
             elif (not from_model_converged is None and not from_model_converged):
                     self._has_converged = False
-            elif self.iterate and not (hasattr(value_out, '__len__') or hasattr(value_out, '__len__')):
+            elif self.iterate and not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__')) or isinstance(value_out, dict) or isinstance(value_in, dict)):
                 if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
                     self._has_converged = False
                 elif value_out == 0:

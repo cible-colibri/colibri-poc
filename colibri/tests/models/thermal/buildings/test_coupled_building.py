@@ -46,7 +46,7 @@ def test_coupled_building():
     project = Project()
 
     project.iterate = True
-    project.n_max_iterations = 3
+    project.n_max_iterations = 100
     project.time_steps = 8760
     project.verbose = False
 
