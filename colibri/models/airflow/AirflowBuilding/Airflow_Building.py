@@ -21,9 +21,9 @@ class Airflow_Building(Model):
         self.project               = None
 
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
-        self.air_temperature_dictionary_input = Variable("air_temperature_dictionary", 0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
-        self.pressures_output = Variable("pressures", value = 0, role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
-        self.flow_rates_output = Variable("flow_rates", value = 0, role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
+        self.air_temperature_dictionary_input = Variable("air_temperature_dictionary", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
+        self.pressures_output = Variable("pressures", value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
+        self.flow_rates_output = Variable("flow_rates", value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         self.my_weather = None
 
@@ -85,7 +85,7 @@ class Airflow_Building(Model):
 
         # Pressure model
         if self.pressure_model:
-            self.temperatures_update(self.air_temperature_dictionary)
+            self.temperatures_update(self.air_temperature_dictionary_input)
             if self.solver == 1:  # iterative together with thermal model
                 self.matrix_model_calc(time_step, n_iteration)
                 self.matrix_model_check_convergence(n_iteration, niter_max)
