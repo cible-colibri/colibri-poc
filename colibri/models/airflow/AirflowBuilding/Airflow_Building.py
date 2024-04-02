@@ -21,7 +21,6 @@ class Airflow_Building(Model):
         self.project               = None
 
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
-        self.air_temperature_dictionary_input = Variable("air_temperature_dictionary", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
         self.pressures_output = Variable("pressures", value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
         self.flow_rates_output = Variable("flow_rates", value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
@@ -85,7 +84,7 @@ class Airflow_Building(Model):
 
         # Pressure model
         if self.pressure_model:
-            self.temperatures_update(self.air_temperature_dictionary_input)
+            self.temperatures_update()
             if self.solver == 1:  # iterative together with thermal model
                 self.matrix_model_calc(time_step, n_iteration)
                 self.matrix_model_check_convergence(n_iteration, niter_max)
@@ -293,34 +292,9 @@ class Airflow_Building(Model):
                         flow_array.append([path[0], path[1], flowrate])
         return flow_array
 
-
-    def matrix_model_send_to_thermal_old(self, Space_list):
-        flow_array = []
-        for space in Space_list:
-            for flow_path in self.flow_paths:
-                path = self.flow_paths[flow_path]['path']
-                sign = self.flow_paths[flow_path]['flow_sign']
-                index_from = self.flow_paths[flow_path]['path_ids'][0]
-                index_to = self.flow_paths[flow_path]['path_ids'][1]
-                if (sign > 0) & (path[0] == space.label):
-                    if self.flow_paths[flow_path]['flow_matrix'] == 'FFb':
-                        flowrate = sign * self.FFb[index_from, index_to] * 3600
-                    else:
-                        flowrate = sign * self.FFa[index_from, index_to] * 3600
-                    flow_array.append([path[0], path[1], flowrate])
-
-                elif (sign < 0) & (path[1] == space.label):
-                    if self.flow_paths[flow_path]['flow_matrix'] == 'FFb':
-                        flowrate = sign * self.FFb[index_from, index_to] * 3600
-                    else:
-                        flowrate = sign * self.FFa[index_from, index_to] * 3600
-                    flow_array.append([path[0], path[1], flowrate])
-        return flow_array
-
-
-    def temperatures_update(self, internal_temperatures_dict):
+    def temperatures_update(self):
         # internal temperatures
-        for temperature in internal_temperatures_dict:
+        for i, space in enumerate(self.project.building_data.space_list):
             for node in self.nodes:
-                if node == temperature:
-                    self.nodes[node]['temperature'] = internal_temperatures_dict[temperature]
+                if node == space.label:
+                    self.nodes[node]['temperature'] = space.temperature

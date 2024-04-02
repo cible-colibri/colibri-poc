@@ -39,7 +39,6 @@ class Thermal_Building(Building):
         self.phi_latent_vec = Variable("phi_latent_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
 
         # outputs
-        self.air_temperature_dictionary_output = Variable("air_temperature_dictionary", 0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, description="air_temperature_dictionary")
         self.flow_rates_input = Variable("flow_rates", value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         # results to save
@@ -87,7 +86,8 @@ class Thermal_Building(Building):
         #################################################################################
 
         self.found = []  # for convergence plot of thermal model
-        self.air_temperature_dictionary = self.reformat_for_pressure()
+        self.store_space_temperatures_in_building()
+        self.air_temperature_dictionary = self.get_space_temperatures()
         self.flow_rates = []
         self.not_converged = True
         self.found = []
@@ -141,7 +141,7 @@ class Thermal_Building(Building):
                         else:
                             emit[0].temperature_in = emit[0].temperature_out.value  #TODO: last, pas last ? Pas initialisé en tout cas
 
-        self.air_temperature_dictionary = self.reformat_for_pressure()  # send temperature values to pressure model
+        self.air_temperature_dictionary = self.get_space_temperatures()  # send temperature values to pressure model
 
         #################################################################################
         # thermal model one at each time step, not in iteration
@@ -153,8 +153,9 @@ class Thermal_Building(Building):
 
         self.found.append(np.sum(self.hvac_flux_vec))  # for convergence plotting
 
+        self.store_space_temperatures_in_building()
+
         # return outputs
-        self.air_temperature_dictionary_output = self.air_temperature_dictionary
         self.heat_flux_vec = self.hvac_flux_vec
 
     def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
@@ -338,11 +339,15 @@ class Thermal_Building(Building):
         #     self.window_losses[i] = space.u_window * space.window_area * (ext_temperature_operative - air_temperatures[i])
         #     self.wall_losses[i] = space.u_wall * space.wall_area * (ext_temperature_operative - air_temperatures[i])
 
-    def reformat_for_pressure(self):
+    def store_space_temperatures_in_building(self):
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
+        for i, space in enumerate(self.project.building_data.space_list):
+            space.temperature = air_temperatures[i]
+
+    def get_space_temperatures(self):
         temperatures_dict = {}
         for i, space in enumerate(self.project.building_data.space_list):
-            temperatures_dict[space.label] = air_temperatures[i]
+            temperatures_dict[space.label] = space.temperature
         return temperatures_dict
 
     def calc_convergence(self, threshold=1e-3):
