@@ -11,11 +11,15 @@ from colibri.models.thermal.DetailedBuilding.Thermal_Building import Thermal_Bui
 from colibri.models.utility.weather import Weather
 from colibri.tests.data.bestest_cases import bestest_configs
 
-
 def test_coupled_building():
+    run_test_case(0) # with pressure model
+    run_test_case(50) # with hydraulic network
+    run_test_case(600) # bestest 600
+    run_test_case(900) # bestest 900
+
+def run_test_case(case: int=0):
 
     building_path = resource_filename('colibri', os.path.join('tests', 'data'))
-    case = 600
     # bestest case
     if case == 0:  # custom test
         file_name = 'house_1.json'
@@ -57,7 +61,6 @@ def test_coupled_building():
     weather.time_zone = time_zone
     project.add(weather)
 
-    #TODO: ça créé la structure de données automatiquement mais pas le type de modélisation (pas Model ou DataClass en fonction du type de modèle thermique utilisé par ex)
     project.add_building_data(building_file)
 
     # thermal model
@@ -71,7 +74,6 @@ def test_coupled_building():
     airflow_building.case = case
     project.add(airflow_building)
 
-    #TODO: soit on met dans le json la classe des objets, si rien n'est spécifié on utilisé la classe RT par défaut
     project.create_envelop()
     project.create_systems()
 
@@ -86,7 +88,6 @@ def test_coupled_building():
     #  Sous quelle forme faire les liens ? On laisse choisir les modèles ? Pas de dict car peut contenir des variables avec des unités différentes (ou sinon homogène avec un type de variable),
     #  faire plutôt type vecteur
     # *** if we want to connect an external controller for the blinds (pilots one variable)
-    project.link(multizone_building, "air_temperature_dictionary_output", airflow_building, "air_temperature_dictionary_input")
     project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
 
     project.run()
@@ -96,17 +97,17 @@ def test_coupled_building():
 
     #TODO: attention, on peut récupérer des objets à différents endroits, mais ce ne sont pas les "vrais objets" par ex Emitter_list n'est pas mis à jour
     # où trouver les inputs ? Il faudrait aller chercher l'objet d'avant ? la galère... en post pro faut pouvoir y accéder facilement
-    emitter = project.get_models_from_class(Emitter)[0]
-    import matplotlib.pyplot as plt
-    fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
-    ax1.plot(emitter.phi_radiative_series, label='phi radiative')
-    ax1.set_ylabel('Phi radiative [w]')
+    for emitter in  project.get_models_from_class(Emitter):
+        import matplotlib.pyplot as plt
+        fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
+        ax1.plot(emitter.phi_radiative_series, label='phi radiative')
+        ax1.set_ylabel('Phi radiative [w]')
 
-    if isinstance(emitter, HydroEmitter):
-        ax2.plot(emitter.temperature_out_series, label='temperature out')
-        ax2.set_ylabel('Temperature out of the emitter [degC]')
-        ax2.set_xlabel('h')
-    plt.show()
+        if isinstance(emitter, HydroEmitter):
+            ax2.plot(emitter.temperature_out_series, label='temperature out')
+            ax2.set_ylabel('Temperature out of the emitter [degC]')
+            ax2.set_xlabel('h')
+        plt.show()
 
     #TODO: todo avec des questions un peu générales
     # - Comment gérer les liens entre les objets ? Ou plus précisément comment récupérer les objets liés (amont et aval) d'un objet en particulier ?

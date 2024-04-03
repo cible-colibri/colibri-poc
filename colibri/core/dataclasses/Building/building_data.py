@@ -44,20 +44,21 @@ class BuildingData():
         # get emitters data
         emitter_list = []
         for space in space_list:
-            for obj in space_list[space]['object_collection']:
-                if obj['type'] == 'emitter':
-                    emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
-                    list_param = list(obj.keys()) + list(emitter.keys())
-                    Emitter = namedtuple('Emitter', list_param)
+            if 'object_collection' in space_list[space]:
+                for obj in space_list[space]['object_collection']:
+                    if obj['type'] == 'emitter':
+                        emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
+                        list_param = list(obj.keys()) + list(emitter.keys())
+                        Emitter = namedtuple('Emitter', list_param)
 
-                    for key, param in obj.items():
-                        setattr(Emitter, key, param)
-                    for key, param in emitter.items():
-                        setattr(Emitter, key, param)
+                        for key, param in obj.items():
+                            setattr(Emitter, key, param)
+                        for key, param in emitter.items():
+                            setattr(Emitter, key, param)
 
-                    Emitter.label = obj['id']
-                    Emitter.zone_name = space
-                    emitter_list.append(Emitter)
+                        Emitter.label = obj['id']
+                        Emitter.zone_name = space
+                        emitter_list.append(Emitter)
 
         self.emitter_list = emitter_list
 
