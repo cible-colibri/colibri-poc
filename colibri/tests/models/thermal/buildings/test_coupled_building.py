@@ -93,21 +93,21 @@ def run_test_case(case: int=0):
     project.run()
 
     print_results(multizone_building)
-    plot_results(multizone_building, to_plot=True)
+    #plot_results(multizone_building, to_plot=True)
 
     #TODO: attention, on peut récupérer des objets à différents endroits, mais ce ne sont pas les "vrais objets" par ex Emitter_list n'est pas mis à jour
     # où trouver les inputs ? Il faudrait aller chercher l'objet d'avant ? la galère... en post pro faut pouvoir y accéder facilement
-    for emitter in  project.get_models_from_class(Emitter):
-        import matplotlib.pyplot as plt
-        fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
-        ax1.plot(emitter.phi_radiative_series, label='phi radiative')
-        ax1.set_ylabel('Phi radiative [w]')
+    # for emitter in  project.get_models_from_class(Emitter):
+    #     import matplotlib.pyplot as plt
+    #     fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
+    #     ax1.plot(emitter.phi_radiative_series, label='phi radiative')
+    #     ax1.set_ylabel('Phi radiative [w]')
 
-        if isinstance(emitter, HydroEmitter):
-            ax2.plot(emitter.temperature_out_series, label='temperature out')
-            ax2.set_ylabel('Temperature out of the emitter [degC]')
-            ax2.set_xlabel('h')
-        plt.show()
+    #     if isinstance(emitter, HydroEmitter):
+    #         ax2.plot(emitter.temperature_out_series, label='temperature out')
+    #         ax2.set_ylabel('Temperature out of the emitter [degC]')
+    #         ax2.set_xlabel('h')
+    #     plt.show()
 
     #TODO: todo avec des questions un peu générales
     # - Comment gérer les liens entre les objets ? Ou plus précisément comment récupérer les objets liés (amont et aval) d'un objet en particulier ?
