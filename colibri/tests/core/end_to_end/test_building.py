@@ -1,52 +1,30 @@
-# -*- coding: utf-8 -*-
+"""
+This file tests the simple_building.py module.
+"""
 
-# ========================================
-# External imports
-# ========================================
-
-import os
 import time
+from importlib import resources
 
-# ========================================
-# Internal imports
-# ========================================
-
-from colibri.utils import data_path
 from colibri.core.project import Project
+from colibri.data.weather import epw
+
+# TODO: Rename SimpleBuilding directory to simple_building or something similar
 from colibri.models.thermal.SimpleBuilding.simple_building import SimpleBuilding
 from colibri.models.utility.weather import Weather
 
-# ========================================
-# Constants
-# ========================================
 
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
-
-
-# ========================================
-# Functions
-# ========================================
-
-def test_building():
-
+def test_building(verbose: bool = False) -> None:
+    """Test the SimpleBuilding class."""
     # Save starting time
-    starting_time = time.perf_counter()
+    starting_time: float = time.perf_counter()
     # Create a project
-    project       = Project()
+    project: Project = Project()
     # Create a weather (from Weather model) and add it to the project
-    weather       = Weather("weather_1")
-    weather.weather_file = os.path.join(data_path['weather'], 'epw/Paris.epw')
+    weather: Weather = Weather("weather_1")
+    weather.weather_file = resources.files(epw) / "Paris.epw"
     project.add(weather)
     # Create a building (from SimpleBuilding model) and add it to the project
-    building      = SimpleBuilding("ChezPeter")
+    building: SimpleBuilding = SimpleBuilding("ChezPeter")
     project.add(building)
     # Link temperature and radiation from weather to building
     project.link(weather, "temperature", building, "ext_temperature")
@@ -54,11 +32,15 @@ def test_building():
     # Set time steps
     project.time_steps = 8760
     # Set no loops (runs twice as fast)
-    project.iterate    = False
+    project.iterate = False
     # Run project
     project.run()
     # Show execution time
-    print(f"Simulation time: {(time.perf_counter() - starting_time):3.2f} seconds")
+    total_time: float = time.perf_counter() - starting_time
+    if verbose is True:
+        print(f"Simulation time: {total_time:3.2f} seconds")
+    assert total_time < 0.5
+
 
 if __name__ == "__main__":
-    test_building()
+    test_building(verbose=True)

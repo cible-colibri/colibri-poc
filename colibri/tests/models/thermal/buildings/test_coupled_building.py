@@ -1,48 +1,50 @@
 import json
 import os
+from importlib import resources
+from pathlib import Path
 
-from pkg_resources import resource_filename
 from colibri.core.project import Project
+from colibri.data.weather import epw
 from colibri.models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
-from colibri.models.emitters.emitter import Emitter
-from colibri.models.emitters.hydro_emitter import HydroEmitter
-from colibri.models.thermal.DetailedBuilding.generic import print_results, plot_results
+from colibri.models.thermal.DetailedBuilding.generic import plot_results, print_results
 from colibri.models.thermal.DetailedBuilding.Thermal_Building import Thermal_Building
 from colibri.models.utility.weather import Weather
+from colibri.tests import data
 from colibri.tests.data.bestest_cases import bestest_configs
 
+
 def test_coupled_building():
-    run_test_case(0) # with pressure model
-    run_test_case(50) # with hydraulic network
-    run_test_case(600) # bestest 600
-    run_test_case(900) # bestest 900
+    run_test_case(0)  # with pressure model
+    run_test_case(50)  # with hydraulic network
+    run_test_case(600)  # bestest 600
+    run_test_case(900)  # bestest 900
 
-def run_test_case(case: int=0):
 
-    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
+def run_test_case(case: int = 0):
+    building_path: Path = resources.files(data)
     # bestest case
     if case == 0:  # custom test
-        file_name = 'house_1.json'
-        weather_file = 'Paris.epw'  # old weather file
-        time_zone = 'Europe/Paris'
+        file_name = "house_1.json"
+        weather_file_name: str = "Paris.epw"  # old weather file
+        time_zone = "Europe/Paris"
     elif case > 100:
-        weather_file = 'DRYCOLDTMY.epw'  # old weather file
+        weather_file_name: str = "DRYCOLDTMY.epw"  # old weather file
         # epw_file = '725650TYCST.epw'  # new weather file after update of standard in 2020
-        time_zone = 'America/Denver'
+        time_zone = "America/Denver"
         if case >= 900:
-            file_name = 'house_bestest_900.json'
+            file_name = "house_bestest_900.json"
         elif case < 900:
-            file_name = 'house_bestest_600.json'
+            file_name = "house_bestest_600.json"
     else:
-        weather_file = 'DRYCOLDTMY.epw'  # old weather file
-        time_zone = 'America/Denver'
-        file_name = 'house_hydraulic.json'
+        weather_file_name: str = "DRYCOLDTMY.epw"  # old weather file
+        time_zone = "America/Denver"
+        file_name = "house_hydraulic.json"
 
     building_file = os.path.join(building_path, file_name)
 
     # adapt to bestest cases if necessary
     if case > 100:  # Bestest
-        with open(building_file, 'r') as f:
+        with open(building_file, "r") as f:
             building_file = json.load(f)
         building_file = bestest_configs(building_file, case)
 
@@ -56,8 +58,8 @@ def run_test_case(case: int=0):
 
     # weather
     weather = Weather("weather")
-    weather.constant_ground_temperature = 10.
-    weather.weather_file = weather_file
+    weather.constant_ground_temperature = 10.0
+    weather.weather_file = resources.files(epw) / weather_file_name
     weather.time_zone = time_zone
     project.add(weather)
 
@@ -65,7 +67,7 @@ def run_test_case(case: int=0):
 
     # thermal model
     multizone_building = Thermal_Building("thermal model")
-    multizone_building.blind_position = 1 # 1 = open
+    multizone_building.blind_position = 1  # 1 = open
     multizone_building.case = case
     project.add(multizone_building)
 
@@ -88,14 +90,16 @@ def run_test_case(case: int=0):
     #  Sous quelle forme faire les liens ? On laisse choisir les modèles ? Pas de dict car peut contenir des variables avec des unités différentes (ou sinon homogène avec un type de variable),
     #  faire plutôt type vecteur
     # *** if we want to connect an external controller for the blinds (pilots one variable)
-    project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
+    project.link(
+        airflow_building, "flow_rates_output", multizone_building, "flow_rates_input"
+    )
 
     project.run()
 
     print_results(multizone_building)
-    #plot_results(multizone_building, to_plot=True)
+    # plot_results(multizone_building, to_plot=True)
 
-    #TODO: attention, on peut récupérer des objets à différents endroits, mais ce ne sont pas les "vrais objets" par ex Emitter_list n'est pas mis à jour
+    # TODO: attention, on peut récupérer des objets à différents endroits, mais ce ne sont pas les "vrais objets" par ex Emitter_list n'est pas mis à jour
     # où trouver les inputs ? Il faudrait aller chercher l'objet d'avant ? la galère... en post pro faut pouvoir y accéder facilement
     # for emitter in  project.get_models_from_class(Emitter):
     #     import matplotlib.pyplot as plt
@@ -109,15 +113,12 @@ def run_test_case(case: int=0):
     #         ax2.set_xlabel('h')
     #     plt.show()
 
-    #TODO: todo avec des questions un peu générales
+    # TODO: todo avec des questions un peu générales
     # - Comment gérer les liens entre les objets ? Ou plus précisément comment récupérer les objets liés (amont et aval) d'un objet en particulier ?
     # - Comment relier les inputs/outputs ? Avec une fonction dédiée appelée à chaque fois avant les run ? Pour l'instant c'est dans ThModel qu'on impose les temperatures in/out de hydroemitter et la heat_demand -> pas très modulaire
     # - Faire des classes génériques de type "Emitter" pour faciliter les connexions et la récupération des objets. Mais comment détecter les différences de type émetteur hydraulique ou non ?
-
 
     # kitchen_temperatures = [x['kitchen_1'] for x in multizone_building.air_temperature_dictionary_series]
 
     # plt.plot(kitchen_temperatures)
     # plt.show()
-
-

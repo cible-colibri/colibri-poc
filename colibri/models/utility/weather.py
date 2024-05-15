@@ -4,7 +4,7 @@ import numpy as np
 import os
 import pandas as pd
 from pkg_resources import resource_filename
-
+from pathlib import Path
 from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
 from colibri.core.templates.outputs import Outputs
@@ -137,17 +137,15 @@ def sun_heigh_etc(weather_data, latitude, longitude, tz='America/Denver'):
     return sun_height, sun_azimuth, weather_index
 
 
-def import_epw_weather(epf_file):
-    weather_dir = resource_filename('colibri', os.path.join('data', 'weather'))
+def import_epw_weather(weather_file_path: Path):
     EPW_vars = ('year', 'month', 'day', 'hour', 'minute', 'datasource', 'temperature', 'DewPoint',
                 'RelHum', 'pressure', 'ExtHorzRad', 'ExtDirRad', 'HorzIRSky', 'GloHorzRad', 'direct_radiation',
                 'diffuse_radiation', 'GloHorzIllum', 'DirNormIllum', 'DifHorzIllum',
                 'ZenLum', 'wind_direction', 'wind_speed', 'TotSkyCvr', 'OpaqSkyCvr', 'Visibility', 'Ceiling',
                 'presweathobs', 'presweathcodes', 'precipwtr', 'aerosoloptdepth', 'snowdepth',
                 'dayslastsnow', 'albedo', 'rain', 'rain_hr')
-    weather_file = os.path.join(weather_dir, 'epw', epf_file)
-    weather_data    = pd.read_csv(weather_file, skiprows=8, header=None, names=EPW_vars)
-    latitude, longitude = tuple(pd.read_csv(weather_file, header=None, nrows=1).loc[:, 6:7].values.flatten().tolist())
+    weather_data    = pd.read_csv(weather_file_path, skiprows=8, header=None, names=EPW_vars)
+    latitude, longitude = tuple(pd.read_csv(weather_file_path, header=None, nrows=1).loc[:, 6:7].values.flatten().tolist())
     solar_direct    = weather_data['direct_radiation']
     solar_diffuse   = weather_data['diffuse_radiation']
     ext_temperature = weather_data.temperature
