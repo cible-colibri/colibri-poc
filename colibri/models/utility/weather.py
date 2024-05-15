@@ -115,7 +115,7 @@ def ground_temperature_kusuda(air_temperature, ground_diffusivity, depth):
 def sun_heigh_etc(weather_data, latitude, longitude, tz='America/Denver'):
     start = '2018-01-01 00:00'
     end = '2018-12-31 23:00'
-    weather_index = pd.date_range(start=start, end=end, freq='1H', tz=tz)
+    weather_index = pd.date_range(start=start, end=end, freq='1h', tz=tz)
     # we define the position from which the sun is observed
     sun_observer = ephem.Observer()
     sun_observer.lon, sun_observer.lat = str(longitude), str(latitude)
