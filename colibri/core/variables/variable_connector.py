@@ -1,47 +1,42 @@
-# -*- coding: utf-8 -*-
+"""This file contains the VariableConnector class."""
 
-# ========================================
-# External imports
-# ========================================
-
-import typing
-
-# ========================================
-# Internal imports
-# ========================================
-
-
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-SelfVariableConnector = typing.TypeVar("SelfVariableConnector", bound = "VariableConnector")
-
-# ========================================
-# Classes
-# ========================================
+from typing import Self
 
 
 class VariableConnector:
+    __slots__ = ("connections",)
 
-    def __init__(self):
-        self.connections = []
+    def __init__(self) -> None:
+        self.connections: list = []
 
-    def add(self, from_variable_name: str, to_variable_name: str) -> SelfVariableConnector:
-        self.connections.append((from_variable_name, to_variable_name))
-        return self
-
-    # Return the string representation of the object
-    def __str__(self) -> str:
-        """Return the string representation of the object
+    def add(self, from_variable_name: str, to_variable_name: str) -> Self:
+        """Add connection to the VariableConnector instance
 
         Parameters
         ----------
+        from_variable_name : str
+           Name of the variable from which the connection starts
+        to_variable_name : str
+            Name of the variable from which the connection ends
+
+        Returns
+        -------
+        Self
+            Return the VariableConnector instance
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        self.connections.append((from_variable_name, to_variable_name))
+        return self
+
+    def __str__(self) -> str:
+        """Return the string representation of the object
 
         Returns
         -------
@@ -56,11 +51,18 @@ class VariableConnector:
         --------
         >>> None
         """
-        join_adds             = f".".join([f"add({condition})" for condition in self.__dict__.values()])
-        string_representation = f"{self.__class__.__name__}().{join_adds}"
+        join_adds: str = "".join(
+            [
+                f".add({formatted_connection})"
+                for formatted_connection in [
+                    ", ".join(f'"{element}"' for element in condition)
+                    for condition in getattr(self, "connections")
+                ]
+            ]
+        )
+        string_representation: str = f"{self.__class__.__name__}(){join_adds}"
         return string_representation
 
-    # Return the object representation as a string
     def __repr__(self) -> str:
         """Return the object representation as a string
 
@@ -80,9 +82,18 @@ class VariableConnector:
         --------
         >>> None
         """
-        object_representation = self.__str__()
+        object_representation: str = self.__str__()
         return object_representation
 
-# ========================================
-# Functions
-# ========================================
+
+if __name__ == "__main__":
+    variable_connector: VariableConnector = VariableConnector()
+    print(variable_connector.__str__())
+    print(variable_connector.__repr__())
+    print(variable_connector)
+    variable_connector = VariableConnector()
+    variable_connector.add("outlet_temperature", "inlet_temperature")
+    variable_connector.add("outlet_flow_rate", "inlet_flow_rate")
+    print(variable_connector.__str__())
+    print(variable_connector.__repr__())
+    print(variable_connector)
