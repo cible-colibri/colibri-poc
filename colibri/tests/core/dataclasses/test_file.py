@@ -1,40 +1,18 @@
-# -*- coding: utf-8 -*-
+"""
+This file tests the file.py module in dataclasses.
+"""
 
-# ========================================
-# External imports
-# ========================================
+from pathlib import Path
 
-import pathlib
 import pytest
-
-# ========================================
-# Internal imports
-# ========================================
 
 from colibri.core.dataclasses.file import File
 
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
-
-
-# ========================================
-# Functions
-# ========================================
 
 @pytest.mark.short_test
 def test_file():
-    file = File("file", pathlib.Path(__file__))
+    """Test the behavior of File."""
+    file = File("file", Path(__file__))
     assert isinstance(file, File)
     assert hasattr(file, "name")
     assert hasattr(file, "path")

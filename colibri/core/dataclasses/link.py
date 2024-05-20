@@ -1,41 +1,20 @@
-# -*- coding: utf-8 -*-
+"""
+This file contains the Link class.
+"""
 
-# ========================================
-# External imports
-# ========================================
-
-import dataclasses
-
-# ========================================
-# Internal imports
-# ========================================
+from dataclasses import dataclass
+from typing import Optional
 
 from colibri.core.model import Model
 
-# ========================================
-# Constants
-# ========================================
 
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
-
-@dataclasses.dataclass
+@dataclass
 class Link:
-
-    from_model: Model = None
-    from_variable: str = None
-    to_model: Model = None
-    to_variable: str = None
-    index_from: int = None # zero-based index if source of link is a vector
-    index_to: int = None # zero-based index if target of link is a vector
-
-# ========================================
-# Functions
-# ========================================
+    from_model: Optional[Model] = None
+    from_variable: Optional[str] = None
+    to_model: Optional[Model] = None
+    to_variable: Optional[str] = None
+    # zero-based index if source of link is a vector
+    index_from: Optional[int] = None
+    # zero-based index if target of link is a vector
+    index_to: Optional[int] = None

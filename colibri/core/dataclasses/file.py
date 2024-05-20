@@ -1,37 +1,13 @@
-# -*- coding: utf-8 -*-
+"""
+This file contains the File class.
+"""
 
-# ========================================
-# External imports
-# ========================================
-
-import dataclasses
-import pathlib
-
-# ========================================
-# Internal imports
-# ========================================
+from dataclasses import dataclass
+from pathlib import Path
 
 
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
-
-@dataclasses.dataclass
+@dataclass
 class File:
     name: str
-    path: pathlib.Path
+    path: Path
     description: str = ""
-
-# ========================================
-# Functions
-# ========================================
