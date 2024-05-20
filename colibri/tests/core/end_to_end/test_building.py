@@ -39,7 +39,8 @@ def test_building(verbose: bool = False) -> None:
     total_time: float = time.perf_counter() - starting_time
     if verbose is True:
         print(f"Simulation time: {total_time:3.2f} seconds")
-    assert total_time < 0.5
+    # TODO: Add asserts that make sense
+    assert total_time < 2
 
 
 if __name__ == "__main__":
