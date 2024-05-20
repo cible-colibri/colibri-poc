@@ -1,9 +1,13 @@
 import numpy as np
 import copy
 from scipy.linalg import inv
-from colibri.core.constants import *
+from colibri.config.constants import ATMOSPHERIC_AIR_PRESSURE, DENSITY_AIR, GRAVITATIONAL_ACCELERATION
 from colibri.models.airflow.AirflowBuilding import connection_functions
 
+
+t_ref_K = 273.15
+t_ext = -20
+Rs_air = 287
 
 def construct_nodes_sep(nodes):
 
@@ -121,18 +125,18 @@ def construct_CCi(flow_paths, boundary_nodes_names, system_nodes_names):
         if connection['connection_type'] == 'door':
             kb = connection_functions.door_calculate_kb(section=connection['section'], discharge_coefficient=connection['discharge_coefficient'], opening=1)
             # exchange coefficient before multiplying with flow rate
-            value = np.abs(kb ** (1/connection['n']) / rho_ref)
+            value = np.abs(kb ** (1/connection['n']) / DENSITY_AIR)
             n_flow = connection['n']
         elif 'grille' in connection['connection_type']:  # outlet or inlet_grille, same equations
             kb = connection_functions.grille_calculate_kb(dp0=connection['dp0'], rho0=connection['rho0'], flow0=connection['flow0'], n=connection['n'], opening=1)
             # exchange coefficient before multiplying with flow rate
-            value = np.abs(kb ** (1/connection['n']) / rho_ref)
-            # np.sign(dp_flow[j]) * kb * abs(rho_ref * dp_flow[j]) ** connection['n']
+            value = np.abs(kb ** (1/connection['n']) / DENSITY_AIR)
+            # np.sign(dp_flow[j]) * kb * abs(DENSITY_AIR * dp_flow[j]) ** connection['n']
             n_flow = connection['n']
         elif 'duct_dtu' in connection['connection_type']:
             # exchange coefficient before multiplying with flow rate
             nominal_flowrate = 50  # no impact if the function is used with type="c_lin"
-            value = np.abs(connection_functions.duct_dtu_calculate_dploss(flowrate=nominal_flowrate, rho=rho_ref, section=connection['section'], h_diam=connection['h_diam'], length=connection['length'], coefK=connection['coefK'], dzeta=connection['dzeta'], calc_mode='c_lin'))
+            value = np.abs(connection_functions.duct_dtu_calculate_dploss(flowrate=nominal_flowrate, rho=DENSITY_AIR, section=connection['section'], h_diam=connection['h_diam'], length=connection['length'], coefK=connection['coefK'], dzeta=connection['dzeta'], calc_mode='c_lin'))
             n_flow = 0.5
         elif 'flow' in connection['connection_type']:
             value = 1  # keep 0 values in CCa and CCb since flow rate is calculated in the fan models and imposed directly as FAN flow rates.
@@ -203,13 +207,13 @@ def construct_CCi(flow_paths, boundary_nodes_names, system_nodes_names):
 def solve_pressure_system(AA, BB, CCa_act, CCb_act, BB_flow, U_pressure, U_flow, flow_paths, nodes, system_nodes_names):
     """
     # from Mathis
-        flow = kb * rho_ref**n * dp**n
+        flow = kb * DENSITY_AIR**n * dp**n
 
-    (p1-p0) = 1/rho_ref * kb**(-1/n) * flows**(1/n) // + correction(f(height, T)
+    (p1-p0) = 1/DENSITY_AIR * kb**(-1/n) * flows**(1/n) // + correction(f(height, T)
 
-    simplified to (p1-p0) = kb**(-1/n) / rho_ref * flows**(1/n) // + correction(f(height, T)
+    simplified to (p1-p0) = kb**(-1/n) / DENSITY_AIR * flows**(1/n) // + correction(f(height, T)
     linearised to :
-    (p1-p0) = kb**(-1/n) / rho_ref * flows(it-1)**(1/n-1) * flows // + correction(f(height, T)
+    (p1-p0) = kb**(-1/n) / DENSITY_AIR * flows(it-1)**(1/n-1) * flows // + correction(f(height, T)
 
     Equation to solve flow balance at each node:
     kb**(-2)*(pj-pi) + injected_flow = 0
@@ -245,10 +249,10 @@ def solve_pressure_system(AA, BB, CCa_act, CCb_act, BB_flow, U_pressure, U_flow,
                 index_from = flow_paths[flow_path]['path_ids'][0]
                 index_to = flow_paths[flow_path]['path_ids'][1]
                 # calculate pressure correction value to apply later in the matrix calculation
-                rho_from = p_ref / (Rs_air * (t_ref_K + nodes[name_from]['temperature']))
-                rho_to = p_ref / (Rs_air * (t_ref_K + nodes[name_to]['temperature']))
+                rho_from = ATMOSPHERIC_AIR_PRESSURE / (Rs_air * (t_ref_K + nodes[name_from]['temperature']))
+                rho_to = ATMOSPHERIC_AIR_PRESSURE / (Rs_air * (t_ref_K + nodes[name_to]['temperature']))
                 # adding buoyancy term to pressure flow
-                delta_p = - (rho_from - rho_to) * g * flow_paths[flow_path]['z']
+                delta_p = - (rho_from - rho_to) * GRAVITATIONAL_ACCELERATION * flow_paths[flow_path]['z']
                 # fill in the matrices with delta_p
                 if flow_paths[flow_path]['flow_matrix'] == 'FFa':  # this is in the CCa matrix with system nodes
                     dpressures_aa_buoyancy[index_from, index_to] = - delta_p

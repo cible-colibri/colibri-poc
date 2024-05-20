@@ -20,7 +20,7 @@ from colibri.utils.unit_utils import (
 # Constants
 # ========================================
 
-from colibri.core.constants import (
+from colibri.config.constants import (
                                 SOLAR_CONSTANT_OF_THE_EARTH,
                                 UNIT_CONVERTER,
                               )

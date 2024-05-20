@@ -2,7 +2,7 @@ import numpy as np
 from numpy import eye
 from scipy.linalg import expm, inv
 epsilon = 1e-15
-from colibri.core.constants import *
+from colibri.config.constants import CP_AIR, DENSITY_AIR
 
 
 def set_U_from_index(U, index_inputs, label, value_to_set, add=False):
@@ -447,12 +447,12 @@ def generate_A_and_B(Space_list, Boundary_list, Window_list):
             i += 1
 
     for obj in Space_list:  # mean radiant nodes, already filled in in boundaries and windows !
-        mcp[i] = obj.volume * cp_air_ref * rho_ref
+        mcp[i] = obj.volume * CP_AIR * DENSITY_AIR
         i += 1
 
     n_space = 0
     for obj in Space_list:  # air nodes
-        mcp[i] = obj.volume * cp_air_ref * rho_ref
+        mcp[i] = obj.volume * CP_AIR * DENSITY_AIR
         # flux indexing (applied at the end of this function, to allow calculation of diagonal of A)
         flux_B_indexing.append([i, index_inputs['space_convective_gain']['start_index'] + n_space, 1])  # convective gain to space air node
         i += 1

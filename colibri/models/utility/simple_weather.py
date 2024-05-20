@@ -19,7 +19,7 @@ from colibri.utils.enums_utils import Units
 # Constants
 # ========================================
 
-from colibri.core.constants import SOLAR_CONSTANT_OF_THE_EARTH
+from colibri.config.constants import SOLAR_CONSTANT_OF_THE_EARTH
 
 # ========================================
 # Variables
