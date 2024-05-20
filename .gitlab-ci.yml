@@ -1,7 +1,7 @@
 default:
-  image: docker:20.10
+  image: docker:25.0
   services:
-    - docker:20.10-dind
+    - docker:25.0-dind
   tags:
     - docker
 
@@ -15,7 +15,7 @@ variables:
   GITLAB_PROJECT_NAME: colibri
   GITLAB_PROJECT_URL: scm.cstb.fr/dee/colibri.git
   GITLAB_PUSH_BRANCH_NAME: main
-  JOB_IMAGE_URL: $DOCKER_GRP/python:3.11.6-slim-bookworm
+  JOB_IMAGE_URL: $DOCKER_GRP/python:3.11-slim
 
 
 job_schemes_validation:
