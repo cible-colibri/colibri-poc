@@ -1,10 +1,4 @@
 [run]
-omit=
-	*/docs/*
-	*/tests/*
-	*/__init__.py
-	*/__project_information__.py
-	setup.py
 
 [report]
 show_missing=True
