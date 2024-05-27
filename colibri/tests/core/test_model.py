@@ -38,7 +38,7 @@ def test_models():
     # Create a model from Model
     class ModelChild(Model):
 
-        def _define_variables(self) -> None:
+        def _assign_same_instance_variables(self) -> None:
             self.var_1 = Variable("var_1", 2, role = Roles.INPUTS)
 
         def check_units(self) -> None:

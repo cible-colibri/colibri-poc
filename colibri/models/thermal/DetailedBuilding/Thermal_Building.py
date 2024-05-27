@@ -1,7 +1,7 @@
 import numpy as np
 
 from colibri.config.constants import CP_AIR, DENSITY_AIR, DENSITY_AIR
-from colibri.core.Building import Building
+from colibri.core.building import Building
 from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
 from colibri.core.templates.outputs import Outputs
@@ -131,15 +131,15 @@ class Thermal_Building(Building):
             # impose supply temperature from generator based on op mode
             for i, space in enumerate(self.project.building_data.space_list):
                 emit = self.project.get_model_by_name(space.label + "_emitter")  # TODO: get by class ? -> create Space class
-                if len(emit) > 0:
+                if emit is not None:
                     #TODO: créer un paramètre hydraulique. Est-ce que c'est à faire ici ce truc ??
                     if emit is HydroEmitter:
                         if self.op_mode[i] == 'cooling':
-                            emit[0].temperature_in = emit[0].nominal_cooling_supply_temperature.value
+                            emit.temperature_in = emit.nominal_cooling_supply_temperature.value
                         elif self.op_mode[i] == 'heating':
-                            emit[0].temperature_in = emit[0].nominal_heating_supply_temperature.value
+                            emit.temperature_in = emit.nominal_heating_supply_temperature.value
                         else:
-                            emit[0].temperature_in = emit[0].temperature_out.value  #TODO: last, pas last ? Pas initialisé en tout cas
+                            emit.temperature_in = emit.temperature_out.value  #TODO: last, pas last ? Pas initialisé en tout cas
 
         self.air_temperature_dictionary = self.get_space_temperatures()  # send temperature values to pressure model
 
@@ -244,10 +244,10 @@ class Thermal_Building(Building):
 
         for i, space in enumerate(self.project.building_data.space_list):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
-            if len(emit) > 0:
-                self.radiative_share_hvac_vec[i] = emit[0].radiative_share.value  #TODO: quid si plusieurs émetteurs mais pas du même mode ? ou pas du même radiative share ? (ex: poële + plancher chauffant)
-                self.max_heating_power_vec[i] = emit[0].nominal_heating_power.value
-                self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power.value
+            if emit is not None:
+                self.radiative_share_hvac_vec[i] = emit.radiative_share.value  #TODO: quid si plusieurs émetteurs mais pas du même mode ? ou pas du même radiative share ? (ex: poële + plancher chauffant)
+                self.max_heating_power_vec[i] = emit.nominal_heating_power.value
+                self.max_cooling_power_vec[i] = emit.nominal_cooling_power.value
 
         # ventilation parameters
         self.air_change_rate = 0.0
@@ -285,14 +285,14 @@ class Thermal_Building(Building):
         # emitter preprocessing
         for i, space in enumerate(self.project.building_data.space_list):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
-            if len(emit) > 0:
+            if emit is not None:
                 if emit is HydroEmitter:  #TODO: suppose ideal
-                    thermal_output_max = emit[0].nominal_UA * (emit[0].temperature_in - air_temperatures[i])
+                    thermal_output_max = emit.nominal_UA * (emit.temperature_in - air_temperatures[i])
                     self.max_heating_power_vec[i] = max(0., thermal_output_max)
                     self.max_cooling_power_vec[i] = abs(min(0., thermal_output_max))
                 else:
-                    self.max_heating_power_vec[i] = emit[0].nominal_heating_power.value
-                    self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power.value
+                    self.max_heating_power_vec[i] = emit.nominal_heating_power.value
+                    self.max_cooling_power_vec[i] = emit.nominal_cooling_power.value
 
         # space heating control
         self.hvac_flux_vec = space_temperature_control_simple(self.op_mode, self.setpoint, self.Ad, self.Bd, self.states,

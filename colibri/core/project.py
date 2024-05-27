@@ -1,102 +1,162 @@
-# ========================================
-# External imports
-# ========================================
+"""
+This file contains the Project class.
+"""
 
 import json
-
 import pathlib
-import typing
+from re import A
 import time
+import typing
+from typing import Dict, List, Optional, Self
 
 import numpy as np
 from matplotlib import pyplot as plt
 
-from colibri.core.Building import Building
-# ========================================
-# Internal imports
-# ========================================
-
-from colibri.core.dataclasses.link import Link
-from colibri.core.model              import Model
-from colibri.core.dataclasses.plot import Plot
+from colibri.core.building import Building
+from colibri.core.helpers.building.building_data import BuildingData
+from colibri.core.helpers.link import Link
+from colibri.core.helpers.plot import Plot
+from colibri.core.model import Model
 from colibri.core.variables.variable_connector import VariableConnector
-from colibri.core.dataclasses.Building.building_data import BuildingData
 from colibri.models.utility.weather import Weather
 from colibri.utils.encorder_utils import NonCyclycEncoder
 from colibri.utils.enums_utils import Schema
 from colibri.utils.files_utils import write_json_file
 
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
 
 class Project:
-
-    def __init__(self, name: str = None, schema: Schema = Schema.RE2020):
-        self.name   = name
-        self.schema = schema
-        self.models = []
-        self.links  = []
-        self._plots = dict()
-        self._set_project_parameters()
+    def __init__(
+        self, name: Optional[str] = None, schema: Schema = Schema.RE2020
+    ) -> None:
+        self.name: str | None = name
+        self.schema: Schema = schema
+        self.models: List[Model] = list()
+        self.links: List[Link] = list()
+        self._plots: Dict[str, List[Plot]] = dict()
         self._has_converged = None
-        self.time_step = 0
-        self.n_iteration = 0
+        self._set_project_parameters()
 
-    def add(self, model: Model) -> None:
+    def add(self, model: Model) -> Self:
+        """Add a model to the project
+
+        Parameters
+        ----------
+        model : Model
+            Model to add
+
+        Returns
+        -------
+        Self
+            Project itself
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
         self.models.append(model)
         model.project = self
         return self
 
-    def get(self, name):
-        models = [model for model in self.models if model.name == name]
+    def get_model_by_name(self, name: str) -> Model | None:
+        """Get a model from the project based on its name
+
+        Parameters
+        ----------
+        model : Model
+            Model to add
+
+        Returns
+        -------
+        Model | None
+            Model associated with the given name if it exists, else None
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        models: List[Model] = [model for model in self.models if model.name == name]
         if models:
             return models[0]
         return None
 
-    def get_models_from_class(self, cls):
-        return [model for model in self.models if isinstance(model, cls)]
+    def get_models_by_class(self, model_class: Model) -> List[Model]:
+        """Get all the models from the project based on the model's class
 
-    def get_model_by_name(self, name):
-        return [model for model in self.models if model.name == name]
+        Parameters
+        ----------
+        model_class : Model
+            Class of the model
+
+        Returns
+        -------
+        List[Model]
+            Models in the project associated with the given model's class
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        return [model for model in self.models if isinstance(model, model_class)]
 
     def add_building_data(self, building_file: str):
         building_data = BuildingData(building_file)
         self.building_data = building_data
 
-    def get_weather(self):
-        weather_models = self.get_models_from_class(Weather)
+    def get_weather(self) -> Weather:
+        """Get weather model associated with the project
+
+
+        Returns
+        -------
+        Weather
+            Weather model associated with the project
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        weather_models: List[Weather] = self.get_models_by_class(Weather)
         if len(weather_models) == 1:
             return weather_models[0]
         elif len(weather_models) > 1:
-            raise Exception("More than one weather model in project, don't know which one to choose.")
+            raise Exception(
+                "More than one weather model in project, don't know which one to choose."
+            )
         else:
             raise Exception("No weather model in project, but some models need one.")
 
-    #@typing.overload
-    #def link(self, *args: tuple[Model, str, Model, str]) -> None:
+    # @typing.overload
+    # def link(self, *args: tuple[Model, str, Model, str]) -> None:
     #    ...
 
-    #@typing.overload
-    #def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
+    # @typing.overload
+    # def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
     #    ...
 
     def link(self, model_1, arg_2, *connection):
-        if len(connection) ==2:
+        if len(connection) == 2:
             model_2 = connection[0]
             variable_2 = connection[1]
             if not self.is_eligible_link(model_1, arg_2, model_2, variable_2):
-                raise ValueError(f"Cannot link {model_1}.{arg_2} to {model_2}.{variable_2}")
+                raise ValueError(
+                    f"Cannot link {model_1}.{arg_2} to {model_2}.{variable_2}"
+                )
             link = Link(model_1, arg_2, model_2, variable_2)
             self.links.append(link)
         else:
@@ -125,50 +185,91 @@ class Project:
         link = Link(model_1, var_1, model_2, var_2, index_1, index_2)
         self.links.append(link)
 
-    def link_with_connector(self, from_model: Model, to_model: Model, connector: VariableConnector) -> None:
+    def link_with_connector(
+        self, from_model: Model, to_model: Model, connector: VariableConnector
+    ) -> None:
         for from_variable, to_variable in connector.connections:
             self._add_link(from_model, from_variable, to_model, to_variable)
 
-    def link_with_variable_names(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> None:
+    def link_with_variable_names(
+        self, from_model: Model, from_variable: str, to_model: Model, to_variable: str
+    ) -> None:
         self._add_link(from_model, from_variable, to_model, to_variable)
 
-    def _add_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> None:
+    def _add_link(
+        self, from_model: Model, from_variable: str, to_model: Model, to_variable: str
+    ) -> None:
         if not self.is_eligible_link(from_model, from_variable, to_model, to_variable):
-            raise ValueError(f"Sorry, but we cannot link {from_model}.{from_variable} to {to_model}.{to_variable}.")
+            raise ValueError(
+                f"Sorry, but we cannot link {from_model}.{from_variable} to {to_model}.{to_variable}."
+            )
         if not self.is_linked(from_model, from_variable, to_model, to_variable):
             link = Link(from_model, from_variable, to_model, to_variable)
             self.links.append(link)
 
-    def is_eligible_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
+    def is_eligible_link(
+        self, from_model: Model, from_variable: str, to_model: Model, to_variable: str
+    ) -> bool:
         return hasattr(from_model, from_variable) and hasattr(to_model, to_variable)
 
-    def is_linked(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
+    def is_linked(
+        self, from_model: Model, from_variable: str, to_model: Model, to_variable: str
+    ) -> bool:
         for link in self.links:
-            if (link.from_model == from_model) and (link.to_model == to_model) and (link.from_variable == from_variable) and (link.to_variable == to_variable):
+            if (
+                (link.from_model == from_model)
+                and (link.to_model == to_model)
+                and (link.from_variable == from_variable)
+                and (link.to_variable == to_variable)
+            ):
                 return True
         return False
 
-    def add_plot(self, name: str, model: Model, variable_name: str) -> None:
-        plot = Plot(name, model, variable_name)
-        if name in self._plots:
-            self._plots[name].append(plot)
-        else:
-            self._plots[name] = [plot]
+    def add_plot(self, name: str, model: Model, variable_name: str) -> Self:
+        """Add plot (followed a variable of a given object) to the project
+
+        Parameters
+        ----------
+        name : str
+            Name of the plot
+        model : Model
+            Model whose variable will be taken from
+        variable_name : str
+            Name of the variable
+
+        Returns
+        -------
+        Self
+            Project itself
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        plot: Plot = Plot(name=name, model=model, variable_name=variable_name)
+        self._plots[name] = self._plots.setdefault(name, list())
+        self._plots[name].append(plot)
+        return self
+
 
     def plot(self):
         if self.to_plot and len(self._plots) >= 1:
-            figure      = plt.figure()
+            figure = plt.figure()
             disposition = len(self._plots) * 100 + 11
             for title, plots in self._plots.items():
                 axis = figure.add_subplot(disposition)
                 axis.set_title(title)
                 for plot in plots:
-                    model    = plot.model
+                    model = plot.model
                     variable = model.get_variable(plot.variable_name)
-                    series   = getattr(model, variable.name + "_series")
-                    axis.plot(series, label = model.name + "." + variable.name)
+                    series = getattr(model, variable.name + "_series")
+                    axis.plot(series, label=model.name + "." + variable.name)
                     axis.set_ylabel(f"[{variable.unit.value}]")
-                axis.legend(loc = "upper right", numpoints = 1)
+                axis.legend(loc="upper right", numpoints=1)
                 disposition += 1
             # Show plot
             plt.show()
@@ -193,7 +294,7 @@ class Project:
                 self._substitute_links_values()
                 # check for convergence limit
                 if self.n_iteration > self.n_max_iterations:
-                    self._has_converged    = True
+                    self._has_converged = True
                     self.n_non_convergence = self.n_non_convergence + 1
                     self.non_convergence_times.append(self.time_step)
                 self.n_iteration = self.n_iteration + 1
@@ -213,7 +314,7 @@ class Project:
     def _initialize_series(self) -> None:
         for model in self.models:
             for variable in model.outputs:
-                setattr(model, variable.name + '_series', [0] * self.time_steps)
+                setattr(model, variable.name + "_series", [0] * self.time_steps)
 
     def _initialize_models(self) -> None:
         for model in self.models:
@@ -222,35 +323,57 @@ class Project:
     def _substitute_links_values(self):
         for link in self.links:
             if link.index_to is None:
-                value_in = getattr(link.to_model, link.to_variable).value # link to a scalar
+                value_in = getattr(
+                    link.to_model, link.to_variable
+                ).value  # link to a scalar
             else:
-                value_in = getattr(link.to_model, link.to_variable).value[link.index_from] # link to a vector
+                value_in = getattr(link.to_model, link.to_variable).value[
+                    link.index_from
+                ]  # link to a vector
 
             if link.index_from is None:
-                value_out = getattr(link.from_model, link.from_variable).value # link from a scalar
+                value_out = getattr(
+                    link.from_model, link.from_variable
+                ).value  # link from a scalar
             else:
-                value_out = getattr(link.from_model, link.from_variable).value[link.index_from] # link from a vector
+                value_out = getattr(link.from_model, link.from_variable).value[
+                    link.index_from
+                ]  # link from a vector
 
             if link.index_to is None or isinstance(value_out, dict):
                 to_variable = getattr(link.to_model, link.to_variable)
-                to_variable.value = value_out # link scalar
+                to_variable.value = value_out  # link scalar
             else:
-                target_var = getattr(link.to_model, link.to_variable) # TODO: test
+                target_var = getattr(link.to_model, link.to_variable)  # TODO: test
                 if target_var.value.size < link.index_to + 1:
-                    target_var.value = np.resize(target_var.value, link.index_to + 1) # resize target vector
+                    target_var.value = np.resize(
+                        target_var.value, link.index_to + 1
+                    )  # resize target vector
                 value_in = target_var.value[link.index_to]
                 target_var.value[link.index_to] = value_out
 
             if self.verbose:
-                print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
-            from_model_converged = link.from_model.converged(self.time_step, self.n_iteration)
-            to_model_converged = link.to_model.converged(self.time_step, self.n_iteration)
-            if (not to_model_converged is None and not to_model_converged):
+                print(
+                    f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}"
+                )
+            from_model_converged = link.from_model.converged(
+                self.time_step, self.n_iteration
+            )
+            to_model_converged = link.to_model.converged(
+                self.time_step, self.n_iteration
+            )
+            if not to_model_converged is None and not to_model_converged:
                 self._has_converged = False
-            elif (not from_model_converged is None and not from_model_converged):
-                    self._has_converged = False
-            elif self.iterate and not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__')) or isinstance(value_out, dict) or isinstance(value_in, dict)):
-                if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
+            elif not from_model_converged is None and not from_model_converged:
+                self._has_converged = False
+            elif self.iterate and not (
+                (hasattr(value_out, "__len__") or hasattr(value_in, "__len__"))
+                or isinstance(value_out, dict)
+                or isinstance(value_in, dict)
+            ):
+                if (abs(value_out) > self.convergence_tolerance) and (
+                    abs(value_out - value_in) > self.convergence_tolerance
+                ):
                     self._has_converged = False
                 elif value_out == 0:
                     pass
@@ -299,7 +422,7 @@ class Project:
         --------
         >>> None
         """
-        return json.dumps(self, cls = NonCyclycEncoder, check_circular = False, indent = 2)
+        return json.dumps(self, cls=NonCyclycEncoder, check_circular=False, indent=2)
 
     # Save project as a json file
     def save_as_json(self, file_path: typing.Union[str, pathlib.Path]) -> None:
@@ -325,15 +448,18 @@ class Project:
         write_json_file(file_path, self.to_json())
 
     def _set_project_parameters(self) -> None:
-        self.time_steps   = 168
+        self.time_steps = 168
         self.models_order = []
         self.n_max_iterations = 25
         self.n_non_convergence = 0
         self.non_convergence_times = []
         self.convergence_tolerance = 0.01
         self.iterate = True
-        self.verbose = False # TODO: implement printing ON/OFF mechanism
+        self.verbose = False  # TODO: implement printing ON/OFF mechanism
         self.to_plot = True
+        self.time_step = 0
+        self.n_iteration = 0
+
         if self.schema is Schema.RE2020:
             pass
 
@@ -384,9 +510,9 @@ class Project:
         return object_representation
 
     def create_envelop(self):
-        for building in self.get_models_from_class(Building):
+        for building in self.get_models_by_class(Building):
             building.create_envelop()
 
     def create_systems(self):
-        for building in self.get_models_from_class(Building):
+        for building in self.get_models_by_class(Building):
             building.create_systems()
