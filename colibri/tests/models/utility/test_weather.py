@@ -11,7 +11,7 @@ import os
 # Internal imports
 # ========================================
 
-from colibri.core.project           import Project
+from colibri.core.models.project import Project
 from colibri.models.utility.weather import Weather
 from colibri.utils import data_path
 

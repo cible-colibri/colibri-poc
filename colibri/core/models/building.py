@@ -1,6 +1,6 @@
 import abc
 
-from colibri.core.model import Model
+from colibri.core.models.model import Model
 
 
 class Building(Model):

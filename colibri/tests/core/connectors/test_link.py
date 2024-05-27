@@ -4,8 +4,8 @@ This file tests the link.py module in dataclasses.
 
 import pytest
 
-from colibri.core.helpers.link import Link
-from colibri.core.model import Model
+from colibri.core.connectors.link import Link
+from colibri.core.models.model import Model
 from colibri.models.hydronics.duct import Duct
 
 

@@ -2,7 +2,7 @@ import json
 import copy
 from collections import namedtuple
 
-from colibri.core.helpers.building.building_import import import_spaces, import_boundaries
+from colibri.core.processing.building.building_import import import_spaces, import_boundaries
 
 
 default_dict_space = {'constant_internal_gains': 200,

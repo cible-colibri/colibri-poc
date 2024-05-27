@@ -5,7 +5,7 @@ This file tests the fluid_flow.py module in connectors/generics.
 import pytest
 
 from colibri.core.connectors.hydronics.fluid_flow import FluidFlowConnector
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 
 
 @pytest.mark.short_test
@@ -13,7 +13,7 @@ def test_fluid_flow():
     """Test the behavior of FluidFlowConnector."""
     fluid_connector = FluidFlowConnector()
     assert isinstance(fluid_connector, FluidFlowConnector)
-    assert isinstance(fluid_connector, VariableConnector)
+    assert isinstance(fluid_connector, Connector)
     assert hasattr(fluid_connector, "connections")
     assert hasattr(fluid_connector, "add")
     assert isinstance(fluid_connector.connections, list)

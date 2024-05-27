@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from colibri.core.helpers.file import File
+from colibri.core.processing.file import File
 
 
 @pytest.mark.short_test

@@ -3,7 +3,7 @@ import os
 from importlib import resources
 from pathlib import Path
 
-from colibri.core.project import Project
+from colibri.core.models.project import Project
 from colibri.data.weather import epw
 from colibri.models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
 from colibri.models.thermal.DetailedBuilding.generic import plot_results, print_results

@@ -5,7 +5,7 @@ This file contains the Link class.
 from dataclasses import dataclass
 from typing import Optional
 
-from colibri.core.model import Model
+from colibri.core.models.model import Model
 
 
 @dataclass

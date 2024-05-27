@@ -1,16 +1,16 @@
-"""This file contains the VariableConnector class."""
+"""This file contains the Connector class."""
 
 from typing import Self
 
 
-class VariableConnector:
+class Connector:
     __slots__ = ("connections",)
 
     def __init__(self) -> None:
         self.connections: list = []
 
     def add(self, from_variable_name: str, to_variable_name: str) -> Self:
-        """Add connection to the VariableConnector instance
+        """Add connection to the Connector instance
 
         Parameters
         ----------
@@ -22,7 +22,7 @@ class VariableConnector:
         Returns
         -------
         Self
-            Return the VariableConnector instance
+            Return the Connector instance
 
         Raises
         ------
@@ -87,11 +87,11 @@ class VariableConnector:
 
 
 if __name__ == "__main__":
-    variable_connector: VariableConnector = VariableConnector()
+    variable_connector: Connector = Connector()
     print(variable_connector.__str__())
     print(variable_connector.__repr__())
     print(variable_connector)
-    variable_connector = VariableConnector()
+    variable_connector = Connector()
     variable_connector.add("outlet_temperature", "inlet_temperature")
     variable_connector.add("outlet_flow_rate", "inlet_flow_rate")
     print(variable_connector.__str__())

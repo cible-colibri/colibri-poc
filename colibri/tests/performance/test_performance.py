@@ -4,7 +4,7 @@ import pytest
 
 from colibri.core.connectors.hydronics.fluid_flow import FluidFlowConnector
 
-from colibri.core.project import Project
+from colibri.core.models.project import Project
 from colibri.models.hydronics.duct import Duct
 
 def test_performance_linear():

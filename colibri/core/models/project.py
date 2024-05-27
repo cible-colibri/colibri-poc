@@ -12,12 +12,12 @@ from typing import Dict, List, Optional, Self
 import numpy as np
 from matplotlib import pyplot as plt
 
-from colibri.core.building import Building
-from colibri.core.helpers.building.building_data import BuildingData
-from colibri.core.helpers.link import Link
-from colibri.core.helpers.plot import Plot
-from colibri.core.model import Model
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.models.building import Building
+from colibri.core.processing.building.building_data import BuildingData
+from colibri.core.connectors.link import Link
+from colibri.core.visualization.plot import Plot
+from colibri.core.models.model import Model
+from colibri.core.connectors.connector import Connector
 from colibri.models.utility.weather import Weather
 from colibri.utils.encorder_utils import NonCyclycEncoder
 from colibri.utils.enums_utils import Schema
@@ -146,7 +146,7 @@ class Project:
     #    ...
 
     # @typing.overload
-    # def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
+    # def link(self, *args: tuple[Model, Model, Connector]) -> None:
     #    ...
 
     def link(self, model_1, arg_2, *connection):
@@ -186,7 +186,7 @@ class Project:
         self.links.append(link)
 
     def link_with_connector(
-        self, from_model: Model, to_model: Model, connector: VariableConnector
+        self, from_model: Model, to_model: Model, connector: Connector
     ) -> None:
         for from_variable, to_variable in connector.connections:
             self._add_link(from_model, from_variable, to_model, to_variable)

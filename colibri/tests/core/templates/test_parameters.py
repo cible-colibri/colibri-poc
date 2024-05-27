@@ -10,7 +10,7 @@ import pytest
 # Internal imports
 # ========================================
 
-from colibri.core.templates.parameters import Parameters
+from colibri.core.variables.parameters import Parameters
 from colibri.core.variables.variable import (
                                   Variable,
                                   ContainerVariables,

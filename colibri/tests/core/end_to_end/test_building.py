@@ -5,7 +5,7 @@ This file tests the simple_building.py module.
 import time
 from importlib import resources
 
-from colibri.core.project import Project
+from colibri.core.models.project import Project
 from colibri.data.weather import epw
 
 # TODO: Rename SimpleBuilding directory to simple_building or something similar

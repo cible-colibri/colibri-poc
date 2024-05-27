@@ -1,11 +1,11 @@
 import numpy as np
 
 from colibri.config.constants import CP_AIR, DENSITY_AIR, DENSITY_AIR
-from colibri.core.building import Building
-from colibri.core.templates.inputs import Inputs
-from colibri.core.model import Model
-from colibri.core.templates.outputs import Outputs
-from colibri.core.templates.parameters import Parameters
+from colibri.core.models.building import Building
+from colibri.core.variables.inputs import Inputs
+from colibri.core.models.model import Model
+from colibri.core.variables.outputs import Outputs
+from colibri.core.variables.parameters import Parameters
 from colibri.core.variables.variable import Variable
 from colibri.models.emitters.hydro_emitter import HydroEmitter
 from colibri.models.thermal.DetailedBuilding.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\

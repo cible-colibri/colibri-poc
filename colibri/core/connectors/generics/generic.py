@@ -2,8 +2,8 @@
 This file contains the GenericConnector class.
 """
 
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 
 
-class GenericConnector(VariableConnector):
+class GenericConnector(Connector):
     pass

@@ -4,7 +4,7 @@ This file tests the plot.py module in dataclasses.
 
 import pytest
 
-from colibri.core.helpers.plot import Plot
+from colibri.core.visualization.plot import Plot
 from colibri.models.hydronics.duct import Duct
 
 

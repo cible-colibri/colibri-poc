@@ -6,9 +6,9 @@ import abc
 import copy
 from typing import Any, List, Optional, Protocol, Union
 
-from colibri.core.templates.inputs import Inputs
-from colibri.core.templates.outputs import Outputs
-from colibri.core.templates.parameters import Parameters
+from colibri.core.variables.inputs import Inputs
+from colibri.core.variables.outputs import Outputs
+from colibri.core.variables.parameters import Parameters
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles
 

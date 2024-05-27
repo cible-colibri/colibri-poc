@@ -1,14 +1,14 @@
 """
 This file contains the FluidFlowConnector class (inherited from the
-VariableConnector class).
+Connector class).
 """
 
 from typing import List, Self
 
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 
 
-class FluidFlowConnector(VariableConnector):
+class FluidFlowConnector(Connector):
     def __init__(self) -> None:
         self.connections: List[tuple] = [
             # (from_variable, to_variable)
@@ -17,7 +17,7 @@ class FluidFlowConnector(VariableConnector):
         ]
 
     def add(self, from_variable_name: str, to_variable_name: str) -> Self:
-        """Add connection to the VariableConnector instance
+        """Add connection to the Connector instance
 
         Parameters
         ----------
