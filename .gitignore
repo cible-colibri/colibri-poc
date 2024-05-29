@@ -1,21 +1,38 @@
-.cache/
-.idea/
-build/
+# Backup files
+*.bak
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-# Cython compiled extensions
-#*.pyd
+# C extensions
 *.so
 
-# jupyter notebook checkpoints
+# Jupyter notebook checkpoints
 .ipynb_checkpoints
 
+# Distribution / packaging
+build/
 *.egg-info/
+*.egg
 
-# coverage data base (when run locally)
-.coverage
+# Documentation (Sphinx)
+docs/_build/
+docs/build/
 
 # Environement
+env/
+venv/
+.env
+.idea/
 .python-version
+.venv
+.vscode/
+
+# Temporary files
+*.swp
+
+# Tests and coverage
+htmlcov/
+.cache
+.cache/
+.coverage
