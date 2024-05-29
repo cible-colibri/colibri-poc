@@ -10,6 +10,7 @@ stages:
   - schemes_validation
   - test
   - sonarqube
+  - documentation
 
 
 variables:
@@ -62,3 +63,15 @@ job_sonarqube:
   allow_failure: true
   dependencies:
     - job_test
+
+
+pages:
+  stage: documentation
+  image: $JOB_IMAGE_URL
+  script:
+    - pip install .[doc]
+    - sphinx-build docs/source public/
+  artifacts:
+    paths:
+      - public
+
