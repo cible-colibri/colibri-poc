@@ -1,5 +1,5 @@
 """
-This file contains the Link class.
+This file contains the Plot class.
 """
 
 from dataclasses import dataclass
