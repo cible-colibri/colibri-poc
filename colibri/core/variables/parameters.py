@@ -1,33 +1,12 @@
-# -*- coding: utf-8 -*-
-
-# ========================================
-# External imports
-# ========================================
-
-
-# ========================================
-# Internal imports
-# ========================================
+"""
+This file contains the Parameters class.
+"""
 
 from colibri.core.variables.variable import ContainerVariables
 
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
 
 class Parameters(ContainerVariables):
+    """Class representing a variable container (from a programming view) for 
+     parameters only (which are constant over the simulation time).
+    """
     ...
-
-# ========================================
-# Functions
-# ========================================

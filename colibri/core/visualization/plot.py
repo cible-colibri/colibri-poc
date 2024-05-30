@@ -9,6 +9,7 @@ from colibri.core.models.model import Model
 
 @dataclass
 class Plot:
+    """Class representing a plot."""
     name: str
     model: Model
     variable_name: str
