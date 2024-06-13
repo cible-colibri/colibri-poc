@@ -19,6 +19,10 @@ def import_spaces(project_dict):
         Space.label = space
         for i in Space._fields:
             setattr(Space, i, space_list[space][i])
+
+        # simulation variables (computed at each timestep)
+        setattr(Space, "Tint", 20)
+
         Space_list.append(Space)
 
     return Space_list

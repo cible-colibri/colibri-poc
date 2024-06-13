@@ -70,3 +70,9 @@ class BuildingData():
             if space.label == zone_name:
                 return index
         return None
+
+    def space_for_boundary(self, boundary):
+        for space in self.space_list:
+            if space.label == boundary.side_1 or space.label == boundary.side_2:
+                return space
+        return None

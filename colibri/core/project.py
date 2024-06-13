@@ -205,8 +205,9 @@ class Project:
         print("Simulation summary")
         print("==================")
         self._end_simulation(self.time_step)
+        self.runtime = (time.perf_counter() - starting_time)
         print(f"{self.n_non_convergence} timesteps have convergence problems")
-        print(f"Simulation time: {(time.perf_counter() - starting_time):3.2f} seconds")
+        print(f"Simulation time: {self.runtime:3.2f} seconds")
         self.plot()
 
     def _initialize_series(self) -> None:

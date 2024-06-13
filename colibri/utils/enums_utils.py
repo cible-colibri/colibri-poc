@@ -48,6 +48,7 @@ class Units(enum.Enum):
     JOULE                                   = "J"
     JOULE_PER_GRAM_PER_DEGREE_CELCIUS       = "J/(g.°C)"
     KELVIN                                  = "K"
+    KILO_GRAM                              = "kg"
     KILO_JOULE                              = "kJ"
     KILO_JOULE_PER_HOUR                     = "kJ/h"
     KILO_METER                              = "km"
