@@ -26,8 +26,9 @@ class SimplifiedWallLosses(Model):
         for i, boundary in enumerate(self.project.building_data.boundary_list):
             space = self.project.building_data.space_for_boundary(boundary)
             if space:
-                Tint = space.Tint
+                Tint = space.Tint # get value from store ('backbone')
                 Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)
+                setattr(boundary, 'Qwall', Qwall[boundary.label]) # upload value to store
             pass
 
 

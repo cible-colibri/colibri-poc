@@ -30,8 +30,6 @@ def test_run_example_project():
 
     project.add_building_data(building_file)
 
-    # TODO : add example models
-
     # TODO : explain why we want this in real-life applications
     #project.create_envelop()
     #project.create_systems()
@@ -43,11 +41,8 @@ def test_run_example_project():
     # add links
     # dans le vrai Colibri, weather aurait un output qui s'apelle 'Text', ici on utilise un lecteur météo existant (non-colibri)
     project.link(weather, 'temperature', wall_losses, 'Text')
-
     # TODO: générer les lines automatiquement
 
     project.run()
 
-
-    return project.runtime
 
