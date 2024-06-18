@@ -12,24 +12,22 @@ from utils import Aggregation, Summation
 from weather import WeatherModel
 
 
+# Spaces
+
+Space1 = namedtuple("Space1", ["spaceSurface", "spaceHeight", "TconsPresence", "TconsAbsence", "ScenarioPresence"])
+Space1.spaceSurface = 50
+Space1.spaceHeight = 2.5
+Space1.TconsPresence = 20
+Space1.TconsAbsence = 17
+Space1.ScenarioPresence = [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1]
+Space2 = namedtuple("Space2", ["spaceSurface", "spaceHeight", "TconsPresence", "TconsAbsence", "ScenarioPresence"])
+Space2.spaceSurface = 30
+Space2.spaceHeight = 2.5
+Space2.TconsPresence = 20
+Space2.TconsAbsence = 17
+Space2.ScenarioPresence = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 
 
-weather = namedtuple("Weather", ["TextScenario"])
-weather.TextScenario = [9, 12, 13, 14, 18, 21, 21, 16, 12, 11, 9, 9]
-
-
-space_1 = namedtuple("Space", ["spaceSurface", "spaceHeight", "TconsPresence", "TconsAbsence", "ScenarioPresence"])
-space_1.spaceSurface = 50
-space_1.spaceHeight = 2.5
-space_1.TconsPresence = 20
-space_1.TconsAbsence = 17
-space_1.ScenarioPresence = [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1]
-space_2 = namedtuple("Space", ["spaceSurface", "spaceHeight", "TconsPresence", "TconsAbsence", "ScenarioPresence"])
-space_2.spaceSurface = 30
-space_2.spaceHeight = 2.5
-space_2.TconsPresence = 20
-space_2.TconsAbsence = 17
-space_2.ScenarioPresence = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 
 
 wall_1 = namedtuple("Wall",  ["U", "S"])
@@ -83,10 +81,14 @@ weather_1 = WeatherModel("weather_1")
 weather_1.altitude = aggregation_1.elements
 print("weather_1.Text: ", weather_1.Text)
 weather_1.initialize()
-weather_1.run(0)
+weather_1.run()
 weather_1.timestep_done()
 weather_1.simulation_done()
 print("weather_1.Text: ", weather_1.Text)
+
+print("\n")
+
+
 
 print("\n")
 
@@ -117,10 +119,10 @@ print("acv_1.Co2Impact: ", acv_1.Co2Impact)
 print("\n")
 
 occupant_1 = Occupants("occupant_1")
-occupant_1.spaceSurface = np.array([space_1.spaceSurface, space_2.spaceSurface])
-occupant_1.TconsAbsence = np.array([space_1.TconsAbsence, space_2.TconsAbsence])
-occupant_1.TconsPresence = np.array([space_1.TconsPresence, space_2.TconsPresence])
-occupant_1.scenarioPresence = np.array([space_1.ScenarioPresence, space_2.ScenarioPresence])
+occupant_1.spaceSurface = np.array([Space1.spaceSurface, Space2.spaceSurface])
+occupant_1.TconsAbsence = np.array([Space1.TconsAbsence, Space2.TconsAbsence])
+occupant_1.TconsPresence = np.array([Space1.TconsPresence, Space2.TconsPresence])
+occupant_1.scenarioPresence = np.array([Space1.ScenarioPresence, Space2.ScenarioPresence])
 print("occupant_1.spaceSurface: ", occupant_1.spaceSurface)
 print("occupant_1.TconsAbsence: ", occupant_1.TconsAbsence)
 print("occupant_1.TconsPresence): ", occupant_1.TconsPresence)
