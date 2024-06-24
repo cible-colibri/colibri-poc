@@ -73,6 +73,7 @@ class Project:
     def add_building_data(self, building_file: str):
         building_data = BuildingData(building_file)
         self.building_data = building_data
+        return building_data
 
     def get_weather(self):
         weather_models = self.get_models_from_class(Weather)

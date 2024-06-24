@@ -1,0 +1,20 @@
+{
+  "links" : [
+    {
+      "from_model" : "Weather",
+      "to_model" : "SimplifiedWallLosses",
+      "from_variables" : ["Text"],
+      "to_variables" : ["Text"]
+    },
+    {
+      "from_model" : "BuildingData",
+      "to_model" : "SimplifiedWallLosses",
+      "from_variables" : ["space.wall.Tint"],
+      "to_variables" : ["Tint"]
+    }
+
+  ],
+
+  "version" : "RT2042"
+}
+

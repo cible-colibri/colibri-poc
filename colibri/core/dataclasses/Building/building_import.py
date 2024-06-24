@@ -2,6 +2,8 @@
 import json
 import numpy as np
 from collections import namedtuple
+
+from colibri.core.dataclasses.Building.space import Space
 from colibri.models.thermal.DetailedBuilding.RyCj import gen_wall_model
 
 
@@ -11,21 +13,18 @@ def import_project(file_name):
 
 
 def import_spaces(project_dict):
+    spaces = []
     space_list = project_dict['nodes_collection']['space_collection']
-    Space_list = []
     space_param_list = ['volume', 'reference_area', 'altitude', 'air_permeability']
-    for space in space_list:
-        Space = namedtuple('Space', space_param_list)
-        Space.label = space
-        for i in Space._fields:
-            setattr(Space, i, space_list[space][i])
+    for space_label in space_list:
+        space = Space(space_label)
 
-        # simulation variables (computed at each timestep)
-        setattr(Space, "Tint", 20)
+        for i in space_param_list:
+            setattr(space, i, space_list[space_label][i])
 
-        Space_list.append(Space)
+        spaces.append(space)
 
-    return Space_list
+    return spaces
 
 
 def import_emitters(project_dict):

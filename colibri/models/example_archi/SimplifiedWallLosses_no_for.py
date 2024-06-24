@@ -1,3 +1,5 @@
+import numpy as np
+
 from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
 from colibri.core.templates.parameters import Parameters
@@ -6,14 +8,18 @@ from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (Roles,Units)
 
 # M1a
-class SimplifiedWallLosses(Model):
+class SimplifiedWallLossesNoLoop(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
 
         self.Text = Variable("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Tint = Variable("Tint", 20.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.Qwall = Variable("Qwall", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.QWall_out = Variable("QWall_out", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+
+        self.U = Variable("U", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
+        self.S = Variable("S", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass
@@ -22,14 +28,9 @@ class SimplifiedWallLosses(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        Qwall = {}
-        for i, boundary in enumerate(self.project.building_data.boundary_list):
-            space = self.project.building_data.space_for_boundary(boundary)
-            if space:
-                Tint = space.Tint # get value from store ('backbone')
-                Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)
-                setattr(boundary, 'Qwall', Qwall[boundary.label]) # upload value to store
-            pass
+
+        self.Qwall = np.array(self.U.value) * np.array(self.S.value) * (np.array(self.Tint.value) - np.array(self.Text.value))
+
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
