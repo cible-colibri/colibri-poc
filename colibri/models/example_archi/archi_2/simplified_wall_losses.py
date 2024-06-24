@@ -1,3 +1,5 @@
+import numpy as np
+
 from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
 from colibri.core.templates.parameters import Parameters
@@ -5,7 +7,6 @@ from colibri.core.templates.outputs import Outputs
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (Roles, Units)
 
-import numpy as np
 
 class SimplifiedWallLosses(Model):
 
@@ -13,7 +14,9 @@ class SimplifiedWallLosses(Model):
         self.name = name
         self.Tint = Variable("Tint", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.Text = Variable("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qwall = Variable("Qwall", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Qwall = Variable("Qwall", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.U = Variable("U", np.array(()), role=Roles.PARAMETERS, unit=Units.WATT_PER_SQUARE_METER_PER_KELVIN)
+        self.S = Variable("S", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
 
     def initialize(self):
         pass
@@ -22,20 +25,10 @@ class SimplifiedWallLosses(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        Qwall = {}
-        for i, boundary in enumerate(self.project.building_data.boundary_list):
-            space = self.project.building_data.space_for_boundary(boundary)
-            if space:
-                Tint = space.Tint # get value from store ('backbone')
-                Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)
-                setattr(boundary, 'Qwall', Qwall[boundary.label]) # upload value to store
-            pass
-
+        self.Qwall = np.multiply(np.multiply(self.U, self.S), (self.Tint - self.Text))
 
     def simulation_done(self, time_step: int = 0):
-        print(f"{self.name}:")
-        for output in self.outputs:
-            print(f"{output.name}={getattr(self, output.name)}")
+        pass
 
     def iteration_done(self, time_step: int = 0):
         pass
@@ -45,12 +38,3 @@ class SimplifiedWallLosses(Model):
 
     def simulation_done(self, time_step: int = 0):
         pass
-
-
-
-
-
-
-
-
-

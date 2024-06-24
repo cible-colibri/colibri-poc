@@ -11,16 +11,10 @@ class InfinitePowerGenerator(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.Qneeds = Variable("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
-
-
-        self.Tcons = Variable("Tcons", 0.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qprovided = Variable("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
-        self.OccGains = Variable("OccGains", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
-
-        self.Tint = Variable("Tint", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qneeds = Variable("Qneeds", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
-        self.AnnualNeeds = Variable("AnnualNeeds", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Qneeds = Variable("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT)
+        self.Qprovided = Variable("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT)
+        self.Qconsumed = Variable("Qconsumed", 0.0, role=Roles.INPUTS, unit=Units.WATT)
+        self.Efficiency = Variable("Efficiency", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass
@@ -32,9 +26,7 @@ class InfinitePowerGenerator(Model):
         pass
 
     def simulation_done(self, time_step: int = 0):
-        print(f"{self.name}:")
-        for output in self.outputs:
-            print(f"{output.name}={getattr(self, output.name)}")
+        pass
 
     def iteration_done(self, time_step: int = 0):
         pass
