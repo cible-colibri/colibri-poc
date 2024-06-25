@@ -28,7 +28,7 @@ class Airflow_Building(Model):
 
     def initialize(self) -> None:
 
-        self.spaces = self.project.building_data.spaces
+        self.spaces = self.project.get_building_data().spaces
 
         #################################################################################
         #   initialise weather data
@@ -294,7 +294,7 @@ class Airflow_Building(Model):
 
     def temperatures_update(self):
         # internal temperatures
-        for i, space in enumerate(self.project.building_data.spaces):
+        for i, space in enumerate(self.project.get_building_data().spaces):
             for node in self.nodes:
                 if node == space.label:
                     self.nodes[node]['temperature'] = space.temperature

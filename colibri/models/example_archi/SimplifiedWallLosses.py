@@ -23,8 +23,8 @@ class SimplifiedWallLosses(Model):
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         Qwall = {}
-        for i, boundary in enumerate(self.project.building_data.boundary_list):
-            space = self.project.building_data.space_for_boundary(boundary)
+        for i, boundary in enumerate(self.project.get_building_data().boundary_list):
+            space = self.project.get_building_data().space_for_boundary(boundary)
             if space:
                 Tint = space.Tint # get value from store ('backbone')
                 Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)

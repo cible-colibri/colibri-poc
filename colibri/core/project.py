@@ -70,11 +70,6 @@ class Project:
     def get_model_by_name(self, name):
         return [model for model in self.models if model.name == name]
 
-    def add_building_data(self, building_file: str):
-        building_data = BuildingData(building_file)
-        self.building_data = building_data
-        return building_data
-
     def get_weather(self):
         weather_models = self.get_models_from_class(Weather)
         if len(weather_models) == 1:
@@ -83,6 +78,15 @@ class Project:
             raise Exception("More than one weather model in project, don't know which one to choose.")
         else:
             raise Exception("No weather model in project, but some models need one.")
+
+    def get_building_data(self):
+        data_models = self.get_models_from_class(BuildingData)
+        if len(data_models) == 1:
+            return data_models[0]
+        elif len(data_models) > 1:
+            raise Exception("More than one datar model in project, don't know which one to choose.")
+        else:
+            raise Exception("No data model in project, but some models need one.")
 
     #@typing.overload
     #def link(self, *args: tuple[Model, str, Model, str]) -> None:

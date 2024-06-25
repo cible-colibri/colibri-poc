@@ -2,6 +2,8 @@ import json
 import os
 
 from pkg_resources import resource_filename
+
+from colibri.core.dataclasses.Building.building_data import BuildingData
 from colibri.core.project import Project
 from colibri.models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
 from colibri.models.emitters.emitter import Emitter
@@ -61,7 +63,8 @@ def run_test_case(case: int=0):
     weather.time_zone = time_zone
     project.add(weather)
 
-    project.add_building_data(building_file)
+    building_data = BuildingData(building_file)
+    project.add(building_data)
 
     # thermal model
     multizone_building = Thermal_Building("thermal model")

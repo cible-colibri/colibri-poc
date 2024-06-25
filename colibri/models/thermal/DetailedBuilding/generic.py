@@ -11,7 +11,7 @@ def store_results(t, my_T, my_weather):
     my_T.results['setpoint'][:, t] = my_T.setpoint
     for res in my_T.res_list:
         if res == 'outdoor_temperatures':
-            my_T.results['outdoor_temperatures'][0:len(my_T.project.building_data.boundary_list), t] = my_weather.ext_temperature[t]
+            my_T.results['outdoor_temperatures'][0:len(my_T.project.get_building_data().boundary_list), t] = my_weather.ext_temperature[t]
         elif res == 'ground_temperature':
             my_T.results['ground_temperature'][0, t] = my_weather.ground_temperature[t]
         elif res == 'hvac_flux_vec':

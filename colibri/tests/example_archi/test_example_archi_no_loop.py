@@ -2,6 +2,8 @@ import json
 import os
 
 from pkg_resources import resource_filename
+
+from colibri.core.dataclasses.Building.building_data import BuildingData
 from colibri.core.project import Project
 from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
 from colibri.models.example_archi.SimplifiedWallLosses_no_for import SimplifiedWallLossesNoLoop
@@ -29,7 +31,8 @@ def test_run_example_project():
     weather.time_zone = time_zone
     project.add(weather)
 
-    building_data = project.add_building_data(building_file)
+    building_data = BuildingData(building_file)
+    project.add(building_data)
 
     # TODO : explain why we want this in real-life applications
     #project.create_envelop()
