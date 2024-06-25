@@ -53,10 +53,10 @@ class BuildingData(Model):
         # get emitters data
         # get emitters data
         emitter_list = []
-        space_list = self.project_dict['nodes_collection']['space_collection']
-        for space in space_list:
-            if 'object_collection' in space_list[space]:
-                for obj in space_list[space]['object_collection']:
+        self.space_list = self.project_dict['nodes_collection']['space_collection']
+        for space in self.space_list:
+            if 'object_collection' in self.space_list[space]:
+                for obj in self.space_list[space]['object_collection']:
                     if obj['type'] == 'emitter':
                         emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
                         list_param = list(obj.keys()) + list(emitter.keys())
@@ -105,13 +105,13 @@ class BuildingData(Model):
         pass
 
     def get_zone_index(self, zone_name):
-        for index, space in enumerate(self.space_list):
+        for index, space in enumerate(self.spaces):
             if space.label == zone_name:
                 return index
         return None
 
     def space_for_boundary(self, boundary):
-        for space in self.space_list:
+        for space in self.spaces:
             if space.label == boundary.side_1 or space.label == boundary.side_2:
                 return space
         return None

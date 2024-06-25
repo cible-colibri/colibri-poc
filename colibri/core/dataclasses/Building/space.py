@@ -8,7 +8,12 @@ class Space():
         self.use = use
         self.air_permeability = air_permeability
 
-        # simulation variables (computed at each timestep)
-        self.Tint = 20
+        # computed values
+        self.envelope_area = 0.0
+        self.envelope_list = {}
 
+        # simulation variables (computed at each timestep)
+        self.Tint = 20.0
+        self.set_point_heating = 0.0
+        self.set_point_cooling = 0.0
 

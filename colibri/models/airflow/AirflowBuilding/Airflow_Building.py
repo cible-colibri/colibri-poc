@@ -28,7 +28,7 @@ class Airflow_Building(Model):
 
     def initialize(self) -> None:
 
-        self.Space_list = self.project.building_data.space_list
+        self.spaces = self.project.building_data.spaces
 
         #################################################################################
         #   initialise weather data
@@ -51,7 +51,7 @@ class Airflow_Building(Model):
 
         if self.pressure_model:
             try:
-                self.matrix_model_init(self.n_steps, flow_paths, nodes, self.Space_list)
+                self.matrix_model_init(self.n_steps, flow_paths, nodes, self.spaces)
             except Exception:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
@@ -95,7 +95,7 @@ class Airflow_Building(Model):
                     self.niter += 1
 
             self.flow_rates = self.matrix_model_send_to_thermal(
-                self.Space_list)  # send flow rate values to thermal model
+                self.spaces)  # send flow rate values to thermal model
 
         self.found.append(np.sum(self.pressures))  # for convergence plotting
 
@@ -123,11 +123,11 @@ class Airflow_Building(Model):
         pass
 
 
-    def matrix_model_init(self, t_final, flow_paths, nodes, Space_list):
+    def matrix_model_init(self, t_final, flow_paths, nodes, spaces):
 
         # check if Spaces from thermal model correspond to nodes
         labels = []
-        for space in Space_list:
+        for space in spaces:
             labels.append(space.label)
         for node in nodes:
             if nodes[node]['type'] == 'node':
@@ -294,7 +294,7 @@ class Airflow_Building(Model):
 
     def temperatures_update(self):
         # internal temperatures
-        for i, space in enumerate(self.project.building_data.space_list):
+        for i, space in enumerate(self.project.building_data.spaces):
             for node in self.nodes:
                 if node == space.label:
                     self.nodes[node]['temperature'] = space.temperature
