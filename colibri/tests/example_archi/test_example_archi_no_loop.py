@@ -5,8 +5,9 @@ from pkg_resources import resource_filename
 
 from colibri.core.dataclasses.Building.building_data import BuildingData
 from colibri.core.project import Project
+from colibri.models.example_archi.LayerWallLosses_no_loop import LayerWallLossesNoLoop
 from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
-from colibri.models.example_archi.SimplifiedWallLosses_no_for import SimplifiedWallLossesNoLoop
+from colibri.models.example_archi.SimplifiedWallLosses_no_loop import SimplifiedWallLossesNoLoop
 from colibri.models.utility.weather import Weather
 
 def test_run_example_project():
@@ -39,8 +40,16 @@ def test_run_example_project():
     #project.create_systems()
 
 
-    wall_losses = SimplifiedWallLossesNoLoop("M1a")
-    wall_losses.U = [b.u_value for b in building_data.boundary_list]
+    # simplified wall losses
+    # wall_losses = SimplifiedWallLossesNoLoop("M1a")
+    # wall_losses.U = [b.u_value for b in building_data.boundary_list]
+    # wall_losses.S = [b.area for b in building_data.boundary_list]
+    # project.add(wall_losses)
+
+    # detailed wall losses
+    wall_losses = LayerWallLossesNoLoop("M1b")
+    wall_losses.e = [b.thickness for b in building_data.boundary_list]
+    wall_losses.Lambda = [l for l in [b.thermal_conductivity for b in building_data.boundary_list]]
     wall_losses.S = [b.area for b in building_data.boundary_list]
     project.add(wall_losses)
 
