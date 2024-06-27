@@ -5,6 +5,7 @@ from pkg_resources import resource_filename
 
 from colibri.core.dataclasses.Building.building_data import BuildingData
 from colibri.core.project import Project
+from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
 from colibri.models.utility.weather import Weather
 
@@ -38,7 +39,10 @@ def test_run_example_project():
     #project.create_systems()
 
 
-    wall_losses = SimplifiedWallLosses("M1a")
+    #wall_losses = SimplifiedWallLosses("M1a")
+    #project.add(wall_losses)
+
+    wall_losses = LayerWallLosses("M1b")
     project.add(wall_losses)
 
     # add links
