@@ -13,8 +13,8 @@ class SimplifiedWallLosses(Model):
         self.name = name
         super(SimplifiedWallLosses, self).__init__(name)
 
-        self.Text = Variable("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Boundaries = Variable("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
+        self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
                                    structure = [
                                        Field('u_value', Units.WATT_PER_SQUARE_METER_PER_KELVIN, role=Roles.PARAMETERS),
                                        Field('area', Units.WATT_PER_SQUARE_METER_PER_KELVIN, role=Roles.PARAMETERS),
@@ -31,7 +31,7 @@ class SimplifiedWallLosses(Model):
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         Qwall = {}
-        for boundary in self.Boundaries.value:
+        for boundary in self.Boundaries:
             space = boundary.space
             Tint = space.Tint
             Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)

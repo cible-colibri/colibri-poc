@@ -228,20 +228,31 @@ class Project:
     def _substitute_links_values(self):
         for link in self.links:
             if link.index_to is None:
-                value_in = getattr(link.to_model, link.to_variable).value # link to a scalar
+                to_variable = getattr(link.to_model, link.to_variable)
+                if (hasattr(to_variable, 'value')):
+                    value_in = to_variable.value # link to a scalar Variable
+                else:
+                    value_in = to_variable # link to a scalar Field
             else:
                 value_in = getattr(link.to_model, link.to_variable).value[link.index_from] # link to a vector
 
             if link.index_from is None:
-                value_out = getattr(link.from_model, link.from_variable).value # link from a scalar
+                from_variable = getattr(link.from_model, link.from_variable)
+                if hasattr(from_variable, 'value'):
+                    value_out = from_variable.value # link from a scalar Variable
+                else:
+                    value_out = from_variable  # link from a scalar Field
             else:
                 value_out = getattr(link.from_model, link.from_variable).value[link.index_from] # link from a vector
 
             if link.index_to is None or isinstance(value_out, dict):
                 to_variable = getattr(link.to_model, link.to_variable)
-                to_variable.value = value_out # link dict
+                if (hasattr(to_variable, 'value')):
+                    to_variable.value = value_out # link dict to Variable
+                else:
+                    to_variable = value_out  # link dict to field
             else:
-                target_var = getattr(link.to_model, link.to_variable) # TODO: test
+                target_var = getattr(link.to_model, link.to_variable) # TODO: test ; or remove everything Variable / value-ish
                 if target_var.value.size < link.index_to + 1:
                     target_var.value = np.resize(target_var.value, link.index_to + 1) # resize target vector
                 value_in = target_var.value[link.index_to]
