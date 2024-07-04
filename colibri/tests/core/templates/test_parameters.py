@@ -45,7 +45,7 @@ def test_parameters():
     assert hasattr(parameters, "add")
     assert hasattr(parameters, "variable_1")
     assert parameters.variable_1 is variable_1
-    assert parameters.__str__() == "Parameters().add(Variable(variable_1, 2.5, Roles.PARAMETERS, Units.UNITLESS, Sorry, no description yet., None))"
+    assert parameters.__str__() == "Parameters().add(Variable(variable_1, 2.5, Roles.PARAMETERS, Units.UNITLESS, , None))"
     assert parameters.__repr__() == parameters.__str__()
 
 

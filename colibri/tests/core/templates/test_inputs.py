@@ -45,7 +45,7 @@ def test_inputs():
     assert hasattr(inputs, "add")
     assert hasattr(inputs, "variable_1")
     assert inputs.variable_1 is variable_1
-    assert inputs.__str__() == "Inputs().add(Variable(variable_1, 2.5, Roles.INPUTS, Units.UNITLESS, Sorry, no description yet., None))"
+    assert inputs.__str__() == "Inputs().add(Variable(variable_1, 2.5, Roles.INPUTS, Units.UNITLESS, , None))"
     assert inputs.__repr__() == inputs.__str__()
 
 
