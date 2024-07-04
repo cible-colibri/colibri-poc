@@ -60,9 +60,9 @@ def test_pump():
     # Create a duct (from Duct model) with its parameters (from Parameters model) and initial conditions (from Conditions model)
     duct_1            = Duct("duct_1", parameters = parameters_duct_1)
     # Set the parameters / characteristics of the duct using the get_input method
-    duct_1.get_input("inlet_flow_rate").value = 0.04
+    duct_1.inlet_flow_rate = 0.04
     # Set the parameters / characteristics of the duct using the attributes (which is a Variable object)
-    duct_1.inlet_flow_rate.value = 0.05
+    duct_1.inlet_flow_rate = 0.05
     # Add duct_1 to project
     project.add(duct_1)
     # Create a pump (from Pump model)

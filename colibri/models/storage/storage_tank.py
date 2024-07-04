@@ -37,11 +37,9 @@ from colibri.utils.enums_utils import (
 class StorageTank(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+        super(StorageTank, self).__init__(name)
         self.name                        = name
         self.project                     = None
-        self.inputs                      = [] if inputs is None else inputs.to_list()
-        self.outputs                     = [] if outputs is None else outputs.to_list()
-        self.parameters                  = [] if parameters is None else parameters.to_list()
         self.initial_temperature         = Variable("initial_temperature", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.inlet_temperature_1         = Variable("inlet_temperature_1", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.inlet_temperature_2         = Variable("inlet_temperature_2", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)

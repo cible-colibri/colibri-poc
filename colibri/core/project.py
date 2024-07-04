@@ -170,10 +170,12 @@ class Project:
                 axis.set_title(title)
                 for plot in plots:
                     model    = plot.model
-                    variable = model.get_variable(plot.variable_name)
-                    series   = getattr(model, variable.name + "_series")
-                    axis.plot(series, label = model.name + "." + variable.name)
-                    axis.set_ylabel(f"[{variable.unit.value}]")
+                    field = model.get_field(plot.variable_name)
+                    if not field: # to be removed with Variables
+                        field = model.get_variable(plot.variable_name)
+                    series   = getattr(model, field.name + "_series")
+                    axis.plot(series, label = model.name + "." + field.name)
+                    axis.set_ylabel(f"[{field.unit.value}]")
                 axis.legend(loc = "upper right", numpoints = 1)
                 disposition += 1
             # Show plot
@@ -220,6 +222,8 @@ class Project:
         for model in self.models:
             for variable in model.outputs:
                 setattr(model, variable.name + '_series', [0] * self.time_steps)
+            for field in model.get_output_fields():
+                setattr(model, field.name + '_series', [0] * self.time_steps)
 
     def _initialize_models(self) -> None:
         for model in self.models:

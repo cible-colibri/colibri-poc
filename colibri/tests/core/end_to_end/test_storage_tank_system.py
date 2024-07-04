@@ -43,7 +43,7 @@ def test_storage_tank_system():
     # Create a duct (from Duct model)
     duct_1 = Duct("duct_1")
     # Set the parameters / characteristics of the duct using the get_input method
-    duct_1.get_input("inlet_flow_rate").value = 100
+    duct_1.inlet_flow_rate = 100
     # Set the parameters / characteristics of the duct using the attributes
     duct_1.inlet_temperature = 40
     # Add duct_1 to project

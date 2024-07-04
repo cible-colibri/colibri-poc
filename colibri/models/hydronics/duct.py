@@ -39,21 +39,23 @@ class Duct(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                = name
+        super(Duct, self).__init__(name)
+
         self.project             = None
         self.inputs              = [] if inputs is None else inputs.to_list()
         self.outputs             = [] if outputs is None else outputs.to_list()
         self.parameters          = [] if parameters is None else parameters.to_list()
 
-        self.loss_coefficient    = Variable("loss_coefficient", 3.0, role=Roles.INPUTS, unit=Units.KILO_JOULE_PER_HOUR)
-        self.cp_fluid            = Variable("cp_fluid", 4.186, role=Roles.INPUTS, unit=Units.JOULE_PER_GRAM_PER_DEGREE_CELCIUS)
-        self.inlet_flow_rate     = Variable("inlet_flow_rate", 100, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
-        self.inlet_temperature   = Variable("inlet_temperature", 40, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.outside_temperature = Variable("outside_temperature", 20, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.loss_coefficient    = self.field("loss_coefficient", 3.0, role=Roles.INPUTS, unit=Units.KILO_JOULE_PER_HOUR)
+        self.cp_fluid            = self.field("cp_fluid", 4.186, role=Roles.INPUTS, unit=Units.JOULE_PER_GRAM_PER_DEGREE_CELCIUS)
+        self.inlet_flow_rate     = self.field("inlet_flow_rate", 100, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
+        self.inlet_temperature   = self.field("inlet_temperature", 40, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.outside_temperature = self.field("outside_temperature", 20, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.outlet_flow_rate    = Variable("outlet_flow_rate", 0.0, role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
-        self.outlet_temperature  = Variable("outlet_temperature", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.outlet_flow_rate    = self.field("outlet_flow_rate", 0.0, role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
+        self.outlet_temperature  = self.field("outlet_temperature", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.loss_factor         = Variable("loss_factor", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
+        self.loss_factor         = self.field("loss_factor", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self) -> None:
         self.loss_factor = 1.0 - math.exp(- self.loss_coefficient / (self.inlet_flow_rate * self.cp_fluid))

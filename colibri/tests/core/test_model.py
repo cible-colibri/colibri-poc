@@ -11,8 +11,12 @@ import pytest
 # ========================================
 
 from colibri.core.model        import Model
+from colibri.core.templates.inputs import Inputs
+from colibri.core.templates.outputs import Outputs
+from colibri.core.templates.parameters import Parameters
 from colibri.core.variables.variable import Variable
-from colibri.utils.enums_utils import Roles
+from colibri.utils.enums_utils import Roles, Units
+
 
 # ========================================
 # Constants
@@ -73,6 +77,42 @@ def test_models():
     assert model.inputs[0] == model.var_1
     assert model.__str__() == "ModelChild(name = 'child')"
     assert model.__repr__() == model.__str__()
+
+    class M1(Model):
+        def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None, parameters: Parameters = None):
+            self.name = name
+            super(M1, self).__init__(name)
+
+            self.V1 = self.field("V1", 42, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+            self.V2 = self.field("V2", 43, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+            self.V3 = self.field("V3", 44, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
+            self.V4 = self.field("V4", 45, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
+
+        def check_units(self) -> None:
+            pass
+
+        def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
+            pass
+
+        def iteration_done(self, time_step: int = 0) -> None:
+            pass
+
+        def timestep_done(self, time_step: int = 0) -> None:
+            pass
+
+        def simulation_done(self, time_step: int = 0) -> None:
+            pass
+
+        def initialize(self) -> None:
+            pass
+
+    m1 = M1("m1")
+    v = m1.get_field_value("V1")
+    assert v == 42
+
+    f = m1.get_field("V2")
+    assert f.name == "V2"
+
 
 if __name__ == "__main__":
     test_models()

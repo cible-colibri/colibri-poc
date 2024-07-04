@@ -37,11 +37,9 @@ from colibri.utils.enums_utils import (
 class SimplePump(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+        super(SimplePump, self).__init__(name)
         self.name               = name
         self.project            = None
-        self.inputs             = [] if inputs is None else inputs.to_list()
-        self.outputs            = [] if outputs is None else outputs.to_list()
-        self.parameters         = [] if parameters is None else parameters.to_list()
         self.inlet_flow_rate    = Variable("inlet_flow_rate", 100, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
         self.inlet_temperature  = Variable("inlet_temperature", 40, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.outlet_pressure    = Variable("outlet_pressure", 0, role=Roles.OUTPUTS, unit=Units.PASCAL)

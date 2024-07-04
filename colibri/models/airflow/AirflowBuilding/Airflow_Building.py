@@ -18,6 +18,7 @@ from colibri.utils.enums_utils import Roles, Units
 class Airflow_Building(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name                  = name
+        super(Airflow_Building, self).__init__(self.name)
         self.project               = None
 
         self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")

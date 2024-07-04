@@ -19,8 +19,8 @@ default_dict_space = {'constant_internal_gains': 200,
 class BuildingData(Model):
 
     def __init__(self, building_file : str = None):
-
         self.name = "building_data"
+        super(BuildingData, self).__init__(self.name)
 
         self.Boundaries = Variable("Boundaries", [], role=Roles.OUTPUTS, unit=Units.OBJECT_LIST)
 

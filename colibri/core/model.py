@@ -95,6 +95,27 @@ class Model(metaclass=MetaModel):
         # Return the actual value to be assigned to the variable
         return value
 
+    def get_field(self, name, role: Roles = None):
+        if name in self._field_metadata:
+            if not role or (role and role == self._field_metadata[name].role):
+                return self._field_metadata[name]
+
+    def get_field_value(self, name):
+        if hasattr(self, name):
+            return getattr(self, name)
+
+    def get_fields(self, role):
+        return [field for name, field in self._field_metadata.items() if field.role == role]
+
+    def get_input_fields(self):
+        return self.get_fields(Roles.INPUTS)
+
+    def get_output_fields(self):
+        return self.get_fields(Roles.OUTPUTS)
+
+    def get_parameter_fields(self, name):
+        return self.get_fields(Roles.PARAMETERS)
+
     @abc.abstractmethod
     def initialize(self) -> None:
         raise NotImplementedError("Please, implement me...")
