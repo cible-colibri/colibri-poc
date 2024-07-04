@@ -22,10 +22,11 @@ class BuildingData(Model):
 
         self.name = "building_data"
 
+        self.Boundaries = Variable("Boundaries", [], role=Roles.OUTPUTS, unit=Units.OBJECT_LIST)
+
         self.TintWall = Variable("TintWall", [], role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.QWall_in = Variable("QWall_in", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
-        self.QWall_out = Variable("QWall_out", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Qwall = Variable("Qwall", {}, role=Roles.INPUTS, unit=Units.DICTIONARY)
 
         if building_file == None:
             self.project_dict = {}
@@ -78,8 +79,10 @@ class BuildingData(Model):
 
         self.TintWall.value = []
         for boundary in self.boundary_list:
-            self.TintWall.value.append(20.0) # TODO: replace by boundary.Tint (use class instead of tuple for Boundary)
+            boundary.space = self.space_for_boundary(boundary)
+            self.TintWall.value.append(20.0) # TODO: replace by boundary.Tint
 
+        self.Boundaries.value = self.boundary_list
 
     def initialize(self):
         pass
@@ -88,9 +91,9 @@ class BuildingData(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        self.QWall_out = self.QWall_in
-
-
+        for id, value in self.Qwall.value.items():
+            boundary = self.boundary_from_ID(id)
+            boundary.Qwall = value
 
     def simulation_done(self, time_step: int = 0):
         pass
@@ -114,4 +117,10 @@ class BuildingData(Model):
         for space in self.spaces:
             if space.label == boundary.side_1 or space.label == boundary.side_2:
                 return space
+        return None
+
+    def boundary_from_ID(self, id):
+        for boundary in self.boundary_list:
+            if boundary.label == id:
+                return boundary
         return None

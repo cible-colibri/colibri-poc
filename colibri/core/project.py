@@ -145,7 +145,8 @@ class Project:
             self.links.append(link)
 
     def is_eligible_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
-        return hasattr(from_model, from_variable) and hasattr(to_model, to_variable)
+        result = hasattr(from_model, from_variable) and hasattr(to_model, to_variable)
+        return result
 
     def is_linked(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
         for link in self.links:
@@ -238,7 +239,7 @@ class Project:
 
             if link.index_to is None or isinstance(value_out, dict):
                 to_variable = getattr(link.to_model, link.to_variable)
-                to_variable.value = value_out # link scalar
+                to_variable.value = value_out # link dict
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test
                 if target_var.value.size < link.index_to + 1:

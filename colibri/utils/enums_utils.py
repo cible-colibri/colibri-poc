@@ -67,6 +67,8 @@ class Units(enum.Enum):
     WATT_PER_SQUARE_METER                   = "W/m²"
     WATT_PER_SQUARE_METER_PER_KELVIN        = "W/(m².K)"
     WATT_PER_SQUARE_METER_PER_SQUARE_KELVIN = "W/(m².K²)"
+    OBJECT_LIST = "list(object)"
+    DICTIONARY = "dict"
 
 # ========================================
 # Functions

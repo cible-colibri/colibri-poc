@@ -12,3 +12,6 @@ class Boundary():
         self.origin = origin
         self.segments = segments
 
+        # topology
+        self.space = None
+

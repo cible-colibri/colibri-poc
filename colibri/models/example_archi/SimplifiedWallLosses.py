@@ -12,8 +12,9 @@ class SimplifiedWallLosses(Model):
         self.name = name
 
         self.Text = Variable("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Boundaries = Variable("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST)
 
-        self.Qwall = Variable("Qwall", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Qwall = Variable("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
 
     def initialize(self):
         pass
@@ -23,13 +24,12 @@ class SimplifiedWallLosses(Model):
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         Qwall = {}
-        for i, boundary in enumerate(self.project.get_building_data().boundary_list):
-            space = self.project.get_building_data().space_for_boundary(boundary)
-            if space:
-                Tint = space.Tint # get value from store ('backbone')
-                Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)
-                setattr(boundary, 'Qwall', Qwall[boundary.label]) # upload value to store
-            pass
+        for boundary in self.Boundaries.value:
+            space = boundary.space
+            Tint = space.Tint
+            Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)
+
+        self.Qwall.value = Qwall
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
