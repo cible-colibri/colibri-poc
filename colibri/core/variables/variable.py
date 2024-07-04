@@ -37,14 +37,15 @@ SelfContainerVariable = typing.TypeVar("SelfContainerVariable", bound = "Contain
 
 class Variable:
 
-    def __init__(self, name: str, value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "Sorry, no description yet.", linked_to: typing.List[SelfVariable] = None, model = None):
-        self.name        = name
-        self.value       = value
-        self.role        = role
-        self.unit        = unit
+    def __init__(self, name: str, value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "", paths = [], linked_to: typing.List[SelfVariable] = None, model = None, structure = []):
+        self.name = name
+        self.value = value
+        self.role = role
+        self.unit = unit
         self.description = description
-        self.linked_to   = linked_to
-        self.model       = model
+        self.linked_to = linked_to
+        self.model = model
+        self.structure = structure
 
     def convert(self, target_unit: Units) -> float:
         return UNIT_CONVERTER.convert(self.value, self.unit, target_unit)

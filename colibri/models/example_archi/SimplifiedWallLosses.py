@@ -2,6 +2,7 @@ from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
 from colibri.core.templates.parameters import Parameters
 from colibri.core.templates.outputs import Outputs
+from colibri.core.variables.field import Field
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (Roles,Units)
 
@@ -10,9 +11,15 @@ class SimplifiedWallLosses(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
+        super(SimplifiedWallLosses, self).__init__(name)
 
         self.Text = Variable("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Boundaries = Variable("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST)
+        self.Boundaries = Variable("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
+                                   structure = [
+                                       Field('u_value', Units.WATT_PER_SQUARE_METER_PER_KELVIN, role=Roles.PARAMETERS),
+                                       Field('area', Units.WATT_PER_SQUARE_METER_PER_KELVIN, role=Roles.PARAMETERS),
+                                       Field('space.Tint', Units.DEGREE_CELSIUS, role=Roles.INPUTS)
+                                                ])
 
         self.Qwall = Variable("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
 
@@ -29,7 +36,7 @@ class SimplifiedWallLosses(Model):
             Tint = space.Tint
             Qwall[boundary.label] = boundary.u_value * boundary.area * (Tint - self.Text)
 
-        self.Qwall.value = Qwall
+        self.Qwall = Qwall
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")

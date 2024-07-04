@@ -14,6 +14,7 @@ import copy
 from colibri.core.templates.inputs import Inputs
 from colibri.core.templates.parameters import Parameters
 from colibri.core.templates.outputs import Outputs
+from colibri.core.variables.field import Field
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles
 
@@ -85,6 +86,14 @@ class Model(metaclass=MetaModel):
         self.inputs     = [] if inputs is None else inputs.to_list()
         self.outputs    = [] if outputs is None else outputs.to_list()
         self.parameters = [] if parameters is None else parameters.to_list()
+
+        self._field_metadata = {}
+
+    def field(self, name, value, role=None, unit=None, description=None, structure=[]):
+        # Store the metadata in the global dictionary
+        self._field_metadata[name] = Field(name, value, role, unit, description, structure)
+        # Return the actual value to be assigned to the variable
+        return value
 
     @abc.abstractmethod
     def initialize(self) -> None:
