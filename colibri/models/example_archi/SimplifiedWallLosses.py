@@ -16,9 +16,9 @@ class SimplifiedWallLosses(Model):
         self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
                                    structure = [
-                                       Field('u_value', Units.WATT_PER_SQUARE_METER_PER_KELVIN, role=Roles.PARAMETERS),
-                                       Field('area', Units.WATT_PER_SQUARE_METER_PER_KELVIN, role=Roles.PARAMETERS),
-                                       Field('space.Tint', Units.DEGREE_CELSIUS, role=Roles.INPUTS)
+                                       Field('u_value', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                       Field('area', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                       Field('space.Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS),
                                                 ])
 
         self.Qwall = Variable("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)

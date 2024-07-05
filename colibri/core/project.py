@@ -233,7 +233,7 @@ class Project:
         for link in self.links:
             if link.index_to is None:
                 to_variable = getattr(link.to_model, link.to_variable)
-                if (hasattr(to_variable, 'value')):
+                if hasattr(to_variable, 'value'):
                     value_in = to_variable.value # link to a scalar Variable
                 else:
                     value_in = to_variable # link to a scalar Field
@@ -251,10 +251,10 @@ class Project:
 
             if link.index_to is None or isinstance(value_out, dict):
                 to_variable = getattr(link.to_model, link.to_variable)
-                if (hasattr(to_variable, 'value')):
+                if hasattr(to_variable, 'value'):
                     to_variable.value = value_out # link dict to Variable
                 else:
-                    to_variable = value_out  # link dict to field
+                    setattr(link.to_model, link.to_variable, value_out)  # link dict to field
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test ; or remove everything Variable / value-ish
                 if target_var.value.size < link.index_to + 1:

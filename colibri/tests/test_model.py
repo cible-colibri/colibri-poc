@@ -14,6 +14,7 @@ from colibri.core.model        import Model
 from colibri.core.templates.inputs import Inputs
 from colibri.core.templates.outputs import Outputs
 from colibri.core.templates.parameters import Parameters
+from colibri.core.variables.field import Field
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles, Units
 
@@ -84,6 +85,11 @@ def test_models():
             super(M1, self).__init__(name)
 
             self.V1 = self.field("V1", 42, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+            self.objects1 = self.field("objects1", 42, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS,
+                                  structure = [
+                                      Field(name='o1v1', unit=Units.DEGREE_CELSIUS, role=Roles.INPUTS, default_value=42),
+                                      Field(name='o1v2', unit=Units.DEGREE_CELSIUS, role=Roles.INPUTS, default_value=42),
+                                  ])
             self.V2 = self.field("V2", 43, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
             self.V3 = self.field("V3", 44, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
             self.V4 = self.field("V4", 45, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
@@ -113,6 +119,7 @@ def test_models():
     f = m1.get_field("V2")
     assert f.name == "V2"
 
+    print(m1.input_template())
 
 if __name__ == "__main__":
     test_models()

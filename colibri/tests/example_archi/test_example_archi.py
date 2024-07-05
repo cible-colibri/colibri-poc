@@ -54,4 +54,6 @@ def test_run_example_project():
 
     project.run()
 
-
+    input_template = wall_losses.input_template()
+    parameter_template = wall_losses.parameter_template()
+    template = wall_losses.template()

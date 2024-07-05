@@ -37,7 +37,7 @@ SelfContainerVariable = typing.TypeVar("SelfContainerVariable", bound = "Contain
 
 class Variable:
 
-    def __init__(self, name: str, value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "", paths = [], linked_to: typing.List[SelfVariable] = None, model = None, structure = []):
+    def __init__(self, name: str, value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "", linked_to: typing.List[SelfVariable] = None, model = None, structure = []):
         self.name = name
         self.value = value
         self.role = role

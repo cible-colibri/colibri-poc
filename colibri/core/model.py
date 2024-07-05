@@ -89,11 +89,11 @@ class Model(metaclass=MetaModel):
 
         self._field_metadata = {}
 
-    def field(self, name, value, role=None, unit=None, description=None, structure=[]):
+    def field(self, name, default_value, role=None, unit=None, description=None, structure=[]):
         # Store the metadata in the global dictionary
-        self._field_metadata[name] = Field(name, value, role, unit, description, structure)
+        self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure)
         # Return the actual value to be assigned to the variable
-        return value
+        return default_value
 
     def get_field(self, name, role: Roles = None):
         if name in self._field_metadata:
@@ -104,8 +104,11 @@ class Model(metaclass=MetaModel):
         if hasattr(self, name):
             return getattr(self, name)
 
-    def get_fields(self, role):
-        return [field for name, field in self._field_metadata.items() if field.role == role]
+    def get_fields(self, role=None):
+        if role:
+            return [field for name, field in self._field_metadata.items() if field.role == role]
+        else:
+            return  [field for name, field in self._field_metadata.items()]
 
     def get_input_fields(self):
         return self.get_fields(Roles.INPUTS)
@@ -113,8 +116,33 @@ class Model(metaclass=MetaModel):
     def get_output_fields(self):
         return self.get_fields(Roles.OUTPUTS)
 
-    def get_parameter_fields(self, name):
+    def get_parameter_fields(self):
         return self.get_fields(Roles.PARAMETERS)
+
+    def make_template(self, role: Roles):
+        template = {}
+        for field in self.get_fields():
+            if field.structure:
+                structure_dict = {}
+                for structure_field in field.structure:
+                    if not role or structure_field.role == role:
+                        structure_dict[structure_field.name] = structure_field.default_value
+                if len(structure_dict) > 0:
+                    template[field.name] = [structure_dict]
+            else:
+                if not role or field.role == role:
+                    template[field.name] = field.default_value
+
+        return template
+
+    def input_template(self):
+        return self.make_template(Roles.INPUTS)
+
+    def parameter_template(self):
+        return self.make_template(Roles.PARAMETERS)
+
+    def template(self):
+        return self.make_template(None)
 
     @abc.abstractmethod
     def initialize(self) -> None:
