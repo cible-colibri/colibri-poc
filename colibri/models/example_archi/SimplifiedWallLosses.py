@@ -21,7 +21,7 @@ class SimplifiedWallLosses(Model):
                                        Field('space.Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS)
                                    ])
 
-        self.Qwall = Variable("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
+        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
 
     def initialize(self):
         pass
@@ -51,5 +51,5 @@ class SimplifiedWallLosses(Model):
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
-        for output in self.outputs:
+        for output in self.get_fields(Roles.OUTPUTS):
             print(f"{output.name}={getattr(self, output.name)}")
