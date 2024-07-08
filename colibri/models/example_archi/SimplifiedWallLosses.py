@@ -50,13 +50,6 @@ class SimplifiedWallLosses(Model):
         pass
 
     def simulation_done(self, time_step: int = 0):
-        pass
-
-
-
-
-
-
-
-
-
+        print(f"{self.name}:")
+        for output in self.outputs:
+            print(f"{output.name}={getattr(self, output.name)}")

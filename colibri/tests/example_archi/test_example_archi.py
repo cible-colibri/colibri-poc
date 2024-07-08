@@ -44,8 +44,10 @@ def test_run_example_project():
     project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
-    #wall_losses = LayerWallLosses("M1b")
-    #project.add(wall_losses)
+    # wall_losses = LayerWallLosses("M1b")
+    # project.add(wall_losses)
+    # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
+    # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
     # add links
     # dans le vrai Colibri, weather aurait un output qui s'apelle 'Text', ici on utilise un lecteur météo existant (non-colibri)
