@@ -141,6 +141,9 @@ class Model(metaclass=MetaModel):
     def parameter_template(self):
         return self.make_template(Roles.PARAMETERS)
 
+    def output_template(self):
+        return self.make_template(Roles.OUTPUTS)
+
     def template(self):
         return self.make_template(None)
 
