@@ -16,10 +16,11 @@ class LayerWallLosses(Model):
         self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
                                    structure = [
-                                       Field('thermal_conductivity', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
-                                       Field('thickness', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
-                                       Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER),
-                                       Field('space.Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS)
+                                       Field('thermal_conductivity', [1], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                       Field('thickness', [1], Roles.PARAMETERS, Units.METER),
+                                       Field('area', 5, Roles.PARAMETERS, Units.SQUARE_METER),
+                                       Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS),
+                                       Field('label', "boundary_0", Roles.PARAMETERS, Units.STRING),
                                    ])
 
         self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
@@ -39,11 +40,10 @@ class LayerWallLosses(Model):
                 e = boundary.thickness
                 Lambda = boundary.thermal_conductivity
 
-                boundary.R = sum(e1 / Lambda1 for e1, Lambda1 in zip(e, Lambda))
-                boundary.U = 1 / boundary.R
+                R = sum(e1 / Lambda1 for e1, Lambda1 in zip(e, Lambda))
+                U = 1 / R
 
-                Qwall[boundary.label] = boundary.U * boundary.area * (Tint - self.Text)
-                setattr(boundary, 'Qwall', Qwall[boundary.label]) # upload value to store
+                Qwall[boundary.label] = U * boundary.area * (Tint - self.Text)
 
         self.Qwall = Qwall
 

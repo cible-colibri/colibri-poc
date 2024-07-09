@@ -39,15 +39,15 @@ def test_run_example_project():
     #project.create_systems()
 
 
-    wall_losses = SimplifiedWallLosses("M1a")
-    project.add(wall_losses)
-    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
-    project.link(wall_losses, 'Qwall', building_data , 'Qwall')
-
-    # wall_losses = LayerWallLosses("M1b")
+    # wall_losses = SimplifiedWallLosses("M1a")
     # project.add(wall_losses)
     # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
+
+    wall_losses = LayerWallLosses("M1b")
+    project.add(wall_losses)
+    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
+    project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
     # add links
     # dans le vrai Colibri, weather aurait un output qui s'apelle 'Text', ici on utilise un lecteur météo existant (non-colibri)
@@ -56,8 +56,31 @@ def test_run_example_project():
 
     project.run()
 
-    input_template = wall_losses.input_template()
-    parameter_template = wall_losses.parameter_template()
-    output_template = wall_losses.parameter_template()
-    template = wall_losses.template()
-    pass
+    #input_template = wall_losses.input_template()
+    #parameter_template = wall_losses.parameter_template()
+    #output_template = wall_losses.output_template()
+    #template = wall_losses.template()
+
+    # create a json (input and parameters)
+    in_values = wall_losses.input_parameter_template()
+    json_file = os.path.join(building_path, 'wall_losses_in.json')
+    with open(json_file, "w") as f:
+        f.write(json.dumps(in_values, indent=4))
+
+    # create a json (expected outputs with default values)
+    output_template = wall_losses.output_template()
+    json_file = os.path.join(building_path, 'wall_losses_out.json')
+    with open(json_file, "w") as f:
+        f.write(json.dumps(output_template, indent=4))
+
+    # run from json
+    json_file = os.path.join(building_path, 'wall_losses_in.json')
+    with open(json_file, "r") as f:
+        in_values = json.loads(f.read())
+
+    wall_losses2 = LayerWallLosses("M1b from json")
+    wall_losses2.load_from_json(in_values)
+    wall_losses2.run()
+    result = wall_losses2.Qwall
+    print(result)
+

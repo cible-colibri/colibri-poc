@@ -6,6 +6,7 @@
 
 import abc
 import copy
+from collections import namedtuple, defaultdict
 
 # ========================================
 # Internal imports
@@ -18,19 +19,6 @@ from colibri.core.variables.field import Field
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles
 
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
 
 class MetaModel(abc.ABCMeta):
     def __call__(cls, *args, **kwargs):
@@ -119,33 +107,83 @@ class Model(metaclass=MetaModel):
     def get_parameter_fields(self):
         return self.get_fields(Roles.PARAMETERS)
 
-    def make_template(self, role: Roles):
+    def make_template(self, roles: Roles):
         template = {}
+        structure_dict = {}
         for field in self.get_fields():
             if field.structure:
-                structure_dict = {}
                 for structure_field in field.structure:
-                    if not role or structure_field.role == role:
+                    if not roles or structure_field.role in roles:
                         structure_dict[structure_field.name] = structure_field.default_value
                 if len(structure_dict) > 0:
-                    template[field.name] = [structure_dict]
+                    if field.name in template:
+                        template[field.name].append(structure_dict)
+                    else:
+                        template[field.name] = [structure_dict]
             else:
-                if not role or field.role == role:
-                    template[field.name] = field.default_value
+                if not roles or field.role in roles:
+                    if field.name in template:
+                        template[field.name].append(field.default_value)
+                    else:
+                        template[field.name] = field.default_value
 
         return template
 
     def input_template(self):
-        return self.make_template(Roles.INPUTS)
+        return self.make_template([Roles.INPUTS])
 
     def parameter_template(self):
-        return self.make_template(Roles.PARAMETERS)
+        return self.make_template([Roles.PARAMETERS])
 
     def output_template(self):
-        return self.make_template(Roles.OUTPUTS)
+        return self.make_template([Roles.OUTPUTS])
+
+    def input_parameter_template(self):
+        return self.make_template([Roles.INPUTS, Roles.PARAMETERS])
 
     def template(self):
         return self.make_template(None)
+
+    def load_from_json(self, json_in):
+        for variable_name, variable_value in json_in.items():
+            if isinstance(variable_value, list):
+                object_list = self.create_structure(variable_name, variable_value)
+                setattr(self, variable_name, object_list)
+            else:
+                setattr(self, variable_name, variable_value)
+
+        for field in self.get_fields([Roles.OUTPUTS]):
+            setattr(self, field.name, field.default_value)
+
+    def create_structure(self, variable_name, variable_values):
+        object_list = []
+        # create instance list
+        for variable_value_dict in variable_values:
+            cvf = {}
+            for k,v in variable_value_dict.items():
+                field = k
+                value = v
+                if '.' in field:
+                    field = field.split('.')[0]
+                    value = self.create_subobjects(k, v)
+                cvf[field] = value
+            object_class = namedtuple(variable_name, cvf)
+            object_list.append(object_class(**cvf))
+
+        return object_list
+
+    def create_subobjects(self, variable_name, value):
+        field = variable_name.split('.')[0]
+        subfields = '.'.join(variable_name.split('.')[1:])
+        if '.' in subfields:
+            value = self.create_subobjects(subfields, value)
+        else:
+            cvf = {subfields: value}
+            object_class = namedtuple(field, cvf)
+            object_instance = object_class(**cvf)
+            return object_instance
+
+
 
     @abc.abstractmethod
     def initialize(self) -> None:
