@@ -24,6 +24,19 @@ def test_run_model_objects():
 
 def test_run_model_json():
     building_path = resource_filename('colibri', os.path.join('tests', 'data'))
+    json_file = os.path.join(building_path, 'wall_losses_in.json')
+    with open(json_file, "r") as f:
+        in_values = json.loads(f.read())
+
+    wall_losses2 = LayerWallLosses("M1b from json")
+    wall_losses2.load_from_json(in_values)
+    wall_losses2.run()
+    result = wall_losses2.Qwall
+    print(result)
+
+def test_run_model_building_json():
+
+    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
     file_name = 'house_1.json'
     building_file = os.path.join(building_path, file_name)
     with open(building_file, 'r') as f:
