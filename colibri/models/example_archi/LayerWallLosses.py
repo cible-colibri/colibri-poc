@@ -1,15 +1,12 @@
 from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
-from colibri.core.templates.parameters import Parameters
-from colibri.core.templates.outputs import Outputs
 from colibri.core.variables.field import Field
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (Roles,Units)
 
 # M1a
 class LayerWallLosses(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         super(LayerWallLosses, self).__init__(name)
 
@@ -26,9 +23,6 @@ class LayerWallLosses(Model):
         self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
 
     def initialize(self):
-        pass
-
-    def check_units(self) -> None:
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
@@ -58,3 +52,6 @@ class LayerWallLosses(Model):
         print(f"{self.name}:")
         for output in self.get_fields(Roles.OUTPUTS):
             print(f"{output.name}={getattr(self, output.name)}")
+
+    def check_units(self) -> None:
+        pass

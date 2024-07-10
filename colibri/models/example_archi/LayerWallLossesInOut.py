@@ -3,7 +3,6 @@ from colibri.core.model import Model
 from colibri.core.templates.parameters import Parameters
 from colibri.core.templates.outputs import Outputs
 from colibri.core.variables.field import Field
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (Roles,Units)
 
 # M1a
@@ -18,10 +17,10 @@ class LayerWallLosses(Model):
                                        Field('Text', 0, Roles.INPUTS, Units.DEGREE_CELSIUS),
                                        Field('Boundaries', 0, Roles.INPUTS, Units.DICTIONARY,
                                              structure= [
-                                                 Field('thermal_conductivity', 0, Roles.PARAMETERS,Units.WATT_PER_SQUARE_METER_PER_KELVIN),
-                                                 Field('thickness', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
-                                                 Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER),
-                                                 Field('space.Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS)
+                                                 Field('thermal_conductivity', [0], Roles.PARAMETERS,Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                                 Field('thickness', [0], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                                 Field('area', 10, Roles.PARAMETERS, Units.SQUARE_METER),
+                                                 Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS)
                                              ]
                                              ),
                                    ])

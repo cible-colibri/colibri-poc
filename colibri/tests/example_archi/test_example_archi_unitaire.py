@@ -4,11 +4,34 @@ import os
 from pkg_resources import resource_filename
 
 from colibri.core.dataclasses.Building.building_data import BuildingData
-from colibri.core.project import Project
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
-from colibri.models.example_archi.SimplifiedWallLossesJson import SimplifiedWallLossesJson
-from colibri.models.utility.weather import Weather
+
+def test_generate_json():
+    wall_losses = LayerWallLosses("Pertes avec couches")
+    # create a json (input and parameters)
+    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
+    in_values = wall_losses.input_parameter_template()
+    json_file = os.path.join(building_path, 'wall_losses_in.json')
+    with open(json_file, "w") as f:
+        f.write(json.dumps(in_values, indent=4))
+
+    # create a json (expected outputs with default values)
+    output_template = wall_losses.output_template()
+    json_file = os.path.join(building_path, 'wall_losses_out.json')
+    with open(json_file, "w") as f:
+        f.write(json.dumps(output_template, indent=4))
+
+    # run from json
+    json_file = os.path.join(building_path, 'wall_losses_in.json')
+    with open(json_file, "r") as f:
+        in_values = json.loads(f.read())
+
+    wall_losses2 = LayerWallLosses("M1b from json")
+    wall_losses2.load_from_json(in_values)
+    wall_losses2.run()
+    result = wall_losses2.Qwall
+    print(result)
 
 def test_run_model_objects():
 
@@ -22,55 +45,3 @@ def test_run_model_objects():
     wall_losses.run()
     print(wall_losses.Qwall)
 
-def test_run_model_json():
-    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
-    json_file = os.path.join(building_path, 'wall_losses_in.json')
-    with open(json_file, "r") as f:
-        in_values = json.loads(f.read())
-
-    wall_losses2 = LayerWallLosses("M1b from json")
-    wall_losses2.load_from_json(in_values)
-    wall_losses2.run()
-    result = wall_losses2.Qwall
-    print(result)
-
-def test_run_model_building_json():
-
-    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
-    file_name = 'house_1.json'
-    building_file = os.path.join(building_path, file_name)
-    with open(building_file, 'r') as f:
-        j = json.load(f)
-
-
-    wall_losses = SimplifiedWallLossesJson("M1bJ")
-    wall_losses.inputs = j
-
-    # set inputs
-    for space_id, space in wall_losses.inputs['nodes_collection']['space_collection'].items():
-        space['Tint'] = 20
-    wall_losses.inputs['Text'] = 10
-
-    # set parameters
-    for boundary_id, boundary in wall_losses.inputs['boundary_collection'].items():
-        boundary['area'] = 10
-        boundary['u_value'] = 2
-
-    wall_losses.run()
-    print(wall_losses.Qwall)
-
-
-
-
-    # m1 = SimplifiedWallLosses()
-    # m1.inputs = j1['inputs']
-    # m1.outputs = j1['outputs']
-    # m1.run()
-    # print(m1.outputs)
-    #
-    # m1.Text = j1['Text']
-    # m1.Boundaries = j1['Boundaries']
-    # m1.run()
-    # print(m1.QWall)
-    #
-    # m1.template()
