@@ -11,16 +11,16 @@ class LayerWallLosses(Model):
         super(LayerWallLosses, self).__init__(name)
 
         self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
+        self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('thermal_conductivity', [1], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
                                        Field('thickness', [1], Roles.PARAMETERS, Units.METER),
                                        Field('area', 5, Roles.PARAMETERS, Units.SQUARE_METER),
                                        Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS),
-                                       Field('label', "boundary_0", Roles.PARAMETERS, Units.STRING),
+                                       Field('label', "boundary_0", Roles.PARAMETERS, Units.UNITLESS),
                                    ])
 
-        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
+        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass

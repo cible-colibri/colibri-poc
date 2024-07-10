@@ -13,7 +13,7 @@ class SimplifiedWallLossesJson(Model):
         self.name = name
         super(SimplifiedWallLossesJson, self).__init__(name)
 
-        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.DICTIONARY)
+        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass

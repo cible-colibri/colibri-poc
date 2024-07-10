@@ -12,10 +12,10 @@ class LayerWallLosses(Model):
         self.name = name
         super(LayerWallLosses, self).__init__(name)
 
-        self.inputs = self.field("Inputs", [], role=Roles.INPUTS, unit=Units.OBJECT_LIST,
+        self.inputs = self.field("Inputs", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('Text', 0, Roles.INPUTS, Units.DEGREE_CELSIUS),
-                                       Field('Boundaries', 0, Roles.INPUTS, Units.DICTIONARY,
+                                       Field('Boundaries', 0, Roles.INPUTS, Units.UNITLESS,
                                              structure= [
                                                  Field('thermal_conductivity', [0], Roles.PARAMETERS,Units.WATT_PER_SQUARE_METER_PER_KELVIN),
                                                  Field('thickness', [0], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
@@ -25,9 +25,9 @@ class LayerWallLosses(Model):
                                              ),
                                    ])
 
-        self.outputs = self.field("Outputs", [], role=Roles.OUTPUTS, unit=Units.OBJECT_LIST,
+        self.outputs = self.field("Outputs", [], role=Roles.OUTPUTS, unit=Units.UNITLESS,
                                    structure = [
-                                       Field('Boundaries', 0, Roles.INPUTS, Units.DICTIONARY,
+                                       Field('Boundaries', 0, Roles.INPUTS, Units.UNITLESS,
                                              structure= [
                                                  Field('QWall', 0, Roles.PARAMETERS, Units.SQUARE_METER)
                                              ]
