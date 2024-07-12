@@ -9,7 +9,7 @@ from colibri.utils.enums_utils import (Roles,Units)
 # M1a
 class SimplifiedWallLosses(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         super(SimplifiedWallLosses, self).__init__(name)
 

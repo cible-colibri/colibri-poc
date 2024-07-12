@@ -37,7 +37,7 @@ from colibri.utils.enums_utils import (
 
 class StorageTank(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         super(StorageTank, self).__init__(name)
         self.name                        = name
         self.project                     = None

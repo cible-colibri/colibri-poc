@@ -9,11 +9,11 @@ from colibri.utils.enums_utils import Roles, Units
 
 
 class Emitter(Model):
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        super(Emitter, self).__init__(name, inputs, outputs, parameters)
+    def __init__(self, name: str):
+        super(Emitter, self).__init__(name)
 
-        self.name                  = name
-        self.project               = None
+        self.name = name
+        self.project = None
 
         self.zone_name = self.field("zone_name", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="zone_name")
         self.radiative_share = self.field("radiative_share", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="radiative_share")

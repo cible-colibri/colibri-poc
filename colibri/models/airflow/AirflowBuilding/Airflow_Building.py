@@ -16,14 +16,15 @@ from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles, Units
 
 class Airflow_Building(Model):
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        self.name                  = name
+    def __init__(self, name: str):
+        self.name = name
         super(Airflow_Building, self).__init__(self.name)
-        self.project               = None
+
+        self.project = None
 
         self.case = self.field("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
-        self.pressures_output = self.field("pressures", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
-        self.flow_rates_output = self.field("flow_rates", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
+        self.pressures_output = self.field("pressures_output", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
+        self.flow_rates_output = self.field("flow_rates_output", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         self.my_weather = None
 

@@ -7,7 +7,7 @@ from colibri.utils.enums_utils import (Roles,Units)
 
 class Acv(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.Qconsumed = self.field("Qconsumed", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
         self.Co2Impact = self.field("Co2Impact", 0.0, role=Roles.OUTPUTS, unit=Units.KILO_GRAM)

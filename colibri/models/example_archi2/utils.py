@@ -10,7 +10,7 @@ from colibri.utils.enums_utils import Roles
 
 class Aggregation(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.element = self.field("element", 0.0, role=Roles.INPUTS)
         self.elements = self.field("elements", np.array(()), role=Roles.OUTPUTS)
@@ -40,7 +40,7 @@ class Aggregation(Model):
 
 class Multiplication(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.element = self.field("element", 0.0, role=Roles.INPUTS)
         self.elements = self.field("elements", np.array(()), role=Roles.OUTPUTS)
@@ -70,7 +70,7 @@ class Multiplication(Model):
 
 class Stack(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.elements = self.field("elements", np.array(()), role=Roles.OUTPUTS)
         self._stack = []
@@ -103,7 +103,7 @@ class Stack(Model):
 
 class Summation(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.elements = self.field("elements", np.array(()), role=Roles.INPUTS)
         self.sum = self.field("sum", 0.0, role=Roles.OUTPUTS)

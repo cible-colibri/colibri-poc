@@ -28,7 +28,7 @@ class MetaModel(abc.ABCMeta):
 
 class Model(metaclass=MetaModel):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name       = name
         self.project    = None
 

@@ -43,8 +43,8 @@ def test_models():
     # Create a model from Model
     class ModelChild(Model):
 
-        def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-            super(ModelChild, self).__init__(name, inputs, outputs, parameters)
+        def __init__(self, name: str):
+            super(ModelChild, self).__init__(name)
             self.var_1 = self.field("var_1", 2, role = Roles.INPUTS)
 
         def check_units(self) -> None:

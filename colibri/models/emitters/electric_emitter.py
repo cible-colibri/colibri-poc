@@ -9,8 +9,8 @@ from colibri.utils.enums_utils import Roles, Units
 
 
 class ElectricEmitter(Emitter):
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        super(ElectricEmitter, self).__init__(name, inputs, outputs, parameters)
+    def __init__(self, name: str):
+        super(ElectricEmitter, self).__init__(name)
 
         # parameters
         self.efficiency = self.field("efficiency", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter efficiency")

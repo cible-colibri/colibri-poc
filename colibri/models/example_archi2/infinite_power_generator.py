@@ -9,7 +9,7 @@ from colibri.utils.enums_utils import (Roles, Units)
 
 class InfinitePowerGenerator(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.Qneeds = self.field("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT)
         self.Qprovided = self.field("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT)

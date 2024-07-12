@@ -8,7 +8,7 @@ from colibri.utils.enums_utils import (Roles,Units)
 
 class WeatherModel(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.Text = self.field("Text", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
         self.altitude = self.field("altitude", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)

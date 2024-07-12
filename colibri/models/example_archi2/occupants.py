@@ -10,7 +10,7 @@ from colibri.utils.enums_utils import (Roles, Units)
 
 class Occupants(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
         self.Tcons = self.field("Tcons", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
         self.QoccGains = self.field("QoccGains", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT)

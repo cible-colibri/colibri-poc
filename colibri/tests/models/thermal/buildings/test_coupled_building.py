@@ -15,9 +15,9 @@ from colibri.tests.data.bestest_cases import bestest_configs
 
 def test_coupled_building():
     run_test_case(0) # with pressure model
-    # run_test_case(50) # with hydraulic network
-    # run_test_case(600) # bestest 600
-    # run_test_case(900) # bestest 900
+    run_test_case(50) # with hydraulic network
+    run_test_case(600) # bestest 600
+    run_test_case(900) # bestest 900
 
 def run_test_case(case: int=0):
 

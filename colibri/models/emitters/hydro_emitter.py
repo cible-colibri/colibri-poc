@@ -12,8 +12,8 @@ from colibri.core.constants import CP_WATER
 # Bien voir comment faire les liens entre objets/model pour faciliter la gestions des données au niveau initialisation
 
 class HydroEmitter(Emitter):
-    def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        super(HydroEmitter, self).__init__(name, inputs, outputs, parameters)
+    def __init__(self, name: str):
+        super(HydroEmitter, self).__init__(name)
 
         # parameters
         self.nominal_UA = self.field("nominal_UA", 330., role=Roles.PARAMETERS, unit=Units.WATT_PER_KELVIN, description="Nominal exchange coefficient at design conditions")
