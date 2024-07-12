@@ -19,7 +19,7 @@ from colibri.utils.enums_utils import Roles, Units
 
 class Thermal_Building(Building):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
-        super(Thermal_Building, self).__init__(name, inputs, outputs, parameters)
+        super(Thermal_Building, self).__init__(name)
 
         self.name                  = name
         self.project               = None

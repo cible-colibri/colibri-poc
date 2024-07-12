@@ -56,7 +56,7 @@ class VariableConnector:
         --------
         >>> None
         """
-        join_adds             = f".".join([f"add({condition})" for condition in self.__dict__s()])
+        join_adds             = f".".join([f"add({condition})" for condition in self.connections])
         string_representation = f"{self.__class__.__name__}().{join_adds}"
         return string_representation
 

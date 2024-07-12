@@ -43,7 +43,8 @@ def test_models():
     # Create a model from Model
     class ModelChild(Model):
 
-        def _define_variables(self) -> None:
+        def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
+            super(ModelChild, self).__init__(name, inputs, outputs, parameters)
             self.var_1 = self.field("var_1", 2, role = Roles.INPUTS)
 
         def check_units(self) -> None:
@@ -67,15 +68,14 @@ def test_models():
     model = ModelChild("child")
     assert isinstance(model, ModelChild)
     assert isinstance(model, Model)
-    assert isinstance(model.inputs, list)
-    assert isinstance(model.outputs, list)
-    assert isinstance(model.parameters, list)
-    assert isinstance(model.get_variable("var_1"), Variable)
+    assert isinstance(model.get_input_fields(), list)
+    assert isinstance(model.get_output_fields(), list)
+    assert isinstance(model.get_parameter_fields(), list)
+    assert isinstance(model.get_field("var_1"), Field)
     assert model.var_1 == 2
     model.var_1 = 4
-    assert isinstance(model.get_variable("var_1"), Variable)
+    assert isinstance(model.get_field("var_1"), Field)
     assert model.var_1 == 4
-    assert model.inputs[0] == model.var_1
     assert model.__str__() == "ModelChild(name = 'child')"
     assert model.__repr__() == model.__str__()
 

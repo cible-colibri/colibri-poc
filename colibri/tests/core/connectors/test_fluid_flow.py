@@ -43,7 +43,7 @@ def test_fluid_flow():
     assert fluid_connector.connections[0] == ("outlet_temperature", "inlet_temperature")
     assert fluid_connector.connections[1] == ("outlet_flow_rate", "inlet_flow_rate")
     assert fluid_connector.connections[-1] == ("from", "to")
-    assert fluid_connector.__str__() == "FluidFlowConnector().add([('outlet_temperature', 'inlet_temperature'), ('outlet_flow_rate', 'inlet_flow_rate'), ('from', 'to')])"
+    assert fluid_connector.__str__() == "FluidFlowConnector().add(('outlet_temperature', 'inlet_temperature')).add(('outlet_flow_rate', 'inlet_flow_rate')).add(('from', 'to'))"
     assert fluid_connector.__repr__() == fluid_connector.__str__()
 
 

@@ -23,61 +23,21 @@ from colibri.utils.enums_utils import Roles
 class MetaModel(abc.ABCMeta):
     def __call__(cls, *args, **kwargs):
         instance = type.__call__(cls, *args, **kwargs)
-        cls._define_variables(instance)
-        cls._add_attributes_to_internal_lists(instance)
-        instance._expand_variables()
-
-        for v in instance.inputs + instance.outputs + instance.parameters:
-            v.model = instance
 
         return instance
-
-    @staticmethod
-    def _define_variables(instance):
-        pass
-
-    @staticmethod
-    def _add_attributes_to_internal_lists(instance) -> None:
-        attributes     = [attribute for _, attribute in instance.__dict__.items() if isinstance(attribute, Variable)]
-        variable_names = [variable.name for variable in instance.inputs + instance.outputs + instance.parameters]
-        for attribute in attributes:
-            if (attribute.role == Roles.INPUTS) and (attribute.name not in variable_names):
-                instance.inputs.append(attribute)
-            elif (attribute.role == Roles.INPUTS) and (attribute.name in variable_names):
-                index              = [index for index, variable in enumerate(instance.inputs) if variable.name == attribute.name][0]
-                value              = instance.inputs[index]
-                attribute    = value
-                instance.inputs[index] = attribute
-            elif (attribute.role == Roles.OUTPUTS) and (attribute.name not in variable_names):
-                instance.outputs.append(attribute)
-            elif (attribute.role == Roles.OUTPUTS) and (attribute.name in variable_names):
-                index              = [index for index, variable in enumerate(instance.outputs) if variable.name == attribute.name][0]
-                value              = instance.outputs[index]
-                attribute    = value
-                instance.outputs[index] = attribute
-            elif (attribute.role == Roles.PARAMETERS) and (attribute.name not in variable_names):
-                instance.parameters.append(attribute)
-            elif (attribute.role == Roles.PARAMETERS) and (attribute.name in variable_names):
-                index              = [index for index, variable in enumerate(instance.parameters) if variable.name == attribute.name][0]
-                value              = instance.parameters[index]
-                attribute    = value
-                instance.parameters[index] = attribute
-
 
 class Model(metaclass=MetaModel):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name       = name
         self.project    = None
-        self.inputs     = [] if inputs is None else inputs.to_list()
-        self.outputs    = [] if outputs is None else outputs.to_list()
-        self.parameters = [] if parameters is None else parameters.to_list()
 
         self._field_metadata = {}
 
-    def field(self, name, default_value, role=None, unit=None, description=None, structure=[]):
+    def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to = None):
         # Store the metadata in the global dictionary
-        self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure)
+        self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure,
+                                           linked_to = linked_to) # wonder if we should keep linked_to concept...
         # Return the actual value to be assigned to the variable
         return default_value
 
@@ -249,9 +209,8 @@ class Model(metaclass=MetaModel):
                             list_to_append_to.append(new_variable)
 
     def save_time_step(self, time_step: int) -> None:
-        for variable in self.outputs:
-            # TODO: Check if we need this: if isinstance(value, numbers.Number): Yes, we do, but it's weird
-            getattr(self, variable.name + "_series")[time_step] = variable
+        for variable in self.get_output_fields():
+            getattr(self, variable.name + "_series")[time_step] = getattr(self, variable.name)
 
     # allow to create models for a list of modules (["models.emitters.electric_emitter"])
     # this list can be extended each time a new system model is authored

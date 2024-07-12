@@ -41,7 +41,7 @@ def test_generic():
     assert hasattr(connector, "add")
     assert isinstance(connector.connections, list)
     assert connector.connections[0] == ("from", "to")
-    assert connector.__str__() == "GenericConnector().add([('from', 'to')])"
+    assert connector.__str__() == "GenericConnector().add(('from', 'to'))"
     assert connector.__repr__() == connector.__str__()
 
 

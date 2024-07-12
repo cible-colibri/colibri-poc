@@ -14,6 +14,7 @@ from colibri.core.templates.inputs import Inputs
 from colibri.core.model        import Model
 from colibri.core.templates.parameters import Parameters
 from colibri.core.templates.outputs import Outputs
+from colibri.core.variables.field import Field
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (
                                 Roles,
@@ -57,19 +58,18 @@ class StorageTank(Model):
         self.height_node_2 = self.field("height_node_2", 0.2, Roles.PARAMETERS, unit=Units.METER)
         self.number_of_nodes = self.field(
                                                     name      = "number_of_nodes",
-                                                    value     = 2,
+                                                    default_value     = 2,
                                                     role      = Roles.PARAMETERS,
                                                     unit      = Units.UNITLESS,
                                                     linked_to = [
-                                                                    Variable("height_fraction_of_inlet", 0.2, Roles.INPUTS, unit=Units.UNITLESS),
-                                                                    Variable("inlet_temperature", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS),
-                                                                    Variable("inlet_flow_rate", 100, Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR),
-                                                                    Variable("height_fraction_of_outlet", 0.2, Roles.OUTPUTS, unit = Units.UNITLESS),
-                                                                    Variable("outlet_temperature", 40, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS),
-                                                                    Variable("outlet_flow_rate", 100, Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR),
-                                                                    Variable("height_node", 0.2, Roles.PARAMETERS, unit=Units.METER),
+                                                                    Field("height_fraction_of_inlet", 0.2, Roles.INPUTS, unit=Units.UNITLESS),
+                                                                    Field("inlet_temperature", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS),
+                                                                    Field("inlet_flow_rate", 100, Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR),
+                                                                    Field("height_fraction_of_outlet", 0.2, Roles.OUTPUTS, unit = Units.UNITLESS),
+                                                                    Field("outlet_temperature", 40, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS),
+                                                                    Field("outlet_flow_rate", 100, Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR),
+                                                                    Field("height_node", 0.2, Roles.PARAMETERS, unit=Units.METER),
                                                                  ],
-                                                    model     = self,
                                                     )
 
     def initialize(self) -> None:
@@ -83,8 +83,8 @@ class StorageTank(Model):
         self.outlet_flow_rate_2      = self.inlet_flow_rate_2
         self.outlet_temperature_1    = self.inlet_temperature_1
         self.outlet_temperature_2    = self.inlet_temperature_2
-        self._node_temperatures[:]   = self.get_input("inlet_temperature_1")
-        self._node_temperatures[:-1] = self.get_output("outlet_temperature_1")
+        self._node_temperatures[:]   = self.inlet_temperature_1
+        self._node_temperatures[:-1] = self.outlet_temperature_2
 
     def simulation_done(self, time_step: int = 0):
         pass

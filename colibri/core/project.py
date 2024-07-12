@@ -220,7 +220,7 @@ class Project:
 
     def _initialize_series(self) -> None:
         for model in self.models:
-            for variable in model.outputs:
+            for variable in model.get_output_fields():
                 setattr(model, variable.name + '_series', [0] * self.time_steps)
             for field in model.get_output_fields():
                 setattr(model, field.name + '_series', [0] * self.time_steps)
