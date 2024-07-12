@@ -10,8 +10,8 @@ class Occupants(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
 
-        self.Tcons = Variable("Tcons", 0.0, role=Roles.OUTPUTS, unit=Units.UNITLESS)
-        self.QoccGains = Variable("QoccGains", 0.0, role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.Tcons = self.field("Tcons", 0.0, role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.QoccGains = self.field("QoccGains", 0.0, role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass

@@ -40,22 +40,22 @@ class StorageTank(Model):
         super(StorageTank, self).__init__(name)
         self.name                        = name
         self.project                     = None
-        self.initial_temperature         = Variable("initial_temperature", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.inlet_temperature_1         = Variable("inlet_temperature_1", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.inlet_temperature_2         = Variable("inlet_temperature_2", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.height_fraction_of_inlet_1  = Variable("height_fraction_of_inlet_1", 0.2, Roles.INPUTS, unit = Units.UNITLESS)
-        self.height_fraction_of_inlet_2  = Variable("height_fraction_of_inlet_2", 0.2, Roles.INPUTS, unit = Units.UNITLESS)
-        self.inlet_flow_rate_1           = Variable("inlet_flow_rate_1", 100, Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
-        self.inlet_flow_rate_2           = Variable("inlet_flow_rate_2", 100, Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
-        self.height_fraction_of_outlet_1 = Variable("height_fraction_of_outlet_1", 0.2, Roles.OUTPUTS, unit = Units.UNITLESS)
-        self.height_fraction_of_outlet_2 = Variable("height_fraction_of_outlet_2", 0.2, Roles.OUTPUTS, unit = Units.UNITLESS)
-        self.outlet_temperature_1        = Variable("outlet_temperature_1", 40, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.outlet_temperature_2        = Variable("outlet_temperature_2", 40, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.outlet_flow_rate_1          = Variable("outlet_flow_rate_1", 100, Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
-        self.outlet_flow_rate_2          = Variable("outlet_flow_rate_2", 100, Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
-        self.height_node_1               = Variable("height_node_1", 0.2, Roles.PARAMETERS, unit=Units.METER)
-        self.height_node_2               = Variable("height_node_2", 0.2, Roles.PARAMETERS, unit=Units.METER)
-        self.number_of_nodes             = Variable(
+        self.initial_temperature = self.field("initial_temperature", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.inlet_temperature_1 = self.field("inlet_temperature_1", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.inlet_temperature_2 = self.field("inlet_temperature_2", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.height_fraction_of_inlet_1 = self.field("height_fraction_of_inlet_1", 0.2, Roles.INPUTS, unit = Units.UNITLESS)
+        self.height_fraction_of_inlet_2 = self.field("height_fraction_of_inlet_2", 0.2, Roles.INPUTS, unit = Units.UNITLESS)
+        self.inlet_flow_rate_1 = self.field("inlet_flow_rate_1", 100, Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
+        self.inlet_flow_rate_2 = self.field("inlet_flow_rate_2", 100, Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
+        self.height_fraction_of_outlet_1 = self.field("height_fraction_of_outlet_1", 0.2, Roles.OUTPUTS, unit = Units.UNITLESS)
+        self.height_fraction_of_outlet_2 = self.field("height_fraction_of_outlet_2", 0.2, Roles.OUTPUTS, unit = Units.UNITLESS)
+        self.outlet_temperature_1 = self.field("outlet_temperature_1", 40, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.outlet_temperature_2 = self.field("outlet_temperature_2", 40, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.outlet_flow_rate_1 = self.field("outlet_flow_rate_1", 100, Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
+        self.outlet_flow_rate_2 = self.field("outlet_flow_rate_2", 100, Roles.OUTPUTS, unit=Units.KILOGRAM_PER_HOUR)
+        self.height_node_1 = self.field("height_node_1", 0.2, Roles.PARAMETERS, unit=Units.METER)
+        self.height_node_2 = self.field("height_node_2", 0.2, Roles.PARAMETERS, unit=Units.METER)
+        self.number_of_nodes = self.field(
                                                     name      = "number_of_nodes",
                                                     value     = 2,
                                                     role      = Roles.PARAMETERS,

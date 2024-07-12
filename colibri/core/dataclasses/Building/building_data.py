@@ -22,11 +22,11 @@ class BuildingData(Model):
         self.name = "building_data"
         super(BuildingData, self).__init__(self.name)
 
-        self.Boundaries = Variable("Boundaries", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.Boundaries = self.field("Boundaries", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
-        self.TintWall = Variable("TintWall", [], role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.TintWall = self.field("TintWall", [], role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.Qwall = Variable("Qwall", {}, role=Roles.INPUTS, unit=Units.UNITLESS)
+        self.Qwall = self.field("Qwall", {}, role=Roles.INPUTS, unit=Units.UNITLESS)
 
         if building_file == None:
             self.project_dict = {}

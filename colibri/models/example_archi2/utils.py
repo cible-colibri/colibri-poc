@@ -12,9 +12,9 @@ class Aggregation(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.element = Variable("element", 0.0, role=Roles.INPUTS)
-        self.elements = Variable("elements", np.array(()), role=Roles.OUTPUTS)
-        self.multiplicator = Variable("multiplicator", 1, role=Roles.PARAMETERS)
+        self.element = self.field("element", 0.0, role=Roles.INPUTS)
+        self.elements = self.field("elements", np.array(()), role=Roles.OUTPUTS)
+        self.multiplicator = self.field("multiplicator", 1, role=Roles.PARAMETERS)
 
     def initialize(self):
         pass
@@ -42,9 +42,9 @@ class Multiplication(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.element = Variable("element", 0.0, role=Roles.INPUTS)
-        self.elements = Variable("elements", np.array(()), role=Roles.OUTPUTS)
-        self.multiplicator = Variable("multiplicator", 1, role=Roles.PARAMETERS)
+        self.element = self.field("element", 0.0, role=Roles.INPUTS)
+        self.elements = self.field("elements", np.array(()), role=Roles.OUTPUTS)
+        self.multiplicator = self.field("multiplicator", 1, role=Roles.PARAMETERS)
 
     def initialize(self):
         pass
@@ -72,7 +72,7 @@ class Stack(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.elements = Variable("elements", np.array(()), role=Roles.OUTPUTS)
+        self.elements = self.field("elements", np.array(()), role=Roles.OUTPUTS)
         self._stack = []
 
     def add(self, model: Model, variable: str):
@@ -105,8 +105,8 @@ class Summation(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.elements = Variable("elements", np.array(()), role=Roles.INPUTS)
-        self.sum = Variable("sum", 0.0, role=Roles.OUTPUTS)
+        self.elements = self.field("elements", np.array(()), role=Roles.INPUTS)
+        self.sum = self.field("sum", 0.0, role=Roles.OUTPUTS)
 
     def initialize(self):
         pass

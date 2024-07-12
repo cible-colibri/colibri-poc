@@ -13,18 +13,18 @@ class ThermalSpace(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
 
-        self.Tint = Variable("Tint", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qwall = Variable("Qwall", np.array(()), role=Roles.INPUTS, unit=Units.WATT_HOUR)
-        self.Tcons = Variable("Tcons", 0.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qprovided = Variable("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
-        self.OccGains = Variable("OccGains", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.Tint = self.field("Tint", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Qwall = self.field("Qwall", np.array(()), role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.Tcons = self.field("Tcons", 0.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Qprovided = self.field("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.OccGains = self.field("OccGains", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
 
-        self.Tint = Variable("Tint", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qneeds = Variable("Qneeds", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
-        self.AnnualNeeds = Variable("AnnualNeeds", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Tint = self.field("Tint", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Qneeds = self.field("Qneeds", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.AnnualNeeds = self.field("AnnualNeeds", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
 
-        self.spaceSurface = Variable("spaceSurface", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
-        self.spaceHeight = Variable("spaceHeights", np.array(()), role=Roles.PARAMETERS, unit=Units.METER)
+        self.spaceSurface = self.field("spaceSurface", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
+        self.spaceHeight = self.field("spaceHeights", np.array(()), role=Roles.PARAMETERS, unit=Units.METER)
 
     def initialize(self):
         self.Tint.value = np.array([20 for _ in range()])

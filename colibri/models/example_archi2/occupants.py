@@ -12,12 +12,12 @@ class Occupants(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.Tcons = Variable("Tcons", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.QoccGains = Variable("QoccGains", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT)
-        self.spaceSurface = Variable("spaceSurface", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
-        self.TconsPresence = Variable("TconsPresence", np.array(()), role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
-        self.TconsAbsence = Variable("TconsAbsence", np.array(()), role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
-        self.scenarioPresence = Variable("scenarioPresence ", np.array(()), role=Roles.PARAMETERS, unit=Units.UNITLESS)
+        self.Tcons = self.field("Tcons", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.QoccGains = self.field("QoccGains", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT)
+        self.spaceSurface = self.field("spaceSurface", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
+        self.TconsPresence = self.field("TconsPresence", np.array(()), role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
+        self.TconsAbsence = self.field("TconsAbsence", np.array(()), role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
+        self.scenarioPresence = self.field("scenarioPresence ", np.array(()), role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass

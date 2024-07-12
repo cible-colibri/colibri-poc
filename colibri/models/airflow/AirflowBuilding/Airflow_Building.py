@@ -21,9 +21,9 @@ class Airflow_Building(Model):
         super(Airflow_Building, self).__init__(self.name)
         self.project               = None
 
-        self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
-        self.pressures_output = Variable("pressures", value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
-        self.flow_rates_output = Variable("flow_rates", value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
+        self.case = self.field("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
+        self.pressures_output = self.field("pressures", value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
+        self.flow_rates_output = self.field("flow_rates", value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         self.my_weather = None
 

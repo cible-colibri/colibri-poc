@@ -10,9 +10,9 @@ class WeatherModel(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.Text = Variable("Text", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.altitude = Variable("altitude", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.TextScenario = Variable("TextScenario", np.array([5, 8, 7, 6, 9]), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Text = self.field("Text", 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.altitude = self.field("altitude", np.array(()), role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.TextScenario = self.field("TextScenario", np.array([5, 8, 7, 6, 9]), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
 
     def initialize(self):
         mean_altitude = sum(self.altitude)

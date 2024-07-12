@@ -11,10 +11,10 @@ class InfinitePowerGenerator(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.Qneeds = Variable("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT)
-        self.Qprovided = Variable("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT)
-        self.Qconsumed = Variable("Qconsumed", 0.0, role=Roles.INPUTS, unit=Units.WATT)
-        self.Efficiency = Variable("Efficiency", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
+        self.Qneeds = self.field("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT)
+        self.Qprovided = self.field("Qprovided", 0.0, role=Roles.INPUTS, unit=Units.WATT)
+        self.Qconsumed = self.field("Qconsumed", 0.0, role=Roles.INPUTS, unit=Units.WATT)
+        self.Efficiency = self.field("Efficiency", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass

@@ -13,12 +13,12 @@ class ElectricEmitter(Emitter):
         super(ElectricEmitter, self).__init__(name, inputs, outputs, parameters)
 
         # parameters
-        self.efficiency = Variable("efficiency", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter efficiency")
+        self.efficiency = self.field("efficiency", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter efficiency")
 
         # input
 
         # outputs
-        self.electric_load = Variable("electric_load", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="electric_load")
+        self.electric_load = self.field("electric_load", 0, role=Roles.OUTPUTS, unit=Units.WATT, description="electric_load")
 
     def initialize(self) -> None:
 

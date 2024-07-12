@@ -10,10 +10,10 @@ class GeneratorSim(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
 
-        self.Qneeds = Variable("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.Qneeds = self.field("Qneeds", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
 
-        self.Qprovided = Variable("Qprovided", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
-        self.Qconsumed = Variable("Qconsumed", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Qprovided = self.field("Qprovided", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.Qconsumed = self.field("Qconsumed", 0.0, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
 
     def initialize(self):
         pass

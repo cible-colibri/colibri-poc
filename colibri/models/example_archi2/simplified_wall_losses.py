@@ -12,11 +12,11 @@ class SimplifiedWallLosses(Model):
 
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
-        self.Tint = Variable("Tint", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Text = Variable("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Qwall = Variable("Qwall", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
-        self.U = Variable("U", np.array(()), role=Roles.PARAMETERS, unit=Units.WATT_PER_SQUARE_METER_PER_KELVIN)
-        self.S = Variable("S", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
+        self.Tint = self.field("Tint", np.array(()), role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Qwall = self.field("Qwall", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
+        self.U = self.field("U", np.array(()), role=Roles.PARAMETERS, unit=Units.WATT_PER_SQUARE_METER_PER_KELVIN)
+        self.S = self.field("S", np.array(()), role=Roles.PARAMETERS, unit=Units.SQUARE_METER)
 
     def initialize(self):
         pass

@@ -44,7 +44,7 @@ def test_models():
     class ModelChild(Model):
 
         def _define_variables(self) -> None:
-            self.var_1 = Variable("var_1", 2, role = Roles.INPUTS)
+            self.var_1 = self.field("var_1", 2, role = Roles.INPUTS)
 
         def check_units(self) -> None:
             pass

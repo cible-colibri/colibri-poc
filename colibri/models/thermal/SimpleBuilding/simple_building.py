@@ -43,25 +43,25 @@ class SimpleBuilding(Model):
         self.name                  = name
         self.project               = None
 
-        self.zone_setpoint_heating = Variable('zone_setpoint_heating', 20.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint heating [°C]
-        self.zone_setpoint_cooling = Variable('zone_setpoint_cooling', 27.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint cooling [°C]
-        self.wwr                   = Variable('wwr', 0.2, Roles.INPUTS)  # window wall ration [-]
-        self.ach                   = Variable('ach', 0.5, Roles.INPUTS)  #
-        self.u_wall                = Variable('u_wall', 0.5, Roles.INPUTS)
-        self.u_roof                = Variable('u_roof', 0.3, Roles.INPUTS)
-        self.u_floor               = Variable('u_floor', 0.25, Roles.INPUTS)
-        self.u_window              = Variable('u_window', 2.5, Roles.INPUTS)
-        self.area_walls_t          = Variable('area_walls_t', 200.0, Roles.INPUTS)  # total wall area (windows+opac)
-        self.eta_recup             = Variable('eta_recup', 0.0, Roles.INPUTS)
-        self.area_floor            = Variable('area_floor', 50.0, Roles.INPUTS)
-        self.nb_floors             = Variable('nb_floors', 2, Roles.INPUTS)
-        self.trans_window          = Variable('trans_window', 0.7, Roles.INPUTS)
-        self.heating               = Variable('heating', True, Roles.INPUTS)
-        self.cooling               = Variable('cooling', False, Roles.INPUTS)
-        self.ext_temperature       = Variable('ext_temperature', 20, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.radiation             = Variable('radiation', 0, Roles.INPUTS)
-        self.phi_hvac              = Variable("phi_hvac", 0.0, Roles.OUTPUTS)
-        self.zone_temperature      = Variable("zone_temperature", 20, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.zone_setpoint_heating = self.field('zone_setpoint_heating', 20.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint heating [°C]
+        self.zone_setpoint_cooling = self.field('zone_setpoint_cooling', 27.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint cooling [°C]
+        self.wwr = self.field('wwr', 0.2, Roles.INPUTS)  # window wall ration [-]
+        self.ach = self.field('ach', 0.5, Roles.INPUTS)  #
+        self.u_wall = self.field('u_wall', 0.5, Roles.INPUTS)
+        self.u_roof = self.field('u_roof', 0.3, Roles.INPUTS)
+        self.u_floor = self.field('u_floor', 0.25, Roles.INPUTS)
+        self.u_window = self.field('u_window', 2.5, Roles.INPUTS)
+        self.area_walls_t = self.field('area_walls_t', 200.0, Roles.INPUTS)  # total wall area (windows+opac)
+        self.eta_recup = self.field('eta_recup', 0.0, Roles.INPUTS)
+        self.area_floor = self.field('area_floor', 50.0, Roles.INPUTS)
+        self.nb_floors = self.field('nb_floors', 2, Roles.INPUTS)
+        self.trans_window = self.field('trans_window', 0.7, Roles.INPUTS)
+        self.heating = self.field('heating', True, Roles.INPUTS)
+        self.cooling = self.field('cooling', False, Roles.INPUTS)
+        self.ext_temperature = self.field('ext_temperature', 20, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+        self.radiation = self.field('radiation', 0, Roles.INPUTS)
+        self.phi_hvac = self.field("phi_hvac", 0.0, Roles.OUTPUTS)
+        self.zone_temperature = self.field("zone_temperature", 20, Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
     def initialize(self) -> None:
         self.volume               = self.area_floor * self.nb_floors * 2.5

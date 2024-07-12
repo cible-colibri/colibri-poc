@@ -10,9 +10,9 @@ class Acv(Model):
     def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None,  parameters: Parameters = None):
         self.name = name
 
-        self.Qconsumed = Variable("Qconsumed", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.Qconsumed = self.field("Qconsumed", 0.0, role=Roles.INPUTS, unit=Units.WATT_HOUR)
 
-        self.Co2Impact = Variable("Co2Impact", 0.0, role=Roles.OUTPUTS, unit=Units.KILO_GRAM)
+        self.Co2Impact = self.field("Co2Impact", 0.0, role=Roles.OUTPUTS, unit=Units.KILO_GRAM)
 
     def initialize(self):
         pass
