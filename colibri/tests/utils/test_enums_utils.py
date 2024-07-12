@@ -33,7 +33,7 @@ from colibri.utils.enums_utils import Units
 
 @pytest.mark.short_test
 def test_units() -> None:
-    assert Units.JOULE.value == "J"
+    assert Units.JOULE == "J"
     assert Units.JOULE.name == "JOULE"
 
 

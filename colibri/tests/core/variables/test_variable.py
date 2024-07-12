@@ -39,11 +39,11 @@ from colibri.utils.enums_utils import (
 @pytest.mark.short_test
 def test_variable():
     a = Variable("a", 0, Roles.INPUTS)
-    a.value = 42.2
+    a = 42.2
     b = Variable("b", 0, Roles.INPUTS)
-    b.value = 2
+    b = 2
     c = Variable("c", 0, Roles.INPUTS)
-    c.value = 2
+    c = 2
 
     assert a + b == 44.2
     assert a + 1 == 43.2
@@ -76,11 +76,11 @@ def test_variable():
 @pytest.mark.short_test
 def test_unit_conversion():
     a = Variable("a", 0, Roles.INPUTS)
-    a.value = 42.2
+    a = 42.2
     a.unit = Units.JOULE
 
     a_kJ = a.convert(Units.KILO_JOULE)
-    assert a_kJ == a.value / 1000
+    assert a_kJ == a / 1000
 
     a.unit = Units.JOULE
     a_kWh = a.convert(Units.KILO_WATT_HOUR)

@@ -61,9 +61,9 @@ class HydroEmitter(Emitter):
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
 
-        self.phi_radiative   = self.heat_demand.value * self.radiative_share
-        self.phi_convective  = self.heat_demand.value * (1 - self.radiative_share)
-        self.temperature_out = self.temperature_in.value - self.heat_demand.value / CP_WATER / self.flow_rate.value
+        self.phi_radiative   = self.heat_demand * self.radiative_share
+        self.phi_convective  = self.heat_demand * (1 - self.radiative_share)
+        self.temperature_out = self.temperature_in - self.heat_demand / CP_WATER / self.flow_rate
 
     def iteration_done(self, time_step: int = 0):
         self.temperature_out_last = self.temperature_out

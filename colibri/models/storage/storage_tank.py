@@ -83,8 +83,8 @@ class StorageTank(Model):
         self.outlet_flow_rate_2      = self.inlet_flow_rate_2
         self.outlet_temperature_1    = self.inlet_temperature_1
         self.outlet_temperature_2    = self.inlet_temperature_2
-        self._node_temperatures[:]   = self.get_input("inlet_temperature_1").value
-        self._node_temperatures[:-1] = self.get_output("outlet_temperature_1").value
+        self._node_temperatures[:]   = self.get_input("inlet_temperature_1")
+        self._node_temperatures[:-1] = self.get_output("outlet_temperature_1")
 
     def simulation_done(self, time_step: int = 0):
         pass

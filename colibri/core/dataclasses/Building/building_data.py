@@ -77,12 +77,12 @@ class BuildingData(Model):
         # get boundaries data
         self.boundary_list, self.window_list = import_boundaries(self.project_dict)
 
-        self.TintWall.value = []
+        self.TintWall = []
         for boundary in self.boundary_list:
             boundary.space = self.space_for_boundary(boundary)
-            self.TintWall.value.append(20.0) # TODO: replace by boundary.Tint
+            self.TintWall.append(20.0) # TODO: replace by boundary.Tint
 
-        self.Boundaries.value = self.boundary_list
+        self.Boundaries = self.boundary_list
 
     def initialize(self):
         pass
@@ -91,7 +91,7 @@ class BuildingData(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        for id, value in self.Qwall.value.items():
+        for id, value in self.Qwall.items():
             boundary = self.boundary_from_ID(id)
             boundary.Qwall = value
 

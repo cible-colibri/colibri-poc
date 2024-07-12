@@ -31,4 +31,4 @@ class Field:
         self.structure = structure
 
     def convert(self, target_unit: Units) -> float:
-        return UNIT_CONVERTER.convert(self.value, self.unit, target_unit)
+        return UNIT_CONVERTER.convert(self, self.unit, target_unit)

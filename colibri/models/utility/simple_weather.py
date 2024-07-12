@@ -100,11 +100,11 @@ class SimpleWeather(Model):
         >>> None
         """
         # Compute the number of days (n) since the beginning of the year [-]
-        self.day_numbers = [day_number for day_number in range(self.starting_day.value, self.ending_day.value + 1, 1) for _ in range(0, self.number_of_time_steps_per_day.value, 1)]
+        self.day_numbers = [day_number for day_number in range(self.starting_day, self.ending_day + 1, 1) for _ in range(0, self.number_of_time_steps_per_day, 1)]
         # Create a dataframe to store all the weather data
         weather_data = {
-                            "day_number":           self.day_numbers.value,
-                            "legal_standard_time":  self.legal_standard_time.value,
+                            "day_number":           self.day_numbers,
+                            "legal_standard_time":  self.legal_standard_time,
                         }
         weather_data = pandas.DataFrame.from_dict(weather_data)
         self._create_weather_data(weather_data)
@@ -116,15 +116,15 @@ class SimpleWeather(Model):
     def run(self, time_step: int = 0, n_iteration: int = 0):
         if time_step > 155:
             print("toto")
-        for surface_index in range(1, self.number_of_surfaces.value + 1):
+        for surface_index in range(1, self.number_of_surfaces + 1):
             surface_direct_beam_solar_radiation             = self.get_variable(f"direct_beam_solar_radiation_{surface_index}")
             surface_sky_diffuse_solar_radiation             = self.get_variable(f"sky_diffuse_solar_radiation_{surface_index}")
             surface_reflected_diffuse_solar_radiation       = self.get_variable(f"reflected_diffuse_solar_radiation_{surface_index}")
             surface_total_incident_solar_radiation          = self.get_variable(f"total_incident_solar_radiation_{surface_index}")
-            surface_direct_beam_solar_radiation.value       = self.weather_data.loc[time_step, f"direct_beam_solar_radiation_{surface_index}"]
-            surface_sky_diffuse_solar_radiation.value       = self.weather_data.loc[time_step, f"sky_diffuse_solar_radiation_{surface_index}"]
-            surface_reflected_diffuse_solar_radiation.value = self.weather_data.loc[time_step, f"reflected_diffuse_solar_radiation_{surface_index}"]
-            surface_total_incident_solar_radiation.value    = self.weather_data.loc[time_step, f"total_incident_solar_radiation_{surface_index}"]
+            surface_direct_beam_solar_radiation       = self.weather_data.loc[time_step, f"direct_beam_solar_radiation_{surface_index}"]
+            surface_sky_diffuse_solar_radiation       = self.weather_data.loc[time_step, f"sky_diffuse_solar_radiation_{surface_index}"]
+            surface_reflected_diffuse_solar_radiation = self.weather_data.loc[time_step, f"reflected_diffuse_solar_radiation_{surface_index}"]
+            surface_total_incident_solar_radiation    = self.weather_data.loc[time_step, f"total_incident_solar_radiation_{surface_index}"]
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
@@ -162,23 +162,23 @@ class SimpleWeather(Model):
         >>> None
         """
         weather_data["equation_of_time"]                             = weather_data["day_number"].apply(lambda day_number: self.get_solar_equation_of_time(day_number))
-        weather_data["apparent_solar_time"]                          = weather_data.apply(lambda columns: self.get_apparent_solar_time(columns["legal_standard_time"], self.local_standard_meridian.value, self.longitude.value, columns["equation_of_time"]), axis = 1)
+        weather_data["apparent_solar_time"]                          = weather_data.apply(lambda columns: self.get_apparent_solar_time(columns["legal_standard_time"], self.local_standard_meridian, self.longitude, columns["equation_of_time"]), axis = 1)
         weather_data["hour_angle"]                                   = weather_data["apparent_solar_time"].apply(lambda apparent_solar_time: self.get_hour_angle(apparent_solar_time))
         weather_data["declination_angle"]                            = weather_data["day_number"].apply(lambda day_number: self.get_declination_angle(day_number))
-        weather_data["solar_altitude_angle"]                         = weather_data.apply(lambda columns: self.get_solar_altitude_angle(self.latitude.value, columns["declination_angle"], columns["hour_angle"]), axis = 1)
-        weather_data["solar_azimuth_angle"]                          = weather_data.apply(lambda columns: self.get_solar_azimuth_angle(self.latitude.value, columns["declination_angle"], columns["solar_altitude_angle"], columns["hour_angle"]), axis = 1)
+        weather_data["solar_altitude_angle"]                         = weather_data.apply(lambda columns: self.get_solar_altitude_angle(self.latitude, columns["declination_angle"], columns["hour_angle"]), axis = 1)
+        weather_data["solar_azimuth_angle"]                          = weather_data.apply(lambda columns: self.get_solar_azimuth_angle(self.latitude, columns["declination_angle"], columns["solar_altitude_angle"], columns["hour_angle"]), axis = 1)
         weather_data["solar_zenith_angle"]                           = weather_data["solar_altitude_angle"].apply(lambda solar_altitude_angle: self.get_solar_zenith_angle(solar_altitude_angle))
-        weather_data["atmospheric_transmittance_for_beam_radiation"] = weather_data["solar_zenith_angle"].apply(lambda solar_zenith_angle: self.get_atmospheric_transmittance_for_beam_radiation(self.altitude.value, solar_zenith_angle))
+        weather_data["atmospheric_transmittance_for_beam_radiation"] = weather_data["solar_zenith_angle"].apply(lambda solar_zenith_angle: self.get_atmospheric_transmittance_for_beam_radiation(self.altitude, solar_zenith_angle))
         weather_data["diffuse_atmospheric_transmittance"]            = weather_data["atmospheric_transmittance_for_beam_radiation"].apply(lambda atmospheric_transmittance_for_beam_radiation: self.get_diffuse_atmospheric_transmittance(atmospheric_transmittance_for_beam_radiation))
-        weather_data["sun_rise_time"]                                = weather_data["declination_angle"].apply(lambda declination_angle: self.get_sun_rise_time(self.latitude.value, declination_angle))
-        weather_data["sun_set_time"]                                 = weather_data["declination_angle"].apply(lambda declination_angle: self.get_sun_set_time(self.latitude.value, declination_angle))
+        weather_data["sun_rise_time"]                                = weather_data["declination_angle"].apply(lambda declination_angle: self.get_sun_rise_time(self.latitude, declination_angle))
+        weather_data["sun_set_time"]                                 = weather_data["declination_angle"].apply(lambda declination_angle: self.get_sun_set_time(self.latitude, declination_angle))
         weather_data["extraterrestrial_solar_radiation"]             = weather_data["day_number"].apply(lambda day_number : self.get_extraterrestrial_solar_radiation(day_number))
         weather_data["direct_normal_beam_solar_radiation"]           = weather_data.apply(lambda columns: self.get_direct_normal_beam_solar_radiation(columns["extraterrestrial_solar_radiation"], columns["atmospheric_transmittance_for_beam_radiation"]), axis = 1)
         weather_data["direct_horizontal_beam_solar_radiation"]       = weather_data.apply(lambda columns: self.get_direct_horizontal_beam_solar_radiation(columns["direct_normal_beam_solar_radiation"], columns["solar_altitude_angle"]), axis = 1)
         weather_data["normal_sky_diffuse_solar_radiation"]           = weather_data.apply(lambda columns: self.get_normal_sky_diffuse_solar_radiation(columns["diffuse_atmospheric_transmittance"], columns["solar_altitude_angle"]), axis = 1)
-        for surface_index in range(1, self.number_of_surfaces.value + 1):
-            surface_azimuth_angle                                                              = self.get_variable(f"surface_azimuth_angle_{surface_index}").value
-            surface_tilt_angle                                                                 = self.get_variable(f"surface_tilt_angle_{surface_index}").value
+        for surface_index in range(1, self.number_of_surfaces + 1):
+            surface_azimuth_angle                                                              = self.get_variable(f"surface_azimuth_angle_{surface_index}")
+            surface_tilt_angle                                                                 = self.get_variable(f"surface_tilt_angle_{surface_index}")
             weather_data[f"solar_surface_azimuth_angle_{surface_index}"]                       = weather_data["solar_azimuth_angle"].apply(lambda solar_azimuth_angle: self.get_solar_surface_azimuth_angle(solar_azimuth_angle, surface_azimuth_angle))
             weather_data[f"incidence_angle_{surface_index}"]                                   = weather_data.apply(lambda columns: self.get_incidence_angle(columns["solar_zenith_angle"], surface_tilt_angle, columns[f"solar_surface_azimuth_angle_{surface_index}"]), axis = 1)
             weather_data[f"direct_beam_solar_radiation_{surface_index}"]                       = weather_data.apply(lambda columns: self.get_direct_beam_solar_radiation(columns["direct_normal_beam_solar_radiation"], columns[f"incidence_angle_{surface_index}"], columns["solar_altitude_angle"], surface_tilt_angle), axis = 1)

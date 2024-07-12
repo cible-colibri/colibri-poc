@@ -23,7 +23,7 @@ class Aggregation(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        self.elements = np.array([self.element.value] * self.multiplicator)
+        self.elements = np.array([self.element] * self.multiplicator)
 
     def simulation_done(self, time_step: int = 0):
         pass
@@ -53,7 +53,7 @@ class Multiplication(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        self.elements = np.array([self.element.value] * self.multiplicator)
+        self.elements = np.array([self.element] * self.multiplicator)
 
     def simulation_done(self, time_step: int = 0):
         pass
@@ -86,7 +86,7 @@ class Stack(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        self.elements = np.array([model.value for model in self._stack])
+        self.elements = np.array([model for model in self._stack])
 
     def simulation_done(self, time_step: int = 0):
         pass
@@ -116,7 +116,7 @@ class Summation(Model):
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         # BUG: Error when summing without value
-        self.sum = np.sum(self.elements.value)
+        self.sum = np.sum(self.elements)
 
     def simulation_done(self, time_step: int = 0):
         pass

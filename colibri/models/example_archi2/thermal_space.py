@@ -27,7 +27,7 @@ class ThermalSpace(Model):
         self.spaceHeight = self.field("spaceHeights", np.array(()), role=Roles.PARAMETERS, unit=Units.METER)
 
     def initialize(self):
-        self.Tint.value = np.array([20 for _ in range()])
+        self.Tint = np.array([20 for _ in range()])
 
     def check_units(self) -> None:
         pass

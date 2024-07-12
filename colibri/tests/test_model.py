@@ -71,10 +71,10 @@ def test_models():
     assert isinstance(model.outputs, list)
     assert isinstance(model.parameters, list)
     assert isinstance(model.get_variable("var_1"), Variable)
-    assert model.var_1.value == 2
+    assert model.var_1 == 2
     model.var_1 = 4
     assert isinstance(model.get_variable("var_1"), Variable)
-    assert model.var_1.value == 4
+    assert model.var_1 == 4
     assert model.inputs[0] == model.var_1
     assert model.__str__() == "ModelChild(name = 'child')"
     assert model.__repr__() == model.__str__()

@@ -154,11 +154,11 @@ class UnitConverter(metaclass=Singleton):
 
     def get_unit(self, unit: Units):
         for dimension in self.dimensions:
-            if dimension.base_unit.name == unit.value:
+            if dimension.base_unit.name == unit:
                 return dimension.base_unit
             else:
                 for equivalent_unit in dimension.equivalent_units:
-                    if equivalent_unit.name == unit.value:
+                    if equivalent_unit.name == unit:
                         return equivalent_unit
         return None
 

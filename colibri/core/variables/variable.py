@@ -39,7 +39,7 @@ class Variable:
 
     def __init__(self, name: str, value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "", linked_to: typing.List[SelfVariable] = None, model = None, structure = []):
         self.name = name
-        self.value = value
+        self = value
         self.role = role
         self.unit = unit
         self.description = description
@@ -48,7 +48,7 @@ class Variable:
         self.structure = structure
 
     def convert(self, target_unit: Units) -> float:
-        return UNIT_CONVERTER.convert(self.value, self.unit, target_unit)
+        return UNIT_CONVERTER.convert(self, self.unit, target_unit)
 
     @property
     def value(self) -> typing.Any:
@@ -61,7 +61,7 @@ class Variable:
                 sizing_variable = getattr(self.model, self.name)
                 for expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
-                    list_name                = expandable_variable.role.value
+                    list_name                = expandable_variable.role
                     list_to_remove_from      = getattr(self.model, list_name)
                     for index in range(0, int(sizing_variable)):
                         attribute = getattr(self.model, f"{expandable_variable_name}_{index + 1}")
@@ -70,7 +70,7 @@ class Variable:
                         delattr(self.model, variable.name)
                 for expandable_variable in sizing_variable.linked_to:
                     expandable_variable_name = expandable_variable.name
-                    list_name                = expandable_variable.role.value
+                    list_name                = expandable_variable.role
                     list_to_append_to        = getattr(self.model, list_name)
                     for index in range(0, int(value)):
                         expandable_variable.name = f"{expandable_variable_name}_{index + 1}"
@@ -80,142 +80,142 @@ class Variable:
         self._value = value
 
     def __add__(self, val2):
-        return self.value + val2
+        return self + val2
 
     __radd__ = __add__
 
     def __sub__(self, val2):
-        return self.value - val2
+        return self - val2
 
     def __rsub__(self, val2):
-        return val2 - self.value
+        return val2 - self
 
     def __mul__(self, val2):
         if type(val2) == Variable: # why is this not required for + or / ???
-            return self.value * val2.value
+            return self * val2
         else:
-            return self.value * val2
+            return self * val2
 
     def __rmul__(self, val2):
         if type(val2) == Variable:
-            return self.value * val2.value
+            return self * val2
         else:
-            return self.value * val2
+            return self * val2
 
     #for now variables are scalar only, but this may change quickly if Anthony comes up with another smart idea
     # def __matmul__(self, val2):
-    #     return self.value / val2
+    #     return self / val2
 
     def __truediv__(self, val2):
-        return operator.truediv(self.value, val2)
+        return operator.truediv(self, val2)
 
     def __rtruediv__(self, val2):
-        return operator.truediv(val2, self.value)
+        return operator.truediv(val2, self)
 
     def __floordiv__(self, val2):
-        return operator.floordiv(self.value, val2)
+        return operator.floordiv(self, val2)
 
     def __rfloordiv__(self, val2):
-        return operator.floordiv(val2, self.value)
+        return operator.floordiv(val2, self)
 
     def __mod__(self, val2):
-        return self.value % val2
+        return self % val2
 
     def __rmod__(self, val2):
-        return val2 % self.value
+        return val2 % self
 
     def __divmod__(self, val2):
-        return divmod(self.value, val2)
+        return divmod(self, val2)
 
     def __rdivmod__(self, val2):
-        return divmod(val2, self.value)
+        return divmod(val2, self)
 
     def __pow__(self, val2):
-        return pow(self.value, val2)
+        return pow(self, val2)
 
     def __rpow__(self, val2):
-        return pow(val2, self.value)
+        return pow(val2, self)
 
     def __lshift__(self, val2):
-        return self.value << val2
+        return self << val2
 
     def __rlshift__(self, val2):
-        return val2 << self.value
+        return val2 << self
 
     def __rshift__(self, val2):
-        return self.value >> val2
+        return self >> val2
 
     def __rrshift__(self, val2):
-        return val2 >> self.value
+        return val2 >> self
 
     def __and__(self, val2):
-        return self.value and val2
+        return self and val2
 
     def __rand__(self, val2):
-        return val2 and self.value
+        return val2 and self
 
     def __xor__(self, val2):
-        return self.value or val2
+        return self or val2
 
     __rxor__ = __xor__
 
     def __or__(self, val2):
-        return self.value or val2
+        return self or val2
 
     __ror__ = __or__
 
     def __neg__(self):
-        return -self.value
+        return -self
 
     def __pos__(self):
-        return self.value
+        return self
 
     def __abs__(self):
-        return abs(self.value)
+        return abs(self)
 
     def __invert__(self):
-        return ~self.value
+        return ~self
 
     # rich comparison methods
     def __lt__(self, other):
-        return self.value < other
+        return self < other
 
     def __le__(self, other):
-        return self.value <= other
+        return self <= other
 
     def __eq__(self, other):
-        return self.value == other
+        return self == other
 
     def __ne__(self, other):
-        return not (self.value == other)
+        return not (self == other)
 
     def __gt__(self, other):
-        return self.value > other
+        return self > other
 
     def __ge__(self, other):
-        return self.value >= other
+        return self >= other
 
     # TODO: add
     #  - augmented assignment methods (__iadd__ et al)
     #  - ALL type Conversion methods (__int__ et al)
 
     def __int__(self):
-        return int(self.value)
+        return int(self)
 
     def __float__(self, other):
-        return float(self.value)
+        return float(self)
 
     def __index__(self):
-        return int(self.value)
+        return int(self)
 
     # Required for numpy.exp(variable), but
     # create problems with self.zone_setpoint_list[self.heating_season == False] = self.zone_setpoint_cooling
     # if implemented as follows (_array__() takes 1 positional argument but 2 were given)
     #def __array__(self):
-    #    return numpy.array(self.value)
+    #    return numpy.array(self)
 
     def __iter__(self):
-        yield self.value
+        yield self
 
     # Return the string representation of the object
     def __str__(self) -> str:
@@ -237,7 +237,7 @@ class Variable:
         --------
         >>> None
         """
-        string_representation = f"{self.__class__.__name__}({self.name}, {self.value}, {self.role}, {self.unit}, {self.description}, {self.linked_to})"
+        string_representation = f"{self.__class__.__name__}({self.name}, {self}, {self.role}, {self.unit}, {self.description}, {self.linked_to})"
         return string_representation
 
     # Return the object representation as a string
@@ -336,7 +336,7 @@ class ContainerVariables:
         >>> variables.to_list()
         >>> [Variable(name='1', value=1.0, unit=<Units.UNITLESS: '-'>, description='Sorry, no description yet.']
         """
-        return [attribute for attribute in self.__dict__.values()]
+        return [attribute for attribute in self.__dict__s()]
 
     # Return the string representation of the object
     def __str__(self) -> str:
@@ -358,7 +358,7 @@ class ContainerVariables:
         --------
         >>> None
         """
-        join_adds             = f".".join([f"add({condition})" for condition in self.__dict__.values()])
+        join_adds             = f".".join([f"add({condition})" for condition in self.__dict__s()])
         string_representation = f"{self.__class__.__name__}().{join_adds}"
         return string_representation
 

@@ -175,7 +175,7 @@ class Project:
                         field = model.get_variable(plot.variable_name)
                     series   = getattr(model, field.name + "_series")
                     axis.plot(series, label = model.name + "." + field.name)
-                    axis.set_ylabel(f"[{field.unit.value}]")
+                    axis.set_ylabel(f"[{field.unit}]")
                 axis.legend(loc = "upper right", numpoints = 1)
                 disposition += 1
             # Show plot
@@ -234,33 +234,33 @@ class Project:
             if link.index_to is None:
                 to_variable = getattr(link.to_model, link.to_variable)
                 if hasattr(to_variable, 'value'):
-                    value_in = to_variable.value # link to a scalar Variable
+                    value_in = to_variable # link to a scalar Variable
                 else:
                     value_in = to_variable # link to a scalar Field
             else:
-                value_in = getattr(link.to_model, link.to_variable).value[link.index_from] # link to a vector
+                value_in = getattr(link.to_model, link.to_variable)[link.index_from] # link to a vector
 
             if link.index_from is None:
                 from_variable = getattr(link.from_model, link.from_variable)
                 if hasattr(from_variable, 'value'):
-                    value_out = from_variable.value # link from a scalar Variable
+                    value_out = from_variable # link from a scalar Variable
                 else:
                     value_out = from_variable  # link from a scalar Field
             else:
-                value_out = getattr(link.from_model, link.from_variable).value[link.index_from] # link from a vector
+                value_out = getattr(link.from_model, link.from_variable)[link.index_from] # link from a vector
 
             if link.index_to is None or isinstance(value_out, dict):
                 to_variable = getattr(link.to_model, link.to_variable)
                 if hasattr(to_variable, 'value'):
-                    to_variable.value = value_out # link dict to Variable
+                    to_variable = value_out # link dict to Variable
                 else:
                     setattr(link.to_model, link.to_variable, value_out)  # link dict to field
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test ; or remove everything Variable / value-ish
-                if target_var.value.size < link.index_to + 1:
-                    target_var.value = np.resize(target_var.value, link.index_to + 1) # resize target vector
-                value_in = target_var.value[link.index_to]
-                target_var.value[link.index_to] = value_out
+                if target_var.size < link.index_to + 1:
+                    target_var = np.resize(target_var, link.index_to + 1) # resize target vector
+                value_in = target_var[link.index_to]
+                target_var[link.index_to] = value_out
 
             if self.verbose:
                 print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")

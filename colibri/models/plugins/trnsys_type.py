@@ -28,7 +28,7 @@ class TrnsysType(Model):
         # todo: implement something like this:
         # type_function = ctypes.CDLL(os.path.join(self.dll_path, self.dll_name))
         # info_array = ...
-        # inputs = [i.value for i in self.inputs]
+        # inputs = [i for i in self.inputs]
         # result = type_function.type1(inputs, info_array))
         # for r in results:
         #     self.outputs

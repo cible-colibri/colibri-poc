@@ -34,9 +34,7 @@ class MetaModel(abc.ABCMeta):
 
     @staticmethod
     def _define_variables(instance):
-        instance.inputs     = [] if hasattr(instance, Roles.INPUTS.value) is False else instance.inputs
-        instance.outputs    = [] if hasattr(instance, Roles.OUTPUTS.value) is False else instance.outputs
-        instance.parameters = [] if hasattr(instance, Roles.PARAMETERS.value) is False else instance.parameters
+        pass
 
     @staticmethod
     def _add_attributes_to_internal_lists(instance) -> None:
@@ -47,22 +45,22 @@ class MetaModel(abc.ABCMeta):
                 instance.inputs.append(attribute)
             elif (attribute.role == Roles.INPUTS) and (attribute.name in variable_names):
                 index              = [index for index, variable in enumerate(instance.inputs) if variable.name == attribute.name][0]
-                value              = instance.inputs[index].value
-                attribute.value    = value
+                value              = instance.inputs[index]
+                attribute    = value
                 instance.inputs[index] = attribute
             elif (attribute.role == Roles.OUTPUTS) and (attribute.name not in variable_names):
                 instance.outputs.append(attribute)
             elif (attribute.role == Roles.OUTPUTS) and (attribute.name in variable_names):
                 index              = [index for index, variable in enumerate(instance.outputs) if variable.name == attribute.name][0]
-                value              = instance.outputs[index].value
-                attribute.value    = value
+                value              = instance.outputs[index]
+                attribute    = value
                 instance.outputs[index] = attribute
             elif (attribute.role == Roles.PARAMETERS) and (attribute.name not in variable_names):
                 instance.parameters.append(attribute)
             elif (attribute.role == Roles.PARAMETERS) and (attribute.name in variable_names):
                 index              = [index for index, variable in enumerate(instance.parameters) if variable.name == attribute.name][0]
-                value              = instance.parameters[index].value
-                attribute.value    = value
+                value              = instance.parameters[index]
+                attribute    = value
                 instance.parameters[index] = attribute
 
 
@@ -238,7 +236,7 @@ class Model(metaclass=MetaModel):
         for variable in variables:
             if variable.linked_to:
                 for expandable_variable in variable.linked_to:
-                    list_name                = expandable_variable.role.value
+                    list_name                = expandable_variable.role
                     expandable_variable_name = expandable_variable.name
                     for index in range(0, int(variable)):
                         new_variable      = copy.deepcopy(expandable_variable)
@@ -252,8 +250,8 @@ class Model(metaclass=MetaModel):
 
     def save_time_step(self, time_step: int) -> None:
         for variable in self.outputs:
-            # TODO: Check if we need this: if isinstance(value.value, numbers.Number): Yes, we do, but it's weird
-            getattr(self, variable.name + "_series")[time_step] = variable.value
+            # TODO: Check if we need this: if isinstance(value, numbers.Number): Yes, we do, but it's weird
+            getattr(self, variable.name + "_series")[time_step] = variable
 
     # allow to create models for a list of modules (["models.emitters.electric_emitter"])
     # this list can be extended each time a new system model is authored
@@ -274,8 +272,8 @@ class Model(metaclass=MetaModel):
             variable = getattr(self, name)
             if hasattr(variable, "value"):
                 if isinstance(value, Variable):
-                    value = value.value
-                variable.value = value
+                    value = value
+                variable = value
             else:
                 self.__dict__[name] = value
         else:

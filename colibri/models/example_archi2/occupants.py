@@ -30,11 +30,11 @@ class Occupants(Model):
         singleOccupantPower = 100
         self.QoccGains = np.multiply(self.scenarioPresence, np.multiply(nbOccPerSquareMeter, np.multiply(self.spaceSurface, singleOccupantPower)))
         tcons = []
-        for index, scenario in enumerate(self.scenarioPresence.value):
+        for index, scenario in enumerate(self.scenarioPresence):
             if scenario[time_step] > 0:
-                tcons.append(self.TconsPresence.value[index])
+                tcons.append(self.TconsPresence[index])
             else:
-                tcons.append(self.TconsAbsence.value[index])
+                tcons.append(self.TconsAbsence[index])
         self.Tcons = np.array(tcons)
 
     def simulation_done(self, time_step: int = 0):

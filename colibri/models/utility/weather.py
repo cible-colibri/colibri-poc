@@ -61,8 +61,8 @@ class Weather(Model):
 
         self.weather_data, self.latitude, self.longitude, self.solar_direct, self.solar_diffuse, self.ext_temperature = import_epw_weather(self.weather_file)
 
-        if self.constant_ground_temperature.value is not None:
-            self.ground_temperature = self.constant_ground_temperature.value * np.ones(self.weather_data['ground_temperature'].shape)
+        if self.constant_ground_temperature is not None:
+            self.ground_temperature = self.constant_ground_temperature * np.ones(self.weather_data['ground_temperature'].shape)
         else:
             self.ground_temperature = self.weather_data['ground_temperature']
 
