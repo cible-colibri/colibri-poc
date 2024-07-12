@@ -25,24 +25,24 @@ class Thermal_Building(Building):
         self.project               = None
 
         # parameters
-        self.case = Variable("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
-        self.radiative_share_sensor = Variable("radiative_share_sensor", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Radiative share between Tair and Tmr for operative temperature control. 1 = Tmr, 0=Tair")
-        self.dt = Variable("dt", 3600, role=Roles.PARAMETERS, unit=Units.SECOND, description="Time step for the simulation ") #TODO: associate to the project instead of ThModel ?
-        self.f_sky = Variable("f_sky", 0.5, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Coefficient to connect the mean radiant temperature around the building f_sky = 0 --> Tmr = Tair, 1 --> Tmr=Fsky")
-        self.radiative_share_internal_gains = Variable("radiative_share_internal_gains", 0.6, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Radiative share for internal gains")
-        self.iter_max = Variable("iter_max", 3, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Number maximal of iteration")
+        self.case = self.field("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
+        self.radiative_share_sensor = self.field("radiative_share_sensor", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Radiative share between Tair and Tmr for operative temperature control. 1 = Tmr, 0=Tair")
+        self.dt = self.field("dt", 3600, role=Roles.PARAMETERS, unit=Units.SECOND, description="Time step for the simulation ") #TODO: associate to the project instead of ThModel ?
+        self.f_sky = self.field("f_sky", 0.5, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Coefficient to connect the mean radiant temperature around the building f_sky = 0 --> Tmr = Tair, 1 --> Tmr=Fsky")
+        self.radiative_share_internal_gains = self.field("radiative_share_internal_gains", 0.6, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Radiative share for internal gains")
+        self.iter_max = self.field("iter_max", 3, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Number maximal of iteration")
 
         # inputs
-        self.blind_position = Variable("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
-        self.phi_radiative_vec = Variable("phi_radiative_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
-        self.phi_convective_vec = Variable("phi_convective_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
-        self.phi_latent_vec = Variable("phi_latent_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
+        self.blind_position = self.field("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
+        self.phi_radiative_vec = self.field("phi_radiative_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
+        self.phi_convective_vec = self.field("phi_convective_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
+        self.phi_latent_vec = self.field("phi_latent_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
 
         # outputs
-        self.flow_rates_input = Variable("flow_rates", value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
+        self.flow_rates_input = self.field("flow_rates", default_value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         # results to save
-        self.heat_flux_vec = Variable("hvac_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
+        self.heat_flux_vec = self.field("hvac_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
 
     def initialize(self) -> None:
 
@@ -105,7 +105,7 @@ class Thermal_Building(Building):
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
         # pass inputs to model
-        self.flow_array = self.flow_rates_input.value
+        self.flow_array = self.flow_rates_input
 
         #################################################################################
         # control modes
@@ -121,9 +121,6 @@ class Thermal_Building(Building):
                                                          self.op_modes)
 
 
-            # blind control
-            self.blind_position = self.blind_position.value  # open = 1 np.clip(results['spaces_air'][:, t-1] < 25., 0.15, 1.)
-
             # reset parameters for next time step
             self.has_converged = False  # set to True at each time step, before iterating
             self.found = []
@@ -135,11 +132,11 @@ class Thermal_Building(Building):
                     #TODO: créer un paramètre hydraulique. Est-ce que c'est à faire ici ce truc ??
                     if emit is HydroEmitter:
                         if self.op_mode[i] == 'cooling':
-                            emit[0].temperature_in = emit[0].nominal_cooling_supply_temperature.value
+                            emit[0].temperature_in = emit[0].nominal_cooling_supply_temperature
                         elif self.op_mode[i] == 'heating':
-                            emit[0].temperature_in = emit[0].nominal_heating_supply_temperature.value
+                            emit[0].temperature_in = emit[0].nominal_heating_supply_temperature
                         else:
-                            emit[0].temperature_in = emit[0].temperature_out.value  #TODO: last, pas last ? Pas initialisé en tout cas
+                            emit[0].temperature_in = emit[0].temperature_out  #TODO: last, pas last ? Pas initialisé en tout cas
 
         self.air_temperature_dictionary = self.get_space_temperatures()  # send temperature values to pressure model
 
@@ -245,9 +242,9 @@ class Thermal_Building(Building):
         for i, space in enumerate(self.project.get_building_data().spaces):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
-                self.radiative_share_hvac_vec[i] = emit[0].radiative_share.value  #TODO: quid si plusieurs émetteurs mais pas du même mode ? ou pas du même radiative share ? (ex: poële + plancher chauffant)
-                self.max_heating_power_vec[i] = emit[0].nominal_heating_power.value
-                self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power.value
+                self.radiative_share_hvac_vec[i] = emit[0].radiative_share  #TODO: quid si plusieurs émetteurs mais pas du même mode ? ou pas du même radiative share ? (ex: poële + plancher chauffant)
+                self.max_heating_power_vec[i] = emit[0].nominal_heating_power
+                self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power
 
         # ventilation parameters
         self.air_change_rate = 0.0
@@ -291,8 +288,8 @@ class Thermal_Building(Building):
                     self.max_heating_power_vec[i] = max(0., thermal_output_max)
                     self.max_cooling_power_vec[i] = abs(min(0., thermal_output_max))
                 else:
-                    self.max_heating_power_vec[i] = emit[0].nominal_heating_power.value
-                    self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power.value
+                    self.max_heating_power_vec[i] = emit[0].nominal_heating_power
+                    self.max_cooling_power_vec[i] = emit[0].nominal_cooling_power
 
         # space heating control
         self.hvac_flux_vec = space_temperature_control_simple(self.op_mode, self.setpoint, self.Ad, self.Bd, self.states,
