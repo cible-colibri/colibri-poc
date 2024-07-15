@@ -1,32 +1,13 @@
-# -*- coding: utf-8 -*-
+"""
+This file contains the Link class.
+"""
 
-# ========================================
-# External imports
-# ========================================
-
-import dataclasses
-
-# ========================================
-# Internal imports
-# ========================================
+from dataclasses import dataclass
 
 from colibri.core.model import Model
 
-# ========================================
-# Constants
-# ========================================
 
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
-
-@dataclasses.dataclass
+@dataclass
 class Plot:
     name: str
     model: Model

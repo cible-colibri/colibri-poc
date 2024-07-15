@@ -120,7 +120,7 @@ class SimpleBuilding(Model):
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
-        _plot_building(1, self.zone_temperature_series, self.phi_hvac_series, self.ext_temperature_list, model_type='simplicity', to_plot=True)
+        #_plot_building(1, self.zone_temperature_series, self.phi_hvac_series, self.ext_temperature_list, model_type='simplicity', to_plot=True)
 
 # ========================================
 # Functions

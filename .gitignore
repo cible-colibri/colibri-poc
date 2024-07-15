@@ -16,3 +16,6 @@ __pycache__/
 
 # coverage data base (when run locally)
 .coverage
+
+# Environement
+.python-version

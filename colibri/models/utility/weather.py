@@ -4,12 +4,8 @@ import numpy as np
 import os
 import pandas as pd
 from pkg_resources import resource_filename
-
-from colibri.core.templates.inputs import Inputs
+from pathlib import Path
 from colibri.core.model import Model
-from colibri.core.templates.outputs import Outputs
-from colibri.core.templates.parameters import Parameters
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles, Units
 
 
@@ -113,7 +109,7 @@ def ground_temperature_kusuda(air_temperature, ground_diffusivity, depth):
 def sun_heigh_etc(weather_data, latitude, longitude, tz='America/Denver'):
     start = '2018-01-01 00:00'
     end = '2018-12-31 23:00'
-    weather_index = pd.date_range(start=start, end=end, freq='1H', tz=tz)
+    weather_index = pd.date_range(start=start, end=end, freq='1h', tz=tz)
     # we define the position from which the sun is observed
     sun_observer = ephem.Observer()
     sun_observer.lon, sun_observer.lat = str(longitude), str(latitude)

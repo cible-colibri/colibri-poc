@@ -1,1 +1,10 @@
 jsonschema
+pandas
+matplotlib
+pytest
+pytest-cov
+scipy
+networkx
+ephem
+jsonschema
+pvlib

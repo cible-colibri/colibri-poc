@@ -183,7 +183,7 @@ class Project:
             # Adjust everything automatically
             plt.tight_layout()
 
-    def run(self):
+    def run(self, show_plot: bool = False):
         starting_time = time.perf_counter()
         self._initialize_series()
         self._initialize_models()
@@ -216,7 +216,8 @@ class Project:
         self.runtime = (time.perf_counter() - starting_time)
         print(f"{self.n_non_convergence} timesteps have convergence problems")
         print(f"Simulation time: {self.runtime:3.2f} seconds")
-        self.plot()
+        if show_plot is True:
+            self.plot()
 
     def _initialize_series(self) -> None:
         for model in self.models:

@@ -2,18 +2,18 @@
 import numpy as np
 
 from colibri.models.airflow.AirflowBuilding.boundary_conditions import boundary_matrix
-from colibri.core.constants import *
+from colibri.config.constants import *
 from colibri.models.airflow.AirflowBuilding import connection_functions
 from colibri.models.airflow.AirflowBuilding.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
     construct_CCi, gen_pressure_system, generate_AA_BB_pressure_system
 from colibri.tests.data.data_model_coupling_Temp_Press import nodes, flow_paths
 
-from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
-from colibri.core.templates.outputs import Outputs
-from colibri.core.templates.parameters import Parameters
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles, Units
+
+t_ref_K = 273.15
+t_ext = -20
+Rs_air = 287
 
 class Airflow_Building(Model):
     def __init__(self, name: str):
@@ -152,7 +152,7 @@ class Airflow_Building(Model):
         # initialise flow matrix
         self.n_syst_nodes = len(self.system_nodes_ids)
         self.n_bound_nodes = len(self.boundary_nodes_ids)
-        self.nominal_flowrate = 10./3600. * rho_ref  # any value, juste for initialising
+        self.nominal_flowrate = 10./3600. * DENSITY_AIR  # any value, juste for initialising
         # initialise 2 flow matrices:
         self.FFa = np.ones((self.n_syst_nodes, self.n_syst_nodes)) * self.nominal_flowrate  # initial flow rate is nominal one in all segments
         self.FFb = np.ones((self.n_syst_nodes, self.n_bound_nodes)) * self.nominal_flowrate  # initial flow rate is nominal one in all segments

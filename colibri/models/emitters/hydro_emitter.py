@@ -1,12 +1,8 @@
 import numpy as np
 
-from colibri.core.templates.inputs import Inputs
-from colibri.core.templates.outputs import Outputs
-from colibri.core.templates.parameters import Parameters
-from colibri.core.variables.variable import Variable
 from colibri.models.emitters.emitter import Emitter
 from colibri.utils.enums_utils import Roles, Units
-from colibri.core.constants import CP_WATER
+from colibri.config.constants import CP_WATER
 
 #TODO: faire une classe générique Emitter pour faciliter les associations automatiques
 # Bien voir comment faire les liens entre objets/model pour faciliter la gestions des données au niveau initialisation

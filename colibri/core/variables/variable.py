@@ -21,7 +21,7 @@ from colibri.utils.enums_utils import (
 # Constants
 # ========================================
 
-from colibri.core.constants import UNIT_CONVERTER
+from colibri.config.constants import UNIT_CONVERTER
 
 # ========================================
 # Variables
