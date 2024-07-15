@@ -2,6 +2,9 @@ import numpy as np
 from colibri.config.constants import CP_AIR, DENSITY_AIR
 from numpy import eye
 from scipy.linalg import expm, inv
+
+from colibri.config.constants import CP_AIR, DENSITY_AIR
+
 epsilon = 1e-15
 
 

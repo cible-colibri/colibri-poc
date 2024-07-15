@@ -16,4 +16,8 @@ class Space():
         self.Tint = 20.0
         self.set_point_heating = 0.0
         self.set_point_cooling = 0.0
+        self.Qneeds = 0.0
+
+        # topology
+        self.emitters = []
 

@@ -4,6 +4,7 @@ from pkg_resources import resource_filename
 
 from colibri.core.processing.building.building_data import BuildingData
 from colibri.core.project import Project
+from colibri.models.example_archi.InfinitePowerGenerator import InfinitePowerGenerator
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.utility.weather import Weather
 
@@ -46,10 +47,13 @@ def test_run_example_project():
     project.add(wall_losses)
     project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     project.link(wall_losses, 'Qwall', building_data , 'Qwall')
-
-    # add links
     # dans le vrai Colibri, weather aurait un output qui s'apelle 'Text', ici on utilise un lecteur météo existant (non-colibri)
     project.link(weather, 'temperature', wall_losses, 'Text')
+
+    power_generator = InfinitePowerGenerator("IM_2")
+    project.add(power_generator)
+    project.link(building_data, 'Spaces', power_generator, 'Spaces')
+
     # TODO: générer les lines automatiquement
 
     project.run()

@@ -21,6 +21,8 @@ class BuildingData(Model):
         super(BuildingData, self).__init__(self.name)
 
         self.Boundaries = self.field("Boundaries", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.Spaces = self.field("Spaces", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.Emitters = self.field("Emitters", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
         self.TintWall = self.field("TintWall", [], role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
@@ -53,9 +55,10 @@ class BuildingData(Model):
         # get emitters data
         emitter_list = []
         self.space_list = self.project_dict['nodes_collection']['space_collection']
-        for space in self.space_list:
-            if 'object_collection' in self.space_list[space]:
-                for obj in self.space_list[space]['object_collection']:
+        for space in self.spaces:
+            space.emitters = []
+            if 'object_collection' in self.space_list[space.label]:
+                for obj in self.space_list[space.label]['object_collection']:
                     if obj['type'] == 'emitter':
                         emitter = self.project_dict['archetype_collection']['emitter_types'][obj['type_id']]
                         list_param = list(obj.keys()) + list(emitter.keys())
@@ -67,8 +70,15 @@ class BuildingData(Model):
                             setattr(Emitter, key, param)
 
                         Emitter.label = obj['id']
-                        Emitter.zone_name = space
+                        Emitter.zone_name = space.label
+
+                        # for proto archi - remove this or add efficiency or add to json
+                        if not hasattr(Emitter, 'efficiency'):
+                            setattr(Emitter, 'efficiency', 0.9)
+
                         emitter_list.append(Emitter)
+
+                        space.emitters.append(Emitter)
 
         self.emitter_list = emitter_list
 
@@ -81,6 +91,8 @@ class BuildingData(Model):
             self.TintWall.append(20.0) # TODO: replace by boundary.Tint
 
         self.Boundaries = self.boundary_list
+        self.Spaces = self.spaces
+        self.Emitters = self.emitter_list
 
     def initialize(self):
         pass

@@ -21,6 +21,8 @@ class Emitter(Model):
         self.nominal_cooling_power = self.field("nominal_cooling_power", 10000., role=Roles.PARAMETERS, unit=Units.WATT, description="emitter absolute nominal cooling power")
         self.time_constant = self.field("time_constant", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter time constant")
         self.mode = self.field("mode", "reversible", role=Roles.PARAMETERS, unit=Units.UNITLESS, description="emitter emission mode (heating, cooling, reversible)")
+        self.efficiency = self.field("efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS,
+                               description="emitter efficiency")
 
         # inputs
         self.heat_demand = self.field("heat_demand", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="heat_demand - positive=heating, negative=cooling")
