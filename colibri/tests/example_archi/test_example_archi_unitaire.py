@@ -3,7 +3,7 @@ import os
 
 from pkg_resources import resource_filename
 
-from colibri.core.dataclasses.Building.building_data import BuildingData
+from colibri.core.helpers.building.building_data import BuildingData
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
 

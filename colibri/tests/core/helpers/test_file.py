@@ -1,12 +1,12 @@
 """
-This file tests the file.py module in dataclasses.
+This file tests the file.py module in helpers.
 """
 
 from pathlib import Path
 
 import pytest
 
-from colibri.core.dataclasses.file import File
+from colibri.core.helpers.file import File
 
 
 @pytest.mark.short_test

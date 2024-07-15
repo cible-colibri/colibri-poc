@@ -10,7 +10,7 @@ import pytest
 # Internal imports
 # ========================================
 
-from colibri.core.dataclasses.link import Link
+from colibri.core.helpers.link import Link
 from colibri.core.model            import Model
 from colibri.models.hydronics.duct import Duct
 

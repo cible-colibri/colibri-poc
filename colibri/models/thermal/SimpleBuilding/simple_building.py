@@ -156,7 +156,7 @@ def _model(volume, zone_setpoint, ach, eta_recup, ext_temperature, u_window, are
 
     Return:
          (numpy.array): energy heating demand of building (Wh)
-         (numpy.array): Building temperature (°C)
+         (numpy.array): building temperature (°C)
 
     Notes:
         1. The simulation is designed to have a one-hour resolution, if another resolution is
@@ -217,7 +217,7 @@ def _plot_building(id, zone_temperatures, phi_hvacs, ext_temperature, model_type
         ax1.plot(zone_temperatures, label='zone_temperature')
         ax1.plot(ext_temperature, label='ext_temperature')
         ax1.set_ylabel('Temperature [degC]')
-        ax1.set_title('Building ' + str(id))
+        ax1.set_title('building ' + str(id))
         ax1.set_ylim([0, 50])
         ax2 = fig1.add_subplot(312, sharex=ax1)
         ax2.plot(phi_hvacs, label='heating power')

@@ -16,11 +16,11 @@ from colibri.core.Building import Building
 # Internal imports
 # ========================================
 
-from colibri.core.dataclasses.link import Link
+from colibri.core.helpers.link import Link
 from colibri.core.model              import Model
-from colibri.core.dataclasses.plot import Plot
+from colibri.core.helpers.plot import Plot
 from colibri.core.variables.variable_connector import VariableConnector
-from colibri.core.dataclasses.Building.building_data import BuildingData
+from colibri.core.helpers.building.building_data import BuildingData
 from colibri.models.utility.weather import Weather
 from colibri.utils.encorder_utils import NonCyclycEncoder
 from colibri.utils.enums_utils import Schema

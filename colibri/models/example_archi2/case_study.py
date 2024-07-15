@@ -2,7 +2,7 @@
 import numpy as np
 from collections import namedtuple
 
-from colibri.core.dataclasses.link import Link
+from colibri.core.helpers.link import Link
 from colibri.core.project import Project
 from acv import Acv
 from generator_sim import GeneratorSim
@@ -33,9 +33,9 @@ space_2.TconsPresence = 20
 space_2.TconsAbsence = 17
 space_2.ScenarioPresence = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 
-# Building
+# building
 
-Building = namedtuple("Building", ["altitude"])
+Building = namedtuple("building", ["altitude"])
 Building.altitude = 250
 
 # Walls
