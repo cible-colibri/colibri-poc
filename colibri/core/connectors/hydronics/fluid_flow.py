@@ -9,7 +9,7 @@
 # Internal imports
 # ========================================
 
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 
 # ========================================
 # Constants
@@ -25,7 +25,7 @@ from colibri.core.variables.variable_connector import VariableConnector
 # Classes
 # ========================================
 
-class FluidFlowConnector(VariableConnector):
+class FluidFlowConnector(Connector):
 
     def __init__(self):
         self.connections = [

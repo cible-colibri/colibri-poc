@@ -2,7 +2,7 @@
 import numpy as np
 from collections import namedtuple
 
-from colibri.core.helpers.link import Link
+from colibri.core.processing.link import Link
 from colibri.core.project import Project
 from acv import Acv
 from generator_sim import GeneratorSim

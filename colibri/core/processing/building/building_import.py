@@ -3,7 +3,7 @@ import json
 import numpy as np
 from collections import namedtuple
 
-from colibri.core.helpers.building.space import Space
+from colibri.core.processing.building.space import Space
 from colibri.models.thermal.DetailedBuilding.RyCj import gen_wall_model
 
 

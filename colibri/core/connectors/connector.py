@@ -20,14 +20,14 @@ import typing
 # Variables
 # ========================================
 
-SelfVariableConnector = typing.TypeVar("SelfVariableConnector", bound = "VariableConnector")
+SelfVariableConnector = typing.TypeVar("SelfVariableConnector", bound = "Connector")
 
 # ========================================
 # Classes
 # ========================================
 
 
-class VariableConnector:
+class Connector:
 
     def __init__(self):
         self.connections = []

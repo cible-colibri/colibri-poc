@@ -2,7 +2,7 @@ import json
 import copy
 from collections import namedtuple
 
-from colibri.core.helpers.building.building_import import import_spaces, import_boundaries
+from colibri.core.processing.building.building_import import import_spaces, import_boundaries
 from colibri.core.model import Model
 from colibri.utils.enums_utils import Roles, Units
 

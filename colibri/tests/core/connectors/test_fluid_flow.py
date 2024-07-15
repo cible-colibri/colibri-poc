@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from colibri.core.connectors.hydronics.fluid_flow import FluidFlowConnector
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 
 # ========================================
 # Constants
@@ -37,7 +37,7 @@ def test_fluid_flow():
     fluid_connector = FluidFlowConnector()
     fluid_connector.add("from", "to")
     assert isinstance(fluid_connector, FluidFlowConnector)
-    assert isinstance(fluid_connector, VariableConnector)
+    assert isinstance(fluid_connector, Connector)
     assert hasattr(fluid_connector, "add")
     assert isinstance(fluid_connector.connections, list)
     assert fluid_connector.connections[0] == ("outlet_temperature", "inlet_temperature")

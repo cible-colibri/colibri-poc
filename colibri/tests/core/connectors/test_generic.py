@@ -11,7 +11,7 @@ import pytest
 # ========================================
 
 from colibri.core.connectors.generics.generic import GenericConnector
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 
 # ========================================
 # Constants
@@ -37,7 +37,7 @@ def test_generic():
     connector = GenericConnector()
     connector.add("from", "to")
     assert isinstance(connector, GenericConnector)
-    assert isinstance(connector, VariableConnector)
+    assert isinstance(connector, Connector)
     assert hasattr(connector, "add")
     assert isinstance(connector.connections, list)
     assert connector.connections[0] == ("from", "to")

@@ -1,12 +1,12 @@
 """
-This file tests the file.py module in helpers.
+This file tests the file.py module in processing.
 """
 
 from pathlib import Path
 
 import pytest
 
-from colibri.core.helpers.file import File
+from colibri.core.processing.file import File
 
 
 @pytest.mark.short_test

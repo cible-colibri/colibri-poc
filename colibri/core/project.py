@@ -16,11 +16,11 @@ from colibri.core.Building import Building
 # Internal imports
 # ========================================
 
-from colibri.core.helpers.building.building_data import BuildingData
-from colibri.core.helpers.link import Link
-from colibri.core.helpers.plot import Plot
+from colibri.core.processing.building.building_data import BuildingData
+from colibri.core.processing.link import Link
+from colibri.core.processing.plot import Plot
 from colibri.core.model import Model
-from colibri.core.variables.variable_connector import VariableConnector
+from colibri.core.connectors.connector import Connector
 from colibri.models.utility.weather import Weather
 from colibri.utils.encorder_utils import NonCyclycEncoder
 from colibri.utils.enums_utils import Schema
@@ -93,7 +93,7 @@ class Project:
     #    ...
 
     #@typing.overload
-    #def link(self, *args: tuple[Model, Model, VariableConnector]) -> None:
+    #def link(self, *args: tuple[Model, Model, Connector]) -> None:
     #    ...
 
     def link(self, model_1, arg_2, *connection):
@@ -130,7 +130,7 @@ class Project:
         link = Link(model_1, var_1, model_2, var_2, index_1, index_2)
         self.links.append(link)
 
-    def link_with_connector(self, from_model: Model, to_model: Model, connector: VariableConnector) -> None:
+    def link_with_connector(self, from_model: Model, to_model: Model, connector: Connector) -> None:
         for from_variable, to_variable in connector.connections:
             self._add_link(from_model, from_variable, to_model, to_variable)
 

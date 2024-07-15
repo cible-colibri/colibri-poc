@@ -2,7 +2,7 @@ import os
 
 from pkg_resources import resource_filename
 
-from colibri.core.helpers.building.building_data import BuildingData
+from colibri.core.processing.building.building_data import BuildingData
 from colibri.core.project import Project
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.utility.weather import Weather
