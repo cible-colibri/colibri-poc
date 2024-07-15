@@ -1,6 +1,6 @@
 name : colibri
 dependencies :
-    - python=3.10
+    - python=3.11
     - pandas
     - matplotlib
     - pytest
