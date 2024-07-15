@@ -76,7 +76,7 @@ boundary_scheme = {
             "default" : None
                    },
         "side_2": {
-                "info": "identifier of the space (or 'exterior' if not connected to a space) onto which face 1 of the boundary is in contact",
+                "info": "identifier of the space (or 'exterior' if not connected to a space) onto which face 2 of the boundary is in contact",
                 "format" : "string",
                 "min" : None,
                 "max": None,
@@ -94,7 +94,7 @@ boundary_scheme = {
             "default" : None
         },
         "tilt": {
-            "info": "inclination of the boundary inclination of the wall relative to the horizontal"
+            "info": "inclination of the boundary (the wall) relative to the horizontal; "
                     "0° : horizontal facing upwards, 90° : vertical, 180° : horizontal facing downwards",
             "format" : "int",
             "min" : 0,
@@ -104,7 +104,7 @@ boundary_scheme = {
             "default" : None
         },
         "area": {
-            "info": "total area of the boundary in the middle of the wall" #TODO : attention a voir si il faut side_1_area, side_2_area ou pas ou si on laisse les moteur recalculés
+            "info": "total area of the boundary in the middle of the wall, " #TODO : attention a voir si il faut side_1_area, side_2_area ou pas ou si on laisse les moteur recalculés
                     "including the surface occupied by elements such as windows (gross area of the boundary)",
             "format" : "float",
             "min" : 0,
@@ -114,8 +114,8 @@ boundary_scheme = {
             "default" : None
         },
         "3d_origin": {
-            "info": "Origin (x,y,z) in the absolute reference of the first point of the first segment of the boundary"
-                    "Can be used to build the 3d model without using segment information for rebuild anything", #TODO create a function that create that automatically
+            "info": "Origin (x,y,z) in the absolute reference of the first point of the first segment of the boundary. "
+                    "Can be used to build the 3d model without using segment information for rebuilding anything", #TODO create a function that create that automatically
             "format" : "tuple",
             "min" : None,
             "max": None,
@@ -124,11 +124,11 @@ boundary_scheme = {
             "default" : None
         },
         "segments": {
-            "info": "Collection of segment forming the edges of the boundary or in case of a non 3D description linears of interest for modeling."
-                    "Important : coordinates needs to be set in CLOCKWISE order regarding side_1 of the boundary"
-                    "The coordinates of segments are set in a 2D plane (boundaries are always planar) with a relative reference point, where the first point of the boundary is designated as x:0, y:0."
-                    "In case of a non use of 3D, 'points' key is set to None and only 'length' is used."
-                    "Examples :[ {'id' : 'arrete_1'', 'points' : [[x1,y1],[x2,y2]], 'length' : 10, 'junction' : {'nodes_type' : 'linear_junction','nodes_id' : 'junction_64'} ]"
+            "info": "Collection of segments forming the edges of the boundary or in case of a non 3D description linears of interest for modeling. "
+                    "Important: coordinates need to be set in CLOCKWISE order regarding side_1 of the boundary. "
+                    "The coordinates of segments are set in a 2D plane (boundaries are always planar) with a relative reference point, where the first point of the boundary is designated as x:0, y:0. "
+                    "If 3D is not used, the key 'points' is set to None and only 'length' is used. "
+                    "Examples :[ {'id' : 'arrete_1'', 'points' : [[x1,y1],[x2,y2]], 'length' : 10, 'junction' : {'nodes_type' : 'linear_junction','nodes_id' : 'junction_64'} ] "
                     "Search for 'points', 'length', 'junction' to know more...",
             "format" : "list",
             "min" : None,
@@ -156,17 +156,17 @@ boundary_scheme = {
             "default" : None
         },
         "points": {
-            "info": "list of the two (x,y) points coordinates forming a segment"
+            "info": "list of the two (x,y) points coordinates forming a segment. "
                     "ex : [[x1,y1], [x2,y2]]",
             "format" : "list",
             "min" : None,
             "max": None,
-            "unit" : "Each coordinates use meter unit",
+            "unit" : "All coordinates use meters as unit",
             "choices" : None,
             "default" : None
         },
         "junction" : {
-            "info": "junction is a way to connect one segment to another using 'nodes_type' et 'nodes_id' in order to find the nodes into nodes_collection of the project. It allows multiple boundary to be on contact"
+            "info": "junction is a way to connect one segment to another using 'nodes_type' and 'nodes_id' in order to find the nodes in nodes_collection of the project. It allows multiple boundaries to be in contact"
                     "ex : {'nodes_type' : 'linear_junction','nodes_id' : 'junction_64'}",
             "format" : "dict",
             "min" : None,

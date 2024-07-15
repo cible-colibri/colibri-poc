@@ -258,7 +258,7 @@ class Scheme():
                                 f"Successfully set default {key} value to id to {self.scheme['parameters'][key]['default']} \n -----------------------------") if self.logs else None
                         else:
                             print(
-                                f"WARNING : no default value existing for {key}, value keep at None \n -----------------------------") if self.logs else None
+                                f"WARNING : no default value exists for {key}, value kept at None \n -----------------------------") if self.logs else None
 
     def describe(self, parameter_name=None):
         '''
@@ -287,7 +287,7 @@ class Scheme():
                     f"{parameter_name} is not a {self.type_name} available parameter. \n Please use 'describe()' to access all available parameter for this object")
 
         else:
-            documentation = f"Here the list of parameters use for {self.mode} configuration of {self.type_name} object : \n"
+            documentation = f"List of parameters used for {self.mode} configuration of the {self.type_name} object : \n"
             for key in self.scheme["parameters"]:
                 documentation += f"- {key} : {self.scheme['parameters'][key]['info']}"
                 if self.scheme['parameters'][key]['unit'] is not None:
