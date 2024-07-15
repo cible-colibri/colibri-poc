@@ -1,15 +1,12 @@
 [run]
 omit=
 	*/docs/*
-	*/tests/*
-	*/__init__.py
-	*/__project_information__.py
-	setup.py
+  setup.py
 
 [report]
 show_missing=True
 fail_under=50
-exclude_lines =
+exclude_also =
     if __name__ == .__main__.:
     \.\.\.
 
