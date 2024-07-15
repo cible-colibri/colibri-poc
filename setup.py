@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     extras_require={
         "doc": [
-            "sphinx",
+            "sphinx==7.3.7",
         ],
     },
 )
