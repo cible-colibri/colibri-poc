@@ -34,7 +34,7 @@ Le répertoire test contient des tests unitaires et d'intégration ainsi que des
 ## Installation
 
 ### Python
-Nous utilisons Python 3.10. Un bon moyen de créer un environnement est d'utiliser conda : 
+Nous utilisons Python 3.11. Un bon moyen de créer un environnement est d'utiliser conda : 
 [distribution Anaconda](https://www.anaconda.com/distribution/) 
 ou la [distribution Miniconda3](https://docs.conda.io/en/latest/miniconda.html>). 
 

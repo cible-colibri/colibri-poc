@@ -3,9 +3,7 @@ import copy
 from collections import namedtuple
 
 from colibri.core.helpers.building.building_import import import_spaces, import_boundaries
-from colibri.core.helpers.building.space import Space
 from colibri.core.model import Model
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles, Units
 
 default_dict_space = {'constant_internal_gains': 200,

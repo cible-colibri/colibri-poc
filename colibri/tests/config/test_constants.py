@@ -1,29 +1,24 @@
 # -*- coding: utf-8 -*-
-
-# ========================================
-# External imports
-# ========================================
-
 import pytest
 
 # ========================================
-# Internal imports
-# ========================================
-
-from colibri.utils.unit_utils import (
-                                Dimension,
-                                UnitConverter,
-                                Unit,
-                              )
-
-# ========================================
-# Constants
+# External imports
 # ========================================
 
 from colibri.config.constants import (
                                 SOLAR_CONSTANT_OF_THE_EARTH,
                                 UNIT_CONVERTER,
                               )
+from colibri.utils.unit_utils import UnitConverter, Dimension, Unit
+
+
+# ========================================
+# Internal imports
+# ========================================
+
+# ========================================
+# Constants
+# ========================================
 
 # ========================================
 # Variables

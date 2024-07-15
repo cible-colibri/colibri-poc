@@ -1,5 +1,6 @@
 import numpy as np
 
+from colibri.config.constants import DENSITY_AIR, CP_AIR
 from colibri.core.Building import Building
 from colibri.core.model import Model
 from colibri.models.emitters.hydro_emitter import HydroEmitter
@@ -246,7 +247,7 @@ class Thermal_Building(Building):
         self.efficiency_heat_recovery = 0.0  # exhaust ventilation, no heat recovery
         self.ventilation_gain_multiplier = np.zeros(self.n_spaces)
         for i, space in enumerate(self.project.get_building_data().spaces):
-            self.ventilation_gain_multiplier[i] = space.volume * rho_ref * cp_air_ref
+            self.ventilation_gain_multiplier[i] = space.volume * DENSITY_AIR * CP_AIR
             self.air_change_rate += space.air_change_rate
 
     def calc_thermal_building_model_iter(self, t, weather):

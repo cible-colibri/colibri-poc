@@ -1,12 +1,12 @@
 # ========================================
 # External imports
 # ========================================
-
 import json
-
 import pathlib
-import typing
 import time
+import typing
+
+from typing import Optional, List, Dict
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -16,31 +16,31 @@ from colibri.core.Building import Building
 # Internal imports
 # ========================================
 
-from colibri.core.helpers.link import Link
-from colibri.core.model              import Model
-from colibri.core.helpers.plot import Plot
-from colibri.core.variables.variable_connector import VariableConnector
 from colibri.core.helpers.building.building_data import BuildingData
+from colibri.core.helpers.link import Link
+from colibri.core.helpers.plot import Plot
+from colibri.core.model import Model
+from colibri.core.variables.variable_connector import VariableConnector
 from colibri.models.utility.weather import Weather
 from colibri.utils.encorder_utils import NonCyclycEncoder
 from colibri.utils.enums_utils import Schema
 from colibri.utils.files_utils import write_json_file
 
-# ========================================
-# Constants
-# ========================================
-
-
-# ========================================
-# Variables
-# ========================================
-
-
-# ========================================
-# Classes
-# ========================================
-
 class Project:
+
+    def __init__(
+        self, name: Optional[str] = None, schema: Schema = Schema.RE2020
+    ) -> None:
+        self.name: str | None = name
+        self.schema: Schema = schema
+        self.models: List[Model] = list()
+        self.links: List[Link] = list()
+        self._plots: Dict[str, List[Plot]] = dict()
+        self._has_converged = None
+        self._set_project_parameters()
+        self._has_converged = None
+        self.time_step = 0
+        self.n_iteration = 0
 
     def __init__(self, name: str = None, schema: Schema = Schema.RE2020):
         self.name   = name

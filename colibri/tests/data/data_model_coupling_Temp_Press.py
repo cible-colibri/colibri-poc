@@ -1,4 +1,4 @@
-from colibri.config.constants import DENSITY_AIR
+from colibri.config.constants import DENSITY_AIR, DENSITY_AIR
 
 flow_paths = {'B0': {'path': ['BC0', 'living_room_1'], 'z': 0,
                      'connection': {'connection_type': 'inlet_grille', 'dp0': 20, 'rho0': DENSITY_AIR, 'flow0': 30,

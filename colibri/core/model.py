@@ -8,13 +8,6 @@ import abc
 import copy
 from collections import namedtuple, defaultdict
 
-# ========================================
-# Internal imports
-# ========================================
-
-from colibri.core.templates.inputs import Inputs
-from colibri.core.templates.parameters import Parameters
-from colibri.core.templates.outputs import Outputs
 from colibri.core.variables.field import Field
 from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles
@@ -145,28 +138,28 @@ class Model(metaclass=MetaModel):
 
     @abc.abstractmethod
     def initialize(self) -> None:
-        raise NotImplementedError("Please, implement me...")
+        ...
 
     # TODO: check_units could/should be the same for all models, not an abstractmethod
     @abc.abstractmethod
     def check_units(self) -> None:
-        raise NotImplementedError("Please, implement me...")
+        ...
 
     @abc.abstractmethod
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        raise NotImplementedError("Please, implement me...")
+        ...
 
     @abc.abstractmethod
     def iteration_done(self, time_step: int = 0) -> None:
-        raise NotImplementedError("Please, implement me...")
+        ...
 
     @abc.abstractmethod
     def timestep_done(self, time_step: int = 0) -> None:
-        raise NotImplementedError("Please, implement me...")
+        ...
 
     @abc.abstractmethod
     def simulation_done(self, time_step: int = 0) -> None:
-        raise NotImplementedError("Please, implement me...")
+        ...
 
     def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
         return None

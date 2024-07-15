@@ -188,10 +188,10 @@ class Airflow_Building(Model):
                     dp_corr = 0.  # eventual correction (fan etc.)
                     self.nodes[node]['pressure'] = self.nodes[node]['pressure_list'][t]
                     self.nodes[node]['temperature'] = self.nodes[node]['temperature_list'][t]
-                    rhobound = p_ref / (Rs_air * (t_ref_K + self.nodes[node]['temperature']))
-                    rhoext = p_ref / (Rs_air * (t_ref_K + t_ext))
+                    rhobound = ATMOSPHERIC_AIR_PRESSURE / (Rs_air * (t_ref_K + self.nodes[node]['temperature']))
+                    rhoext = ATMOSPHERIC_AIR_PRESSURE / (Rs_air * (t_ref_K + t_ext))
                     # pressure correction
-                    dp_corr -= (rhoext - rhobound) * g * self.nodes[node]['z']
+                    dp_corr -= (rhoext - rhobound) * GRAVITATIONAL_ACCELERATION * self.nodes[node]['z']
                     if node in self.fan_suction_nodes:
                         for f in range(len(self.U_fan_indexer)):
                             if node == self.U_fan_indexer[f][2]:  # this is the right one
@@ -200,7 +200,7 @@ class Airflow_Building(Model):
                                 connection = self.flow_paths[self.U_fan_indexer[f][0]]['connection']
                                 flowrate = self.FFb_act[id_to, id_from]
                                 sign = self.U_fan_indexer[f][4]
-                                dp_corr += sign * connection_functions.fan_mechanical_calculate_dploss(flowrate=flowrate * 3600 / rho_ref,
+                                dp_corr += sign * connection_functions.fan_mechanical_calculate_dploss(flowrate=flowrate * 3600 / DENSITY_AIR,
                                                                                                        dplaw=connection['pressure_curve'])
                     self.nodes[node]['pressure'] += dp_corr
                     self.U_pressure[i, 0] = self.nodes[node]['pressure']  # set boundary pressures in U_pressure array
@@ -230,7 +230,7 @@ class Airflow_Building(Model):
     def matrix_model_check_convergence(self, niter, niter_max):
 
         # # check for difference from last time step
-        delta_p = np.abs(self.pressures - self.pressures_last) / p_ref  # relative change from last iteration compared to reference pressure p_ref
+        delta_p = np.abs(self.pressures - self.pressures_last) / ATMOSPHERIC_AIR_PRESSURE  # relative change from last iteration compared to reference pressure ATMOSPHERIC_AIR_PRESSURE
         delta_p_max = np.abs(np.max(delta_p))  # take the maximum difference from all pressure nodes
 
         # check for convergence

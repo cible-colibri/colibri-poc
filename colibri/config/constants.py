@@ -13,6 +13,12 @@ CP_WATER: float = 4_186.0  # [J/(kg.K)]
 GRAVITATIONAL_ACCELERATION: float = 9.81  # [m/s²]
 
 
+t_ref = 20.0
+t_ref_K = 273.15
+t_ext = -20
+Rs_air = 287
+
+
 # Solar constant of the Earth
 SOLAR_CONSTANT_OF_THE_EARTH: float = 1_367.0  # [W/m²]
 # Object to convert from one unit to another (has all unit conversion factors)

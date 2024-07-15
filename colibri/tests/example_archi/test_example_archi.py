@@ -1,4 +1,3 @@
-import json
 import os
 
 from pkg_resources import resource_filename
@@ -6,7 +5,6 @@ from pkg_resources import resource_filename
 from colibri.core.helpers.building.building_data import BuildingData
 from colibri.core.project import Project
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
-from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
 from colibri.models.utility.weather import Weather
 
 def test_run_example_project():

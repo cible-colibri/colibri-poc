@@ -6,19 +6,16 @@ from pkg_resources import resource_filename
 from colibri.core.helpers.building.building_data import BuildingData
 from colibri.core.project import Project
 from colibri.models.airflow.AirflowBuilding.Airflow_Building import Airflow_Building
-from colibri.models.emitters.emitter import Emitter
-from colibri.models.emitters.hydro_emitter import HydroEmitter
-from colibri.models.thermal.DetailedBuilding.generic import print_results, plot_results
+from colibri.models.thermal.DetailedBuilding.generic import print_results
 from colibri.models.thermal.DetailedBuilding.Thermal_Building import Thermal_Building
 from colibri.models.utility.weather import Weather
 from colibri.tests.data.bestest_cases import bestest_configs
 
 def test_coupled_building():
-    pass
-    # run_test_case(0) # with pressure model
-    # run_test_case(50) # with hydraulic network
-    # run_test_case(600) # bestest 600
-    # run_test_case(900) # bestest 900
+    run_test_case(0) # with pressure model
+    run_test_case(50) # with hydraulic network
+    run_test_case(600) # bestest 600
+    run_test_case(900) # bestest 900
 
 def run_test_case(case: int=0):
 
