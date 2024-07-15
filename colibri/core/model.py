@@ -224,7 +224,7 @@ class Model(metaclass=MetaModel):
             variable = getattr(self, name)
             if hasattr(variable, "value"):
                 if isinstance(value, Variable):
-                    value = value
+                    value.value = value
                 variable = value
             else:
                 self.__dict__[name] = value

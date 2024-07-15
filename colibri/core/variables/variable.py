@@ -91,16 +91,10 @@ class Variable:
         return val2 - self
 
     def __mul__(self, val2):
-        if type(val2) == Variable: # why is this not required for + or / ???
-            return self * val2
-        else:
-            return self * val2
+        return self * val2
 
     def __rmul__(self, val2):
-        if type(val2) == Variable:
-            return self * val2
-        else:
-            return self * val2
+        return self * val2
 
     #for now variables are scalar only, but this may change quickly if Anthony comes up with another smart idea
     # def __matmul__(self, val2):

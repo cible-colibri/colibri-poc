@@ -235,18 +235,14 @@ class Project:
             if link.index_to is None:
                 to_variable = getattr(link.to_model, link.to_variable)
                 if hasattr(to_variable, 'value'):
-                    value_in = to_variable # link to a scalar Variable
-                else:
-                    value_in = to_variable # link to a scalar Field
+                    value_in = to_variable # link to a scalar Field or Variable
             else:
                 value_in = getattr(link.to_model, link.to_variable)[link.index_from] # link to a vector
 
             if link.index_from is None:
                 from_variable = getattr(link.from_model, link.from_variable)
                 if hasattr(from_variable, 'value'):
-                    value_out = from_variable # link from a scalar Variable
-                else:
-                    value_out = from_variable  # link from a scalar Field
+                    value_out = from_variable # link from a scalar Variable of Field
             else:
                 value_out = getattr(link.from_model, link.from_variable)[link.index_from] # link from a vector
 
