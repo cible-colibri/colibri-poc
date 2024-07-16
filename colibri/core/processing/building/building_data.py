@@ -72,9 +72,11 @@ class BuildingData(Model):
                         Emitter.label = obj['id']
                         Emitter.zone_name = space.label
 
-                        # for proto archi - remove this or add efficiency or add to json
+                        # for proto archi - remove this or add efficiency/maxQ or add to json
                         if not hasattr(Emitter, 'efficiency'):
                             setattr(Emitter, 'efficiency', 0.9)
+                        if not hasattr(Emitter, 'maxQ'):
+                            setattr(Emitter, 'maxQ', 1)
 
                         emitter_list.append(Emitter)
 

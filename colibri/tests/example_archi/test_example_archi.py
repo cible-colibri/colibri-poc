@@ -6,6 +6,7 @@ from colibri.core.processing.building.building_data import BuildingData
 from colibri.core.project import Project
 from colibri.models.example_archi.InfinitePowerGenerator import InfinitePowerGenerator
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
+from colibri.models.example_archi.LimitedGenerator import LimitedGenerator
 from colibri.models.utility.weather import Weather
 
 def test_run_example_project():
@@ -53,6 +54,10 @@ def test_run_example_project():
     power_generator = InfinitePowerGenerator("IM_2")
     project.add(power_generator)
     project.link(building_data, 'Spaces', power_generator, 'Spaces')
+
+    limited_power_generator = LimitedGenerator("IM_2b")
+    project.add(limited_power_generator)
+    project.link(building_data, 'Spaces', limited_power_generator, 'Spaces')
 
     # TODO: générer les lines automatiquement
 
