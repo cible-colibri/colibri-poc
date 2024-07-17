@@ -203,7 +203,8 @@ class Model(metaclass=MetaModel):
 
     def save_time_step(self, time_step: int) -> None:
         for variable in self.get_output_fields():
-            getattr(self, variable.name + "_series")[time_step] = getattr(self, variable.name)
+                getattr(self, variable.name + "_series")[time_step] = copy.deepcopy(getattr(self, variable.name))
+
 
     # allow to create models for a list of modules (["models.emitters.electric_emitter"])
     # this list can be extended each time a new system model is authored

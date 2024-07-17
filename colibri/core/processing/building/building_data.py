@@ -77,6 +77,8 @@ class BuildingData(Model):
                             setattr(Emitter, 'efficiency', 0.9)
                         if not hasattr(Emitter, 'maxQ'):
                             setattr(Emitter, 'maxQ', 1)
+                        if not hasattr(Emitter, 'qProvided'):
+                            setattr(Emitter, 'qProvided', 1)
 
                         emitter_list.append(Emitter)
 
@@ -90,6 +92,7 @@ class BuildingData(Model):
         self.TintWall = []
         for boundary in self.boundary_list:
             boundary.space = self.space_for_boundary(boundary)
+            space.boundaries.append(boundary)
             self.TintWall.append(20.0) # TODO: replace by boundary.Tint
 
         self.Boundaries = self.boundary_list

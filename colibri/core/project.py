@@ -1,21 +1,12 @@
-# ========================================
-# External imports
-# ========================================
 import json
 import pathlib
 import time
 import typing
-
 from typing import Optional, List, Dict
-
 import numpy as np
 from matplotlib import pyplot as plt
 
 from colibri.core.Building import Building
-# ========================================
-# Internal imports
-# ========================================
-
 from colibri.core.processing.building.building_data import BuildingData
 from colibri.core.processing.link import Link
 from colibri.core.processing.plot import Plot
@@ -174,7 +165,18 @@ class Project:
                     if not field: # to be removed with Variables
                         field = model.get_variable(plot.variable_name)
                     series   = getattr(model, field.name + "_series")
-                    axis.plot(series, label = model.name + "." + field.name)
+
+                    if type(series[0]) is dict:
+                        variables = {}
+                        for variable in series[-1]:
+                            variables[variable] = []
+                        for step in series:
+                            for k,v in step.items():
+                                variables[k].append(v)
+                        for variable_name, values in variables.items():
+                            axis.plot(values, label=model.name + "." + variable_name)
+                    else:
+                        axis.plot(series, label = model.name + "." + field.name)
                     axis.set_ylabel(f"[{field.unit}]")
                 axis.legend(loc = "upper right", numpoints = 1)
                 disposition += 1

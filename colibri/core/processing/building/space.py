@@ -7,10 +7,15 @@ class Space():
         self.altitude = altitude
         self.use = use
         self.air_permeability = air_permeability
+        self.height = 3 # TODO : hook up to data model
+
 
         # computed values
         self.envelope_area = 0.0
         self.envelope_list = {}
+        self.previousTcons = 19.0
+        self.qOccGains = 0  # TODO : hook up to data model
+        self.tempAnnualNeeds = 0.0
 
         # simulation variables (computed at each timestep)
         self.Tint = 20.0
@@ -20,4 +25,5 @@ class Space():
 
         # topology
         self.emitters = []
+        self.boundaries = []
 

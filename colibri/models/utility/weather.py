@@ -12,8 +12,9 @@ from colibri.utils.enums_utils import Roles, Units
 class Weather(Model):
     def __init__(self, name: str):
         super(Weather, self).__init__(name)
-        self.name              = name
-        self.project           = None
+        self.name = name
+
+        self.Text = self.field(name='Text', default_value = 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
         self.constant_ground_temperature = self.field("constant_ground_temperature", None, Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description='Impose a constant ground temperature if the parameter is not None')
 
@@ -68,6 +69,7 @@ class Weather(Model):
         self.rolling_external_temperature[0:time_window] = self.rolling_external_temperature[time_window:2 * time_window]
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
+        self.Text = self.ext_temperature[time_step]
         pass
 
     def simulation_done(self, time_step: int = 0):

@@ -7,6 +7,8 @@ from colibri.core.project import Project
 from colibri.models.example_archi.InfinitePowerGenerator import InfinitePowerGenerator
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.example_archi.LimitedGenerator import LimitedGenerator
+from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLosses
+from colibri.models.example_archi.ThermalSpace import ThermalSpaceSimplified
 from colibri.models.utility.weather import Weather
 
 def test_run_example_project():
@@ -39,17 +41,17 @@ def test_run_example_project():
     #project.create_systems()
 
 
-    # wall_losses = SimplifiedWallLosses("M1a")
+    wall_losses = SimplifiedWallLosses("M1a")
+    project.add(wall_losses)
+    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
+    project.link(wall_losses, 'Qwall', building_data , 'Qwall')
+
+    # wall_losses = LayerWallLosses("M1b")
     # project.add(wall_losses)
     # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
-    wall_losses = LayerWallLosses("M1b")
-    project.add(wall_losses)
-    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
-    project.link(wall_losses, 'Qwall', building_data , 'Qwall')
-    # dans le vrai Colibri, weather aurait un output qui s'apelle 'Text', ici on utilise un lecteur météo existant (non-colibri)
-    project.link(weather, 'temperature', wall_losses, 'Text')
+    project.link(weather, 'Text', wall_losses, 'Text')
 
     power_generator = InfinitePowerGenerator("IM_2")
     project.add(power_generator)
@@ -59,9 +61,19 @@ def test_run_example_project():
     project.add(limited_power_generator)
     project.link(building_data, 'Spaces', limited_power_generator, 'Spaces')
 
+    space_simplified = ThermalSpaceSimplified("IM_3")
+    project.add(space_simplified)
+    project.link(building_data, 'Spaces', space_simplified, 'Spaces')
+    project.link(building_data, 'Qwall', space_simplified, 'Qwall')
+
     # TODO: générer les lines automatiquement
 
+    project.add_plot("Weather", weather, "Text")
+    project.add_plot("Tint", space_simplified, "Tint")
+    project.add_plot("Qwall", wall_losses, "Qwall")
+    project.to_plot = True
     project.run()
+    project.plot()
     pass
 
     #input_template = wall_losses.input_template()
