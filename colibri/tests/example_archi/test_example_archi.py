@@ -53,24 +53,31 @@ def test_run_example_project():
 
     project.link(weather, 'Text', wall_losses, 'Text')
 
-    power_generator = InfinitePowerGenerator("IM_2")
-    project.add(power_generator)
-    project.link(building_data, 'Spaces', power_generator, 'Spaces')
+    # power_generator = InfinitePowerGenerator("IM_2")
+    # project.add(power_generator)
+    # project.link(building_data, 'Spaces', power_generator, 'Spaces')
 
     limited_power_generator = LimitedGenerator("IM_2b")
     project.add(limited_power_generator)
     project.link(building_data, 'Spaces', limited_power_generator, 'Spaces')
+    project.link(limited_power_generator, 'Spaces', building_data, 'Spaces')
 
     space_simplified = ThermalSpaceSimplified("IM_3")
     project.add(space_simplified)
+
     project.link(building_data, 'Spaces', space_simplified, 'Spaces')
+    project.link(space_simplified, 'Qneeds', limited_power_generator, 'Qneeds')
+
     project.link(building_data, 'Qwall', space_simplified, 'Qwall')
+
+    project.link(limited_power_generator, 'Qprovided', space_simplified, 'Qprovided')
 
     # TODO: générer les lines automatiquement
 
     project.add_plot("Weather", weather, "Text")
     project.add_plot("Tint", space_simplified, "Tint")
     project.add_plot("Qwall", wall_losses, "Qwall")
+    project.add_plot("Qprovided", limited_power_generator, "Qprovided")
     project.to_plot = True
     project.run()
     project.plot()

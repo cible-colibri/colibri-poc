@@ -8,8 +8,9 @@ class LimitedGenerator(Model):
         self.name = name
         super(LimitedGenerator, self).__init__(name)
 
+        self.Qneeds = self.field("Qneeds", {}, role=Roles.INPUTS)
+
         self.Spaces = self.field('Boundaries', [], role=Roles.INPUTS, structure = [
-            Field("Qneeds", 0, role=Roles.INPUTS, unit = Units.WATT_HOUR),
             Field("emitter.efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
             Field("emitter.maxQ", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
             Field("emitter.name", "1", role=Roles.PARAMETERS, unit=Units.UNITLESS)
@@ -32,10 +33,16 @@ class LimitedGenerator(Model):
         for space in self.Spaces:
             space_count_emitter = len (space.emitters)
             maxQ = sum([e.maxQ for e in space.emitters])
-            qTotalProvided = min(maxQ, space.Qneeds)
+            Qneeds = 0
+            if space.label in self.Qneeds:
+                Qneeds = self.Qneeds[space.label]
+            qTotalProvided = min(maxQ, Qneeds)
             for emitter in space.emitters:
-                Qconsumed[emitter.label] = qTotalProvided / (emitter.maxQ / maxQ * emitter.efficiency)
-                Qprovided[emitter.label] = qTotalProvided / (emitter.maxQ / maxQ)
+                Qconsumed[space.label] = qTotalProvided / (emitter.maxQ / maxQ * emitter.efficiency)
+                Qprovided[space.label] = qTotalProvided / (emitter.maxQ / maxQ)
+
+        self.Qprovided = Qprovided
+        self.Qconsumed = Qconsumed
 
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")

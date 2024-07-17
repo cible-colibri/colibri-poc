@@ -9,11 +9,12 @@ class ThermalSpaceSimplified(Model):
         self.name = name
         super(ThermalSpaceSimplified, self).__init__(name)
 
+        self.Qprovided = self.field('Qprovided', {}, role=Roles.INPUTS)
+
         self.Spaces = self.field("Spaces", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS),
                                        Field("setpoint_heating", 0.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS),
-                                       Field('emitter.Qprovided', 0, Roles.INPUTS),
                                        Field('surface', 0, Roles.PARAMETERS, Units.SQUARE_METER),
                                        Field('height', 0, Roles.PARAMETERS, Units.METER)
                                    ])
@@ -21,7 +22,7 @@ class ThermalSpaceSimplified(Model):
         self.Qwall = self.field("Qwall", {}, role=Roles.INPUTS)
 
         self.Tint = self.field("Tint", {}, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
-        self.QNeeds = self.field("QNeeds", {}, role=Roles.OUTPUTS)
+        self.Qneeds = self.field("Qneeds", {}, role=Roles.OUTPUTS)
         self.AnnualNeeds = self.field("AnnualNeeds", 0.0, role=Roles.OUTPUTS,)
         pass
 
@@ -43,9 +44,13 @@ class ThermalSpaceSimplified(Model):
                 if wall_label in self.Qwall:
                     qWall += self.Qwall[wall_label]
 
-            self.QNeeds[space.label] = (space.set_point_heating - space.previous_set_point_heating) * (DENSITY_AIR * space.reference_area * space.height) + qWall - space.qOccGains
+            self.Qneeds[space.label] = (space.set_point_heating - space.previous_set_point_heating) * (DENSITY_AIR * space.reference_area * space.height) + qWall - space.qOccGains
             self.tempAnnualNeeds = ((space.set_point_heating - space.previous_set_point_heating) * (DENSITY_AIR * space.reference_area * space.height) + qWall - space.qOccGains) / space.reference_area
-            qProvided = sum([e.qProvided for e in space.emitters])
+
+            qProvided = 0
+            if space.label in self.Qprovided:
+                qProvided = self.Qprovided[space.label]
+
             qEffective = qProvided + space.qOccGains - qWall
             self.Tint[space.label] = space.previousTint + qEffective / (DENSITY_AIR * space.reference_area * space.height)
 

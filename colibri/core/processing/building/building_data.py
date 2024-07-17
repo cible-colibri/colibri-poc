@@ -76,9 +76,7 @@ class BuildingData(Model):
                         if not hasattr(Emitter, 'efficiency'):
                             setattr(Emitter, 'efficiency', 0.9)
                         if not hasattr(Emitter, 'maxQ'):
-                            setattr(Emitter, 'maxQ', 1)
-                        if not hasattr(Emitter, 'qProvided'):
-                            setattr(Emitter, 'qProvided', 1)
+                            setattr(Emitter, 'maxQ', 500)
 
                         emitter_list.append(Emitter)
 
