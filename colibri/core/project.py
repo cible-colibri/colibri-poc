@@ -154,7 +154,8 @@ class Project:
 
     def plot(self):
         if self.to_plot and len(self._plots) >= 1:
-            figure      = plt.figure()
+            figure      = plt.figure(figsize=(10,len(self._plots)*2))
+
             disposition = len(self._plots) * 100 + 11
             for title, plots in self._plots.items():
                 axis = figure.add_subplot(disposition)
