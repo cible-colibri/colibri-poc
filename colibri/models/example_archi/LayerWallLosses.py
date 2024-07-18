@@ -49,9 +49,7 @@ class LayerWallLosses(Model):
         pass
 
     def simulation_done(self, time_step: int = 0):
-        print(f"{self.name}:")
-        for output in self.get_fields(Roles.OUTPUTS):
-            print(f"{output.name}={getattr(self, output.name)}")
+        self.print_outputs()
 
     def check_units(self) -> None:
         pass

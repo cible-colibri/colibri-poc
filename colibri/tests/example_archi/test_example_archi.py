@@ -4,6 +4,7 @@ from pkg_resources import resource_filename
 
 from colibri.core.processing.building.building_data import BuildingData
 from colibri.core.project import Project
+from colibri.models.example_archi.ACVExploitationOnlyModel import ACVExploitationOnlyModel
 from colibri.models.example_archi.InfinitePowerGenerator import InfinitePowerGenerator
 from colibri.models.example_archi.LayerWallLosses import LayerWallLosses
 from colibri.models.example_archi.LimitedGenerator import LimitedGenerator
@@ -24,7 +25,7 @@ def test_run_example_project():
 
     project.iterate = True
     project.n_max_iterations = 100
-    project.time_steps = 8760
+    project.time_steps = 168
     project.verbose = False
 
     # weather
@@ -60,6 +61,9 @@ def test_run_example_project():
     space_simplified = ThermalSpaceSimplified("IM_3")
     project.add(space_simplified)
 
+    acv = ACVExploitationOnlyModel('IM_6')
+    project.add(acv)
+
     # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
@@ -71,7 +75,7 @@ def test_run_example_project():
     project.link(wall_losses, 'Qwall', space_simplified , 'Qwall')
     project.link(space_simplified, 'Qneeds', limited_power_generator, 'Qneeds')
     project.link(limited_power_generator, 'Qprovided', space_simplified, 'Qprovided')
-
+    project.link(limited_power_generator, 'Qconsumed', acv, 'Qconsumed')
     # TODO: générer les lines automatiquement
 
 

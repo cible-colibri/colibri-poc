@@ -58,6 +58,11 @@ class Model(metaclass=MetaModel):
     def get_parameter_fields(self):
         return self.get_fields(Roles.PARAMETERS)
 
+    def print_outputs(self):
+        print(f"{self.name}:")
+        for output in self.get_fields(Roles.OUTPUTS):
+            print(f"{output.name}={getattr(self, output.name)} [{str(output.unit)}]")
+
     def make_template(self, roles: Roles):
         template = {}
         structure_dict = {}

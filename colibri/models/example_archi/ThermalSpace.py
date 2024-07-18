@@ -64,13 +64,6 @@ class ThermalSpaceSimplified(Model):
 
             self.Tint[space.label] = previousTint + qEffective / (DENSITY_AIR * space.reference_area * space.height)
 
-    def simulation_done(self, time_step: int = 0):
-        self.AnnualNeeds = self.tempAnnualNeeds
-
-        print(f"{self.name}:")
-        for output in self.outputs:
-            print(f"{output.name}={getattr(self, output.name)}")
-
     def iteration_done(self, time_step: int = 0):
         pass
 
@@ -81,10 +74,6 @@ class ThermalSpaceSimplified(Model):
 
 
     def simulation_done(self, time_step: int = 0):
-        pass
+        self.AnnualNeeds = self.tempAnnualNeeds
 
-        print(f"{self.name}:")
-        for output in self.get_fields(Roles.OUTPUTS):
-            print(f"{output.name}={getattr(self, output.name)}")
-
-
+        self.print_outputs()

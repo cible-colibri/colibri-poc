@@ -33,13 +33,6 @@ class InfinitePowerGenerator(Model):
                 Qconsumed[emitter.label] = space.Qneeds / (space_count_emitter * emitter.efficiency)
                 Qprovided[emitter.label] = space.Qneeds / (space_count_emitter)
 
-    def simulation_done(self, time_step: int = 0):
-        print(f"{self.name}:")
-        for output in self.Qprovided:
-            print(f"{output.name}={getattr(self, output.name)}")
-        for output in self.Qconsumed:
-            print(f"{output.name}={getattr(self, output.name)}")
-
     def iteration_done(self, time_step: int = 0):
         pass
 
@@ -47,13 +40,8 @@ class InfinitePowerGenerator(Model):
         pass
 
     def simulation_done(self, time_step: int = 0):
-        pass
-
-
-
-
-
-
-
-
-
+        print(f"{self.name}:")
+        for output in self.Qprovided:
+            print(f"{output.name}={getattr(self, output.name)}")
+        for output in self.Qconsumed:
+            print(f"{output.name}={getattr(self, output.name)}")

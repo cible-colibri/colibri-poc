@@ -44,12 +44,6 @@ class LimitedGenerator(Model):
         self.Qprovided = Qprovided
         self.Qconsumed = Qconsumed
 
-    def simulation_done(self, time_step: int = 0):
-        print(f"{self.name}:")
-        for output in self.Qprovided:
-            print(f"{output.name}={getattr(self, output.name)}")
-        for output in self.Qconsumed:
-            print(f"{output.name}={getattr(self, output.name)}")
 
     def iteration_done(self, time_step: int = 0):
         pass
@@ -58,13 +52,4 @@ class LimitedGenerator(Model):
         pass
 
     def simulation_done(self, time_step: int = 0):
-        pass
-
-
-
-
-
-
-
-
-
+        self.print_outputs()
