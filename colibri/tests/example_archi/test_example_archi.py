@@ -22,8 +22,9 @@ def test_run_example_project():
     # Create a project
     project = Project()
 
-    project.iterate = False
-    project.time_steps = 168
+    project.iterate = True
+    project.n_max_iterations = 100
+    project.time_steps = 8760
     project.verbose = False
 
     # weather
@@ -43,15 +44,9 @@ def test_run_example_project():
 
     wall_losses = SimplifiedWallLosses("M1a")
     project.add(wall_losses)
-    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
-    project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
     # wall_losses = LayerWallLosses("M1b")
     # project.add(wall_losses)
-    # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
-    # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
-
-    project.link(weather, 'Text', wall_losses, 'Text')
 
     # power_generator = InfinitePowerGenerator("IM_2")
     # project.add(power_generator)
@@ -65,15 +60,22 @@ def test_run_example_project():
     space_simplified = ThermalSpaceSimplified("IM_3")
     project.add(space_simplified)
 
+    # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
+    # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
+
+    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     project.link(building_data, 'Spaces', space_simplified, 'Spaces')
+
+    project.link(weather, 'Text', wall_losses, 'Text')
+    project.link(space_simplified, 'Tint', wall_losses, 'Tint')
+    project.link(wall_losses, 'Qwall', space_simplified , 'Qwall')
     project.link(space_simplified, 'Qneeds', limited_power_generator, 'Qneeds')
-
-    project.link(building_data, 'Qwall', space_simplified, 'Qwall')
-
     project.link(limited_power_generator, 'Qprovided', space_simplified, 'Qprovided')
 
     # TODO: générer les lines automatiquement
 
+
+    # son & lumière
     project.add_plot("Weather", weather, "Text")
     project.add_plot("Tint", space_simplified, "Tint")
     project.add_plot("Qwall", wall_losses, "Qwall")

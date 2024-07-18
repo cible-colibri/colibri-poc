@@ -104,9 +104,7 @@ class BuildingData(Model):
         pass
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        for id, value in self.Qwall.items():
-            boundary = self.boundary_from_ID(id)
-            boundary.Qwall = value
+        pass
 
     def simulation_done(self, time_step: int = 0):
         pass

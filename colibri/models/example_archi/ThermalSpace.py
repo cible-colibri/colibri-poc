@@ -52,7 +52,17 @@ class ThermalSpaceSimplified(Model):
                 qProvided = self.Qprovided[space.label]
 
             qEffective = qProvided + space.qOccGains - qWall
-            self.Tint[space.label] = space.previousTint + qEffective / (DENSITY_AIR * space.reference_area * space.height)
+            if time_step > 1 and space.label in self.Tint_series[time_step-1]:
+                previousTint = self.Tint_series[time_step-1][space.label]
+            else:
+                previousTint = space.Tint
+
+            if time_step > 1 and abs(self.Tint[space.label] - previousTint)> 0.5:
+                self.project._has_converged = False
+            else:
+                self.project._has_converged = True
+
+            self.Tint[space.label] = previousTint + qEffective / (DENSITY_AIR * space.reference_area * space.height)
 
     def simulation_done(self, time_step: int = 0):
         self.AnnualNeeds = self.tempAnnualNeeds
@@ -67,7 +77,6 @@ class ThermalSpaceSimplified(Model):
     def timestep_done(self, time_step: int = 0):
         for space in self.Spaces:
             space.previous_set_point_heating = space.set_point_heating
-            space.previousTint = space.Tint
         self.AnnualNeeds += self.tempAnnualNeeds
 
 
