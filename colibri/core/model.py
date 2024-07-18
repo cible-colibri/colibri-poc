@@ -145,11 +145,6 @@ class Model(metaclass=MetaModel):
     def initialize(self) -> None:
         ...
 
-    # TODO: check_units could/should be the same for all models, not an abstractmethod
-    @abc.abstractmethod
-    def check_units(self) -> None:
-        ...
-
     @abc.abstractmethod
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         ...

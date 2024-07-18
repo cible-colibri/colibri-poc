@@ -38,7 +38,6 @@ def test_tank():
     assert isinstance(tank, StorageTank)
     assert isinstance(tank, Model)
     tank.initialize()
-    tank.check_units()
     time_step = 0
     tank.run(time_step)
     tank.simulation_done(time_step)

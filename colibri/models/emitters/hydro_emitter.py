@@ -70,8 +70,5 @@ class HydroEmitter(Emitter):
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
 
-    def check_units(self) -> None:
-        pass
-
     def calc_convergence(self, threshold=1e-3):
         self.has_converged = np.sum(np.abs(self.temperature_out - self.temperature_out_last)) <= threshold

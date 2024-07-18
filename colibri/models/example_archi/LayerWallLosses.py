@@ -51,5 +51,3 @@ class LayerWallLosses(Model):
     def simulation_done(self, time_step: int = 0):
         self.print_outputs()
 
-    def check_units(self) -> None:
-        pass

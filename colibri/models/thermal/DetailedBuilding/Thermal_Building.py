@@ -167,9 +167,6 @@ class Thermal_Building(Building):
     def simulation_done(self, time_step: int = 0):
         print(f"{self.name}:")
 
-    def check_units(self) -> None:
-        pass
-
     def init_thermal_model(self, weather_data, latitude, longitude, time_zone):
 
         #################################################################################

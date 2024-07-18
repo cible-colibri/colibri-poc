@@ -47,9 +47,6 @@ def test_models():
             super(ModelChild, self).__init__(name)
             self.var_1 = self.field("var_1", 2, role = Roles.INPUTS)
 
-        def check_units(self) -> None:
-            pass
-
         def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
             pass
 
@@ -93,9 +90,6 @@ def test_models():
             self.V2 = self.field("V2", 43, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
             self.V3 = self.field("V3", 44, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
             self.V4 = self.field("V4", 45, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
-
-        def check_units(self) -> None:
-            pass
 
         def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
             pass

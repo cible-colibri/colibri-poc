@@ -121,10 +121,6 @@ class Airflow_Building(Model):
         print(f"{self.name}:")
 
 
-    def check_units(self) -> None:
-        pass
-
-
     def matrix_model_init(self, t_final, flow_paths, nodes, spaces):
 
         # check if Spaces from thermal model correspond to nodes

@@ -38,7 +38,6 @@ def test_duct():
     assert isinstance(duct, Duct)
     assert isinstance(duct, Model)
     duct.initialize()
-    duct.check_units()
     time_step = 0
     duct.run(time_step)
     duct.simulation_done(time_step)

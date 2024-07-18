@@ -38,7 +38,6 @@ def test_simple_pump():
     assert isinstance(pump, SimplePump)
     assert isinstance(pump, Model)
     pump.initialize()
-    pump.check_units()
     time_step = 0
     pump.run(time_step)
     pump.simulation_done(time_step)

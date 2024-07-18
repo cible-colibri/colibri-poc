@@ -27,9 +27,6 @@ class SimplifiedWallLosses(Model):
     def initialize(self):
         pass
 
-    def check_units(self) -> None:
-        pass
-
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         Qwall = {}
         for boundary in self.Boundaries:

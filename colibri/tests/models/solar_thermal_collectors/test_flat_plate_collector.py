@@ -38,7 +38,6 @@ def test_flat_plate_collector():
     assert isinstance(collector, FlatPlateCollector)
     assert isinstance(collector, Model)
     collector.initialize()
-    collector.check_units()
     time_step = 0
     collector.run(time_step)
     collector.simulation_done(time_step)

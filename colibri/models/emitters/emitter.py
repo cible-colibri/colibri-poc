@@ -58,11 +58,6 @@ class Emitter(Model):
     def simulation_done(self, time_step: int = 0):
         raise NotImplementedError("Not implemented")
 
-
-    @abc.abstractmethod
-    def check_units(self) -> None:
-        raise NotImplementedError("Not implemented")
-
     @abc.abstractmethod
     def calc_convergence(self, threshold=1e-3):
         raise NotImplementedError("Not implemented")

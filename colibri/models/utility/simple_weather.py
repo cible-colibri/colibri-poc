@@ -110,9 +110,6 @@ class SimpleWeather(Model):
         self._create_weather_data(weather_data)
 
 
-    def check_units(self) -> None:
-        pass
-
     def run(self, time_step: int = 0, n_iteration: int = 0):
         if time_step > 155:
             print("toto")

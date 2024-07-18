@@ -33,9 +33,6 @@ class ThermalSpaceSimplified(Model):
 
         self.tempAnnualNeeds = 0.0
 
-    def check_units(self) -> None:
-        pass
-
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         pass
         for space in self.Spaces:

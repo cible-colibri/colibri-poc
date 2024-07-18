@@ -84,9 +84,6 @@ class Weather(Model):
     def simulation_done(self, time_step: int = 0):
         pass
 
-    def check_units(self):
-        pass
-
 def ground_temperature_kusuda(air_temperature, ground_diffusivity, depth):
 
     if len(air_temperature) != 8760:
