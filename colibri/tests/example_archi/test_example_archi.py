@@ -29,7 +29,7 @@ def test_run_example_project():
     project.verbose = False
 
     # weather
-    weather = Weather("weather")
+    weather = Weather("IM_4-Weather")
     weather.constant_ground_temperature = 10.
     weather.weather_file = weather_file
     weather.time_zone = time_zone
@@ -43,7 +43,7 @@ def test_run_example_project():
     #project.create_systems()
 
 
-    wall_losses = SimplifiedWallLosses("M1a")
+    wall_losses = SimplifiedWallLosses("M1a-SimplifiedWallLosses")
     project.add(wall_losses)
 
     # wall_losses = LayerWallLosses("M1b")
@@ -53,30 +53,32 @@ def test_run_example_project():
     # project.add(power_generator)
     # project.link(building_data, 'Spaces', power_generator, 'Spaces')
 
-    limited_power_generator = LimitedGenerator("IM_2b")
+    limited_power_generator = LimitedGenerator("IM_2b-LimitedGenerator")
     project.add(limited_power_generator)
-    project.link(building_data, 'Spaces', limited_power_generator, 'Spaces')
-    project.link(limited_power_generator, 'Spaces', building_data, 'Spaces')
 
-    space_simplified = ThermalSpaceSimplified("IM_3")
+    space_simplified = ThermalSpaceSimplified("IM_3-ThermalSpaceSimplified")
     project.add(space_simplified)
 
-    acv = ACVExploitationOnlyModel('IM_6')
+    acv = ACVExploitationOnlyModel('IM_6-ACVExploitationOnlyModel')
     project.add(acv)
 
     # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
     # project.link(wall_losses, 'Qwall', building_data , 'Qwall')
 
-    project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
-    project.link(building_data, 'Spaces', space_simplified, 'Spaces')
-
-    project.link(weather, 'Text', wall_losses, 'Text')
-    project.link(space_simplified, 'Tint', wall_losses, 'Tint')
-    project.link(wall_losses, 'Qwall', space_simplified , 'Qwall')
-    project.link(space_simplified, 'Qneeds', limited_power_generator, 'Qneeds')
-    project.link(limited_power_generator, 'Qprovided', space_simplified, 'Qprovided')
-    project.link(limited_power_generator, 'Qconsumed', acv, 'Qconsumed')
-    # TODO: générer les lines automatiquement
+    project.auto_link()
+    # the above line will do the equivalent of :
+    # project.link(building_data, 'Boundaries', wall_losses, 'Boundaries')
+    # project.link(building_data, 'Spaces', space_simplified, 'Spaces')
+    # project.link(building_data, 'Spaces', limited_power_generator, 'Spaces')
+    # project.link(wall_losses, 'Qwall', building_data, 'Qwall')
+    #
+    # project.link(weather, 'Text', wall_losses, 'Text')
+    # project.link(space_simplified, 'Tint', wall_losses, 'Tint')
+    # project.link(wall_losses, 'Qwall', space_simplified , 'Qwall')
+    # project.link(space_simplified, 'Qneeds', limited_power_generator, 'Qneeds')
+    # project.link(limited_power_generator, 'Spaces', building_data, 'Spaces')
+    # project.link(limited_power_generator, 'Qprovided', space_simplified, 'Qprovided')
+    # project.link(limited_power_generator, 'Qconsumed', acv, 'Qconsumed')
 
 
     # son & lumière

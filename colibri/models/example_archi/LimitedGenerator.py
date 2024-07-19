@@ -10,7 +10,7 @@ class LimitedGenerator(Model):
 
         self.Qneeds = self.field("Qneeds", {}, role=Roles.INPUTS)
 
-        self.Spaces = self.field('Boundaries', [], role=Roles.INPUTS, structure = [
+        self.Spaces = self.field('Spaces', [], role=Roles.INPUTS, structure = [
             Field("emitter.efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
             Field("emitter.maxQ", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
             Field("emitter.name", "1", role=Roles.PARAMETERS, unit=Units.UNITLESS)

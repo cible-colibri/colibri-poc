@@ -409,3 +409,15 @@ class Project:
     def create_systems(self):
         for building in self.get_models_from_class(Building):
             building.create_systems()
+
+    def auto_link(self):
+        links = []
+        for model in self.models:
+            for input in model.get_input_fields():
+                for model2 in self.models:
+                    outputs = model2.get_output_fields()
+                    for output in outputs:
+                        if output.name == input.name:
+                            self.link(model2, output.name, model, input.name)
+                            if self.verbose:
+                                print(model2.name + "." + output.name + " -> " + model.name + "." + input.name)
