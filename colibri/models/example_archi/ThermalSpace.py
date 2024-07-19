@@ -1,3 +1,5 @@
+import numpy as np
+
 from colibri.config.constants import DENSITY_AIR
 from colibri.core.model import Model
 from colibri.core.variables.field import Field
@@ -54,15 +56,12 @@ class ThermalSpaceSimplified(Model):
             else:
                 previousTint = space.Tint
 
-            if time_step > 1 and abs(self.Tint[space.label] - previousTint)> 0.5:
-                self.project._has_converged = False
-            else:
-                self.project._has_converged = True
-
             self.Tint[space.label] = previousTint + qEffective / (DENSITY_AIR * space.reference_area * space.height)
 
+            self.project._has_converged = self.calc_convergence(threshold=0.5)
+
     def iteration_done(self, time_step: int = 0):
-        pass
+        self.Tint_dict_last = self.Tint
 
     def timestep_done(self, time_step: int = 0):
         for space in self.Spaces:
@@ -74,3 +73,11 @@ class ThermalSpaceSimplified(Model):
         self.AnnualNeeds = self.tempAnnualNeeds
 
         self.print_outputs()
+
+    # temporary convergence control; will be in backbone, but does not work yet for dictionaries
+    def calc_convergence(self, threshold=1e-3):
+        if not hasattr(self, 'Tint_dict_last') or not len(self.Tint) == len(self.Tint_dict_last):
+            return
+        tint = self.Tint.values()
+        tint_last = self.Tint_dict_last.values()
+        self.has_converged = np.max(np.abs(np.array(list(tint)) - np.array(list(tint_last)))) <= threshold
