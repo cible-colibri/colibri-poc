@@ -91,9 +91,10 @@ class Model(metaclass=MetaModel):
             print(f"{output.name}={getattr(self, output.name)} [{str(output.unit)}]")
 
     def is_linked(self, input):
-        for link in self.project.links:
-            if link.to_model == self and link.to_variable == input:
-                return True
+        if self.project:
+            for link in self.project.links:
+                if link.to_model == self and link.to_variable == input:
+                    return True
         return False
 
     def make_template(self, roles: Roles):
