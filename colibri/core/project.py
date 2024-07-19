@@ -93,33 +93,31 @@ class Project:
             variable_2 = connection[1]
             if not self.is_eligible_link(model_1, arg_2, model_2, variable_2):
                 raise ValueError(f"Cannot link {model_1}.{arg_2} to {model_2}.{variable_2}")
-            link = Link(model_1, arg_2, model_2, variable_2)
-            self.links.append(link)
+            self._add_link(model_1, arg_2, model_2, variable_2)
         else:
             connector = connection[0]
             for c in connector.connections:
                 if not self.is_eligible_link(model_1, c[0], arg_2, c[1]):
                     raise ValueError(f"Cannot link {model_1}.{c[0]} to {arg_2}.{c[1]}")
-                link = Link(model_1, c[0], arg_2, c[1])
-                self.links.append(link)
+                self._add_link(model_1, c[0], arg_2, c[1])
 
     def link_to_vector(self, model_1, var_1, model_2, var_2, index_2):
         if not self.is_eligible_link(model_1, var_1, model_2, var_2):
             raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
         link = Link(model_1, var_1, model_2, var_2, None, index_2)
-        self.links.append(link)
+        self.links.append(link) # TODO: should use self._add_link
 
     def link_from_vector(self, model_1, var_1, index_1, model_2, var_2):
         if not self.is_eligible_link(model_1, var_1, model_2, var_2):
             raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
         link = Link(model_1, var_1, model_2, var_2, index_1, None)
-        self.links.append(link)
+        self.links.append(link) # TODO: should use self._add_link
 
     def link_vector_to_vector(self, model_1, var_1, index_1, model_2, var_2, index_2):
         if not self.is_eligible_link(model_1, var_1, model_2, var_2):
             raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
         link = Link(model_1, var_1, model_2, var_2, index_1, index_2)
-        self.links.append(link)
+        self.links.append(link) # TODO: should use self._add_link
 
     def link_with_connector(self, from_model: Model, to_model: Model, connector: Connector) -> None:
         for from_variable, to_variable in connector.connections:
@@ -129,8 +127,10 @@ class Project:
         self._add_link(from_model, from_variable, to_model, to_variable)
 
     def _add_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> None:
+        if to_model.is_linked(to_variable):
+            raise ValueError(f"Cannot link twice to {to_model}.{to_variable} (from {from_model}.{from_variable})")
         if not self.is_eligible_link(from_model, from_variable, to_model, to_variable):
-            raise ValueError(f"Sorry, but we cannot link {from_model}.{from_variable} to {to_model}.{to_variable}.")
+            raise ValueError(f"Cannot link {from_model}.{from_variable} to {to_model}.{to_variable}")
         if not self.is_linked(from_model, from_variable, to_model, to_variable):
             link = Link(from_model, from_variable, to_model, to_variable)
             self.links.append(link)
@@ -411,7 +411,7 @@ class Project:
             building.create_systems()
 
     def auto_link(self):
-        links = []
+
         for model in self.models:
             for input in model.get_input_fields():
                 for model2 in self.models:

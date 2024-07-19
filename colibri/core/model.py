@@ -90,6 +90,12 @@ class Model(metaclass=MetaModel):
         for output in self.get_fields(Roles.OUTPUTS):
             print(f"{output.name}={getattr(self, output.name)} [{str(output.unit)}]")
 
+    def is_linked(self, input):
+        for link in self.project.links:
+            if link.to_model == self and link.to_variable == input:
+                return True
+        return False
+
     def make_template(self, roles: Roles):
         template = {}
         structure_dict = {}
@@ -226,18 +232,6 @@ class Model(metaclass=MetaModel):
                 return cls(instance_name)
 
         return None
-
-    def __setattr__(self, name, value):
-        if hasattr(self, name):
-            variable = getattr(self, name)
-            if hasattr(variable, "value"):
-                if isinstance(value, Variable):
-                    value.value = value
-                variable = value
-            else:
-                self.__dict__[name] = value
-        else:
-            self.__dict__[name] = value
 
     # Return the string representation of the object
     def __str__(self) -> str:
