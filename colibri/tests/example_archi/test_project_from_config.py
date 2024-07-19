@@ -1,0 +1,32 @@
+import os
+
+from pkg_resources import resource_filename
+
+from colibri.core.project import Project
+
+
+def test_project_from_config():
+    building_path = resource_filename('colibri', os.path.join('tests', 'data'))
+    file_name = 'house_1.json'
+    weather_file = 'Paris.epw'
+    time_zone = 'Europe/Paris'
+    building_file = os.path.join(building_path, file_name)
+
+    config = {
+        "models": [("colibri.models.utility.weather.Weather", {
+            "weather_file": weather_file,
+            "time_zone": time_zone
+
+        }),
+                   ("colibri.core.processing.building.building_data.BuildingData", {"building_file" : building_file}),
+                   ("colibri.models.example_archi.SimplifiedWallLosses.SimplifiedWallLosses", {}),
+                   ("colibri.models.example_archi.LimitedGenerator.LimitedGenerator", {}),
+                   ("colibri.models.example_archi.ThermalSpace.ThermalSpaceSimplified", {}),
+                   ("colibri.models.example_archi.ACVExploitationOnlyModel.ACVExploitationOnlyModel", {}), ],
+
+        "version": "RT2042"
+    }
+
+    project = Project("pfc")
+    project.project_from_config(config)
+    project.run()

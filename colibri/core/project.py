@@ -1,3 +1,4 @@
+import importlib
 import json
 import pathlib
 import time
@@ -342,6 +343,33 @@ class Project:
         >>> None
         """
         write_json_file(file_path, self.to_json())
+
+    def project_from_config(self, config):
+        for model_def in config['models']:
+            model_cls = model_def[0]
+            class_name = model_cls.split('.')[-1]
+            module_name = model_cls.rsplit( ".", 1 )[ 0 ]
+
+            module = importlib.import_module(module_name)
+            if not module is None and hasattr(module, class_name):
+                # insatnciate
+                instance_name = class_name
+                cls = getattr(module, class_name)
+                if class_name == "BuildingData": # :-(
+                    instance = BuildingData(model_def[1]['building_file']) # Mr. Bricolage ... :-)
+                else:
+                    instance = cls(instance_name)
+                self.models.append(instance)
+                instance.project = self
+
+                # set parameters
+                for attribute, value in model_def[1].items():
+                    setattr(instance, attribute, value)
+            else:
+                raise ValueError(f"Model class {class_name} is not defined in package {module}")
+
+        self.auto_link()
+
 
     def _set_project_parameters(self) -> None:
         self.time_steps   = 168
