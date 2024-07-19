@@ -12,7 +12,7 @@ import numpy
 # ========================================
 
 from colibri.core.model        import Model
-from colibri.core.variables.variable import Variable
+
 from colibri.utils.enums_utils import Units
 
 # ========================================

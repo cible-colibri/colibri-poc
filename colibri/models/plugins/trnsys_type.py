@@ -1,7 +1,7 @@
 import os.path
 
 from colibri.core.model import Model
-from colibri.core.variables.variable import Variable
+
 
 
 class TrnsysType(Model):

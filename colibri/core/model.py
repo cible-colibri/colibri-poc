@@ -9,7 +9,6 @@ import copy
 from collections import namedtuple, defaultdict
 
 from colibri.core.variables.field import Field
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles
 
 
@@ -162,26 +161,6 @@ class Model(metaclass=MetaModel):
         ...
 
     def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
-        return None
-
-    def get_variable(self, name: str) -> Variable:
-        variables = self.inputs + self.outputs + self.parameters
-        return self._get_variable(name, variables)
-
-    def get_input(self, name: str) -> Variable:
-        return self._get_variable(name, self.inputs)
-
-    def get_output(self, name: str) -> Variable:
-        return self._get_variable(name, self.outputs)
-
-    def get_parameter(self, name: str) -> Variable:
-        return self._get_variable(name, self.parameters)
-
-    @staticmethod
-    def _get_variable(name: str, variables: list) -> Variable:
-        for variable in variables:
-            if variable.name == name:
-                return variable
         return None
 
     def _expand_variables(self) -> None:

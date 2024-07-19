@@ -1,8 +1,4 @@
-from colibri.core.templates.inputs import Inputs
 from colibri.core.model import Model
-from colibri.core.templates.parameters import Parameters
-from colibri.core.templates.outputs import Outputs
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import (Roles,Units)
 
 class Occupants(Model):

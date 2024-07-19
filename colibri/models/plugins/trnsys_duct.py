@@ -1,6 +1,6 @@
 import os.path
 
-from colibri.core.variables.variable import Variable
+
 
 from colibri.models.plugins.trnsys_type import TrnsysType
 

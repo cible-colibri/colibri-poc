@@ -11,11 +11,7 @@ import pytest
 # ========================================
 
 from colibri.core.model        import Model
-from colibri.core.templates.inputs import Inputs
-from colibri.core.templates.outputs import Outputs
-from colibri.core.templates.parameters import Parameters
 from colibri.core.variables.field import Field
-from colibri.core.variables.variable import Variable
 from colibri.utils.enums_utils import Roles, Units
 
 
@@ -77,7 +73,7 @@ def test_models():
     assert model.__repr__() == model.__str__()
 
     class M1(Model):
-        def __init__(self, name: str, inputs: Inputs = None, outputs: Outputs = None, parameters: Parameters = None):
+        def __init__(self, name: str):
             self.name = name
             super(M1, self).__init__(name)
 
