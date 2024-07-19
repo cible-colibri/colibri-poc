@@ -13,8 +13,35 @@ from colibri.utils.enums_utils import Roles
 
 
 class MetaModel(abc.ABCMeta):
+
     def __call__(cls, *args, **kwargs):
-        instance = type.__call__(cls, *args, **kwargs)
+        # automatically call all __init__ functions of parent classes, topmost first
+
+        # Temporarily replace __init__ to prevent automatic call upon instancecreation
+        original_init = cls.__init__
+        cls.__init__ = lambda self, *args, **kwargs: None
+
+        # Create the instance
+        instance = super(MetaModel, cls).__call__(*args, **kwargs)
+
+        # Restore the original __init__
+        cls.__init__ = original_init
+
+        # Initialize a set to track called __init__ methods
+        called_init = set()
+
+        # Call __init__ methods of all parent classes in the correct order
+        for base in reversed(cls.__mro__):
+            if '__init__' in base.__dict__ and base not in called_init:
+                if issubclass(base, Model):
+                    base.__init__(instance, *args, **kwargs)
+                else:
+                    base.__init__(instance)
+                called_init.add(base)
+
+        # Call the __init__ method of the class itself last
+        if '__init__' in cls.__dict__ and cls not in called_init:
+            cls.__init__(instance, *args, **kwargs)
 
         return instance
 
@@ -25,6 +52,7 @@ class Model(metaclass=MetaModel):
         self.project    = None
 
         self._field_metadata = {}
+
 
     def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to = None):
         # Store the metadata in the global dictionary

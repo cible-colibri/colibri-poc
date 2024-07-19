@@ -18,7 +18,6 @@ Rs_air = 287
 class Airflow_Building(Model):
     def __init__(self, name: str):
         self.name = name
-        super(Airflow_Building, self).__init__(self.name)
 
         self.project = None
 

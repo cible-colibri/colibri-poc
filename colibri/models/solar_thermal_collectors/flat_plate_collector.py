@@ -36,10 +36,8 @@ from colibri.utils.enums_utils import (
 class FlatPlateCollector(Model):
 
     def __init__(self, name: str):
-        super(FlatPlateCollector, self).__init__(name)
 
         self.name                           = name
-        self.project                        = None
 
         self.inlet_flow_rate = self.field("inlet_flow_rate", 100.0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
         self.inlet_temperature = self.field("inlet_temperature", 40.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)

@@ -38,10 +38,7 @@ from colibri.utils.enums_utils import (
 class Duct(Model):
 
     def __init__(self, name: str):
-        self.name                = name
-        super(Duct, self).__init__(name)
-
-        self.project             = None
+        self.name = name
 
         self.loss_coefficient    = self.field("loss_coefficient", 3.0, role=Roles.INPUTS, unit=Units.KILO_JOULE_PER_HOUR)
         self.cp_fluid            = self.field("cp_fluid", 4.186, role=Roles.INPUTS, unit=Units.JOULE_PER_GRAM_PER_DEGREE_CELCIUS)

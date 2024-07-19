@@ -6,7 +6,6 @@ class LimitedGenerator(Model):
 
     def __init__(self, name: str):
         self.name = name
-        super(LimitedGenerator, self).__init__(name)
 
         self.Qneeds = self.field("Qneeds", {}, role=Roles.INPUTS)
 

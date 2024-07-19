@@ -11,7 +11,6 @@ from colibri.utils.enums_utils import Roles, Units
 
 class Weather(Model):
     def __init__(self, name: str):
-        super(Weather, self).__init__(name)
         self.name = name
 
         self.Text = self.field(name='Text', default_value = 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)

@@ -10,7 +10,6 @@ from colibri.utils.enums_utils import Roles, Units
 
 class Emitter(Model):
     def __init__(self, name: str):
-        super(Emitter, self).__init__(name)
 
         self.name = name
         self.project = None

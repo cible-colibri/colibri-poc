@@ -12,6 +12,9 @@ from colibri.models.example_archi.SimplifiedWallLosses import SimplifiedWallLoss
 from colibri.models.example_archi.ThermalSpace import ThermalSpaceSimplified
 from colibri.models.utility.weather import Weather
 
+def test_meta():
+    wall_losses = SimplifiedWallLosses("M1a-SimplifiedWallLosses")
+
 def test_run_example_project():
 
     building_path = resource_filename('colibri', os.path.join('tests', 'data'))

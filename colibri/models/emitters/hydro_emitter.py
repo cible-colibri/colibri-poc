@@ -9,7 +9,6 @@ from colibri.config.constants import CP_WATER
 
 class HydroEmitter(Emitter):
     def __init__(self, name: str):
-        super(HydroEmitter, self).__init__(name)
 
         # parameters
         self.nominal_UA = self.field("nominal_UA", 330., role=Roles.PARAMETERS, unit=Units.WATT_PER_KELVIN, description="Nominal exchange coefficient at design conditions")

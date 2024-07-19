@@ -37,9 +37,9 @@ from colibri.utils.enums_utils import (
 class SimplePump(Model):
 
     def __init__(self, name: str):
-        super(SimplePump, self).__init__(name)
-        self.name               = name
-        self.project            = None
+
+        self.name= name
+
         self.inlet_flow_rate = self.field("inlet_flow_rate", 100, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_HOUR)
         self.inlet_temperature = self.field("inlet_temperature", 40, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.outlet_pressure = self.field("outlet_pressure", 0, role=Roles.OUTPUTS, unit=Units.PASCAL)

@@ -9,7 +9,6 @@ class ThermalSpaceSimplified(Model):
 
     def __init__(self, name: str):
         self.name = name
-        super(ThermalSpaceSimplified, self).__init__(name)
 
         self.Qprovided = self.field('Qprovided', {}, role=Roles.INPUTS)
 

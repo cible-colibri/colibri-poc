@@ -18,7 +18,6 @@ class BuildingData(Model):
 
     def __init__(self, building_file : str = None):
         self.name = "building_data"
-        super(BuildingData, self).__init__(self.name)
 
         self.Boundaries = self.field("Boundaries", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
         self.Spaces = self.field("Spaces", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)

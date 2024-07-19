@@ -6,9 +6,8 @@ from colibri.utils.enums_utils import (Roles,Units)
 # M1a
 class SimplifiedWallLossesJson(Model):
 
-    def __init__(self, name: str, inputs: Inputs = None, parameters: Parameters = None):
+    def __init__(self, name: str):
         self.name = name
-        super(SimplifiedWallLossesJson, self).__init__(name)
 
         self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
 

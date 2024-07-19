@@ -7,7 +7,6 @@ class SimplifiedWallLosses(Model):
 
     def __init__(self, name: str):
         self.name = name
-        super(SimplifiedWallLosses, self).__init__(name)
 
         self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.Tint = self.field("Tint", {}, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)

@@ -40,7 +40,6 @@ def test_models():
     class ModelChild(Model):
 
         def __init__(self, name: str):
-            super(ModelChild, self).__init__(name)
             self.var_1 = self.field("var_1", 2, role = Roles.INPUTS)
 
         def run(self, time_step: int = 0, n_iteration: int = 0) -> None:

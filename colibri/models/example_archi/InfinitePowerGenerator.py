@@ -6,7 +6,6 @@ class InfinitePowerGenerator(Model):
 
     def __init__(self, name: str):
         self.name = name
-        super(InfinitePowerGenerator, self).__init__(name)
 
         self.Spaces = self.field('Boundaries', [], role=Roles.INPUTS, structure = [
             Field("Qneeds", 0, role=Roles.INPUTS, unit = Units.WATT_HOUR),

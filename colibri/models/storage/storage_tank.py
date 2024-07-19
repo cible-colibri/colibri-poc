@@ -39,8 +39,9 @@ class StorageTank(Model):
 
     def __init__(self, name: str):
         super(StorageTank, self).__init__(name)
-        self.name                        = name
-        self.project                     = None
+
+        self.name = name
+
         self.initial_temperature = self.field("initial_temperature", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.inlet_temperature_1 = self.field("inlet_temperature_1", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.inlet_temperature_2 = self.field("inlet_temperature_2", 40, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)

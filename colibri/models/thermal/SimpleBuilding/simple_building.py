@@ -39,9 +39,7 @@ from colibri.utils.enums_utils import (
 class SimpleBuilding(Model):
 
     def __init__(self, name: str):
-        super(SimpleBuilding, self).__init__(name)
-        self.name                  = name
-        self.project               = None
+        self.name = name
 
         self.zone_setpoint_heating = self.field('zone_setpoint_heating', 20.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint heating [°C]
         self.zone_setpoint_cooling = self.field('zone_setpoint_cooling', 27.0, Roles.INPUTS, unit=Units.DEGREE_CELSIUS)  # default setpoint cooling [°C]
