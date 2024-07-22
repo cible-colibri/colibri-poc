@@ -20,7 +20,7 @@ def test_project_from_config():
         }),
                    ("colibri.core.processing.building.building_data.BuildingData", {"building_file" : building_file}),
                    ("colibri.models.example_archi.SimplifiedWallLosses.SimplifiedWallLosses", {}),
-                   ("colibri.models.example_archi.LimitedGenerator.LimitedGenerator", {}),
+                   ("colibri.models.example_archi.LimitedGenerator.LimitedGenerator", {"efficiency": 0.9}),
                    ("colibri.models.example_archi.ThermalSpace.ThermalSpaceSimplified", {}),
                    ("colibri.models.example_archi.ACVExploitationOnlyModel.ACVExploitationOnlyModel", {}), ],
 

@@ -360,6 +360,11 @@ class Project:
                 else:
                     instance = cls(instance_name)
                 self.models.append(instance)
+
+                # apply parameters from config file
+                for parameter, value in model_def[1].items():
+                    setattr(instance, parameter, value)
+
                 instance.project = self
 
                 # set parameters
