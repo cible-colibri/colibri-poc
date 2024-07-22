@@ -25,7 +25,6 @@ class ThermalSpaceSimplified(Model):
         self.Tint = self.field("Tint", {}, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
         self.Qneeds = self.field("Qneeds", {}, role=Roles.OUTPUTS)
         self.AnnualNeeds = self.field("AnnualNeeds", 0.0, role=Roles.OUTPUTS,)
-        pass
 
     def initialize(self):
         for space in self.Spaces:
@@ -35,7 +34,6 @@ class ThermalSpaceSimplified(Model):
         self.tempAnnualNeeds = 0.0
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
-        pass
         for space in self.Spaces:
             qWall = 0
             for wall_label in [b.label for b in space.boundaries]:
@@ -75,7 +73,7 @@ class ThermalSpaceSimplified(Model):
 
     # temporary convergence control; will be in backbone, but does not work yet for dictionaries
     def calc_convergence(self, threshold=1e-3):
-        if not hasattr(self, 'Tint_dict_last') or not len(self.Tint) == len(self.Tint_dict_last):
+        if not hasattr(self, 'Tint_dict_last') or len(self.Tint) != len(self.Tint_dict_last):
             return
         tint = self.Tint.values()
         tint_last = self.Tint_dict_last.values()

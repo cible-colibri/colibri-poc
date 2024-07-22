@@ -97,7 +97,7 @@ class Model(metaclass=MetaModel):
                     return True
         return False
 
-    def make_template(self, roles: Roles):
+    def make_template(self, roles: [Roles]):
         template = {}
         structure_dict = {}
         for field in self.get_fields():
@@ -196,7 +196,7 @@ class Model(metaclass=MetaModel):
         ...
 
     def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
-        return None
+        return True
 
     def _expand_variables(self) -> None:
         variables = self.inputs + self.parameters

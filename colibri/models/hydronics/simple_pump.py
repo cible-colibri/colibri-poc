@@ -54,7 +54,7 @@ class SimplePump(Model):
         self.outlet_temperature = self.inlet_temperature
         self.outlet_pressure = 42
 
-    def simulation_done(self, time_step: int = 0):
+    def simulation_done(self):
         print(f"{self.name}:")
         for output in self.outputs:
             print(f"{output.name}={getattr(self, output.name)}")

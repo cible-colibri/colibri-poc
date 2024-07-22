@@ -249,11 +249,7 @@ class Project:
                 value_out = getattr(link.from_model, link.from_variable)[link.index_from] # link from a vector
 
             if link.index_to is None or isinstance(value_out, dict):
-                to_variable = getattr(link.to_model, link.to_variable)
-                if hasattr(to_variable, 'value'):
-                    to_variable = value_out # link dict to Variable
-                else:
-                    setattr(link.to_model, link.to_variable, value_out)  # link dict to field
+                setattr(link.to_model, link.to_variable, value_out)  # link dict to field
             else:
                 target_var = getattr(link.to_model, link.to_variable) # TODO: test ; or remove everything Variable / value-ish
                 if target_var.size < link.index_to + 1:

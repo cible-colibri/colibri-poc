@@ -1,8 +1,8 @@
 
 import numpy as np
 
+from colibri.config.constants import DENSITY_AIR, ATMOSPHERIC_AIR_PRESSURE, GRAVITATIONAL_ACCELERATION
 from colibri.models.airflow.AirflowBuilding.boundary_conditions import boundary_matrix
-from colibri.config.constants import *
 from colibri.models.airflow.AirflowBuilding import connection_functions
 from colibri.models.airflow.AirflowBuilding.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
     construct_CCi, gen_pressure_system, generate_AA_BB_pressure_system

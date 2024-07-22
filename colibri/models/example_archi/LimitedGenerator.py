@@ -27,7 +27,6 @@ class LimitedGenerator(Model):
         Qconsumed = {}
 
         for space in self.Spaces:
-            space_count_emitter = len (space.emitters)
             maxQ = sum([e.maxQ for e in space.emitters])
             Qneeds = 0
             if space.label in self.Qneeds:
