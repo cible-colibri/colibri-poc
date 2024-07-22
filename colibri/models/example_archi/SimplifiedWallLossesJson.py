@@ -9,7 +9,7 @@ class SimplifiedWallLossesJson(Model):
     def __init__(self, name: str):
         self.name = name
 
-        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)
 
     def initialize(self):
         pass

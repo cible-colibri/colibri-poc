@@ -13,7 +13,7 @@ class SimplifiedWallLosses(Model):
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('u_value', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
-                                       Field('area', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                       Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER),
                                        Field('space.Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS)
                                    ])
 

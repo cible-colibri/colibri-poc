@@ -10,7 +10,7 @@ class ThermalSpaceSimplified(Model):
     def __init__(self, name: str):
         self.name = name
 
-        self.Qprovided = self.field('Qprovided', {}, role=Roles.INPUTS)
+        self.Qprovided = self.field('Qprovided', {}, role=Roles.INPUTS, unit=Units.WATT_HOUR)
 
         self.Spaces = self.field("Spaces", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
