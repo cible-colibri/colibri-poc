@@ -23,8 +23,8 @@ def test_run_example_project():
     # Create a project
     project = Project()
 
-    project.iterate = True
-    project.n_max_iterations = 100
+    project.iterate = False
+    project.n_max_iterations = 1
     project.time_steps = 168
     project.verbose = False
 

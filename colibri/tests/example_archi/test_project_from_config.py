@@ -29,4 +29,18 @@ def test_project_from_config():
 
     project = Project("pfc")
     project.project_from_config(config)
+
+    project.iterate = False
+    project.n_max_iterations = 1
+    project.time_steps = 168
+    project.verbose = False
+
+    # son & lumière
+    project.add_plot("Weather", project.get("Weather"), "Text")
+    project.add_plot("Tint", project.get("ThermalSpaceSimplified"), "Tint")
+    project.add_plot("Qwall", project.get("SimplifiedWallLosses"), "Qwall")
+    project.add_plot("Qprovided", project.get("LimitedGenerator"), "Qprovided")
+    project.to_plot = True
+
     project.run()
+    project.plot()

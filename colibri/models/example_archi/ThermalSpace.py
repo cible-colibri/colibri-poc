@@ -1,6 +1,6 @@
 import numpy as np
 
-from colibri.config.constants import DENSITY_AIR
+from colibri.config.constants import DENSITY_AIR, CP_AIR
 from colibri.core.model import Model
 from colibri.core.variables.field import Field
 from colibri.utils.enums_utils import (Roles,Units)
@@ -55,7 +55,7 @@ class ThermalSpaceSimplified(Model):
             else:
                 previousTint = space.Tint
 
-            self.Tint[space.label] = previousTint + qEffective / (DENSITY_AIR * space.reference_area * space.height)
+            self.Tint[space.label] = previousTint + qEffective / (DENSITY_AIR * CP_AIR * space.reference_area * space.height)
 
             self.project._has_converged = self.calc_convergence(threshold=0.5)
 
