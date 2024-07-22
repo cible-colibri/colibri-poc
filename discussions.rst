@@ -19,10 +19,12 @@ Should we keep @abc.abstractmethod (on each function)?
 - pros: show options to users / give opportunities
 - cons: do not hide "complexity" / add code
 
-Variable
-========
+Variable / Field
+================
 
-Find another name for "linked_to" in variable.py (line 48)? Options:
+Variable was replaced by Field. The name is far from sexy.
+
+The "linked_to" concept seems too complicated, do we want to keep it ? If yes, find a bette rname ?
     - expands
     - indexes
 

@@ -113,20 +113,20 @@ Ce package contient les modèles standards fournis, organisés par thème.
 
 Chaque modèle est une classe qui dérive (directement ou indirectement) de la classe **Model** du package **core**. 
 
-L'API du modèle (l'interface du modèle avec l'extérieur, i.e. sa façon d'échanger des informations avec d'autres modèles) est défini par des objets **Variable**, définis en tant que variables membres de la classe. 
-Les objets de type **Variable** ont des attributs permettant (entre autres) de définir
-- le nom de la variable
-- l'unité de la variable
-- la valeur de la variable
-- le role de la variable 
+L'API du modèle (l'interface du modèle avec l'extérieur, i.e. sa façon d'échanger des informations avec d'autres modèles) est défini par des objets **Field**, définis en tant que dictionnaire attaché à la classe Model.
+Il défini 
+- le nom du champ
+- l'unité du champ
+- la valeur par défaut du champ
+- le role du champ 
   - input : variable d'entrée : la variable reçoit potentiellement des valeurs d'un autre modèle
   - output : variable de sortie : la variable est calculé par le modèle et potentiellement transmis à un autre modèle
-  - parameter : la variable est constante (ne change pas au fil du temps) mais peut être changé par l'utilisateur pour paramétrer le modèle
+  - parameter : valeur constant (ne change pas au fil du temps) mais peut être changé par l'utilisateur pour paramétrer le modèle
 
 
-Dans un projet (classe **Project**), les modèles peuvent être liés entre eux via les variables d'entrée / sortie pour définir un projet de simulation.
+Dans un projet (classe **Project**), les modèles peuvent être liés entre eux via les champs d'entrée / sortie pour définir un projet de simulation.
 
-En plus de communiquer via les liens (variables d'entrée / sortie), les modèles peuvent faire appell à des services fournis par le noyau, par exemple :
+En plus de communiquer via les liens (champs d'entrée / sortie), les modèles peuvent faire appell à des services fournis par le noyau, par exemple :
 - un data store représentant le bâtiment avec son enveloppe et ses systèmes (**BuildingData**)
 - les données météo pre-calculés par orientation (**Weather**)
 
