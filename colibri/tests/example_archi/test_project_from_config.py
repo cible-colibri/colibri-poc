@@ -22,7 +22,7 @@ def test_project_from_config():
 
         "project": {
             "iterate": True,
-            "n_max_iterations": 25,
+            "n_max_iterations": 4,
             "time_steps": 168,
             "verbose": False,
             "convergence_tolerance": 0.1

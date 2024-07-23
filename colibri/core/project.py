@@ -36,7 +36,8 @@ class Project:
         self.n_iteration = 0
         self.runtime = 0
         self.n_non_convergence = 0
-        self.n_non_convergence_times = 0
+        self.non_convergence_times = []
+        self.n_iterations = []
 
     def add(self, model: Model) -> None:
         self.models.append(model)
@@ -195,16 +196,19 @@ class Project:
                 self._run_models(self.time_step, self.n_iteration)
                 self._substitute_links_values()
                 # check for convergence limit
+
                 if self.n_iteration > self.n_max_iterations:
                     self._has_converged = True
                     self.n_non_convergence = self.n_non_convergence + 1
                     self.non_convergence_times.append(self.time_step)
-                self.n_iteration = self.n_iteration + 1
                 if not self.iterate:
                     self._has_converged = True
+                if not self._has_converged:
+                    self.n_iteration = self.n_iteration + 1
                 self._end_iteration(self.time_step)
             self._save_model_data(self.time_step)
             self._end_time_step(self.time_step)
+            self.n_iterations.append(self.n_iteration)
         print("Simulation summary")
         print("==================")
         self._end_simulation(self.time_step)

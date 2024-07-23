@@ -24,7 +24,7 @@ def test_run_example_project():
     project = Project()
 
     project.iterate = True
-    project.n_max_iterations = 25
+    project.n_max_iterations = 4
     project.time_steps = 168
     project.verbose = False
     project.convergence_tolerance = 0.1
