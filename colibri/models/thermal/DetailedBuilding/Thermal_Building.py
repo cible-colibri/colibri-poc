@@ -33,10 +33,10 @@ class Thermal_Building(Building):
         self.phi_latent_vec = self.field("phi_latent_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_latent from emitter")
 
         # outputs
-        self.flow_rates_input = self.field("flow_rates", default_value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
+        self.flow_rates_input = self.field("flow_rates_input", default_value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         # results to save
-        self.heat_flux_vec = self.field("hvac_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
+        self.heat_flux_vec = self.field("heat_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
 
     def initialize(self) -> None:
 

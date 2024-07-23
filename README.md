@@ -113,8 +113,11 @@ Ce package contient les modèles standards fournis, organisés par thème.
 
 Chaque modèle est une classe qui dérive (directement ou indirectement) de la classe **Model** du package **core**. 
 
-L'API du modèle (l'interface du modèle avec l'extérieur, i.e. sa façon d'échanger des informations avec d'autres modèles) est défini par des objets **Field** (champ), définis en tant que dictionnaire attaché à la classe Model.
+L'API du modèle (l'interface du modèle avec l'extérieur, i.e. sa façon d'échanger des informations avec d'autres modèles) est défini par des objets **Field** (champ), 
+définis en tant que dictionnaire attaché automatiquement à la classe Model.
+
 Il définit 
+
 - le nom du champ
 - l'unité du champ
 - la valeur par défaut du champ
@@ -139,6 +142,16 @@ Chaque modèle doit implémenter un ensemble de méthodes définissant son compo
 
 Ces méthodes sont définies au niveau de la classe **Model** en tant que méthodes abstraites (il n'est pas possible de dériver une classe qui ne définie pas ces méthodes).
 
+La classe **Project** fourni une méthode de résolution numérique de type substitution successive qui permet d'éxécuter la boucle 
+de temps et d'itérer au sein d'un même pas de temps si nécessaire : méthode Project.run(). 
+
+Un projet peut être créée en instantiant des objets Python ou à partir d'un fichier de configuration qui défini seulement 
+l'ensemble de modèles (classes) utilisées et leurs paramètres (Project.project_from_config()), avec création automatique de liens basés 
+sur les noms des champs (méthode Project.auto_link()). 
+
+L'infrastructure permet aussi d'implémenter toute autre méthode de résolution numériques ou de perfectionné la méthode 
+basique proposée. On imagine, par exemple, l'ajout d'un facteur de relaxation pour des problèmes de couplage 
+thermo-aéraulique, etc.  
 
 ## Tests
 
