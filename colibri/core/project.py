@@ -371,6 +371,8 @@ class Project:
 
         self.auto_link()
 
+        for k,v in config['project'].items():
+            setattr(self, k, v)
 
     def _set_project_parameters(self) -> None:
         self.time_steps   = 168
