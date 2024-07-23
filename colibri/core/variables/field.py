@@ -20,7 +20,7 @@ SelfField          = typing.TypeVar("SelfField", bound = "Field")
 
 class Field:
 
-    def __init__(self, name: str, default_value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "", linked_to: typing.List[SelfField] = None, model = None, structure = []):
+    def __init__(self, name: str, default_value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, description: str = "", linked_to: typing.List[SelfField] = None, model = None, structure = [], check_convergence: bool = True):
         self.name = name
         self.default_value = default_value
         self.role = role
@@ -29,6 +29,7 @@ class Field:
         self.linked_to = linked_to
         self.model = model
         self.structure = structure
+        self.check_convergence = check_convergence
 
     def convert(self, target_unit: Units) -> float:
         return UNIT_CONVERTER.convert(self, self.unit, target_unit)

@@ -261,18 +261,20 @@ class Project:
                 self._has_converged = False
             elif not (from_model_converged is None or from_model_converged):
                 self._has_converged = False
-            elif self.iterate and (isinstance(value_out, dict) and isinstance(value_in, dict)) and len(value_in) > 0:
-                self._has_converged = compare_dictionaries(value_in, value_out, self.convergence_tolerance)
-            elif self.iterate and not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__'))
-                                       or isinstance(value_out, dict)
-                                       or isinstance(value_in, dict)):
-                if (abs(value_out) > self.convergence_tolerance) and (
-                        abs(value_out - value_in) > self.convergence_tolerance):
-                    self._has_converged = False
-                elif value_out == 0:
-                    pass
-                elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
-                    self._has_converged = False
+            elif self.iterate and link.is_check_convergence():
+                # check values for convergence
+                if (isinstance(value_out, dict) and isinstance(value_in, dict)) and len(value_in) > 0:
+                    self._has_converged = compare_dictionaries(value_in, value_out, self.convergence_tolerance)
+                elif not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__'))
+                                           or isinstance(value_out, dict)
+                                           or isinstance(value_in, dict)):
+                    if (abs(value_out) > self.convergence_tolerance) and (
+                            abs(value_out - value_in) > self.convergence_tolerance):
+                        self._has_converged = False
+                    elif value_out == 0:
+                        pass
+                    elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
+                        self._has_converged = False
 
     def _run_models(self, time_step: int, n_iteration: int) -> None:
         for model in self.models:

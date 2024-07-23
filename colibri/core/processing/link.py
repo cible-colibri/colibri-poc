@@ -18,3 +18,7 @@ class Link:
     index_from: Optional[int] = None
     # zero-based index if target of link is a vector
     index_to: Optional[int] = None
+
+    def is_check_convergence(self):
+        return (self.from_model.get_field(self.from_variable).check_convergence
+                and self.to_model.get_field(self.to_variable).check_convergence)
