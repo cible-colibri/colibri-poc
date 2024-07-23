@@ -55,8 +55,6 @@ class ThermalSpaceSimplified(Model):
 
             self.Tint[space.label] = previousTint + qEffective / (DENSITY_AIR * CP_AIR * space.reference_area * space.height)
 
-            self.project._has_converged = self.calc_convergence(threshold=0.5)
-
     def iteration_done(self, time_step: int = 0):
         self.Tint_dict_last = self.Tint
 
@@ -72,9 +70,3 @@ class ThermalSpaceSimplified(Model):
         self.print_outputs()
 
     # temporary convergence control; will be in backbone, but does not work yet for dictionaries
-    def calc_convergence(self, threshold=1e-3):
-        if not hasattr(self, 'Tint_dict_last') or len(self.Tint) != len(self.Tint_dict_last):
-            return
-        tint = self.Tint.values()
-        tint_last = self.Tint_dict_last.values()
-        self.has_converged = np.max(np.abs(np.array(list(tint)) - np.array(list(tint_last)))) <= threshold

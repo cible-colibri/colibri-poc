@@ -18,6 +18,7 @@ from colibri.utils.encorder_utils import NonCyclycEncoder
 from colibri.utils.enums_utils import Schema
 from colibri.utils.files_utils import write_json_file
 
+
 class Project:
 
     def __init__(
@@ -33,22 +34,13 @@ class Project:
         self._has_converged = None
         self.time_step = 0
         self.n_iteration = 0
-
-    def __init__(self, name: str = None, schema: Schema = Schema.RE2020):
-        self.name   = name
-        self.schema = schema
-        self.models = []
-        self.links  = []
-        self._plots = dict()
-        self._set_project_parameters()
-        self._has_converged = None
-        self.time_step = 0
-        self.n_iteration = 0
+        self.runtime = 0
+        self.n_non_convergence = 0
+        self.n_non_convergence_times = 0
 
     def add(self, model: Model) -> None:
         self.models.append(model)
         model.project = self
-        return self
 
     def get(self, name):
         models = [model for model in self.models if model.name == name]
@@ -80,16 +72,16 @@ class Project:
         else:
             raise Exception("No data model in project, but some models need one.")
 
-    #@typing.overload
-    #def link(self, *args: tuple[Model, str, Model, str]) -> None:
+    # @typing.overload
+    # def link(self, *args: tuple[Model, str, Model, str]) -> None:
     #    ...
 
-    #@typing.overload
-    #def link(self, *args: tuple[Model, Model, Connector]) -> None:
+    # @typing.overload
+    # def link(self, *args: tuple[Model, Model, Connector]) -> None:
     #    ...
 
     def link(self, model_1, arg_2, *connection):
-        if len(connection) ==2:
+        if len(connection) == 2:
             model_2 = connection[0]
             variable_2 = connection[1]
             if not self.is_eligible_link(model_1, arg_2, model_2, variable_2):
@@ -106,7 +98,7 @@ class Project:
         if not self.is_eligible_link(model_1, var_1, model_2, var_2):
             raise ValueError(f"Cannot link {model_1}.{var_2} to {model_2}.{var_2}")
         link = Link(model_1, var_1, model_2, var_2, None, index_2)
-        self.links.append(link) # TODO: should use self._add_link
+        self.links.append(link)  # TODO: should use self._add_link
 
     def link_from_vector(self, model_1, var_1, index_1, model_2, var_2):
         if not self.is_eligible_link(model_1, var_1, model_2, var_2):
@@ -136,7 +128,8 @@ class Project:
             link = Link(from_model, from_variable, to_model, to_variable)
             self.links.append(link)
 
-    def is_eligible_link(self, from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
+    @staticmethod
+    def is_eligible_link(from_model: Model, from_variable: str, to_model: Model, to_variable: str) -> bool:
         result = hasattr(from_model, from_variable) and hasattr(to_model, to_variable)
         return result
 
@@ -155,18 +148,16 @@ class Project:
 
     def plot(self):
         if self.to_plot and len(self._plots) >= 1:
-            figure      = plt.figure(figsize=(10,len(self._plots)*2))
+            figure = plt.figure(figsize=(10,len(self._plots)*2))
 
             disposition = len(self._plots) * 100 + 11
             for title, plots in self._plots.items():
                 axis = figure.add_subplot(disposition)
                 axis.set_title(title)
                 for plot in plots:
-                    model    = plot.model
+                    model = plot.model
                     field = model.get_field(plot.variable_name)
-                    if not field: # to be removed with Variables
-                        field = model.get_variable(plot.variable_name)
-                    series   = getattr(model, field.name + "_series")
+                    series = getattr(model, field.name + "_series")
 
                     if type(series[0]) is dict:
                         variables = {}
@@ -180,7 +171,7 @@ class Project:
                     else:
                         axis.plot(series, label = model.name + "." + field.name)
                     axis.set_ylabel(f"[{field.unit}]")
-                axis.legend(loc = "upper right", numpoints = 1)
+                axis.legend(loc="upper right", numpoints = 1)
                 disposition += 1
             # Show plot
             plt.show()
@@ -205,7 +196,7 @@ class Project:
                 self._substitute_links_values()
                 # check for convergence limit
                 if self.n_iteration > self.n_max_iterations:
-                    self._has_converged    = True
+                    self._has_converged = True
                     self.n_non_convergence = self.n_non_convergence + 1
                     self.non_convergence_times.append(self.time_step)
                 self.n_iteration = self.n_iteration + 1
@@ -238,35 +229,41 @@ class Project:
         for link in self.links:
             if link.index_to is None:
                 to_variable = getattr(link.to_model, link.to_variable)
-                value_in = to_variable # link to a scalar Field or Variable
+                value_in = to_variable  # link to a scalar Field or Variable
             else:
-                value_in = getattr(link.to_model, link.to_variable)[link.index_from] # link to a vector
+                value_in = getattr(link.to_model, link.to_variable)[link.index_from]  # link to a vector
 
             if link.index_from is None:
                 from_variable = getattr(link.from_model, link.from_variable)
-                value_out = from_variable # link from a scalar Variable of Field
+                value_out = from_variable  # link from a scalar Variable of Field
             else:
-                value_out = getattr(link.from_model, link.from_variable)[link.index_from] # link from a vector
+                value_out = getattr(link.from_model, link.from_variable)[link.index_from]  # link from a vector
 
             if link.index_to is None or isinstance(value_out, dict):
                 setattr(link.to_model, link.to_variable, value_out)  # link dict to field
             else:
-                target_var = getattr(link.to_model, link.to_variable) # TODO: test ; or remove everything Variable / value-ish
+                target_var = getattr(link.to_model, link.to_variable)
                 if target_var.size < link.index_to + 1:
-                    target_var = np.resize(target_var, link.index_to + 1) # resize target vector
+                    target_var = np.resize(target_var, link.index_to + 1)  # resize target vector
                 value_in = target_var[link.index_to]
                 target_var[link.index_to] = value_out
 
             if self.verbose:
-                print(f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
+                print(
+                    f"Substituting {link.to_model}.{link.to_variable} by {link.from_model}.{link.from_variable} : {value_in} -> {value_out}")
             from_model_converged = link.from_model.converged(self.time_step, self.n_iteration)
             to_model_converged = link.to_model.converged(self.time_step, self.n_iteration)
-            if (not to_model_converged is None and not to_model_converged):
+            if not (to_model_converged is None or to_model_converged):
                 self._has_converged = False
-            elif (not from_model_converged is None and not from_model_converged):
-                    self._has_converged = False
-            elif self.iterate and not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__')) or isinstance(value_out, dict) or isinstance(value_in, dict)):
-                if (abs(value_out) > self.convergence_tolerance) and (abs(value_out - value_in) > self.convergence_tolerance):
+            elif not (from_model_converged is None or from_model_converged):
+                self._has_converged = False
+            elif self.iterate and (isinstance(value_out, dict) and isinstance(value_in, dict)) and len(value_in) > 0:
+                self._has_converged = compare_dictionaries(value_in, value_out, self.convergence_tolerance)
+            elif self.iterate and not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__'))
+                                       or isinstance(value_out, dict)
+                                       or isinstance(value_in, dict)):
+                if (abs(value_out) > self.convergence_tolerance) and (
+                        abs(value_out - value_in) > self.convergence_tolerance):
                     self._has_converged = False
                 elif value_out == 0:
                     pass
@@ -315,7 +312,7 @@ class Project:
         --------
         >>> None
         """
-        return json.dumps(self, cls = NonCyclycEncoder, check_circular = False, indent = 2)
+        return json.dumps(self, cls=NonCyclycEncoder, check_circular=False, indent=2)
 
     # Save project as a json file
     def save_as_json(self, file_path: typing.Union[str, pathlib.Path]) -> None:
@@ -344,11 +341,11 @@ class Project:
         for model_def in config['models']:
             model_cls = model_def[0]
             class_name = model_cls.split('.')[-1]
-            module_name = model_cls.rsplit( ".", 1 )[ 0 ]
+            module_name = model_cls.rsplit(".", 1)[0]
 
             module = importlib.import_module(module_name)
-            if not module is None and hasattr(module, class_name):
-                # insatnciate
+            if module and hasattr(module, class_name):
+                # instanciate
                 instance_name = class_name
                 cls = getattr(module, class_name)
                 if class_name == "BuildingData": # :-(
@@ -452,3 +449,10 @@ class Project:
                             self.link(model2, output.name, model, input.name)
                             if self.verbose:
                                 print(model2.name + "." + output.name + " -> " + model.name + "." + input.name)
+
+def compare_dictionaries(d1, d2, threshold=0.5):
+    for key in d1:
+        if key in d2:
+            if abs(d1[key] - d2[key]) > threshold:
+                return False
+    return True

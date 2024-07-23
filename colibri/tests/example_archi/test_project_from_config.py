@@ -21,10 +21,11 @@ def test_project_from_config():
                    ("colibri.models.example_archi.ACVExploitationOnlyModel.ACVExploitationOnlyModel", {}), ],
 
         "project": {
-            "iterate": False,
-            "n_max_iterations": 1,
+            "iterate": True,
+            "n_max_iterations": 25,
             "time_steps": 168,
-            "verbose": False
+            "verbose": False,
+            "convergence_tolerance": 0.1
 
         },
 

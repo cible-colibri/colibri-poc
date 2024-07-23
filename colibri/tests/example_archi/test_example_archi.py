@@ -23,10 +23,11 @@ def test_run_example_project():
     # Create a project
     project = Project()
 
-    project.iterate = False
-    project.n_max_iterations = 1
+    project.iterate = True
+    project.n_max_iterations = 25
     project.time_steps = 168
     project.verbose = False
+    project.convergence_tolerance = 0.1
 
     # weather
     weather = Weather("IM_4-Weather")
