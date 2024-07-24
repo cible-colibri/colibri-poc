@@ -1,14 +1,13 @@
-from colibri.core.model import Model
 from colibri.core.variables.field import Field
+from colibri.models.example_archi.wall.Wall import Wall
 from colibri.utils.enums_utils import (Roles,Units)
 
 # M1a
-class LayerWallLosses(Model):
+class LayerWallLosses(Wall):
 
     def __init__(self, name: str):
         self.name = name
 
-        self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('thermal_conductivity', [1], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
@@ -18,7 +17,7 @@ class LayerWallLosses(Model):
                                        Field('label', "boundary_0", Roles.PARAMETERS, Units.UNITLESS),
                                    ])
 
-        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
+
 
     def initialize(self):
         pass
@@ -28,7 +27,11 @@ class LayerWallLosses(Model):
         for boundary in self.Boundaries:
             space = boundary.space
             if space:
-                Tint = space.Tint # get value from store ('backbone')
+                if boundary.space.label in self.Tint:
+                    Tint = self.Tint[space.label]
+                else:
+                    Tint = space.Tint
+
                 e = boundary.thickness
                 Lambda = boundary.thermal_conductivity
 

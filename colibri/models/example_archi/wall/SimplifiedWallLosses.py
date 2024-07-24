@@ -1,23 +1,19 @@
-from colibri.core.model import Model
 from colibri.core.variables.field import Field
+from colibri.models.example_archi.wall.Wall import Wall
 from colibri.utils.enums_utils import (Roles,Units)
 
 # M1a
-class SimplifiedWallLosses(Model):
+class SimplifiedWallLosses(Wall):
 
     def __init__(self, name: str):
         self.name = name
 
-        self.Text = self.field("Text", 10.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
-        self.Tint = self.field("Tint", {}, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('u_value', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
-                                       Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER),
-                                       Field('space.Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS)
+                                       Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER)
                                    ])
 
-        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
     def initialize(self):
         pass

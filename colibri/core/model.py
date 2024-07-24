@@ -48,8 +48,8 @@ class MetaModel(abc.ABCMeta):
 class Model(metaclass=MetaModel):
 
     def __init__(self, name: str):
-        self.name       = name
-        self.project    = None
+        self.name = name
+        self.project = None
 
         self._field_metadata = {}
 

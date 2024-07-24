@@ -15,7 +15,7 @@ def test_project_from_config():
     config = {
         "models": [("colibri.core.model.Model", "colibri.models.utility.weather.Weather", {"weather_file": weather_file, "time_zone": time_zone}),
                    ("colibri.core.model.Model", "colibri.core.processing.building.building_data.BuildingData", {"building_file": building_file}),
-                   ("colibri.core.model.Model", "colibri.models.example_archi.SimplifiedWallLosses.SimplifiedWallLosses", {}),
+                   ("colibri.models.example_archi.wall.Wall.Wall", "colibri.models.example_archi.wall.SimplifiedWallLosses.SimplifiedWallLosses", {}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.LimitedGenerator.LimitedGenerator", {"efficiency": 0.9}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.ThermalSpace.ThermalSpaceSimplified", {}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.ACVExploitationOnlyModel.ACVExploitationOnlyModel", {}), ],
