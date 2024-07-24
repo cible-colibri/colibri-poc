@@ -1,5 +1,5 @@
 from colibri.core.variables.field import Field
-from colibri.models.example_archi.wall.Wall import Wall
+from colibri.models.example_archi.wall.wall import Wall
 from colibri.utils.enums_utils import (Roles,Units)
 
 # M1a

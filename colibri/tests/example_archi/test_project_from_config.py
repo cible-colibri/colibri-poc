@@ -15,10 +15,10 @@ def test_project_from_config():
     config = {
         "models": [("colibri.core.model.Model", "colibri.models.utility.weather.Weather", {"weather_file": weather_file, "time_zone": time_zone}),
                    ("colibri.core.model.Model", "colibri.core.processing.building.building_data.BuildingData", {"building_file": building_file}),
-                   ("colibri.models.example_archi.wall.Wall.Wall", "colibri.models.example_archi.wall.SimplifiedWallLosses.SimplifiedWallLosses", {}),
-                   ("colibri.core.model.Model", "colibri.models.example_archi.LimitedGenerator.LimitedGenerator", {"efficiency": 0.9}),
-                   ("colibri.core.model.Model", "colibri.models.example_archi.ThermalSpace.ThermalSpaceSimplified", {}),
-                   ("colibri.core.model.Model", "colibri.models.example_archi.ACVExploitationOnlyModel.ACVExploitationOnlyModel", {}), ],
+                   ("colibri.models.example_archi.wall.wall.Wall", "colibri.models.example_archi.wall.simplified_wall_losses.SimplifiedWallLosses", {}),
+                   ("colibri.core.model.Model", "colibri.models.example_archi.limited_generator.LimitedGenerator", {"efficiency": 0.9}),
+                   ("colibri.core.model.Model", "colibri.models.example_archi.thermal_space.ThermalSpaceSimplified", {}),
+                   ("colibri.core.model.Model", "colibri.models.example_archi.acv_exploitation_only_model.ACVExploitationOnlyModel", {}), ],
 
         "project": {
             "iterate": True,

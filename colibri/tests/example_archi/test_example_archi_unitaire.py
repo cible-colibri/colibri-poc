@@ -4,8 +4,8 @@ import os
 from pkg_resources import resource_filename
 
 from colibri.core.processing.building.building_data import BuildingData
-from colibri.models.example_archi.wall.LayerWallLosses import LayerWallLosses
-from colibri.models.example_archi.wall.SimplifiedWallLosses import SimplifiedWallLosses
+from colibri.models.example_archi.wall.layer_wall_losses import LayerWallLosses
+from colibri.models.example_archi.wall.simplified_wall_losses import SimplifiedWallLosses
 
 def test_generate_json():
     wall_losses = LayerWallLosses("Pertes avec couches")

@@ -4,10 +4,10 @@ from pkg_resources import resource_filename
 
 from colibri.core.processing.building.building_data import BuildingData
 from colibri.core.project import Project
-from colibri.models.example_archi.ACVExploitationOnlyModel import ACVExploitationOnlyModel
-from colibri.models.example_archi.LimitedGenerator import LimitedGenerator
-from colibri.models.example_archi.wall.SimplifiedWallLosses import SimplifiedWallLosses
-from colibri.models.example_archi.ThermalSpace import ThermalSpaceSimplified
+from colibri.models.example_archi.acv_exploitation_only_model import ACVExploitationOnlyModel
+from colibri.models.example_archi.limited_generator import LimitedGenerator
+from colibri.models.example_archi.wall.simplified_wall_losses import SimplifiedWallLosses
+from colibri.models.example_archi.thermal_space import ThermalSpaceSimplified
 from colibri.models.utility.weather import Weather
 
 def test_run_example_project():
