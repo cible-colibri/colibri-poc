@@ -345,30 +345,39 @@ class Project:
 
     def project_from_config(self, config):
         for model_def in config['models']:
-            model_cls = model_def[0]
+            parent_model_cls = model_def[0]
+            model_cls = model_def[1]
+
             class_name = model_cls.split('.')[-1]
             module_name = model_cls.rsplit(".", 1)[0]
 
+            parent_class_name = parent_model_cls.split('.')[-1]
+            parent_module_name = parent_model_cls.rsplit(".", 1)[0]
+
             module = importlib.import_module(module_name)
+            model_cls_obj = getattr(module, class_name)
+            parent_module = importlib.import_module(parent_module_name)
+            model_parent_cls_obj = getattr(parent_module, parent_class_name)
+
+            if not issubclass(model_cls_obj, model_parent_cls_obj):
+                raise ValueError("Configuration error: " + model_cls  + " is not a subclass of " + parent_model_cls)
+
             if module and hasattr(module, class_name):
                 # instanciate
                 instance_name = class_name
                 cls = getattr(module, class_name)
                 if class_name == "BuildingData": # :-(
-                    instance = BuildingData(model_def[1]['building_file']) # Mr. Bricolage ... :-)
+                    instance = BuildingData(model_def[2]['building_file']) # Mr. Bricolage ... :-)
                 else:
                     instance = cls(instance_name)
                 self.models.append(instance)
 
                 # apply parameters from config file
-                for parameter, value in model_def[1].items():
+                for parameter, value in model_def[2].items():
                     setattr(instance, parameter, value)
 
                 instance.project = self
 
-                # set parameters
-                for attribute, value in model_def[1].items():
-                    setattr(instance, attribute, value)
             else:
                 raise ValueError(f"Model class {class_name} is not defined in package {module}")
 
