@@ -147,33 +147,70 @@ class Model(metaclass=MetaModel):
             setattr(self, field.name, field.default_value)
 
     def create_structure(self, variable_name, variable_values):
+        # this is mindboggingly complicated and maybe useless, if we require the user to replace
+        # Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS),
+        # by
+        # Field('space', 19, Roles.INPUTS, Units.DEGREE_CELSIUS, structure=[
+        #     Field('Tint', 19.0, Roles.PARAMETERS, Units.DEGREE_CELSIUS)
+        # ]),
+        #
+        # and make it work ...
+
         object_list = []
         # create instance list
+        cvf = {}
         for variable_value_dict in variable_values:
-            cvf = {}
+            subobject_fields = {}
             for k,v in variable_value_dict.items():
                 field = k
                 value = v
                 if '.' in field:
-                    field = field.split('.')[0]
-                    value = self.create_subobjects(k, v)
-                cvf[field] = value
-            object_class = namedtuple(variable_name, cvf)
-            object_list.append(object_class(**cvf))
+                    field_name = field.split('.')[0]
+                    subfield = '.'.join(field.split('.')[1:])
+
+                    if '.' in subfield:
+                        field_name1 = subfield.split('.')[0]
+                        subfield1 = '.'.join(subfield.split('.')[1:])
+                        existing_subfield = None
+                        for f in subobject_fields[field_name]:
+                            for k3, v3 in f.items():
+                                if k3 == field_name1:
+                                    existing_subfield = f
+                        if field_name in subobject_fields:
+                            if existing_subfield:
+                                existing_subfield[field_name1][subfield1] = v
+                            else:
+                                subobject_fields[field_name].append({field_name1: {subfield1: v}})
+                        else:
+                            subobject_fields[field_name] = [{field_name1: {subfield1: v}}]
+                        pass
+                    else:
+                        if field_name in subobject_fields:
+                            subobject_fields[field_name].append({subfield : v})
+                        else:
+                            subobject_fields[field_name] = [{subfield : v}]
+                else:
+                    cvf[field] = value
+
+            subobjects = {}
+            for subobject_field in subobject_fields:
+                if subobject_field[-1] == 's':
+                    subobjects[subobject_field] = self.create_structure(subobject_field, subobject_fields[subobject_field])
+                else:
+                    subobjects[subobject_field] = self.create_structure(subobject_field,
+                                                                        subobject_fields[subobject_field])[0]
+
+            for field, value in subobject_fields.items():
+                if not type(value) is dict:
+                    cvf[field] = value
+
+            for so, sov in subobjects.items():
+                cvf[so] = sov
+
+        object_class = namedtuple(variable_name, cvf)
+        object_list.append(object_class(**cvf))
 
         return object_list
-
-    def create_subobjects(self, variable_name, value):
-        field = variable_name.split('.')[0]
-        subfields = '.'.join(variable_name.split('.')[1:])
-        if '.' in subfields:
-            value = self.create_subobjects(subfields, value)
-        else:
-            cvf = {subfields: value}
-            object_class = namedtuple(field, cvf)
-            object_instance = object_class(**cvf)
-            return object_instance
-
 
 
     @abc.abstractmethod

@@ -1,5 +1,6 @@
 {
     "Text": 10.0,
+    "Tint": {},
     "Boundaries": [
         {
             "thermal_conductivity": [
@@ -9,7 +10,8 @@
                 1
             ],
             "area": 5,
-            "space.Tint": 19,
+            "space": 19,
+            "space.label": "space_0",
             "label": "boundary_0"
         }
     ]

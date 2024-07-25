@@ -14,6 +14,9 @@ class LayerWallLosses(Wall):
                                        Field('thickness', [1], Roles.PARAMETERS, Units.METER),
                                        Field('area', 5, Roles.PARAMETERS, Units.SQUARE_METER),
                                        Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS),
+                                       Field('space.label', "space_0", Roles.INPUTS, Units.UNITLESS),
+                                       Field('space.schnurz.Tx', 42, Roles.INPUTS, Units.UNITLESS),
+                                       Field('space.schnurz.Ty', 43, Roles.INPUTS, Units.UNITLESS),
                                        Field('label', "boundary_0", Roles.PARAMETERS, Units.UNITLESS),
                                    ])
 
