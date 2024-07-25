@@ -100,17 +100,17 @@ class Model(metaclass=MetaModel):
 
     def make_template(self, roles: [Roles]):
         template = {}
-        structure_dict = {}
         for field in self.get_fields():
             if field.structure:
-                for structure_field in field.structure:
-                    if not roles or structure_field.role in roles:
-                        structure_dict[structure_field.name] = structure_field.default_value
+                structure_dict = self.make_template_for_structure(field.structure, roles)
                 if len(structure_dict) > 0:
                     if field.name in template:
                         template[field.name].append(structure_dict)
                     else:
-                        template[field.name] = [structure_dict]
+                        if field.name[-1] == 's':
+                            template[field.name] = [structure_dict]
+                        else:
+                            template[field.name] = structure_dict
             else:
                 if not roles or field.role in roles:
                     if field.name in template:
@@ -119,6 +119,18 @@ class Model(metaclass=MetaModel):
                         template[field.name] = field.default_value
 
         return template
+
+    def make_template_for_structure(self, structure, roles: [Roles]):
+        structure_dict = {}
+        for structure_field in structure:
+            if not roles or structure_field.role in roles:
+                if len(structure_field.structure) >0:
+                    structure_template = self.make_template_for_structure(structure_field.structure, roles)
+                    structure_dict[structure_field.name] = structure_template
+                else:
+                    structure_dict[structure_field.name] = structure_field.default_value
+
+        return structure_dict
 
     def input_template(self):
         return self.make_template([Roles.INPUTS])
@@ -147,15 +159,6 @@ class Model(metaclass=MetaModel):
             setattr(self, field.name, field.default_value)
 
     def create_structure(self, variable_name, variable_values):
-        # this is mindboggingly complicated and maybe useless, if we require the user to replace
-        # Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS),
-        # by
-        # Field('space', 19, Roles.INPUTS, Units.DEGREE_CELSIUS, structure=[
-        #     Field('Tint', 19.0, Roles.PARAMETERS, Units.DEGREE_CELSIUS)
-        # ]),
-        #
-        # and make it work ...
-
         object_list = []
         # create instance list
         cvf = {}
@@ -164,31 +167,10 @@ class Model(metaclass=MetaModel):
             for k,v in variable_value_dict.items():
                 field = k
                 value = v
-                if '.' in field:
-                    field_name = field.split('.')[0]
-                    subfield = '.'.join(field.split('.')[1:])
-
-                    if '.' in subfield:
-                        field_name1 = subfield.split('.')[0]
-                        subfield1 = '.'.join(subfield.split('.')[1:])
-                        existing_subfield = None
-                        for f in subobject_fields[field_name]:
-                            for k3, v3 in f.items():
-                                if k3 == field_name1:
-                                    existing_subfield = f
-                        if field_name in subobject_fields:
-                            if existing_subfield:
-                                existing_subfield[field_name1][subfield1] = v
-                            else:
-                                subobject_fields[field_name].append({field_name1: {subfield1: v}})
-                        else:
-                            subobject_fields[field_name] = [{field_name1: {subfield1: v}}]
-                        pass
-                    else:
-                        if field_name in subobject_fields:
-                            subobject_fields[field_name].append({subfield : v})
-                        else:
-                            subobject_fields[field_name] = [{subfield : v}]
+                if type(value) is dict:
+                    object_class = namedtuple(k, value)
+                    cvf[k] = object_class(**value)
+                    pass
                 else:
                     cvf[field] = value
 

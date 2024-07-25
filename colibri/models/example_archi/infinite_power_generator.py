@@ -9,8 +9,12 @@ class InfinitePowerGenerator(Model):
 
         self.Spaces = self.field('Boundaries', [], role=Roles.INPUTS, structure = [
             Field("Qneeds", 0, role=Roles.INPUTS, unit = Units.WATT_HOUR),
-            Field("emitter.efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
-            Field("emitter.name", "1", role=Roles.PARAMETERS, unit=Units.UNITLESS)
+
+            Field("emitter", default_value ={}, role=Roles.PARAMETERS, unit=Units.UNITLESS, structure = [
+                Field("name", "1", role=Roles.PARAMETERS, unit=Units.UNITLESS),
+                Field("efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
+            ]),
+
         ])
 
         self.Qprovided = self.field("Qprovided", {}, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)

@@ -10,8 +10,10 @@
                 1
             ],
             "area": 5,
-            "space": 19,
-            "space.label": "space_0",
+            "space": {
+                "Tint": 19.0,
+                "label": "space_0"
+            },
             "label": "boundary_0"
         }
     ]

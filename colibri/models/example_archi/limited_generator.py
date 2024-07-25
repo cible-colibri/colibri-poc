@@ -10,9 +10,12 @@ class LimitedGenerator(Model):
         self.Qneeds = self.field("Qneeds", {}, role=Roles.INPUTS, unit=Units.WATT_HOUR)
 
         self.Spaces = self.field('Spaces', [], role=Roles.INPUTS, structure = [
-            Field("emitter.efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
-            Field("emitter.maxQ", 0.9, role=Roles.PARAMETERS, unit=Units.WATT_HOUR),
-            Field("emitter.name", "1", role=Roles.PARAMETERS, unit=Units.UNITLESS)
+            Field("emitter", default_value={}, role=Roles.PARAMETERS, unit=Units.UNITLESS, structure=[
+                Field("efficiency", 0.9, role=Roles.PARAMETERS, unit=Units.UNITLESS),
+                Field("maxQ", 0.9, role=Roles.PARAMETERS, unit=Units.WATT_HOUR),
+                Field("name", "1", role=Roles.PARAMETERS, unit=Units.UNITLESS)
+            ]),
+
         ])
 
         self.Qgenerator = self.field("Qgenerator", {}, role=Roles.OUTPUTS, unit=Units.WATT_HOUR)

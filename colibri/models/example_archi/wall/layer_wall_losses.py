@@ -13,13 +13,12 @@ class LayerWallLosses(Wall):
                                        Field('thermal_conductivity', [1], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
                                        Field('thickness', [1], Roles.PARAMETERS, Units.METER),
                                        Field('area', 5, Roles.PARAMETERS, Units.SQUARE_METER),
-                                       Field('space.Tint', 19, Roles.INPUTS, Units.DEGREE_CELSIUS),
-                                       Field('space.label', "space_0", Roles.INPUTS, Units.UNITLESS),
-                                       Field('space.schnurz.Tx', 42, Roles.INPUTS, Units.UNITLESS),
-                                       Field('space.schnurz.Ty', 43, Roles.INPUTS, Units.UNITLESS),
+                                       Field('space', 19, Roles.INPUTS, Units.DEGREE_CELSIUS, structure = [
+                                           Field('Tint', 19.0, Roles.PARAMETERS, Units.DEGREE_CELSIUS),
+                                           Field('label', "space_0", Roles.PARAMETERS, Units.DEGREE_CELSIUS),
+                                       ]),
                                        Field('label', "boundary_0", Roles.PARAMETERS, Units.UNITLESS),
                                    ])
-
 
 
     def initialize(self):
