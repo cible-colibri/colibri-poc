@@ -21,4 +21,4 @@ class Link:
 
     def is_check_convergence(self):
         return (self.from_model.get_field(self.from_variable).check_convergence
-                and self.to_model.get_field(self.to_variable).check_convergence)
+                or self.to_model.get_field(self.to_variable).check_convergence)

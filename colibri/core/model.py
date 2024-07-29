@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# ========================================
-# External imports
-# ========================================
-
 import abc
 import copy
 from collections import namedtuple, defaultdict
@@ -52,6 +46,8 @@ class Model(metaclass=MetaModel):
         self.project = None
 
         self._field_metadata = {}
+
+        self.check_convergence = {}
 
 
     def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to = None, check_convergence = True):
@@ -218,6 +214,38 @@ class Model(metaclass=MetaModel):
     def converged(self, time_step: int = 0, n_iteration: int = 0) -> bool:
         return True
 
+    def get_convergence_tolerance(self, variable_name) -> bool:
+        field = self.get_field(variable_name)
+        if hasattr(field, 'convergence_tolerance'):
+            return getattr(field, 'convergence_tolerance')
+        return None
+
+    def check_variable_convergence(self, variable_name: str, model_from, variable_to: str, value_in, value_out) -> bool:
+
+        convergence_tolerance = self.project.convergence_tolerance
+        field_in = self.get_field(variable_name)
+
+        if not field_in.check_convergence:
+            return True
+
+        if not field_in.convergence_tolerance is None:
+            convergence_tolerance = field_in.convergence_tolerance
+
+        if (isinstance(value_out, dict) and isinstance(value_in, dict)) and len(value_in) > 0:
+            return compare_dictionaries(value_in, value_out, convergence_tolerance)
+        elif not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__'))
+                  or isinstance(value_out, dict)
+                  or isinstance(value_in, dict)):
+
+            if (abs(value_out) > convergence_tolerance) and (
+                abs(value_out - value_in) > convergence_tolerance):
+                return False
+            elif value_out == 0:
+                return True
+            elif abs(value_in - value_out) / value_out > convergence_tolerance:
+                return False
+        return True
+
     def _expand_variables(self) -> None:
         variables = self.inputs + self.parameters
         for variable in variables:
@@ -300,6 +328,9 @@ class Model(metaclass=MetaModel):
         object_representation = self.__str__()
         return object_representation
 
-# ========================================
-# Functions
-# ========================================
+def compare_dictionaries(d1, d2, threshold=0.5):
+    for key in d1:
+        if key in d2:
+            if abs(d1[key] - d2[key]) > threshold:
+                return False
+    return True

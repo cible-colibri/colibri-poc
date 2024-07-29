@@ -30,6 +30,9 @@ class Field:
         self.model = model
         self.structure = structure
         self.check_convergence = check_convergence
+        self.convergence_tolerance = 0.1
+
+
 
     def convert(self, target_unit: Units) -> float:
         return UNIT_CONVERTER.convert(self, self.unit, target_unit)

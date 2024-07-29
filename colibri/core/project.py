@@ -248,6 +248,7 @@ class Project:
 
     def _substitute_links_values(self):
         for link in self.links:
+
             if link.index_to is None:
                 to_variable = getattr(link.to_model, link.to_variable)
                 value_in = to_variable  # link to a scalar Field or Variable
@@ -279,19 +280,7 @@ class Project:
             elif not (from_model_converged is None or from_model_converged):
                 self._has_converged = False
             elif self.iterate and link.is_check_convergence():
-                # check values for convergence
-                if (isinstance(value_out, dict) and isinstance(value_in, dict)) and len(value_in) > 0:
-                    self._has_converged = compare_dictionaries(value_in, value_out, self.convergence_tolerance)
-                elif not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__'))
-                                           or isinstance(value_out, dict)
-                                           or isinstance(value_in, dict)):
-                    if (abs(value_out) > self.convergence_tolerance) and (
-                            abs(value_out - value_in) > self.convergence_tolerance):
-                        self._has_converged = False
-                    elif value_out == 0:
-                        pass
-                    elif abs(value_in - value_out) / value_out > self.convergence_tolerance:
-                        self._has_converged = False
+                self._has_converged = link.to_model.check_variable_convergence(link.to_variable, link.to_model, link.from_variable, value_in, value_out)
 
     def _run_models(self, time_step: int, n_iteration: int) -> None:
         for model in self.models:
@@ -392,6 +381,17 @@ class Project:
                 # apply parameters from config file
                 for parameter, value in model_def[2].items():
                     setattr(instance, parameter, value)
+                    if parameter == 'check_convergence':
+
+                        for conv_check in getattr(instance, 'check_convergence', {}):
+                            variable_name = conv_check['name']
+
+                        for k,v in conv_check.items():
+                            variable_field = instance.get_field(variable_name)
+                            setattr(variable_field, k, v)
+
+                        if variable_field.check:
+                            instance.check_convergence = variable_field.check
 
                 instance.project = self
 
@@ -513,7 +513,6 @@ class Project:
             return model[0]
         else:
             raise ValueError(f"Model class {class_path} used more than once")
-
 
 def compare_dictionaries(d1, d2, threshold=0.5):
     for key in d1:
