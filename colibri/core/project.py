@@ -29,7 +29,6 @@ class Project:
         self.models: List[Model] = list()
         self.links: List[Link] = list()
         self._plots: Dict[str, List[Plot]] = dict()
-        self._has_converged = None
         self._set_project_parameters()
         self._has_converged = None
         self.time_step = 0
@@ -38,6 +37,8 @@ class Project:
         self.n_non_convergence = 0
         self.non_convergence_times = []
         self.n_iterations = []
+        self.auto_links = True
+        self.custom_links = []
 
     def add(self, model: Model) -> None:
         self.models.append(model)
@@ -94,6 +95,22 @@ class Project:
                 if not self.is_eligible_link(model_1, c[0], arg_2, c[1]):
                     raise ValueError(f"Cannot link {model_1}.{c[0]} to {arg_2}.{c[1]}")
                 self._add_link(model_1, c[0], arg_2, c[1])
+
+    def unlink(self, model_1, var_1, model_2, var_2):
+            link = self.find_link(model_1, var_1, model_2, var_2)
+            if not link:
+                raise ValueError(f"Cannot unlink {model_1}.{var_1} to {model_2}.{var_2} - not linked")
+
+            if link:
+                self.links.remove(link)
+                if self.verbose:
+                    print("unlinking " + str(link))
+
+    def find_link(self, from_model, from_variable, to_model, to_variable):
+        for link in self.links:
+            if link.from_model == from_model and link.to_model == to_model and link.from_variable == from_variable and link.to_variable == to_variable:
+                return link
+        return None
 
     def link_to_vector(self, model_1, var_1, model_2, var_2, index_2):
         if not self.is_eligible_link(model_1, var_1, model_2, var_2):
@@ -381,10 +398,14 @@ class Project:
             else:
                 raise ValueError(f"Model class {class_name} is not defined in package {module}")
 
-        self.auto_link()
-
         for k,v in config['project'].items():
             setattr(self, k, v)
+
+        if self.auto_links:
+            self.auto_link()
+
+        if 'custom_links' in config:
+            self.custom_link(config['custom_links'])
 
     def _set_project_parameters(self) -> None:
         self.time_steps   = 168
@@ -454,7 +475,6 @@ class Project:
             building.create_systems()
 
     def auto_link(self):
-
         for model in self.models:
             for input in model.get_input_fields():
                 for model2 in self.models:
@@ -464,6 +484,36 @@ class Project:
                             self.link(model2, output.name, model, input.name)
                             if self.verbose:
                                 print(model2.name + "." + output.name + " -> " + model.name + "." + input.name)
+
+    def custom_link(self, custom_links):
+        for link_def in custom_links:
+            from_model = self.get_model_by_name(link_def[0])
+            from_variable = link_def[1]
+            to_model = self.get_model_by_name((link_def[2]))
+            to_variable = link_def[3]
+
+            if len(from_model) == 1 and len(to_model) == 1:
+                existing_link= self.find_link(from_model, from_variable, to_model, to_variable)
+                if existing_link:
+                    self.unlink(from_model, from_variable, to_model, to_variable)
+
+                self.link(from_model[0], link_def[1], to_model[0], link_def[3])
+            else:
+                raise ValueError(f"Cannot create custom link {link_def}")
+
+
+    def get_class_from_string(self, class_path):
+        module_path, class_name = class_path.rsplit('.', 1)
+        module = importlib.import_module(module_path)
+        cls = getattr(module, class_name)
+
+        model =  [model for model in self.models if isinstance(model, cls)]
+
+        if len(model) == 1:
+            return model[0]
+        else:
+            raise ValueError(f"Model class {class_path} used more than once")
+
 
 def compare_dictionaries(d1, d2, threshold=0.5):
     for key in d1:
