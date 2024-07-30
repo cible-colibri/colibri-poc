@@ -126,8 +126,16 @@ Il définit
   - output : variable de sortie : la variable est calculé par le modèle et potentiellement transmis à un autre modèle
   - parameter : valeur constante (ne change pas au fil du temps) mais peut être changé par l'utilisateur pour paramétrer le modèle
 
+Il est possible d'ajuster le mécanisme de convergence pour chaque variable avec les champs suivants :
+- convergence_tolerance permet de définir le pourcentage à partir duquel on considère la différence entre 2 itérations égales ; si cet attribut n'est pas défini, la valeur définie pour le projet est retenu 
+- n_max_iterations permet de définir le nombre maximal d'itérations pour la variable ; si cet attribut n'est pas défini, la valeur définie pour le projet est retenu. Si ce critère termine l'itération, le nombre maximale de pas de temps du projet +1 est rapporté pour le pas de temps concerné. 
 
-Dans un projet (classe **Project**), les modèles peuvent être liés entre eux via les champs d'entrée / sortie pour définir un projet de simulation.
+
+La fonction check_convergence() peut être redéfini par le modèle pour implémenter un critère de convergence propre au modèle.
+
+
+Dans un projet (classe **Project**), les modèles peuvent être liés entre eux via les champs d'entrée / sortie pour définir un projet de simulation. 
+Des critères de convergance globales sont définis au niveau du projet, mais peuvent être redéfini par chaque modèle, soit globalement (redéfinition de la fonction check_convergence()), soit par variable (via des attributs des fields). 
 
 En plus de communiquer via les liens (champs d'entrée / sortie), les modèles peuvent faire appell à des services fournis par le noyau, par exemple :
 - un data store représentant le bâtiment avec son enveloppe et ses systèmes (**BuildingData**)

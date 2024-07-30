@@ -39,6 +39,7 @@ class MetaModel(abc.ABCMeta):
 
         return instance
 
+
 class Model(metaclass=MetaModel):
 
     def __init__(self, name: str):
@@ -49,11 +50,11 @@ class Model(metaclass=MetaModel):
 
         self.check_convergence = {}
 
-
-    def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to = None, check_convergence = True):
+    def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to=None,
+              check_convergence=True):
         # Store the metadata in the global dictionary
         self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure,
-                                           linked_to = linked_to, check_convergence=check_convergence)
+                                           linked_to=linked_to, check_convergence=check_convergence)
 
         # Return the actual value to be assigned to the variable
         return default_value
@@ -71,7 +72,7 @@ class Model(metaclass=MetaModel):
         if role:
             return [field for name, field in self._field_metadata.items() if field.role == role]
         else:
-            return  [field for name, field in self._field_metadata.items()]
+            return [field for name, field in self._field_metadata.items()]
 
     def get_input_fields(self):
         return self.get_fields(Roles.INPUTS)
@@ -120,7 +121,7 @@ class Model(metaclass=MetaModel):
         structure_dict = {}
         for structure_field in structure:
             if not roles or structure_field.role in roles:
-                if len(structure_field.structure) >0:
+                if len(structure_field.structure) > 0:
                     structure_template = self.make_template_for_structure(structure_field.structure, roles)
                     structure_dict[structure_field.name] = structure_template
                 else:
@@ -160,7 +161,7 @@ class Model(metaclass=MetaModel):
         cvf = {}
         for variable_value_dict in variable_values:
             subobject_fields = {}
-            for k,v in variable_value_dict.items():
+            for k, v in variable_value_dict.items():
                 field = k
                 value = v
                 if type(value) is dict:
@@ -173,7 +174,8 @@ class Model(metaclass=MetaModel):
             subobjects = {}
             for subobject_field in subobject_fields:
                 if subobject_field[-1] == 's':
-                    subobjects[subobject_field] = self.create_structure(subobject_field, subobject_fields[subobject_field])
+                    subobjects[subobject_field] = self.create_structure(subobject_field,
+                                                                        subobject_fields[subobject_field])
                 else:
                     subobjects[subobject_field] = self.create_structure(subobject_field,
                                                                         subobject_fields[subobject_field])[0]
@@ -189,7 +191,6 @@ class Model(metaclass=MetaModel):
         object_list.append(object_class(**cvf))
 
         return object_list
-
 
     @abc.abstractmethod
     def initialize(self) -> None:
@@ -225,7 +226,12 @@ class Model(metaclass=MetaModel):
         convergence_tolerance = self.project.convergence_tolerance
         field_in = self.get_field(variable_name)
 
+        n_iteration = self.project.n_iteration
+
         if not field_in.check_convergence:
+            return True
+        elif n_iteration > field_in.n_max_iterations:
+            self.project.n_iteration = self.project.n_max_iterations + 1
             return True
 
         if not field_in.convergence_tolerance is None:
@@ -236,9 +242,7 @@ class Model(metaclass=MetaModel):
         elif not ((hasattr(value_out, '__len__') or hasattr(value_in, '__len__'))
                   or isinstance(value_out, dict)
                   or isinstance(value_in, dict)):
-
-            if (abs(value_out) > convergence_tolerance) and (
-                abs(value_out - value_in) > convergence_tolerance):
+            if (abs(value_out) > convergence_tolerance) and (abs(value_out - value_in) > convergence_tolerance):
                 return False
             elif value_out == 0:
                 return True
@@ -251,22 +255,22 @@ class Model(metaclass=MetaModel):
         for variable in variables:
             if variable.linked_to:
                 for expandable_variable in variable.linked_to:
-                    list_name                = expandable_variable.role
+                    list_name = expandable_variable.role
                     expandable_variable_name = expandable_variable.name
                     for index in range(0, int(variable)):
-                        new_variable      = copy.deepcopy(expandable_variable)
+                        new_variable = copy.deepcopy(expandable_variable)
                         new_variable.name = f"{expandable_variable_name}_{index + 1}"
                         list_to_append_to = getattr(self, list_name)
                         if any([variable for variable in list_to_append_to if variable.name == new_variable.name]):
-                            variable_index = [index for index, variable in enumerate(list_to_append_to) if variable.name == new_variable.name][0]
+                            variable_index = [index for index, variable in enumerate(list_to_append_to) if
+                                              variable.name == new_variable.name][0]
                             list_to_append_to[variable_index] = new_variable
                         else:
                             list_to_append_to.append(new_variable)
 
     def save_time_step(self, time_step: int) -> None:
         for variable in self.get_output_fields():
-                getattr(self, variable.name + "_series")[time_step] = copy.deepcopy(getattr(self, variable.name))
-
+            getattr(self, variable.name + "_series")[time_step] = copy.deepcopy(getattr(self, variable.name))
 
     # allow to create models for a list of modules (["models.emitters.electric_emitter"])
     # this list can be extended each time a new system model is authored
@@ -274,7 +278,8 @@ class Model(metaclass=MetaModel):
     @staticmethod
     def model_factory(class_name, instance_name):
         import importlib
-        for module_name in ["colibri.models.emitters.electric_emitter", "colibri.models.emitters.hydro_emitter"]:  #TODO: récupérer de manière automatique ? Ou à un autre endroit ?
+        for module_name in ["colibri.models.emitters.electric_emitter",
+                            "colibri.models.emitters.hydro_emitter"]:  # TODO: récupérer de manière automatique ? Ou à un autre endroit ?
             module = importlib.import_module(module_name)
             if not module is None and hasattr(module, class_name):
                 cls = getattr(module, class_name)
@@ -327,6 +332,7 @@ class Model(metaclass=MetaModel):
         """
         object_representation = self.__str__()
         return object_representation
+
 
 def compare_dictionaries(d1, d2, threshold=0.5):
     for key in d1:

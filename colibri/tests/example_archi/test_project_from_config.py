@@ -16,11 +16,14 @@ def test_project_from_config():
     # custom_links unlink if necessary
     # instances used the class name (without path) as name perdefault ; to change it, used 'name' parameter
     # the attribute check_convergence is owned by all models and allows to customize convergence rules
+    # convergence_tolerance allows to fine-tune convergence limit for each variable (epsilon = percentage of delta)
+    # n_max_iterations allows to fine-tune convergence limit for each variable (if this criterion stops itarations,
+    # the maximum number of iterations of the project is reported for the timestep concerned
     config = {
         "models": [("colibri.core.model.Model", "colibri.models.utility.weather.Weather", {"name": "Weather", "weather_file": weather_file, "time_zone": time_zone}),
                    ("colibri.core.model.Model", "colibri.core.processing.building.building_data.BuildingData", {"building_file": building_file}),
                    ("colibri.models.example_archi.wall.wall.Wall", "colibri.models.example_archi.wall.simplified_wall_losses.SimplifiedWallLosses",
-                    {"check_convergence" : [{"name": "Tint", "check": True, "convergence_tolerance": 0.000001, "n_max_iterations": 100}]}),
+                    {"check_convergence" : [{"name": "Tint", "check": True, "convergence_tolerance": 0.000001, "n_max_iterations": 5}]}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.limited_generator.LimitedGenerator",
                     {"efficiency": 0.9,
                      "check_convergence" : [{"name": "Qneeds", "check": True, "convergence_tolerance": 0.000001, "n_max_iterations": 100}]}),
