@@ -22,12 +22,11 @@ def test_project_from_config():
     config = {
         "models": [("colibri.core.model.Model", "colibri.models.utility.weather.Weather", {"name": "Weather", "weather_file": weather_file, "time_zone": time_zone}),
                    ("colibri.core.model.Model", "colibri.core.processing.building.building_data.BuildingData", {"building_file": building_file}),
-                   ("colibri.models.example_archi.wall.wall.Wall", "colibri.models.example_archi.wall.simplified_wall_losses.SimplifiedWallLosses",
-                    {"check_convergence" : [{"name": "Tint", "check": True, "convergence_tolerance": 0.000001, "n_max_iterations": 5}]}),
+                   ("colibri.models.example_archi.wall.wall.Wall", "colibri.models.example_archi.wall.simplified_wall_losses.SimplifiedWallLosses",{}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.limited_generator.LimitedGenerator",
-                    {"efficiency": 0.9,
-                     "check_convergence" : [{"name": "Qneeds", "check": True, "convergence_tolerance": 0.000001, "n_max_iterations": 100}]}),
-                   ("colibri.core.model.Model", "colibri.models.example_archi.thermal_space.ThermalSpaceSimplified", {}),
+                    {"efficiency": 0.9}),
+                   ("colibri.core.model.Model", "colibri.models.example_archi.thermal_space.ThermalSpaceSimplified",
+                    {"check_convergence" : [{"name": "Qprovided", "check": True, "convergence_tolerance": 0.000001, "n_max_iterations": 5}]}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.acv_exploitation_only_model.ACVExploitationOnlyModel", {}), ],
 
         # "custom_links" : [

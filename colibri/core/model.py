@@ -48,10 +48,9 @@ class Model(metaclass=MetaModel):
 
         self._field_metadata = {}
 
-        self.check_convergence = {}
 
     def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to=None,
-              check_convergence=True):
+              check_convergence=False):
         # Store the metadata in the global dictionary
         self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure,
                                            linked_to=linked_to, check_convergence=check_convergence)

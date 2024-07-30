@@ -214,7 +214,7 @@ class Project:
                 self._substitute_links_values()
                 # check for convergence limit
 
-                if self.n_iteration > self.n_max_iterations or self.n_max_iterations < 0:
+                if self.n_iteration > self.n_max_iterations or self.n_iteration < 0:
                     self._has_converged = True
                     self.n_non_convergence = self.n_non_convergence + 1
                     self.non_convergence_times.append(self.time_step)
@@ -391,7 +391,7 @@ class Project:
                             setattr(variable_field, k, v)
 
                         if variable_field.check:
-                            instance.check_convergence = variable_field.check
+                            variable_field.check_convergence = variable_field.check
 
                 instance.project = self
 
@@ -513,10 +513,3 @@ class Project:
             return model[0]
         else:
             raise ValueError(f"Model class {class_path} used more than once")
-
-def compare_dictionaries(d1, d2, threshold=0.5):
-    for key in d1:
-        if key in d2:
-            if abs(d1[key] - d2[key]) > threshold:
-                return False
-    return True
