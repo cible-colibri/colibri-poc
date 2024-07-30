@@ -231,7 +231,7 @@ class Model(metaclass=MetaModel):
         if not field_in.check_convergence:
             return True
         elif n_iteration > field_in.n_max_iterations:
-            self.project.n_iteration = self.project.n_max_iterations + 1
+            self.project.n_iteration = -field_in.n_max_iterations
             return True
 
         if not field_in.convergence_tolerance is None:

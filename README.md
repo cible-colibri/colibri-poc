@@ -128,7 +128,7 @@ Il définit
 
 Il est possible d'ajuster le mécanisme de convergence pour chaque variable avec les champs suivants :
 - convergence_tolerance permet de définir le pourcentage à partir duquel on considère la différence entre 2 itérations égales ; si cet attribut n'est pas défini, la valeur définie pour le projet est retenu 
-- n_max_iterations permet de définir le nombre maximal d'itérations pour la variable ; si cet attribut n'est pas défini, la valeur définie pour le projet est retenu. Si ce critère termine l'itération, le nombre maximale de pas de temps du projet +1 est rapporté pour le pas de temps concerné. 
+- n_max_iterations permet de définir le nombre maximal d'itérations pour la variable ; si cet attribut n'est pas défini, la valeur définie pour le projet est retenu. Si ce critère local (par variable) termine l'itération, le nombre maximal d'itérations est rapporté avec un nombre négatif pour le pas de temps concerné. 
 
 
 La fonction check_convergence() peut être redéfini par le modèle pour implémenter un critère de convergence propre au modèle.

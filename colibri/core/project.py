@@ -214,7 +214,7 @@ class Project:
                 self._substitute_links_values()
                 # check for convergence limit
 
-                if self.n_iteration > self.n_max_iterations:
+                if self.n_iteration > self.n_max_iterations or self.n_max_iterations < 0:
                     self._has_converged = True
                     self.n_non_convergence = self.n_non_convergence + 1
                     self.non_convergence_times.append(self.time_step)
