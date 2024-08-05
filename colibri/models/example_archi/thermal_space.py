@@ -14,7 +14,7 @@ class ThermalSpaceSimplified(Model):
 
         self.Spaces = self.field("Spaces", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
-                                       Field('Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS),
+                                       Field('Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS), # should be Tint_initial ?
                                        Field("setpoint_heating", 0.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS),
                                        Field('surface', 0, Roles.PARAMETERS, Units.SQUARE_METER),
                                        Field('height', 0, Roles.PARAMETERS, Units.METER)
@@ -27,10 +27,6 @@ class ThermalSpaceSimplified(Model):
         self.AnnualNeeds = self.field("AnnualNeeds", 0.0, role=Roles.OUTPUTS,)
 
     def initialize(self):
-        for space in self.Spaces:
-            space.Tint = 20.0
-            space.previousTint = 20.0
-
         self.tempAnnualNeeds = 0.0
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
@@ -69,4 +65,3 @@ class ThermalSpaceSimplified(Model):
 
         self.print_outputs()
 
-    # temporary convergence control; will be in backbone, but does not work yet for dictionaries
