@@ -81,13 +81,8 @@ def run_test_case(case: int=0):
     else:  # bestest, no pressure calculation
         airflow_building.pressure_model = False
 
-    # TODO: fichier link avec tout en dur pour faire tout automatiquement
-    #  Faire des classes "génériques" pour avoir les entrées fixées par types de classes (Enveloppe thermique, Emetteur hydraulique,
-    #  Emetteur direct, Emetteur plancher chauffant, Générateur...): soit scalaire, soit vecteur mais par classe. Entre 2 classes on ne peut pas avoir 2 types de sorties (vecteur/scalaires)
-    #  Sous quelle forme faire les liens ? On laisse choisir les modèles ? Pas de dict car peut contenir des variables avec des unités différentes (ou sinon homogène avec un type de variable),
-    #  faire plutôt type vecteur
-    # *** if we want to connect an external controller for the blinds (pilots one variable)
     project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
+    project.link(multizone_building, "space_temperatures", airflow_building, "space_temperatures")
 
     project.link(building_data, "Spaces", multizone_building, "Spaces")
     project.link(building_data, "Emitters", multizone_building, "Emitters")

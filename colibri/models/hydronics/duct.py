@@ -52,7 +52,10 @@ class Duct(Model):
         self.loss_factor         = self.field("loss_factor", 0.0, role=Roles.PARAMETERS, unit=Units.UNITLESS)
 
     def initialize(self) -> None:
-        self.loss_factor = 1.0 - math.exp(- self.loss_coefficient / (self.inlet_flow_rate * self.cp_fluid))
+        if abs(self.inlet_flow_rate * self.cp_fluid) <0.0001:
+            self.loss_factor = 1
+        else:
+            self.loss_factor = 1.0 - math.exp(- self.loss_coefficient / (self.inlet_flow_rate * self.cp_fluid))
 
     def run(self, time_step: int = 0, n_iteration: int = 0) -> None:
         self.outlet_flow_rate   = self.inlet_flow_rate

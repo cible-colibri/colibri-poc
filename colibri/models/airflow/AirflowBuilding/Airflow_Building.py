@@ -26,6 +26,9 @@ class Airflow_Building(Model):
                                  ])
 
         self.case = self.field("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
+
+        self.space_temperatures = self.field("space_temperatures", {}, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS)
+
         self.pressures_output = self.field("pressures_output", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
         self.flow_rates_output = self.field("flow_rates_output", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
@@ -293,7 +296,7 @@ class Airflow_Building(Model):
 
     def temperatures_update(self):
         # internal temperatures
-        for i, space in enumerate(self.Spaces):
+        for space_label, temperature in self.space_temperatures.items():
             for node in self.nodes:
-                if node == space.label:
-                    self.nodes[node]['temperature'] = space.temperature
+                if node == space_label:
+                    self.nodes[node]['temperature'] = temperature

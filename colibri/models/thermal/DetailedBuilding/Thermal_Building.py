@@ -62,9 +62,9 @@ class Thermal_Building(Building):
 
         # outputs
         self.flow_rates_input = self.field("flow_rates_input", default_value = 0, role=Roles.INPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
-
-        # results to save
         self.heat_flux_vec = self.field("heat_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
+        self.space_temperatures = self.field("space_temperatures", {}, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+
 
         self.has_converged = False
 
@@ -111,7 +111,6 @@ class Thermal_Building(Building):
 
         self.found = []  # for convergence plot of thermal model
         self.store_space_temperatures_in_building()
-        self.air_temperature_dictionary = self.get_space_temperatures()
         self.flow_rates = []
         self.not_converged = True
         self.found = []
@@ -161,8 +160,6 @@ class Thermal_Building(Building):
                             emit[0].temperature_in = emit[0].nominal_heating_supply_temperature
                         else:
                             emit[0].temperature_in = emit[0].temperature_out  #TODO: last, pas last ? Pas initialisé en tout cas
-
-        self.air_temperature_dictionary = self.get_space_temperatures()  # send temperature values to pressure model
 
         #################################################################################
         # thermal model one at each time step, not in iteration
@@ -319,7 +316,7 @@ class Thermal_Building(Building):
                                                           self.radiative_share_sensor, self.max_heating_power_vec,
                                                           self.max_cooling_power_vec, self.ventilation_gain_multiplier, ventilation_gain_coefficient,
                                                           self.efficiency_heat_recovery, self.convective_internal_gains_vec,
-                                                          self.radiative_internal_gains_vec, self.air_temperature_dictionary,
+                                                          self.radiative_internal_gains_vec, self.space_temperatures,
                                                           self.flow_array)
 
         # now apply the hvac_flux_vec and simulate the building a last time to obtain all results
@@ -331,7 +328,7 @@ class Thermal_Building(Building):
             self.ventilation_gains = (exterior_temperature_act - air_temperatures) * ventilation_gain_coefficient
         else:
             # with flow matrix and airflow calculation
-            self.ventilation_gains = calculate_ventilation_losses(self.flow_array, self.air_temperature_dictionary, exterior_temperature_act, self.efficiency_heat_recovery, self.ventilation_gain_multiplier)
+            self.ventilation_gains = calculate_ventilation_losses(self.flow_array, self.space_temperatures, exterior_temperature_act, self.efficiency_heat_recovery, self.ventilation_gain_multiplier)
 
         # set heat flux from controller for "official building simulation"
         self.convective_gains_vec = self.hvac_flux_vec * (1 - self.radiative_share_hvac_vec) + self.ventilation_gains + self.convective_internal_gains_vec
@@ -354,13 +351,7 @@ class Thermal_Building(Building):
     def store_space_temperatures_in_building(self):
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
         for i, space in enumerate(self.Spaces):
-            space.temperature = air_temperatures[i]
-
-    def get_space_temperatures(self):
-        temperatures_dict = {}
-        for i, space in enumerate(self.Spaces):
-            temperatures_dict[space.label] = space.temperature
-        return temperatures_dict
+            self.space_temperatures[space.label] = air_temperatures[i]
 
     def calc_convergence(self, threshold=1e-3):
         self.has_converged = np.max(np.abs(self.hvac_flux_vec - self.hvac_flux_vec_last)) <= threshold

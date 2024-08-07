@@ -248,7 +248,7 @@ class Project:
         for model in self.models:
             model.initialize()
 
-            self._substitute_links_values()
+            self._substitute_links_values() # propagates parameter structure as a side-effect
 
     def _substitute_links_values(self):
         for link in self.links:
