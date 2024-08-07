@@ -22,6 +22,7 @@ class BuildingData(Model):
         self.Boundaries = self.field("Boundaries", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
         self.Spaces = self.field("Spaces", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
         self.Emitters = self.field("Emitters", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
+        self.Windows = self.field("Windows", [], role=Roles.OUTPUTS, unit=Units.UNITLESS)
 
         self.TintWall = self.field("TintWall", [], role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
@@ -95,6 +96,7 @@ class BuildingData(Model):
         self.Boundaries = self.boundary_list
         self.Spaces = self.spaces
         self.Emitters = self.emitter_list
+        self.Windows = self.window_list
 
     def initialize(self):
         pass

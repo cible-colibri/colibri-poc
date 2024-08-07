@@ -3,6 +3,7 @@ import numpy as np
 from colibri.config.constants import DENSITY_AIR, CP_AIR
 from colibri.core.Building import Building
 from colibri.core.model import Model
+from colibri.core.variables.field import Field
 from colibri.models.emitters.hydro_emitter import HydroEmitter
 from colibri.models.thermal.DetailedBuilding.RyCj import generate_A_and_B, generate_euler_exp_Ad_Bd, runStateSpace, get_rad_shares,\
     set_U_from_index, get_states_from_index, get_u_values
@@ -27,6 +28,33 @@ class Thermal_Building(Building):
         self.iter_max = self.field("iter_max", 3, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="Number maximal of iteration")
 
         # inputs
+        self.Spaces = self.field("Spaces", [], role=Roles.PARAMETERS, unit=Units.UNITLESS,
+                                 structure=[
+                                     Field("setpoint_heating", 19.0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS),
+                                     Field("setpoint_cooling", 26.0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS),
+                                     Field("constant_internal_gains", 26.0, role=Roles.PARAMETERS),
+                                 ])
+
+        self.Boundaries = self.field("Boundaries", [], role=Roles.PARAMETERS, unit=Units.UNITLESS,
+                                   structure = [
+                                       Field('label', 0, Roles.PARAMETERS, Units.UNITLESS),
+                                       Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER),
+                                       Field('u_value', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                       Field('side_1', "", Roles.PARAMETERS, Units.UNITLESS),
+                                       Field('side_2', "", Roles.PARAMETERS, Units.UNITLESS)
+                                   ])
+
+        self.Windows = self.field("Windows", [], role=Roles.PARAMETERS, unit=Units.UNITLESS,
+                                   structure = [
+                                       Field('label', 0, Roles.PARAMETERS, Units.UNITLESS),
+                                       Field('area', 0, Roles.PARAMETERS, Units.SQUARE_METER),
+                                       Field('u_value', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),
+                                       Field('side_1', "", Roles.PARAMETERS, Units.UNITLESS),
+                                       Field('side_2', "", Roles.PARAMETERS, Units.UNITLESS)
+                                   ])
+
+        self.Emitters = self.field("Emitters", [], role=Roles.PARAMETERS, unit=Units.UNITLESS)
+
         self.blind_position = self.field("blind_position", 0, role=Roles.INPUTS, unit=Units.UNITLESS, description="blind position, 1 = open")
         self.phi_radiative_vec = self.field("phi_radiative_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_radiative from emitter")
         self.phi_convective_vec = self.field("phi_convective_vec", np.array(()), role=Roles.INPUTS, unit=Units.WATT, description="phi_convective from emitter")
@@ -37,6 +65,8 @@ class Thermal_Building(Building):
 
         # results to save
         self.heat_flux_vec = self.field("heat_flux_vec", np.array(()), role=Roles.OUTPUTS, unit=Units.WATT, description="hvac_flux_vec")
+
+        self.has_converged = False
 
     def initialize(self) -> None:
 
@@ -68,7 +98,7 @@ class Thermal_Building(Building):
         self.setpoint_heating_vec = np.zeros(self.n_spaces)
         self.setpoint_cooling_vec = np.zeros(self.n_spaces)
         op_modes = []
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             self.setpoint_heating_vec[i] = getattr(space, 'set_point_heating')
             self.setpoint_cooling_vec[i] = getattr(space, 'set_point_cooling')
             op_modes += getattr(space, 'op_modes')
@@ -120,7 +150,7 @@ class Thermal_Building(Building):
             self.found = []
 
             # impose supply temperature from generator based on op mode
-            for i, space in enumerate(self.project.get_building_data().spaces):
+            for i, space in enumerate(self.Spaces):
                 emit = self.project.get_model_by_name(space.label + "_emitter")  # TODO: get by class ? -> create Space class
                 if len(emit) > 0:
                     #TODO: créer un paramètre hydraulique. Est-ce que c'est à faire ici ce truc ??
@@ -171,16 +201,16 @@ class Thermal_Building(Building):
         #   initialise thermal model
         #################################################################################
 
-        self.n_spaces = len(self.project.get_building_data().spaces)
+        self.n_spaces = len(self.Spaces)
 
         # function to define radiative shares of wall surfaces inside a thermal zone
-        get_rad_shares(self.project.get_building_data().boundary_list, self.project.get_building_data().window_list, self.project.get_building_data().spaces)
+        get_rad_shares(self.Boundaries, self.Windows, self.Spaces)
 
         # calculate global u-values for final balances of outputs (not for calculation)
-        get_u_values(self.project.get_building_data().spaces)
+        get_u_values(self.Spaces)
 
         # create A and B matrices
-        A, B, self.index_states, self.index_inputs = generate_A_and_B(self.project.get_building_data().spaces, self.project.get_building_data().boundary_list, self.project.get_building_data().window_list)
+        A, B, self.index_states, self.index_inputs = generate_A_and_B(self.Spaces, self.Boundaries, self.Windows)
 
         # convert matrices to euler exponential
         self.Ad, self.Bd = generate_euler_exp_Ad_Bd(A, B, self.dt, label='None')
@@ -194,14 +224,14 @@ class Thermal_Building(Building):
 
         # generate global dict where results can be saved
         #TODO: mettre dans la définition de la classe ? Mais pb connaissance de la taille des vecteurs
-        self.results, self.res_list = initialise_results(self.index_states, self.project.get_building_data().spaces, self.project.get_building_data().boundary_list, self.n_steps)
+        self.results, self.res_list = initialise_results(self.index_states, self.Spaces, self.Boundaries, self.n_steps)
 
         # create solar radiation matrix for all boundaries
-        self.solar_bound_arriving_flux_matrix, self.solar_transmitted_flux_matrix = solar_processor(weather_data, latitude, longitude, self.project.get_building_data().boundary_list, self.project.get_building_data().spaces, time_zone)
+        self.solar_bound_arriving_flux_matrix, self.solar_transmitted_flux_matrix = solar_processor(weather_data, latitude, longitude, self.Boundaries, self.Spaces, time_zone)
 
         # radiative parameters
-        self.boundary_absorption_array = np.zeros(len(self.project.get_building_data().boundary_list))
-        for i, bound in enumerate(self.project.get_building_data().boundary_list):
+        self.boundary_absorption_array = np.zeros(len(self.Boundaries))
+        for i, bound in enumerate(self.Boundaries):
             if bound.side_1 == 'exterior':
                 self.boundary_absorption_array[i] = 1 - bound.albedo[0]
             else:
@@ -209,7 +239,7 @@ class Thermal_Building(Building):
 
         # internal gains
         self.internal_gains_vec = np.zeros(self.n_spaces)
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             self.internal_gains_vec[i] = getattr(space, 'constant_internal_gains')
 
     def init_systems_parameters(self):
@@ -230,7 +260,7 @@ class Thermal_Building(Building):
         self.max_heating_power_vec = np.zeros(self.n_spaces)  # #TODO: update each time step for hydronic
         self.max_cooling_power_vec = np.zeros(self.n_spaces)  # #TODO: update each time step for hydronic
 
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
                 self.radiative_share_hvac_vec[i] = emit[0].radiative_share  #TODO: quid si plusieurs émetteurs mais pas du même mode ? ou pas du même radiative share ? (ex: poële + plancher chauffant)
@@ -241,7 +271,7 @@ class Thermal_Building(Building):
         self.air_change_rate = 0.0
         self.efficiency_heat_recovery = 0.0  # exhaust ventilation, no heat recovery
         self.ventilation_gain_multiplier = np.zeros(self.n_spaces)
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             self.ventilation_gain_multiplier[i] = space.volume * DENSITY_AIR * CP_AIR
             self.air_change_rate += space.air_change_rate
 
@@ -271,7 +301,7 @@ class Thermal_Building(Building):
 
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
         # emitter preprocessing
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             emit = self.project.get_model_by_name(space.label + "_emitter")  #TODO: get by class ? -> create Space class
             if len(emit) > 0:
                 if emit is HydroEmitter:  #TODO: suppose ideal
@@ -293,12 +323,6 @@ class Thermal_Building(Building):
                                                           self.flow_array)
 
         # now apply the hvac_flux_vec and simulate the building a last time to obtain all results
-
-        # set heat_flux for emitter - TODO: one of the Gurus (Enora, Peter) please check if this is the right spot to do this
-
-        # emitter_list = [self.project.get_model_by_name(s.label + "_emitter") for s in self.project.get_building_data().spaces]
-        # for emitter, flux in zip([found_emitters[0] for found_emitters in emitter_list if found_emitters], self.hvac_flux_vec):
-        #     emitter.heat_demand = flux
 
         # recalculate ventilation losses
         if self.flow_array == 0 or len(self.flow_array) == 0:  # without pressure calculation, only use air change rates for all rooms
@@ -323,18 +347,18 @@ class Thermal_Building(Building):
 
         #TODO: idem voir si dans une classe Space on veut y associer des résultats ou pas, si oui à chaque pas de temps ? en assessment en reprenant l'ensemble des matrices calculees ?
 
-        # for i, space in enumerate(self.project.get_building_data().spaces):
+        # for i, space in enumerate(self.Spaces):
         #     self.window_losses[i] = space.u_window * space.window_area * (ext_temperature_operative - air_temperatures[i])
         #     self.wall_losses[i] = space.u_wall * space.wall_area * (ext_temperature_operative - air_temperatures[i])
 
     def store_space_temperatures_in_building(self):
         air_temperatures = get_states_from_index(self.states, self.index_states, 'spaces_air')
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             space.temperature = air_temperatures[i]
 
     def get_space_temperatures(self):
         temperatures_dict = {}
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             temperatures_dict[space.label] = space.temperature
         return temperatures_dict
 
@@ -349,7 +373,12 @@ class Thermal_Building(Building):
             raise Exception('Project not defined - add me to a project first, so I can create systems with links')
 
         # create emitters
-        for i, emitter in enumerate(project.get_building_data().emitter_list):
+        n_emitters = len(self.Emitters)
+        self.phi_radiative_vec = np.zeros(n_emitters)
+        self.phi_convective_vec = np.zeros(n_emitters)
+        self.phi_latent_vec = np.zeros(n_emitters)
+
+        for i, emitter in enumerate(self.Emitters):
             type_id = emitter.type_id
             emitter_type = self.project.get_building_data().project_dict['archetype_collection']['emitter_types'][type_id]
             emitter_cls = emitter_type['model']
@@ -372,7 +401,3 @@ class Thermal_Building(Building):
             # building -> emitter
             project.link_from_vector(self, 'heat_flux_vec', zone_index, emitter_instance, 'heat_demand')
 
-    def create_envelop(self):
-        # for this, matrix based model, no models for walls, layers etc. are created
-        # it used the data model directly to compute the matrices
-        pass

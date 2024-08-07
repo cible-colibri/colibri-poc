@@ -2,6 +2,7 @@
 import numpy as np
 
 from colibri.config.constants import DENSITY_AIR, ATMOSPHERIC_AIR_PRESSURE, GRAVITATIONAL_ACCELERATION
+from colibri.core.variables.field import Field
 from colibri.models.airflow.AirflowBuilding.boundary_conditions import boundary_matrix
 from colibri.models.airflow.AirflowBuilding import connection_functions
 from colibri.models.airflow.AirflowBuilding.utilities_peter_matrix import construct_nodes_sep, check_compatibility, \
@@ -19,17 +20,19 @@ class Airflow_Building(Model):
     def __init__(self, name: str):
         self.name = name
 
-        self.project = None
+        self.Spaces = self.field("Spaces", [], role=Roles.PARAMETERS, unit=Units.UNITLESS,
+                                 structure=[
+                                     Field("label", 19.0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS)
+                                 ])
 
         self.case = self.field("case", 0, role=Roles.PARAMETERS, unit=Units.UNITLESS, description="The building to use")
         self.pressures_output = self.field("pressures_output", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.PASCAL, description="pressures")
         self.flow_rates_output = self.field("flow_rates_output", default_value = np.array(()), role=Roles.OUTPUTS, unit=Units.KILOGRAM_PER_SECOND, description="flow_rates")
 
         self.my_weather = None
+        self.has_converged = False
 
     def initialize(self) -> None:
-
-        self.spaces = self.project.get_building_data().spaces
 
         #################################################################################
         #   initialise weather data
@@ -52,7 +55,7 @@ class Airflow_Building(Model):
 
         if self.pressure_model:
             try:
-                self.matrix_model_init(self.n_steps, flow_paths, nodes, self.spaces)
+                self.matrix_model_init(self.n_steps, flow_paths, nodes, self.Spaces)
             except Exception:
                 raise ValueError(
                     'Pressure configuration does not correspond to thermal spaces. Change to pressure_model == False or correct')
@@ -67,7 +70,6 @@ class Airflow_Building(Model):
 
         self.found = []  # for convergence plot of pressure model
 
-        self.air_temperature_dictionary = []
 
     def run(self, time_step: int = 0, n_iteration: int = 0):
 
@@ -96,7 +98,7 @@ class Airflow_Building(Model):
                     self.niter += 1
 
             self.flow_rates = self.matrix_model_send_to_thermal(
-                self.spaces)  # send flow rate values to thermal model
+                self.Spaces)  # send flow rate values to thermal model
 
         self.found.append(np.sum(self.pressures))  # for convergence plotting
 
@@ -291,7 +293,7 @@ class Airflow_Building(Model):
 
     def temperatures_update(self):
         # internal temperatures
-        for i, space in enumerate(self.project.get_building_data().spaces):
+        for i, space in enumerate(self.Spaces):
             for node in self.nodes:
                 if node == space.label:
                     self.nodes[node]['temperature'] = space.temperature

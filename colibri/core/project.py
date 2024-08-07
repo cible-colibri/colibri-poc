@@ -198,8 +198,10 @@ class Project:
 
     def run(self, show_plot: bool = False):
         starting_time = time.perf_counter()
-        self._initialize_series()
         self._initialize_models()
+        self.create_systems()
+        self._initialize_series()
+
         # Run the simulation (for each time step)
         for self.time_step in range(0, self.time_steps):
             if self.verbose:
@@ -245,6 +247,8 @@ class Project:
     def _initialize_models(self) -> None:
         for model in self.models:
             model.initialize()
+
+            self._substitute_links_values()
 
     def _substitute_links_values(self):
         for link in self.links:
@@ -465,10 +469,6 @@ class Project:
         """
         object_representation = self.__str__()
         return object_representation
-
-    def create_envelop(self):
-        for building in self.get_models_from_class(Building):
-            building.create_envelop()
 
     def create_systems(self):
         for building in self.get_models_from_class(Building):

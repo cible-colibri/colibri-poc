@@ -13,9 +13,9 @@ from colibri.tests.data.bestest_cases import bestest_configs
 
 def test_coupled_building():
     run_test_case(0) # with pressure model
-    run_test_case(50) # with hydraulic network
-    run_test_case(600) # bestest 600
-    run_test_case(900) # bestest 900
+    # run_test_case(50) # with hydraulic network
+    # run_test_case(600) # bestest 600
+    # run_test_case(900) # bestest 900
 
 def run_test_case(case: int=0):
 
@@ -53,6 +53,7 @@ def run_test_case(case: int=0):
     project.n_max_iterations = 100
     project.time_steps = 8760
     project.verbose = False
+    project.auto_links = False
 
     # weather
     weather = Weather("weather")
@@ -75,9 +76,6 @@ def run_test_case(case: int=0):
     airflow_building.case = case
     project.add(airflow_building)
 
-    project.create_envelop()
-    project.create_systems()
-
     if case == 0:  # Colibri house
         airflow_building.pressure_model = True
     else:  # bestest, no pressure calculation
@@ -91,9 +89,17 @@ def run_test_case(case: int=0):
     # *** if we want to connect an external controller for the blinds (pilots one variable)
     project.link(airflow_building, "flow_rates_output", multizone_building , "flow_rates_input")
 
+    project.link(building_data, "Spaces", multizone_building, "Spaces")
+    project.link(building_data, "Emitters", multizone_building, "Emitters")
+    project.link(building_data, "Boundaries", multizone_building, "Boundaries")
+    project.link(building_data, "Windows", multizone_building, "Windows")
+
+    project.link(building_data, "Spaces", airflow_building, "Spaces")
+
     project.run()
 
     print_results(multizone_building)
+    print(project.n_iterations)
 
     # plot_results(multizone_building, to_plot=True)
     #

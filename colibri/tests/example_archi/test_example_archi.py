@@ -37,11 +37,6 @@ def test_run_example_project():
     building_data = BuildingData(building_file)
     project.add(building_data)
 
-    # TODO : explain why we want this in real-life applications
-    #project.create_envelop()
-    #project.create_systems()
-
-
     wall_losses = SimplifiedWallLosses("M1a-SimplifiedWallLosses")
     project.add(wall_losses)
 
