@@ -186,6 +186,8 @@ class Project:
                                 variables[k].append(v)
                         for variable_name, values in variables.items():
                             axis.plot(values, label=model.name + "." + variable_name)
+                            if title == 'Tint':
+                                axis.set_ylim(-10, 60)
                     else:
                         axis.plot(series, label = model.name + "." + field.name)
                     axis.set_ylabel(f"[{field.unit}]")

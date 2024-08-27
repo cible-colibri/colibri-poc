@@ -7,7 +7,7 @@ class LimitedGenerator(Model):
     def __init__(self, name: str):
         self.name = name
 
-        self.Qneeds = self.field("Qneeds", {}, role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.Qneeds = self.field("Qneeds", {}, role=Roles.INPUTS, unit=Units.WATT_HOUR, key='Spaces.label')
 
         self.Spaces = self.field('Spaces', [], role=Roles.INPUTS, structure = [
             Field("emitter", default_value={}, role=Roles.PARAMETERS, unit=Units.UNITLESS, structure=[

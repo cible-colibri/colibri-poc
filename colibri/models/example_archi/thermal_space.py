@@ -10,19 +10,19 @@ class ThermalSpaceSimplified(Model):
     def __init__(self, name: str):
         self.name = name
 
-        self.Qprovided = self.field('Qprovided', {}, role=Roles.INPUTS, unit=Units.WATT_HOUR)
+        self.Qprovided = self.field('Qprovided', {}, role=Roles.INPUTS, unit=Units.WATT_HOUR, key = 'Spaces.label')
 
         self.Spaces = self.field("Spaces", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
-                                       Field('Tint', 0, Roles.INPUTS, Units.DEGREE_CELSIUS), # should be Tint_initial ?
-                                       Field("setpoint_heating", 0.0, role=Roles.INPUTS, unit=Units.DEGREE_CELSIUS),
+                                       Field('Tint', 0, Roles.PARAMETERS, Units.DEGREE_CELSIUS),
+                                       Field("setpoint_heating", 0.0, role=Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS),
                                        Field('surface', 0, Roles.PARAMETERS, Units.SQUARE_METER),
                                        Field('height', 0, Roles.PARAMETERS, Units.METER)
                                    ])
 
         self.Qwall = self.field("Qwall", {}, role=Roles.INPUTS)
 
-        self.Tint = self.field("Tint", {}, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
+        self.Tint = self.field("Tint", {}, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS, key = 'Spaces.label')
         self.Qneeds = self.field("Qneeds", {}, role=Roles.OUTPUTS)
         self.AnnualNeeds = self.field("AnnualNeeds", 0.0, role=Roles.OUTPUTS,)
 

@@ -50,10 +50,10 @@ class Model(metaclass=MetaModel):
 
 
     def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to=None,
-              check_convergence=False):
+              check_convergence=False, key=None):
         # Store the metadata in the global dictionary
         self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure,
-                                           linked_to=linked_to, check_convergence=check_convergence)
+                                           linked_to=linked_to, check_convergence=check_convergence, key=key)
 
         # Return the actual value to be assigned to the variable
         return default_value
