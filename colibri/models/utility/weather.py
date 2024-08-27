@@ -91,7 +91,7 @@ def ground_temperature_kusuda(air_temperature, ground_diffusivity, depth):
         ground_temperature[0:time_window] = ground_temperature[time_window:2 * time_window]
 
     else:
-        ext_temperature_smoothed = air_temperature.rolling(int(24. * 30.5)).mean().fillna(method='bfill')
+        ext_temperature_smoothed = air_temperature.rolling(int(24. * 30.5)).mean().bfill()
         ground_deltaT = (max(ext_temperature_smoothed) - min(ext_temperature_smoothed)) / 2.
         ground_av_temperature = np.mean(ext_temperature_smoothed)
         time = (np.array(list(range(len(air_temperature)))) + 1.) / 24.

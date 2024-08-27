@@ -39,7 +39,7 @@ class Schema(enum.Enum):
 
 
 @enum.unique
-class Units(enum.Enum):
+class Units(str, enum.Enum):
     CENTIMETER                              = "cm"
     DEGREE                                  = "°"
     DEGREE_CELSIUS                          = "°C"

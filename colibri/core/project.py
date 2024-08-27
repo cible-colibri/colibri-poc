@@ -379,7 +379,10 @@ class Project:
                 instance_name = class_name
                 cls = getattr(module, class_name)
                 if class_name == "BuildingData": # :-(
-                    instance = BuildingData(model_def[2]['building_file']) # Mr. Bricolage ... :-)
+                    building_file = None
+                    if 'building_file' in model_def[2]:
+                        building_file = model_def[2]['building_file']
+                    instance = BuildingData(building_file) # Mr. Bricolage ... :-)
                 else:
                     instance = cls(instance_name)
                 self.models.append(instance)
