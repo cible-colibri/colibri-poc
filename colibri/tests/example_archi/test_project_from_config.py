@@ -22,6 +22,7 @@ def test_project_from_config():
     config = {
         "models": [("colibri.core.model.Model", "colibri.models.utility.weather.Weather", {"name": "Weather", "weather_file": weather_file, "time_zone": time_zone}),
                    ("colibri.core.model.Model", "colibri.core.processing.building.building_data.BuildingData", {"building_file": building_file}),
+#                   ("colibri.models.example_archi.wall.wall.Wall", "colibri.models.example_archi.wall.layer_wall_losses.LayerWallLosses",{}),
                    ("colibri.models.example_archi.wall.wall.Wall", "colibri.models.example_archi.wall.simplified_wall_losses.SimplifiedWallLosses",{}),
                    ("colibri.core.model.Model", "colibri.models.example_archi.limited_generator.LimitedGenerator",
                     {"efficiency": 0.9}),
@@ -47,12 +48,16 @@ def test_project_from_config():
     }
 
     project = Project("pfc")
+
+    print(project.scheme_from_config(config))
+
     project.project_from_config(config)
 
     # son & lumière
     project.add_plot("Weather", project.get("Weather"), "Text")
     project.add_plot("Tint", project.get("ThermalSpaceSimplified"), "Tint")
     project.add_plot("Qwall", project.get("SimplifiedWallLosses"), "Qwall")
+    #project.add_plot("Qwall", project.get("LayerWallLosses"), "Qwall")
     project.add_plot("Qprovided", project.get("LimitedGenerator"), "Qprovided")
     project.to_plot = True
 

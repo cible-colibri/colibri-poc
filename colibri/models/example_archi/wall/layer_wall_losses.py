@@ -8,6 +8,8 @@ class LayerWallLosses(Wall):
     def __init__(self, name: str):
         self.name = name
 
+        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
+
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('thermal_conductivity', [1], Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),

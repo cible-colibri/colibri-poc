@@ -8,6 +8,8 @@ class SimplifiedWallLosses(Wall):
     def __init__(self, name: str):
         self.name = name
 
+        self.Qwall = self.field("Qwall", {}, role=Roles.OUTPUTS, unit=Units.UNITLESS)
+
         self.Boundaries = self.field("Boundaries", [], role=Roles.INPUTS, unit=Units.UNITLESS,
                                    structure = [
                                        Field('u_value', 0, Roles.PARAMETERS, Units.WATT_PER_SQUARE_METER_PER_KELVIN),

@@ -15,7 +15,7 @@ class Weather(Model):
 
         self.Text = self.field(name='Text', default_value = 0.0, role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.constant_ground_temperature = self.field("constant_ground_temperature", None, Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description='Impose a constant ground temperature if the parameter is not None')
+        self.constant_ground_temperature = self.field("constant_ground_temperature", 16, Roles.PARAMETERS, unit=Units.DEGREE_CELSIUS, description='Impose a constant ground temperature if the parameter is not None')
 
         self.year = self.field("year", 0, Roles.OUTPUTS)
         self.month = self.field("month", 0, Roles.OUTPUTS)

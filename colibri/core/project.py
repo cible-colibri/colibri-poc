@@ -15,7 +15,7 @@ from colibri.core.model import Model
 from colibri.core.connectors.connector import Connector
 from colibri.models.utility.weather import Weather
 from colibri.utils.encorder_utils import NonCyclycEncoder
-from colibri.utils.enums_utils import Schema
+from colibri.utils.enums_utils import Schema, Roles
 from colibri.utils.files_utils import write_json_file
 
 
@@ -412,6 +412,32 @@ class Project:
 
         if 'custom_links' in config:
             self.custom_link(config['custom_links'])
+
+    def scheme_from_config(self, config):
+        project = Project("m_project") # create a separate project to avoid side effects
+        project.project_from_config(config)
+        scheme = {}
+
+        predefined_keys = ['Spaces', 'Boundaries']
+
+        for predefined_key in predefined_keys:
+            object_scheme_dict = {}
+            for model in project.models:
+                model_scheme = model.make_scheme([Roles.PARAMETERS])
+                if predefined_key in model_scheme:
+                    object_scheme_parameters = model_scheme[predefined_key]
+                    object_scheme_dict = object_scheme_dict | object_scheme_parameters
+                scheme[str(type(model))] = model_scheme
+
+
+            scheme[predefined_key] = object_scheme_dict
+
+        for predefined_key in predefined_keys:
+            for model in project.models:
+                if predefined_key in scheme[str(type(model))]:
+                    del scheme[str(type(model))][predefined_key]
+
+        return scheme
 
     def _set_project_parameters(self) -> None:
         self.time_steps   = 168

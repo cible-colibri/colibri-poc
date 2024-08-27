@@ -26,8 +26,6 @@ class BuildingData(Model):
 
         self.TintWall = self.field("TintWall", [], role=Roles.OUTPUTS, unit=Units.DEGREE_CELSIUS)
 
-        self.Qwall = self.field("Qwall", {}, role=Roles.INPUTS, unit=Units.UNITLESS)
-
         if building_file == None:
             self.project_dict = {}
             self.space_list = []

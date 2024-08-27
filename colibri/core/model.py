@@ -143,6 +143,38 @@ class Model(metaclass=MetaModel):
     def template(self):
         return self.make_template(None)
 
+    def make_scheme(self, roles: [Roles]):
+        scheme = {}
+        for field in self.get_fields():
+            if field.structure:
+                structure_dict = self.make_scheme_for_structure(field.structure, roles)
+                if len(structure_dict) > 0:
+                    if field.name in scheme:
+                        scheme[field.name].append(structure_dict)
+                    else:
+                        scheme[field.name] = structure_dict
+            else:
+                if not roles or field.role in roles:
+                    if field.name in scheme:
+                        scheme[field.name].append(field.default_value)
+                    else:
+                        scheme[field.name] = field.default_value
+
+        return scheme
+
+    def make_scheme_for_structure(self, structure, roles: [Roles]):
+        structure_dict = {}
+        for structure_field in structure:
+            if not roles or structure_field.role in roles:
+                if len(structure_field.structure) > 0:
+                    structure_scheme = self.make_scheme_for_structure(structure_field.structure, roles)
+                    structure_dict[structure_field.name] = structure_scheme
+                else:
+                    structure_dict[structure_field.name] = structure_field.default_value
+
+        return structure_dict
+
+
     def load_from_json(self, json_in):
         for variable_name, variable_value in json_in.items():
             if isinstance(variable_value, list):
