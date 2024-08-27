@@ -1,9 +1,10 @@
 import abc
 import copy
+import typing
 from collections import namedtuple, defaultdict
 
 from colibri.core.variables.field import Field
-from colibri.utils.enums_utils import Roles
+from colibri.utils.enums_utils import Roles, Units
 
 
 class MetaModel(abc.ABCMeta):
@@ -49,11 +50,10 @@ class Model(metaclass=MetaModel):
         self._field_metadata = {}
 
 
-    def field(self, name, default_value, role=None, unit=None, description=None, structure=[], linked_to=None,
-              check_convergence=False, key=None):
+    def field(self, name: str, default_value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, format  = None, min = None, max = None, description: str = "", linked_to = None, model = None, structure = [], check_convergence: bool = False, n_max_iterations = 10, key=None, choices = []):
         # Store the metadata in the global dictionary
-        self._field_metadata[name] = Field(name, default_value, role, unit, description, structure=structure,
-                                           linked_to=linked_to, check_convergence=check_convergence, key=key)
+        self._field_metadata[name] = Field(name, default_value, role, unit, format, min, max, description, structure=structure,
+                                           linked_to=linked_to, check_convergence=check_convergence, n_max_iterations = n_max_iterations, key=key, choices = choices)
 
         # Return the actual value to be assigned to the variable
         return default_value
@@ -156,9 +156,9 @@ class Model(metaclass=MetaModel):
             else:
                 if not roles or field.role in roles:
                     if field.name in scheme:
-                        scheme[field.name].append(field.default_value)
+                        scheme[field.name].append(field.get_scheme())
                     else:
-                        scheme[field.name] = field.default_value
+                        scheme[field.name] = field.get_scheme()
 
         return scheme
 
@@ -170,7 +170,7 @@ class Model(metaclass=MetaModel):
                     structure_scheme = self.make_scheme_for_structure(structure_field.structure, roles)
                     structure_dict[structure_field.name] = structure_scheme
                 else:
-                    structure_dict[structure_field.name] = structure_field.default_value
+                    structure_dict[structure_field.name] = structure_field.get_scheme()
 
         return structure_dict
 
