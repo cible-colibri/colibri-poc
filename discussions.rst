@@ -24,8 +24,5 @@ Variable / Field
 
 Variable was replaced by Field. The name is far from sexy.
 
-The "linked_to" concept seems too complicated, do we want to keep it ? If yes, find a bette rname ?
-    - expands
-    - indexes
 
 

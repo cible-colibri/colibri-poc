@@ -50,10 +50,10 @@ class Model(metaclass=MetaModel):
         self._field_metadata = {}
 
 
-    def field(self, name: str, default_value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, format  = None, min = None, max = None, description: str = "", linked_to = None, model = None, structure = [], check_convergence: bool = False, n_max_iterations = 10, key=None, choices = []):
+    def field(self, name: str, default_value: typing.Any, role: Roles, unit: Units = Units.UNITLESS, format  = None, min = None, max = None, description: str = "", model = None, structure = [], check_convergence: bool = False, n_max_iterations = 10, key=None, choices = []):
         # Store the metadata in the global dictionary
         self._field_metadata[name] = Field(name, default_value, role, unit, format, min, max, description, structure=structure,
-                                           linked_to=linked_to, check_convergence=check_convergence, n_max_iterations = n_max_iterations, key=key, choices = choices)
+                                           check_convergence=check_convergence, n_max_iterations = n_max_iterations, key=key, choices = choices)
 
         # Return the actual value to be assigned to the variable
         return default_value
@@ -280,24 +280,6 @@ class Model(metaclass=MetaModel):
             elif abs(value_in - value_out) / value_out > convergence_tolerance:
                 return False
         return True
-
-    def _expand_variables(self) -> None:
-        variables = self.inputs + self.parameters
-        for variable in variables:
-            if variable.linked_to:
-                for expandable_variable in variable.linked_to:
-                    list_name = expandable_variable.role
-                    expandable_variable_name = expandable_variable.name
-                    for index in range(0, int(variable)):
-                        new_variable = copy.deepcopy(expandable_variable)
-                        new_variable.name = f"{expandable_variable_name}_{index + 1}"
-                        list_to_append_to = getattr(self, list_name)
-                        if any([variable for variable in list_to_append_to if variable.name == new_variable.name]):
-                            variable_index = [index for index, variable in enumerate(list_to_append_to) if
-                                              variable.name == new_variable.name][0]
-                            list_to_append_to[variable_index] = new_variable
-                        else:
-                            list_to_append_to.append(new_variable)
 
     def save_time_step(self, time_step: int) -> None:
         for variable in self.get_output_fields():
