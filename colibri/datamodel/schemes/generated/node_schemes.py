@@ -1,3 +1,4 @@
+
 space_scheme = {
     "type": "space node",
     "info": "A space is a continuous volume delimited by boundaries",
@@ -78,6 +79,7 @@ space_scheme = {
         "air_permeability": None
     }
 }
+
 ponctual_junction_scheme = {
     "type": "space node",
     "info": "A space is a continuous volume delimited by boundaries",
@@ -158,6 +160,7 @@ ponctual_junction_scheme = {
         "air_permeability": None
     }
 }
+
 linear_junction_scheme = {
     "type": "space node",
     "info": "A space is a continuous volume delimited by boundaries",

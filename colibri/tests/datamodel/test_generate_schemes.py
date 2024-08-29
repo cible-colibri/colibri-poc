@@ -6,6 +6,9 @@ from colibri.datamodel.schemes.object_schemes import boundary_scheme, root_schem
 import json
 import os
 
+from pkg_resources import resource_filename
+scheme_path = resource_filename('colibri', os.path.join('datamodel', 'schemes'))
+
 def test_generate_schemes():
 
     schemes_to_update = [
@@ -28,13 +31,15 @@ def test_generate_schemes():
         }
     ]
 
-    generate_schemes(schemes_to_update)
+    scheme = generate_schemes(schemes_to_update)
 
-    pass
+    # check we have at lease 5 models
+    assert len(scheme) > 5
 
 def generate_schemes(schemes_to_update):
     project = Project("pfc")
     scheme_from_config = project.scheme_from_config(config)
+
 
     for scheme_to_update in schemes_to_update:
         for content in scheme_to_update['content']:
@@ -51,12 +56,14 @@ def generate_schemes(schemes_to_update):
     # schemes for models
     for cls, scheme in scheme_from_config.items():
         scheme_name = cls.replace("<class '",'').replace("'>",'_scheme').replace('.', '_')
-        dump_scheme("object_schemes.py", scheme_name, scheme, "a")
-    pass
+        dump_scheme(os.path.join(scheme_path, "generated", "object_schemes.py"), scheme_name, scheme, "a")
+
+    return scheme_from_config
 
 def dump_scheme(file_name, scheme_name, scheme, mode="w"):
-    generated_schemes_path = os.path.join('generated', file_name)
+    generated_schemes_path = os.path.join(scheme_path, 'generated', file_name)
     with open(generated_schemes_path, mode) as text_file:
+        text_file.write("\n")
         text_file.write(scheme_name + " = ")
         text_file.write(json.dumps(scheme, indent=4).replace('null', 'None'))
         text_file.write("\n")
