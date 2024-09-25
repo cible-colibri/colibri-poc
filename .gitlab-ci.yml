@@ -54,8 +54,6 @@ job_sonarqube:
   script:
     - sonar-scanner
   allow_failure: true
-  only:
-    - main
   dependencies:
     - job_test
 
