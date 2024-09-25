@@ -1,0 +1,335 @@
+"""
+ProjectData class that construct the project data objects
+for the `colibri` package.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any, Dict, List, Type, Union
+
+from colibri.config.constants import (
+    ARCHETYPE_COLLECTION,
+    BOUNDARY_COLLECTION,
+    COLLECTION,
+    DEFAULT_LINEAR_JUNCTION_MODEL,
+    DEFAULT_PUNCTUAL_JUNCTION_MODEL,
+    DEFAULT_SEGMENT_MODEL,
+    DEFAULT_SPACE_MODEL,
+    JUNCTION,
+    NODE_COLLECTION,
+    PROJECT,
+    SEGMENTS,
+    SPACE_COLLECTION,
+    TYPE,
+    TYPE_ID,
+)
+from colibri.interfaces import (
+    ElementObject,
+    Model,
+)
+from colibri.project_objects import (
+    Boundary,
+    LinearJunction,
+    PunctualJunction,
+    Segment,
+    Space,
+)
+from colibri.utils.class_utils import (
+    create_class_instance,
+    get_class,
+)
+from colibri.utils.enums_utils import (
+    ColibriObjectTypes,
+    Units,
+)
+
+
+class ProjectData(Model):
+    """Class representing the project's data (structure of the project)."""
+
+    def __init__(self, name: str, data: Union[dict, Path]):
+        """Initialize a new ProjectData instance."""
+        super().__init__(name=name)
+        self.project_file = data if isinstance(data, Path) is True else False
+        self.project_data: dict = (
+            self.read_project_file() if isinstance(data, Path) is True else data
+        )
+        if self.project_data:
+            spaces: List[Space] = self.get_spaces()
+            self.spaces: List[Space] = self.define_output(
+                name="spaces",
+                default_value=spaces,
+                description="Spaces of the project.",
+                format=List["Space"],
+                min=None,
+                max=None,
+                unit=Units.UNITLESS,
+                attached_to=None,
+            )
+            boundaries: List[Boundary] = self.get_boundaries()
+            self.boundaries: List[Boundary] = self.define_output(
+                name="boundaries",
+                default_value=boundaries,
+                description="Boundaries of the project.",
+                format=List["Boundary"],
+                min=None,
+                max=None,
+                unit=Units.UNITLESS,
+                attached_to=None,
+            )
+
+    def initialize(self) -> None: ...
+
+    def run(self, time_step: int, number_of_iterations: int) -> None: ...
+
+    def end_iteration(self, time_step: int) -> None: ...
+
+    def end_time_step(self, time_step: int) -> None: ...
+
+    def end_simulation(self, time_step: int) -> None: ...
+
+    def save_time_step(self, time_step: int) -> None: ...
+
+    def read_project_file(self):
+        """Read the project file
+
+        Returns
+        -------
+        project_data : dict
+            Project/simulation/input data
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        with open(self.project_file, "r") as _file_descriptor:
+            project_data: dict = json.load(_file_descriptor)
+        return project_data
+
+    def get_spaces(self) -> List[Space]:
+        """Get spaces from the project/simulation/input data
+
+        Returns
+        -------
+        spaces : List[Space]
+            Spaces of the project/simulation/input data
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        spaces: List[Space] = []
+        space_collection: List[dict] = self.project_data[PROJECT][
+            NODE_COLLECTION
+        ][SPACE_COLLECTION]
+        for space_name, space_data in space_collection.items():
+            space: Space = create_class_instance(
+                class_name=DEFAULT_SPACE_MODEL,
+                class_parameters=space_data,
+                output_type=ColibriObjectTypes.PROJECT_OBJECT,
+            )
+            spaces.append(space)
+        return spaces
+
+    def get_boundaries(self) -> List[Boundary]:
+        """Get boundaries from the project/simulation/input data
+
+        Returns
+        -------
+        boundaries : List[Boundary]
+            Boundaries of the project/simulation/input data
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        boundaries: List[Boundary] = []
+        boundary_collection: List[dict] = self.project_data[PROJECT][
+            BOUNDARY_COLLECTION
+        ]
+        for boundary_name, boundary_data in boundary_collection.items():
+            segments_data: Dict[str, Any] = boundary_data.pop(SEGMENTS, [])
+            boundary: Boundary = self.create_element_object(
+                element_data=boundary_data
+            )
+            boundary.segments = self.get_segments(
+                segments_data=segments_data,
+            )
+            for space in self.spaces:
+                if space.id in [boundary.side_1, boundary.side_2]:
+                    space.boundaries.append(boundary)
+                    boundary.spaces.append(space)
+            boundaries.append(boundary)
+        return boundaries
+
+    def get_segments(
+        self,
+        segments_data: List[Dict[str, Any]],
+    ) -> List[Segment]:
+        segments: List[Segment] = []
+        for segment_data in segments_data:
+            junction_data: Dict[str, Any] = segment_data.pop(JUNCTION, [])
+            segment: Segment = create_class_instance(
+                class_name=DEFAULT_SEGMENT_MODEL,
+                class_parameters=segment_data,
+                output_type=ColibriObjectTypes.PROJECT_OBJECT,
+            )
+            if junction_data is not None:
+                segment.junction = self.get_junction(
+                    junction_data=junction_data,
+                    segment_length=segment.length,
+                )
+            segments.append(segment)
+        return segments
+
+    def get_junction(
+        self, junction_data: Dict[str, Any], segment_length: float
+    ) -> Union[LinearJunction, PunctualJunction]:
+        junction_type: str = junction_data[TYPE]
+        junction_type_id: str = junction_data[TYPE_ID]
+        junction_collection: str = f"{junction_type}_{COLLECTION}"
+        junction_properties: Dict[str, Any] = self.project_data[PROJECT][
+            NODE_COLLECTION
+        ][junction_collection][junction_type_id]
+        class_name: str = (
+            DEFAULT_LINEAR_JUNCTION_MODEL
+            if junction_type.split("_")[0]
+            in DEFAULT_LINEAR_JUNCTION_MODEL.lower()
+            else DEFAULT_PUNCTUAL_JUNCTION_MODEL
+        )
+        junction: Union[LinearJunction, PunctualJunction] = (
+            create_class_instance(
+                class_name=class_name,
+                class_parameters=junction_properties,
+                output_type=ColibriObjectTypes.PROJECT_OBJECT,
+            )
+        )
+        junction.length = segment_length
+        return junction
+
+    def create_element_object(
+        self, element_data: Union[Dict[str, Any], List[Dict[str, Any]]]
+    ):
+        is_element_data_list: bool = isinstance(element_data, list)
+        is_element_data_dict: bool = isinstance(element_data, dict)
+        if not (is_element_data_dict or is_element_data_list):
+            return element_data
+        if is_element_data_list:
+            return [
+                self.create_element_object(element_data=element)
+                for element in element_data
+            ]
+        does_element_have_archetype: bool = (TYPE in element_data) and (
+            TYPE_ID in element_data
+        )
+        if is_element_data_dict and does_element_have_archetype:
+            archetype_data: Dict[str, Any] = self.get_archetype_data(
+                object_data=element_data
+            )
+            class_name: str = element_data.get(TYPE).capitalize()
+            class_parameters: Dict[str, Any] = {
+                **archetype_data,
+                **element_data,
+            }
+            class_signature: Type = get_class(
+                class_name=class_name,
+                output_type=ColibriObjectTypes.PROJECT_OBJECT,
+            )
+            if class_signature.__name__ == ElementObject.__name__:
+                return class_signature.create_instance(
+                    class_name=class_name,
+                    fields={
+                        parameter_name: self.create_element_object(
+                            element_data=parameter_value
+                        )
+                        for parameter_name, parameter_value in class_parameters.items()
+                    },
+                )
+            return class_signature(
+                **{
+                    parameter_name: self.create_element_object(
+                        element_data=parameter_value
+                    )
+                    for parameter_name, parameter_value in class_parameters.items()
+                }
+            )
+
+    def get_archetype_data(self, object_data: dict) -> Dict[str, Any]:
+        """Get archetype data associated to an object
+
+        Parameters
+        ----------
+        object_data : dict
+            Object whose archetype data should be returned
+
+        Returns
+        -------
+        archetype_data : Dict[str, Any]
+            Archetype data of the object
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        archetype_type: str | None = object_data.get(TYPE, None)
+        archetype_type_id: str | None = object_data.get(TYPE_ID, None)
+        if (archetype_type is None) or (archetype_type_id is None):
+            archetype_data: Dict[str, Any] = dict()
+            return archetype_data
+        archetype_type_key: str = f"{archetype_type}_{TYPE}s"
+        archetype_data: Dict[str, Any] = self.project_data[PROJECT][
+            ARCHETYPE_COLLECTION
+        ][archetype_type_key][archetype_type_id]
+        return archetype_data
+
+
+if __name__ == "__main__":
+    from colibri.config.constants import LOGGER
+
+    project_file_example: Path = Path(
+        r"D:\developments\sandbox\colibri\src\tests\data\house_1.json"
+    )
+    project_data_example: ProjectData = ProjectData(
+        name="project-data",
+        data=project_file_example,
+    )
+    for boundary_example in project_data_example.boundaries:
+        print(f"{boundary_example.id = } [{boundary_example.label = }]")
+        for segment in boundary_example.segments:
+            print(f"{segment = }")
+            print(f"{segment.junction = }")
+        for collection_object in boundary_example.object_collection:
+            print(f"{collection_object = }")
+        print("")
+
+    """
+    print(project_data_example)
+    print(project_data_example.spaces)
+    print(project_data_example.boundaries)
+    print(project_data_example.boundaries[1])
+    print(project_data_example.boundaries[1].label)
+    print(project_data_example.boundaries[1].object_collection)
+    for boundary_example in project_data_example.boundaries:
+        print(
+            f"{boundary_example.id} [{boundary_example.label}]: "
+            f"{boundary_example.segments} vs {boundary_example.object_collection}"
+        )
+    """

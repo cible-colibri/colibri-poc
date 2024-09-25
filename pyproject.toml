@@ -1,0 +1,60 @@
+[project]
+name = "colibri"
+version = "0.1.0"
+authors = []
+maintainers = []
+description = "COLIBRI package"
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["simulation"]
+dependencies = ["matplotlib", "numpy", "pandas"]
+
+[project.optional-dependencies]
+doc = ["numpydoc", "sphinx", "sphinx-rtd-theme"]
+dev = ["pytest-cov", "numpydoc", "sphinx", "sphinx-rtd-theme"]
+test = ["pytest-cov"]
+
+[project.urls]
+Documentation = "https://dee.scm-pages.cstb.fr/dee/colibri"
+Repository = "https://scm.cstb.fr/dee/colibri"
+Issues = "https://scm.cstb.fr/dee/colibri/-/issues"
+Changelog = "https://scm.cstb.fr/dee/colibri/-/blob/main/CHANGELOG.md?ref_type=heads"
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["colibri"]
+
+[tool.setuptools.package-data]
+colibri = ["config/data/*.json"]
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "B",
+    "C4",
+    "E",
+    "F",
+    "I",
+    "D",
+    "W",
+]
+extend-select = ["E501"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.isort]
+known-first-party = ["colibri"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

@@ -1,12 +1,17 @@
 [run]
+source=src
 omit=
-	*/docs/*
-  setup.py
+    */docs/*
+    */__init__.py
+    */tests/*
+
+[paths]
+source=src
 
 [report]
 show_missing=True
-fail_under=50
+fail_under=85
 exclude_also =
     if __name__ == .__main__.:
     \.\.\.
-
+    if TYPE_CHECKING:

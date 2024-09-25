@@ -3,17 +3,22 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to colibri's documentation!
-===================================
+****************************
+Documentation de ``colibri``
+****************************
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Tables des matières
 
+   ./architecture/architecture.rst
+   ./operating_mode/operating-mode.rst
+   ./development/development.rst
+   ./api/api.rst
 
-
+******************
 Indices and tables
-==================
+******************
 
 * :ref:`genindex`
 * :ref:`modindex`
