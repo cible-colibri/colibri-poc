@@ -2,6 +2,7 @@ from colibri.interfaces.model import Model
 from colibri.interfaces.modules import (
     Acv,
     AirFlow,
+    CircularEconomy,
     Generator,
     Occupants,
     ThermalSpace,
