@@ -9,7 +9,10 @@ import sys
 # -- Path setup --------------------------------------------------------------
 
 # Patch sys.path in your Sphinx conf.py to include the folder of your sources.
-sys.path.insert(0, os.path.abspath("../src"))
+sys.path.insert(0, os.path.abspath("../../src"))
+print("")
+print(sys.path)
+print("")
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
