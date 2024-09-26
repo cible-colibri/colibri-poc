@@ -10,9 +10,6 @@ import sys
 
 # Patch sys.path in your Sphinx conf.py to include the folder of your sources.
 sys.path.insert(0, os.path.abspath("../../src"))
-print("")
-print(sys.path)
-print("")
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -29,9 +26,11 @@ release = "0.1.0"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "nbsphinx",  # Sphinx extension that provides a source parser for *.ipynb files
     "numpydoc",  # For numpy docstrings
     "sphinx.ext.autodoc",  # Core Sphinx library for auto html doc generation from docstrings
     "sphinx.ext.autosummary",  # Create neat summary tables for modules/classes/methods etc
+    "sphinx.ext.mathjax",  # Enable mathjax (advised by numpydoc)
 ]
 
 # Generate autosummary even if no references
@@ -48,7 +47,11 @@ numpydoc_class_members_toctree = True
 
 
 templates_path = ["_templates"]
-exclude_patterns = []
+# List of patterns, relative to source directory, that match files and
+# directories to ignore when looking for source files.
+# This pattern also affects html_static_path and html_extra_path.
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
+
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
