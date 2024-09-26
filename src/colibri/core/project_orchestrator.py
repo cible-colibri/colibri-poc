@@ -152,7 +152,7 @@ class ProjectOrchestrator:
             # End time step (run models' end_time_step method)
             self._end_time_step(time_step=time_step)
         # End simulation (run models' end_simulation method)
-        self._end_simulation(time_step=time_step)
+        self._end_simulation()
         # Show plots if show_plots is set to True
         if show_plots:
             self.plot()
@@ -869,13 +869,8 @@ class ProjectOrchestrator:
         for model in self.models:
             model.end_time_step(time_step=time_step)
 
-    def _end_simulation(self, time_step: int) -> None:
+    def _end_simulation(self) -> None:
         """Run the end_simulation method of each model in the project
-
-        Parameters
-        ----------
-        time_step : int
-            Current time step of the simulation
 
         Returns
         -------
@@ -890,7 +885,7 @@ class ProjectOrchestrator:
         >>> None
         """
         for model in self.models:
-            model.end_simulation(time_step=time_step)
+            model.end_simulation()
 
 
 if __name__ == "__main__":
