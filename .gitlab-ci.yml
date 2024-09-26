@@ -63,7 +63,8 @@ pages:
   image: $JOB_DOC_AND_TEST_IMAGE_URL
   script:
     - pip install .[doc]
-    - sphinx-build docs/source public/
+    - cd docs
+    - sphinx-build source ../public/
   artifacts:
     paths:
       - public
