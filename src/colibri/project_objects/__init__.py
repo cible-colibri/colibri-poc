@@ -8,12 +8,12 @@ from colibri.project_objects.segment import Segment
 from colibri.project_objects.space import Space
 
 __all__ = [
-    Boundary,
-    BoundaryCondition,
-    Building,
-    LinearJunction,
-    PunctualJunction,
-    Project,
-    Segment,
-    Space,
+    "Boundary",
+    "BoundaryCondition",
+    "Building",
+    "LinearJunction",
+    "PunctualJunction",
+    "Project",
+    "Segment",
+    "Space",
 ]

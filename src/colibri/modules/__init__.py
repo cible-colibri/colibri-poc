@@ -22,15 +22,15 @@ from colibri.modules.weathers.epw_weather import WeatherEpw
 from colibri.modules.weathers.weather_model import WeatherModel
 
 __all__ = [
-    AcvExploitationOnly,
-    CircularEconomyIndicator,
-    CustomModel,
-    InfinitePowerGenerator,
-    LayerWallLosses,
-    LimitedGenerator,
-    OccupantModel,
-    SimplifiedWallLosses,
-    ThermalSpaceSimplified,
-    WeatherEpw,
-    WeatherModel,
+    "AcvExploitationOnly",
+    "CircularEconomyIndicator",
+    "CustomModel",
+    "InfinitePowerGenerator",
+    "LayerWallLosses",
+    "LimitedGenerator",
+    "OccupantModel",
+    "SimplifiedWallLosses",
+    "ThermalSpaceSimplified",
+    "WeatherEpw",
+    "WeatherModel",
 ]
