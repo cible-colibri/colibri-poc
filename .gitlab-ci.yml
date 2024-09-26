@@ -62,10 +62,11 @@ pages:
   stage: documentation
   image: $JOB_DOC_AND_TEST_IMAGE_URL
   script:
+    - sudo apt update && apt install make
     - pip install .
     - pip install .[doc]
-    - cd docs
-    - sphinx-build source ../public/
+    - make -directory=docs/ html
+    - mv docs/build/html/ public/
   artifacts:
     paths:
       - public
