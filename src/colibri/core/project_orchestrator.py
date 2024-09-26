@@ -919,7 +919,6 @@ if __name__ == "__main__":
 
     def test_links() -> None:
         from pathlib import Path
-        from random import randint
 
         from colibri.core.project_data import ProjectData
         from colibri.modules import (
@@ -937,7 +936,7 @@ if __name__ == "__main__":
         project: ProjectOrchestrator = ProjectOrchestrator(
             name="my-project",
             verbose=False,
-            time_steps=200,
+            time_steps=72,
         )
 
         # Create models
@@ -972,7 +971,78 @@ if __name__ == "__main__":
         weather: WeatherModel = WeatherModel(
             name="weather",
             scenario_exterior_air_temperatures=[
-                randint(5, 20) for _ in range(0, project.time_steps)
+                16,
+                11,
+                18,
+                15,
+                6,
+                10,
+                14,
+                17,
+                13,
+                14,
+                7,
+                15,
+                19,
+                7,
+                18,
+                13,
+                12,
+                18,
+                5,
+                19,
+                19,
+                5,
+                9,
+                6,
+                10,
+                10,
+                16,
+                18,
+                11,
+                19,
+                5,
+                19,
+                18,
+                11,
+                17,
+                18,
+                11,
+                14,
+                13,
+                11,
+                13,
+                16,
+                17,
+                17,
+                16,
+                16,
+                19,
+                9,
+                17,
+                12,
+                19,
+                19,
+                19,
+                19,
+                18,
+                11,
+                6,
+                5,
+                7,
+                17,
+                17,
+                15,
+                12,
+                15,
+                5,
+                15,
+                10,
+                18,
+                12,
+                14,
+                20,
+                6,
             ],
         )
 
