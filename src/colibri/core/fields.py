@@ -133,7 +133,7 @@ class Parameter(Field):
         Required parameters that a parameter might need
     """
 
-    required: List[Parameter] = None
+    required: Optional[List[Parameter]] = None
 
 
 @dataclass
@@ -169,5 +169,5 @@ class SimulationVariable(Field):
     check_convergence: bool = False
     convergence_tolerance: float = 0.1
     maximum_number_of_iterations: int = 10
-    required: List[Parameter] = None
+    required: Optional[List[Parameter]] = None
     use_post_initialization: bool = False
