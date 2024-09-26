@@ -22,13 +22,13 @@ il suffira de l'importer pour que le module puisse en hériter :
         def __init__(
             self,
             name: str,
-            parameter_for_interface: float = 0.0,
+            input_or_output_for_interface: float = 0.0,
             parameter_for_module: bool = False,
         ) -> None:
             """Initialize a new ModuleExample instance."""
             super().__init__(
                 name=name,
-                parameter_for_interface=parameter_for_interface,
+                input_or_output_for_interface=input_or_output_for_interface,
             )
             self.parameter_for_module = parameter_for_module
 
@@ -126,6 +126,8 @@ Une interface de module doit :
 
 Une interface peut avoir uniquement une ou plusieurs entrées ou une ou
 plusieurs sorties, mais doit définir au moins une entrée ou une sortie.
+
+.. _fonctions_define_input_output_section:
 
 Fonctions ``define_input`` et  ``define_output``
 """"""""""""""""""""""""""""""""""""""""""""""""
