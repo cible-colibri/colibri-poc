@@ -65,7 +65,7 @@ pages:
     - apt update && apt install make
     - pip install .
     - pip install .[doc]
-    - make -directory=docs/ html
+    - make --directory=docs/ html
     - mv docs/build/html/ public/
   artifacts:
     paths:
