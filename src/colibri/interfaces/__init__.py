@@ -16,15 +16,15 @@ from colibri.interfaces.project_objects import (
 )
 
 __all__ = [
-    Acv,
-    AirFlow,
-    BoundaryObject,
-    ElementObject,
-    Generator,
-    Occupants,
-    Model,
-    StructureObject,
-    ThermalSpace,
-    WallLosses,
-    Weather,
+    "Acv",
+    "AirFlow",
+    "BoundaryObject",
+    "ElementObject",
+    "Generator",
+    "Occupants",
+    "Model",
+    "StructureObject",
+    "ThermalSpace",
+    "WallLosses",
+    "Weather",
 ]

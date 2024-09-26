@@ -8,12 +8,12 @@ from colibri.interfaces.modules.wall_losses import WallLosses
 from colibri.interfaces.modules.weather import Weather
 
 __all__ = [
-    Acv,
-    AirFlow,
-    CircularEconomy,
-    Generator,
-    Occupants,
-    ThermalSpace,
-    WallLosses,
-    Weather,
+    "Acv",
+    "AirFlow",
+    "CircularEconomy",
+    "Generator",
+    "Occupants",
+    "ThermalSpace",
+    "WallLosses",
+    "Weather",
 ]
