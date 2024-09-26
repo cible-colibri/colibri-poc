@@ -52,7 +52,7 @@ job_sonarqube:
     paths:
       - .sonar/cache
   script:
-    - sonar-scanner -X
+    - sonar-scanner
   allow_failure: true
   dependencies:
     - job_test
