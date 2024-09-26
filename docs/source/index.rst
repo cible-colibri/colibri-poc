@@ -14,6 +14,7 @@ Documentation de ``colibri``
    ./architecture/architecture.rst
    ./operating_mode/operating-mode.rst
    ./development/development.rst
+   ./examples/examples.rst
    ./api/api.rst
 
 ******************
