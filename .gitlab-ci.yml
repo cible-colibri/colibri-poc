@@ -62,6 +62,7 @@ pages:
   stage: documentation
   image: $JOB_DOC_AND_TEST_IMAGE_URL
   script:
+    - apt update && apt install pandoc
     - pip install .[doc]
     - sphinx-build docs/source public/
   artifacts:

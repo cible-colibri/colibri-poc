@@ -10,8 +10,8 @@ keywords = ["simulation"]
 dependencies = ["matplotlib", "numpy", "pandas"]
 
 [project.optional-dependencies]
-doc = ["numpydoc", "sphinx", "sphinx-rtd-theme"]
-dev = ["pytest-cov", "numpydoc", "sphinx", "sphinx-rtd-theme"]
+doc = ["nbsphinx", "numpydoc", "sphinx", "sphinx-rtd-theme"]
+dev = ["nbsphinx", "numpydoc", "pytest-cov", "sphinx", "sphinx-rtd-theme"]
 test = ["pytest-cov"]
 
 [project.urls]
