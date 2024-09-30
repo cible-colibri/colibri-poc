@@ -26,8 +26,6 @@ class WeatherEpw(Weather):
         rolling_time_window: int = 48,
         rolling_exterior_air_temperatures: Optional[Series] = None,
         exterior_air_temperatures: Optional[Series] = None,
-        latitude: Optional[float] = None,
-        longitude: Optional[float] = None,
         solar_direct: Optional[Series] = None,
         solar_diffuse: Optional[Series] = None,
         global_horizontal_radiation: Optional[Series] = None,
@@ -107,7 +105,7 @@ class WeatherEpw(Weather):
         )
         self.latitude: float = self.define_output(
             name="latitude",
-            default_value=latitude,
+            default_value=48,
             description="Latitude of the location.",
             format=float,
             min=-90,
@@ -117,7 +115,7 @@ class WeatherEpw(Weather):
         )
         self.longitude: float = self.define_output(
             name="longitude",
-            default_value=longitude,
+            default_value=2,
             description="Longitude of the location.",
             format=float,
             min=-180,
