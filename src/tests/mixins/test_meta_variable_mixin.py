@@ -277,7 +277,7 @@ def test_to_scheme():
         "Space": {
             "q_needs": {
                 "choices": None,
-                "default": {},
+                "default": 0.0,
                 "description": "Needs of the space.",
                 "format": "float",
                 "max": "inf",

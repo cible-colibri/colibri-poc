@@ -12,6 +12,7 @@ from colibri.config.constants import (
     ARCHETYPES,
     ATTACHED_TO,
     CATEGORY,
+    DEFAULT,
     DESCRIPTION,
     ELEMENT_OBJECT,
     FORMAT,
@@ -518,12 +519,15 @@ class MetaFieldMixin:
             from_element_object: str = attachment.from_element_object
             description: str = attachment.description
             format: Any = attachment.format
+            default_value: Any = attachment.default_value
             # Update field's description and format with those from the attachment,
             # in case the inputs is a kind of aggregation of the attachment
             if description is not None:
                 field_data.update({DESCRIPTION: description})
             if format is not None:
                 field_data.update({FORMAT: format})
+            if default_value is not None:
+                field_data.update({DEFAULT: default_value})
             # Regular field
             if (
                 category
