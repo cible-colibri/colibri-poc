@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, List
 
 from matplotlib.pyplot import Axes, Figure
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 
 if TYPE_CHECKING:
     from colibri.core.fields import SimulationVariable
@@ -18,7 +18,7 @@ class Plot:
     """Class representing a plot."""
 
     name: str
-    model: Model
+    model: Module
     variable_name: str
 
     def add_plot_to_figure(self, figure: Figure, location: int) -> None:

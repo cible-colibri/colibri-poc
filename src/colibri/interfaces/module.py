@@ -1,5 +1,5 @@
 """
-Class Model, which is the parent class of each model for the `colibri` package.
+Class Module, which is the parent class of each module for the `colibri` package.
 """
 
 from __future__ import annotations
@@ -20,20 +20,20 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-class Model(ClassMixin, MetaFieldMixin):
-    """Class representing an abstract model (interface for a concrete model)."""
+class Module(ClassMixin, MetaFieldMixin):
+    """Class representing an abstract module (interface for a concrete module)."""
 
     def __init__(
         self, name: str, project: Optional[ProjectOrchestrator] = None
     ) -> None:
-        """Initialize a new Model instance
+        """Initialize a new Module instance
 
         Parameters
         ----------
         name: str
-            Name of the model
+            Name of the module
         project : Optional[ProjectOrchestrator] = None
-            Project from which the model belongs to
+            Project from which the module belongs to
 
         Returns
         -------
@@ -95,7 +95,7 @@ class Model(ClassMixin, MetaFieldMixin):
             )
 
     def get_field(self, name: str) -> Union[Field, None]:
-        """Get a specific field of the model by its name
+        """Get a specific field of the module by its name
 
         Parameters
         ----------
@@ -118,7 +118,7 @@ class Model(ClassMixin, MetaFieldMixin):
         return self._fields_metadata.get(name, None)
 
     def is_field_linked(self, field_name: str) -> bool:
-        """Is the model's field already linked (to another model's field)
+        """Is the module's field already linked (to another module's field)
 
         Parameters
         ----------
@@ -127,7 +127,7 @@ class Model(ClassMixin, MetaFieldMixin):
 
         Returns
         -------
-        True if the model's field is already linked, False otherwise
+        True if the module's field is already linked, False otherwise
 
         Raises
         ------
@@ -140,12 +140,12 @@ class Model(ClassMixin, MetaFieldMixin):
         if not self.project:
             return False
         for link in self.project.links:
-            if (link.to_model == self) and (link.to_field == field_name):
+            if (link.to_module == self) and (link.to_field == field_name):
                 return True
         return False
 
     def get_link(self, field_name: str) -> Link | None:
-        """Return the link (if it exists) associated to the model's field
+        """Return the link (if it exists) associated to the module's field
 
         Parameters
         ----------
@@ -155,7 +155,7 @@ class Model(ClassMixin, MetaFieldMixin):
         Returns
         -------
         Link | None
-            Link associated to the model's field if it exists,
+            Link associated to the module's field if it exists,
             None otherwise
 
         Raises
@@ -169,6 +169,6 @@ class Model(ClassMixin, MetaFieldMixin):
         if not self.project:
             return None
         for link in self.project.links:
-            if (link.to_model == self) and (link.to_field == field_name):
+            if (link.to_module == self) and (link.to_field == field_name):
                 return link
         return None

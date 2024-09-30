@@ -47,7 +47,7 @@ Si une interface n'existe pas encore, elle peut être ajoutée dans le dossier
     │ ├── core
     │ ├── interfaces
     │ │ ├── __init__.py
-    │ │ ├── model.py
+    │ │ ├── module.py
     │ │ ├── modules
     │ │ └── project_objects
     │ ├── mixins
@@ -66,7 +66,7 @@ Une interface (par exemple ``InterfaceModuleExample``) prend la forme suivante :
     import abc
     from typing import Dict
 
-    from colibri.interfaces.model import Model
+    from colibri.interfaces.module import Module
     from colibri.utils.colibri_utils import Attachment
     from colibri.utils.enums_utils import (
         ColibriProjectObjects,
@@ -74,7 +74,7 @@ Une interface (par exemple ``InterfaceModuleExample``) prend la forme suivante :
     )
 
 
-    class InterfaceModuleExample(Model, metaclass=abc.ABCMeta):
+    class InterfaceModuleExample(Module, metaclass=abc.ABCMeta):
         """Class representing a ModuleExample interface."""
 
         def __init__(
@@ -117,12 +117,12 @@ Une interface (par exemple ``InterfaceModuleExample``) prend la forme suivante :
 
 Une interface de module doit :
 
-- Hériter de la class ``Model`` (afin d'avoir toutes les fonctions
+- Hériter de la class ``Module`` (afin d'avoir toutes les fonctions
   ``initialize``, ``run``, etc.) ;
 - Hériter de la meta-class ``abc.ABCMeta`` (afin d'éviter que l'interface soit
   instanciable) ;
 - Créer des entrées et/ou sorties via les fonctions ``self.define_input`` et
-  ``self.define_output`` issues de la class ``Model``.
+  ``self.define_output`` issues de la class ``Module``.
 
 Une interface peut avoir uniquement une ou plusieurs entrées ou une ou
 plusieurs sorties, mais doit définir au moins une entrée ou une sortie.
@@ -147,7 +147,7 @@ Les fonctions ``define_input`` et ``define_output`` demande:
   Le format ne doit pas être une chaîne de charactères, mais le format Python.
 
 Plus d'informations sur ces fonctions dans :ref:`meta_fields_mixin_section`,
-étant donné qu'elles sont héritées de ``Model``, qui les hérite
+étant donné qu'elles sont héritées de ``Module``, qui les hérite
 ``MetaFieldMixin``.
 
 Attached_to

@@ -46,7 +46,7 @@ def get_class(class_name: str, output_type: ColibriObjectTypes) -> Type:
     """
     classes_path: str = (
         COLIBRI_MODULES_MODULE_PATH
-        if output_type is ColibriObjectTypes.MODEL
+        if output_type is ColibriObjectTypes.MODULE
         else COLIBRI_PROJECT_OBJECTS_MODULE_PATH
     )
     colibri_classes_module: ModuleType = importlib.import_module(classes_path)
@@ -61,7 +61,7 @@ def create_class_instance(
     class_name: str,
     class_parameters: Dict[str, Any],
     output_type: ColibriObjectTypes,
-) -> Union["BoundaryObject", "Model", "StructureObject"]:
+) -> Union["BoundaryObject", "Module", "StructureObject"]:
     """Create an instance of a class given its name
 
     Parameters
@@ -75,7 +75,7 @@ def create_class_instance(
 
     Returns
     -------
-    instance : Union[BoundaryObject, Model, StructureObject]
+    instance : Union[BoundaryObject, Module, StructureObject]
         Instance of the class
 
     Raises
@@ -107,8 +107,8 @@ def create_class_instance(
             COLIBRI_INTERFACES_MODULE_PATH
         )
         colibri_interfaces: List[str] = dir(colibri_interfaces_module)
-        parent_model_class_name: Type = model_class.__bases__[0].__name__
-        if parent_model_class_name not in colibri_interfaces:
+        parent_module_class_name: Type = model_class.__bases__[0].__name__
+        if parent_module_class_name not in colibri_interfaces:
             raise UnauthorizedColibriModule(
                 f"{class_name} of {model_class} class is not a subclass "
                 f"of the available scheme configuration."
@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     class_signature = get_class(
         class_name="AcvExploitationOnly",
-        output_type=ColibriObjectTypes.MODEL,
+        output_type=ColibriObjectTypes.MODULE,
     )
     LOGGER.debug(class_signature)
     class_signature = get_class(
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     acv = create_class_instance(
         class_name="AcvExploitationOnly",
         class_parameters={"name": "model-1"},
-        output_type=ColibriObjectTypes.MODEL,
+        output_type=ColibriObjectTypes.MODULE,
     )
     LOGGER.debug(acv)
     space = create_class_instance(

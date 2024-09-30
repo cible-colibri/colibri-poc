@@ -5,7 +5,7 @@ Occupants interface (IM_5).
 import abc
 from typing import Dict
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -13,7 +13,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class Occupants(Model, metaclass=abc.ABCMeta):
+class Occupants(Module, metaclass=abc.ABCMeta):
     """Occupants interface (IM_5)."""
 
     def __init__(

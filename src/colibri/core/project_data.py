@@ -13,21 +13,21 @@ from colibri.config.constants import (
     ARCHETYPE_COLLECTION,
     BOUNDARY_COLLECTION,
     COLLECTION,
-    DEFAULT_LINEAR_JUNCTION_MODEL,
-    DEFAULT_PUNCTUAL_JUNCTION_MODEL,
-    DEFAULT_SEGMENT_MODEL,
-    DEFAULT_SPACE_MODEL,
     JUNCTION,
+    LINEAR_JUNCTION,
     NODE_COLLECTION,
     PROJECT,
+    PUNCTUAL_JUNCTION,
+    SEGMENT,
     SEGMENTS,
+    SPACE,
     SPACE_COLLECTION,
     TYPE,
     TYPE_ID,
 )
 from colibri.interfaces import (
     ElementObject,
-    Model,
+    Module,
 )
 from colibri.project_objects import (
     Boundary,
@@ -46,7 +46,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class ProjectData(Model):
+class ProjectData(Module):
     """Class representing the project's data (structure of the project)."""
 
     def __init__(self, name: str, data: Union[dict, Path]):
@@ -134,7 +134,7 @@ class ProjectData(Model):
         ][SPACE_COLLECTION]
         for space_name, space_data in space_collection.items():
             space: Space = create_class_instance(
-                class_name=DEFAULT_SPACE_MODEL,
+                class_name=SPACE,
                 class_parameters=space_data,
                 output_type=ColibriObjectTypes.PROJECT_OBJECT,
             )
@@ -184,7 +184,7 @@ class ProjectData(Model):
         for segment_data in segments_data:
             junction_data: Dict[str, Any] = segment_data.pop(JUNCTION, [])
             segment: Segment = create_class_instance(
-                class_name=DEFAULT_SEGMENT_MODEL,
+                class_name=Segment.__name__,
                 class_parameters=segment_data,
                 output_type=ColibriObjectTypes.PROJECT_OBJECT,
             )
@@ -206,10 +206,9 @@ class ProjectData(Model):
             NODE_COLLECTION
         ][junction_collection][junction_type_id]
         class_name: str = (
-            DEFAULT_LINEAR_JUNCTION_MODEL
-            if junction_type.split("_")[0]
-            in DEFAULT_LINEAR_JUNCTION_MODEL.lower()
-            else DEFAULT_PUNCTUAL_JUNCTION_MODEL
+            LinearJunction.__name__
+            if junction_type.split("_")[0] in LinearJunction.__name__.lower()
+            else PunctualJunction.__name__
         )
         junction: Union[LinearJunction, PunctualJunction] = (
             create_class_instance(

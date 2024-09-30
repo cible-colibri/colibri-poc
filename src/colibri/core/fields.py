@@ -20,7 +20,7 @@ from colibri.utils.enums_utils import (
 )
 
 if TYPE_CHECKING:
-    from colibri.interfaces.model import Model
+    from colibri.interfaces.module import Module
 
 
 @dataclass
@@ -165,7 +165,7 @@ class SimulationVariable(Field):
     """
 
     linked_to: List[SimulationVariable] = field(default_factory=list)
-    model: Optional[Model] = None
+    model: Optional[Module] = None
     check_convergence: bool = False
     convergence_tolerance: float = 0.1
     maximum_number_of_iterations: int = 10

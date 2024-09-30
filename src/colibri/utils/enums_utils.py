@@ -23,7 +23,7 @@ class ColibriCategories(Enum):
 
 @unique
 class ColibriObjectTypes(Enum):
-    MODEL = "model"
+    MODULE = "module"
     PROJECT_OBJECT = "project_object"
 
 

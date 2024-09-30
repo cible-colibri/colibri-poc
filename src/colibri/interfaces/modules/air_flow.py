@@ -7,7 +7,7 @@ from typing import Dict
 
 from numpy import ndarray
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -15,7 +15,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class AirFlow(Model, metaclass=abc.ABCMeta):
+class AirFlow(Module, metaclass=abc.ABCMeta):
     """Air flow interface."""
 
     def __init__(

@@ -60,7 +60,7 @@ from colibri.utils.exceptions_utils import LinkError
 from colibri.utils.plot_utils import Plot
 
 if TYPE_CHECKING:
-    from colibri.interfaces.model import Model
+    from colibri.interfaces.module import Module
 
 
 @dataclass
@@ -70,7 +70,7 @@ class ProjectOrchestrator:
     name: str = "project-orchestrator-1"
     links: List[Link] = field(default_factory=list)
     post_initialization_links: List[Link] = field(default_factory=list)
-    models: List[Model] = field(default_factory=list)
+    models: List[Module] = field(default_factory=list)
     time_steps: int = 168
     verbose: bool = False
     iterate_for_convergence: bool = False
@@ -109,7 +109,7 @@ class ProjectOrchestrator:
         self._substitute_parameter_links_values_2()
         # Add a variable series for each output of each model to store results
         # at each time step
-        self._initialize_model_output_series()
+        self._initialize_module_output_series()
         # Initialize models (run models' initialize method)
         self._initialize_models()
         # Pass information (models' values) to connected models
@@ -149,7 +149,7 @@ class ProjectOrchestrator:
                 # End iteration (run models' iteration_done method)
                 self._end_iteration(time_step=time_step)
             # Save the model's data for the given time step
-            self._save_model_data(time_step=time_step)
+            self._save_module_data(time_step=time_step)
             # End time step (run models' end_time_step method)
             self._end_time_step(time_step=time_step)
         # End simulation (run models' end_simulation method)
@@ -164,13 +164,13 @@ class ProjectOrchestrator:
         }
         return information
 
-    def add_model(self, model: Model) -> ProjectOrchestrator:
+    def add_model(self, model: Module) -> ProjectOrchestrator:
         """Add a model to the project
 
         Parameters
         ----------
-        model : Model
-            Model to add
+        model : Module
+            Module to add
 
         Returns
         -------
@@ -189,7 +189,7 @@ class ProjectOrchestrator:
         model.project = self
         return self
 
-    def get_models_by_class(self, class_name: str) -> List[Model]:
+    def get_models_by_class(self, class_name: str) -> List[Module]:
         """Get all models given a class name
 
         Parameters
@@ -199,7 +199,7 @@ class ProjectOrchestrator:
 
         Returns
         -------
-        List[Model]
+        List[Module]
             List of models with the given a class name
 
         Raises
@@ -216,7 +216,7 @@ class ProjectOrchestrator:
             if model.__class__.__name__ == class_name
         ]
 
-    def get_model_by_name(self, name: str) -> Union[Model, None]:
+    def get_module_by_name(self, name: str) -> Union[Module, None]:
         """Get a model given its name
 
         Parameters
@@ -226,8 +226,8 @@ class ProjectOrchestrator:
 
         Returns
         -------
-        Union[Model, None]
-            Model with the given name or None if no model with that name
+        Union[Module, None]
+            Module with the given name or None if no model with that name
 
         Raises
         ------
@@ -237,7 +237,7 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        models: List[Model] = [
+        models: List[Module] = [
             model for model in self.models if model.name == name
         ]
         if not models:
@@ -245,7 +245,7 @@ class ProjectOrchestrator:
         return models[0]
 
     def add_plot(
-        self, name: str, model: Model, variable_name: str
+        self, name: str, model: Module, variable_name: str
     ) -> ProjectOrchestrator:
         """Add plot to the project
 
@@ -253,8 +253,8 @@ class ProjectOrchestrator:
         ----------
         name : str
             Name of the plot
-        model : Model
-            Model from which the variable to be plotted is taken
+        model : Module
+            Module from which the variable to be plotted is taken
         variable_name : str
             Name of the variable to be plotted
 
@@ -308,15 +308,15 @@ class ProjectOrchestrator:
 
     def add_link(
         self,
-        from_model: Model,
+        from_module: Module,
         from_field: str,
-        to_model: Model,
+        to_module: Module,
         to_field: str,
     ) -> ProjectOrchestrator:
         self._add_link(
-            from_model=from_model,
+            from_module=from_module,
             from_field=from_field,
-            to_model=to_model,
+            to_module=to_module,
             to_field=to_field,
         )
         return self
@@ -352,11 +352,11 @@ class ProjectOrchestrator:
             itertools.product(*[outputs, inputs])
         )
         for output_input_combination in output_input_combinations:
-            output_model_variable, input_model_variable = (
+            output_module_variable, input_module_variable = (
                 output_input_combination
             )
-            output_model, output_variable = output_model_variable
-            input_model, input_variable = input_model_variable
+            output_model, output_variable = output_module_variable
+            input_model, input_variable = input_module_variable
             is_same_variable: bool = output_variable == input_variable
             is_different_model: bool = output_model != input_model
             if is_same_variable and is_different_model:
@@ -423,7 +423,7 @@ class ProjectOrchestrator:
         for module_name in modules:
             module: Type = get_class(
                 class_name=module_name,
-                output_type=ColibriObjectTypes.MODEL,
+                output_type=ColibriObjectTypes.MODULE,
             )
             module_scheme: Dict[str, Dict[str, Any]] = module.to_scheme()
             for scheme_name, scheme_group in module_scheme.items():
@@ -705,10 +705,10 @@ class ProjectOrchestrator:
         project.add_model(model=project_data)
         """
         for module_name in project_data[PROJECT][MODULE_COLLECTION]:
-            module_instance: Model = create_class_instance(
+            module_instance: Module = create_class_instance(
                 class_name=module_name,
                 class_parameters=dict(),
-                output_type=ColibriObjectTypes.MODEL,
+                output_type=ColibriObjectTypes.MODULE,
             )
             project.add_model(model=module_instance)
         project.create_links_automatically()
@@ -716,27 +716,27 @@ class ProjectOrchestrator:
 
     def _add_link(
         self,
-        from_model: Model,
+        from_module: Module,
         from_field: str,
-        to_model: Model,
+        to_module: Module,
         to_field: str,
     ) -> None:
-        if to_model.is_field_linked(field_name=to_field):
-            link: Link = to_model.get_link(field_name=to_field)
-            existing_link: str = f"{link.from_model.name}.{link.from_field}"
+        if to_module.is_field_linked(field_name=to_field):
+            link: Link = to_module.get_link(field_name=to_field)
+            existing_link: str = f"{link.from_module.name}.{link.from_field}"
             raise LinkError(
-                f"Cannot link {from_model.name}.{from_field} "
-                f"to {to_model.name}.{to_field}, because "
-                f"{to_model.name}.{to_field} is already linked to "
+                f"Cannot link {from_module.name}.{from_field} "
+                f"to {to_module.name}.{to_field}, because "
+                f"{to_module.name}.{to_field} is already linked to "
                 f"{existing_link}."
             )
         link: Link = Link(
-            from_model=from_model,
+            from_module=from_module,
             from_field=from_field,
-            to_model=to_model,
+            to_module=to_module,
             to_field=to_field,
         )
-        if to_model.get_field(to_field).use_post_initialization is True:
+        if to_module.get_field(to_field).use_post_initialization is True:
             self.post_initialization_links.append(link)
         else:
             self.links.append(link)
@@ -744,9 +744,9 @@ class ProjectOrchestrator:
     def _substitute_parameter_links_values(self):
         """"""
         for link in self.links:
-            if link.to_model.get_field(link.to_field).role is Roles.PARAMETERS:
-                from_field = getattr(link.from_model, link.from_field)
-                setattr(link.to_model, link.to_field, from_field)
+            if link.to_module.get_field(link.to_field).role is Roles.PARAMETERS:
+                from_field = getattr(link.from_module, link.from_field)
+                setattr(link.to_module, link.to_field, from_field)
 
     def _substitute_parameter_links_values_2(self):
         for module in self.models:
@@ -756,12 +756,12 @@ class ProjectOrchestrator:
                     field_format=parameter.format
                 )
                 if parameter_format == "ProjectData":
-                    project_data: Model = self.get_models_by_class(
+                    project_data: Module = self.get_models_by_class(
                         class_name="ProjectData"
                     )[0]
                     setattr(module, parameter.name, project_data)
 
-    def _initialize_model_output_series(self) -> None:
+    def _initialize_module_output_series(self) -> None:
         """Create a variable for each output of each model to store results at
          each time step
 
@@ -870,8 +870,8 @@ class ProjectOrchestrator:
         >>> None
         """
         for link in self.links:
-            new_value: Any = getattr(link.from_model, link.from_field)
-            setattr(link.to_model, link.to_field, new_value)
+            new_value: Any = getattr(link.from_module, link.from_field)
+            setattr(link.to_module, link.to_field, new_value)
 
     def _substitute_links_values_for_post_initialization(self) -> None:
         """Pass information (models' values) to connected models
@@ -892,8 +892,8 @@ class ProjectOrchestrator:
         >>> None
         """
         for link in self.post_initialization_links:
-            new_value: Any = getattr(link.from_model, link.from_field)
-            setattr(link.to_model, link.to_field, new_value)
+            new_value: Any = getattr(link.from_module, link.from_field)
+            setattr(link.to_module, link.to_field, new_value)
 
     def _set_convergence(self, time_step: int) -> None:
         """Set convergence to True if iteration threshold has been reached or
@@ -946,7 +946,7 @@ class ProjectOrchestrator:
         for model in self.models:
             model.end_iteration(time_step=time_step)
 
-    def _save_model_data(self, time_step: int) -> None:
+    def _save_module_data(self, time_step: int) -> None:
         """Run the save_time_step method of each model in the project
 
         Parameters

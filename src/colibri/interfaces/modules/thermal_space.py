@@ -5,7 +5,7 @@ ThermalSpace interface (IM_3).
 import abc
 from typing import Dict
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -13,7 +13,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class ThermalSpace(Model, metaclass=abc.ABCMeta):
+class ThermalSpace(Module, metaclass=abc.ABCMeta):
     """ThermalSpace interface (IM_4)."""
 
     def __init__(

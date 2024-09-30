@@ -3,7 +3,7 @@
 import abc
 from typing import Dict
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -11,7 +11,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class Acv(Model, metaclass=abc.ABCMeta):
+class Acv(Module, metaclass=abc.ABCMeta):
     """Acv interface (IM_6)."""
 
     def __init__(

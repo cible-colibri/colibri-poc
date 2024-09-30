@@ -1,5 +1,5 @@
 """
-Model of the simplified building, kept separated for possible Cythonization.
+Module of the simplified building, kept separated for possible Cythonization.
 """
 
 from typing import Tuple, Union

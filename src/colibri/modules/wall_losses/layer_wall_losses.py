@@ -187,7 +187,7 @@ if __name__ == "__main__":
         "boundaries": [
             {
                 "name": "boundary-1",
-                "model": "GenericBoundary",
+                "module": "GenericBoundary",
                 "label": "kitchen-living-room",
                 "side_1": "kitchen",
                 "side_2": "living-room",
@@ -195,7 +195,7 @@ if __name__ == "__main__":
                 "layers": [
                     {
                         "name": "layer-1",
-                        "model": "GenericLayer",
+                        "module": "GenericLayer",
                         "label": "concrete",
                         "thermal_conductivity": 0.5,
                         "specific_heat": 1_050,
@@ -206,7 +206,7 @@ if __name__ == "__main__":
                 "spaces": [
                     {
                         "name": "space-1",
-                        "model": "GenericSpace",
+                        "module": "GenericSpace",
                         "label": "kitchen",
                         "volume": 120,
                         "reference_area": 40,

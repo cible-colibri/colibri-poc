@@ -5,7 +5,7 @@ from colibri.core import (
 from colibri.datamodel.dataset import DataSet
 from colibri.modules import (
     AcvExploitationOnly,
-    CustomModel,
+    CustomModule,
     InfinitePowerGenerator,
     LayerWallLosses,
     LimitedGenerator,

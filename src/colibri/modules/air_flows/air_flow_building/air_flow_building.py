@@ -58,12 +58,12 @@ class AirFlowBuilding(AirFlow):
             attached_to=None,
             required=None,
         )
-        self._has_model_converged = False
+        self._has_module_converged = False
         self.number_of_steps = 0
 
     def initialize(self) -> None:
         if self.has_pressure_model is True:
-            self._has_model_converged = False
+            self._has_module_converged = False
             self.internal_solver = "fully_iterative"
 
     def post_initialize(self) -> None:
@@ -77,7 +77,7 @@ class AirFlowBuilding(AirFlow):
         # Reset parameters for next time step
         if number_of_iterations == 1:
             self._number_of_iterations = 0
-            self._has_model_converged = False
+            self._has_module_converged = False
             self.found = []
         # Pressure model
         if self.internal_solver is Solvers.FULLY_ITERATIVE:
@@ -90,7 +90,7 @@ class AirFlowBuilding(AirFlow):
             )
         if self.internal_solver is Solvers.PING_PONG:
             while (
-                not self._has_model_converged
+                not self._has_module_converged
                 or self._number_of_iterations
                 >= internal_maximum_number_of_iterations
             ) and (number_of_iterations == 0):

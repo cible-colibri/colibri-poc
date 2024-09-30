@@ -4,7 +4,7 @@ Weather interface (IM_4).
 
 import abc
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -12,7 +12,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class Weather(Model, metaclass=abc.ABCMeta):
+class Weather(Module, metaclass=abc.ABCMeta):
     """Weather interface (IM_4)."""
 
     def __init__(

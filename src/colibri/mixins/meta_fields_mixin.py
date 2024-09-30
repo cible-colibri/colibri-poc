@@ -37,7 +37,7 @@ from colibri.utils.enums_utils import (
 from colibri.utils.exceptions_utils import AttachmentError
 
 if TYPE_CHECKING:
-    from colibri.interfaces import Model
+    from colibri.interfaces import Module
 
 
 class MetaFieldMixin:
@@ -295,7 +295,7 @@ class MetaFieldMixin:
         >>> None
         """
         linked_to: List[Field] = list()
-        model: Optional[Model] = None
+        model: Optional[Module] = None
         check_convergence: bool = False
         convergence_tolerance: float = 0.1
         maximum_number_of_iterations: int = 10

@@ -5,7 +5,7 @@ Generator interface (IM_2).
 import abc
 from typing import Dict
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -13,7 +13,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class Generator(Model, metaclass=abc.ABCMeta):
+class Generator(Module, metaclass=abc.ABCMeta):
     """Generator interface (IM_2)."""
 
     def __init__(

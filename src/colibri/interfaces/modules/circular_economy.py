@@ -2,7 +2,7 @@
 
 import abc
 
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -10,7 +10,7 @@ from colibri.utils.enums_utils import (
 )
 
 
-class CircularEconomy(Model, metaclass=abc.ABCMeta):
+class CircularEconomy(Module, metaclass=abc.ABCMeta):
     """Class representing a circular economy interface."""
 
     def __init__(

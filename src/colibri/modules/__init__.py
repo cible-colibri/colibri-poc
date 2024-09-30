@@ -2,7 +2,7 @@ from colibri.modules.acvs.acv_exploitation import AcvExploitationOnly
 from colibri.modules.circular_economy.circular_economy_indicator import (
     CircularEconomyIndicator,
 )
-from colibri.modules.customs.custom_models import CustomModel
+from colibri.modules.customs.custom_modules import CustomModule
 from colibri.modules.generators.infinite_power_generator import (
     InfinitePowerGenerator,
 )
@@ -24,7 +24,7 @@ from colibri.modules.weathers.weather_model import WeatherModel
 __all__ = [
     "AcvExploitationOnly",
     "CircularEconomyIndicator",
-    "CustomModel",
+    "CustomModule",
     "InfinitePowerGenerator",
     "LayerWallLosses",
     "LimitedGenerator",

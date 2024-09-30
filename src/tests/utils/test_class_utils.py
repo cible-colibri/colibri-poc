@@ -22,14 +22,14 @@ def test_create_class_instance() -> None:
     acv: AcvExploitationOnly = create_class_instance(
         class_name="AcvExploitationOnly",
         class_parameters={"name": "model-1"},
-        output_type=ColibriObjectTypes.MODEL,
+        output_type=ColibriObjectTypes.MODULE,
     )
     assert isinstance(acv, AcvExploitationOnly) is True
     assert acv.co2_impact == 0.0
     acv: AcvExploitationOnly = create_class_instance(
         class_name="AcvExploitationOnly",
         class_parameters={"name": "model-1", "co2_impact": 24},
-        output_type=ColibriObjectTypes.MODEL,
+        output_type=ColibriObjectTypes.MODULE,
     )
     assert isinstance(acv, AcvExploitationOnly) is True
     assert acv.co2_impact == 24
@@ -37,15 +37,15 @@ def test_create_class_instance() -> None:
         _ = create_class_instance(
             class_name="WrongName",
             class_parameters={"name": "model-1"},
-            output_type=ColibriObjectTypes.MODEL,
+            output_type=ColibriObjectTypes.MODULE,
         )
     assert exception_information.typename == ColibriModuleNotFoundError.__name__
     assert str(exception_information.value) == "WrongName is not a valid model."
     with pytest.raises(Exception) as exception_information:
         _ = create_class_instance(
-            class_name="CustomModel",
+            class_name="CustomModule",
             class_parameters={"name": "model-1"},
-            output_type=ColibriObjectTypes.MODEL,
+            output_type=ColibriObjectTypes.MODULE,
         )
     assert exception_information.typename == UnauthorizedColibriModule.__name__
     assert "not a subclass of the available scheme configuration" in str(
@@ -64,7 +64,7 @@ def test_get_class() -> None:
     assert (
         get_class(
             class_name="AcvExploitationOnly",
-            output_type=ColibriObjectTypes.MODEL,
+            output_type=ColibriObjectTypes.MODULE,
         ).__name__
         == "AcvExploitationOnly"
     )

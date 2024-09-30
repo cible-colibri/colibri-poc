@@ -35,7 +35,7 @@ données d'entrée et ne contiendra aucune information.
 
 Comme pour les entrées et sorties (voir
 :ref:`fonctions_define_input_output_section`), il est possible de définir un
-paramètre grâce à la fonction ``define_parameter`` issue de la class ``Model``
+paramètre grâce à la fonction ``define_parameter`` issue de la class ``Module``
 (qui est amenée par l'interface) :
 
 .. code-block:: python

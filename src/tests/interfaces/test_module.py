@@ -1,18 +1,18 @@
 """
-Tests for the `model.py` module.
+Tests for the `module.py` module.
 """
 
 from colibri.core.fields import Field
 from colibri.core.link import Link
 from colibri.core.project_orchestrator import ProjectOrchestrator
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.utils.enums_utils import Roles, Units
 
 
 def test_model() -> None:
-    """Test the Model class."""
+    """Test the Module class."""
 
-    class RealModel(Model):
+    class RealModule(Module):
         def __init__(self, name: str):
             super().__init__(name=name)
             self.my_field = self.define_input(
@@ -37,7 +37,7 @@ def test_model() -> None:
         def end_simulation(self) -> None: ...
 
     model_name_example: str = "model_example"
-    model_example: RealModel = RealModel(name=model_name_example)
+    model_example: RealModule = RealModule(name=model_name_example)
     assert model_example.project is None
     assert isinstance(model_example._fields_metadata["my_field"], Field) is True
     assert isinstance(model_example.get_fields(), list) is True
@@ -48,7 +48,7 @@ def test_model() -> None:
     assert isinstance(model_example.get_field("my_field"), Field) is True
     assert model_example.get_field("wrong-name") is None
 
-    class RealModelVariant(Model):
+    class RealModuleVariant(Module):
         def __init__(self, name: str):
             super().__init__(name=name)
             self.my_input_field = self.define_input(
@@ -92,7 +92,7 @@ def test_model() -> None:
 
         def end_simulation(self) -> None: ...
 
-    model_example_variant: RealModelVariant = RealModelVariant(
+    model_example_variant: RealModuleVariant = RealModuleVariant(
         name="other-name"
     )
     assert model_example_variant.inputs[0].name == "my_input_field"
@@ -116,13 +116,13 @@ def test_model() -> None:
         isinstance(model_example.get_link(field_name="my_field"), Link) is True
     )
     project_example.add_model(model=model_example_variant)
-    project_example._initialize_model_output_series()
+    project_example._initialize_module_output_series()
     model_example_variant.my_output_field = 35
     model_example_variant.save_time_step(1)
     assert model_example_variant.my_output_field_series[1] == 35
 
     model_name_example: str = "model_example"
-    model_example: Model = Model(name=model_name_example)
+    model_example: Module = Module(name=model_name_example)
     assert model_example.name == model_name_example
     assert model_example.project is None
     assert model_example._fields_metadata == dict()

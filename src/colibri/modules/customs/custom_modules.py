@@ -1,8 +1,8 @@
 """
-Custom model for tests.
+Custom module for tests.
 """
 
 
-class CustomModel:
+class CustomModule:
     def __init__(self, name: str):
         self.name = name

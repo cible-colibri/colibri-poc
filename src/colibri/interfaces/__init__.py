@@ -1,5 +1,5 @@
 from colibri.interfaces.archetype import Archetype
-from colibri.interfaces.model import Model
+from colibri.interfaces.module import Module
 from colibri.interfaces.modules import (
     Acv,
     AirFlow,
@@ -24,7 +24,7 @@ __all__ = [
     "ElementObject",
     "Generator",
     "Occupants",
-    "Model",
+    "Module",
     "StructureObject",
     "ThermalSpace",
     "WallLosses",

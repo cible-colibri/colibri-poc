@@ -61,13 +61,13 @@ def test_project_orchestrator(mock_show: MagicMock) -> None:
     project_orchestrator_example.add_model(model=weather)
     # Get models by name
     assert (
-        project_orchestrator_example.get_model_by_name(
+        project_orchestrator_example.get_module_by_name(
             name="simplified_wall_losses"
         )
         == simplified_wall_losses
     )
     assert (
-        project_orchestrator_example.get_model_by_name(name="wrong_name")
+        project_orchestrator_example.get_module_by_name(name="wrong_name")
         is None
     )
     # Create link automatically
