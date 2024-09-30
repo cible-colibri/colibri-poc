@@ -1,3 +1,4 @@
+from colibri.interfaces.archetype import Archetype
 from colibri.interfaces.model import Model
 from colibri.interfaces.modules import (
     Acv,
@@ -18,6 +19,7 @@ from colibri.interfaces.project_objects import (
 __all__ = [
     "Acv",
     "AirFlow",
+    "Archetype",
     "BoundaryObject",
     "ElementObject",
     "Generator",
