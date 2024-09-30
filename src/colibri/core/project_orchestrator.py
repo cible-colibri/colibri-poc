@@ -29,6 +29,7 @@ from colibri.core.fields import Parameter, SimulationVariable
 from colibri.core.link import Link
 from colibri.core.project_data import ProjectData
 from colibri.interfaces import (
+    Archetype,
     BoundaryObject,
     ElementObject,
     StructureObject,
@@ -392,16 +393,90 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
+        # Define categories
+        archetype_category: str = Archetype.__name__
         element_object_category: str = ElementObject.__name__
         boundary_object_category: str = BoundaryObject.__name__
         structure_object_category: str = StructureObject.__name__
         module_category: str = "Modules"
+        # Define schemes
+        archetype_scheme: Dict[str, Any] = Archetype.to_scheme()[
+            archetype_category
+        ]
+        boundary_object_scheme: Dict[str, Any] = BoundaryObject.to_scheme()[
+            boundary_object_category
+        ]
+        element_object_scheme: Dict[str, Any] = ElementObject.to_scheme()
+        # Define the final scheme
         scheme: Dict[str, Dict[str, Any]] = {
+            archetype_category: dict(),
             boundary_object_category: dict(),
             element_object_category: dict(),
             module_category: dict(),
             structure_object_category: dict(),
         }
+        # Set all parameters that are mandatory for project objects
+        cls._set_project_objects_base_scheme(
+            scheme=scheme, structure_object_category=structure_object_category
+        )
+        # For each module
+        for module_name in modules:
+            module: Type = get_class(
+                class_name=module_name,
+                output_type=ColibriObjectTypes.MODEL,
+            )
+            module_scheme: Dict[str, Dict[str, Any]] = module.to_scheme()
+            for scheme_name, scheme_group in module_scheme.items():
+                # Archetypes
+                if scheme_name == ARCHETYPES.capitalize():
+                    cls._set_archetypes_scheme(
+                        scheme,
+                        scheme_group,
+                        archetype_category,
+                        archetype_scheme,
+                    )
+                scheme_category: str = scheme_group.pop(CATEGORY, None)
+                # Boundary objects
+                if (
+                    scheme_name not in scheme
+                ) and scheme_category == boundary_object_category:
+                    cls._set_base_boundary_objects_scheme(
+                        scheme,
+                        scheme_group,
+                        boundary_object_category,
+                        scheme_name,
+                        boundary_object_scheme,
+                    )
+                # Element objects
+                if scheme_name == element_object_category:
+                    cls._set_base_element_objects_scheme(
+                        scheme,
+                        scheme_group,
+                        element_object_category,
+                        element_object_scheme,
+                        boundary_object_scheme,
+                        archetype_category,
+                        archetype_scheme,
+                    )
+                # Module and structure objects
+                if scheme_name != ARCHETYPES.capitalize():
+                    cls._set_module_objects_scheme(
+                        scheme,
+                        scheme_group,
+                        scheme_name,
+                        scheme_category,
+                        modules,
+                        boundary_object_category,
+                        element_object_category,
+                        structure_object_category,
+                        module_category,
+                    )
+        return scheme
+
+    @classmethod
+    def _set_project_objects_base_scheme(
+        cls, scheme: Dict[str, Dict[str, Any]], structure_object_category: str
+    ) -> None:
         for project_object_class in [
             Boundary,
             BoundaryCondition,
@@ -421,148 +496,196 @@ class ProjectOrchestrator:
                 ),
                 PARAMETERS: temporary_scheme[temporary_class_name],
             }
-        boundary_object_scheme: Dict[str, Any] = BoundaryObject.to_scheme()[
-            boundary_object_category
+
+    @classmethod
+    def _set_archetypes_scheme(
+        cls, scheme, scheme_group, archetype_category, archetype_scheme
+    ):
+        scheme.setdefault(archetype_category, dict())
+        for archetype_name, archetype_data in scheme_group.items():
+            _ = archetype_data.pop(CATEGORY, None)
+            if archetype_name not in scheme[archetype_category]:
+                scheme[archetype_category].setdefault(
+                    archetype_name,
+                    {
+                        DESCRIPTION: archetype_scheme.pop(DESCRIPTION, None),
+                        PARAMETERS: dict(),
+                        TYPE: archetype_scheme.pop(TYPE, None),
+                    },
+                )
+                for (
+                    parameter_name,
+                    parameter_data,
+                ) in archetype_scheme.items():
+                    scheme[archetype_category][archetype_name][PARAMETERS][
+                        parameter_name
+                    ] = parameter_data
+            for (
+                parameter_name,
+                parameter_data,
+            ) in archetype_data.items():
+                scheme[archetype_category][archetype_name][PARAMETERS][
+                    parameter_name
+                ] = parameter_data
+
+    @classmethod
+    def _set_base_boundary_objects_scheme(
+        cls,
+        scheme,
+        scheme_group,
+        boundary_object_category,
+        scheme_name,
+        boundary_object_scheme,
+    ):
+        scheme[boundary_object_category].setdefault(
+            scheme_name,
+            {
+                DESCRIPTION: boundary_object_scheme.pop(DESCRIPTION, None),
+                PARAMETERS: dict(),
+                TYPE: boundary_object_scheme.pop(TYPE, None),
+            },
+        )
+        for (
+            parameter_name,
+            parameter_data,
+        ) in boundary_object_scheme.items():
+            scheme[boundary_object_category][scheme_name][PARAMETERS][
+                parameter_name
+            ] = parameter_data
+
+    @classmethod
+    def _set_base_element_objects_scheme(
+        cls,
+        scheme,
+        scheme_group,
+        element_object_category,
+        element_object_scheme,
+        boundary_object_scheme,
+        archetype_category,
+        archetype_scheme,
+    ):
+        element_object_archetype_name: str = next(iter(scheme_group))
+        scheme_category: str = scheme_group[element_object_archetype_name].pop(
+            CATEGORY, None
+        )
+        attached_to: str = scheme_group[element_object_archetype_name].pop(
+            ATTACHED_TO, None
+        )
+        element_object_name: str = next(
+            iter(scheme_group[element_object_archetype_name])
+        )
+        scheme[element_object_category].setdefault(
+            element_object_name,
+            {
+                DESCRIPTION: scheme_group[element_object_archetype_name][
+                    element_object_name
+                ].pop(DESCRIPTION, None),
+                PARAMETERS: dict(),
+                TYPE: element_object_scheme.pop(
+                    TYPE, element_object_archetype_name
+                ),
+                ATTACHED_TO: attached_to,
+            },
+        )
+        scheme[scheme_category].setdefault(
+            attached_to, {DESCRIPTION: None, PARAMETERS: dict(), TYPE: None}
+        )
+        scheme[scheme_category][attached_to][PARAMETERS].setdefault(
+            element_object_name, dict()
+        )
+        parameters: dict = scheme_group[element_object_archetype_name][
+            element_object_name
         ]
-        element_object_scheme: Dict[str, Any] = ElementObject.to_scheme()
-        for module_name in modules:
-            module: Type = get_class(
-                class_name=module_name,
-                output_type=ColibriObjectTypes.MODEL,
+        _ = scheme_group[element_object_archetype_name][
+            element_object_name
+        ].pop("required", None)
+        if DESCRIPTION not in parameters:
+            parameters[DESCRIPTION] = None
+        scheme[scheme_category][attached_to][PARAMETERS][
+            element_object_name
+        ] = scheme_group[element_object_archetype_name][element_object_name]
+
+        """
+        for (
+            parameter_name,
+            parameter_data,
+        ) in boundary_object_scheme.items():
+            scheme[element_object_category][element_object_name][PARAMETERS][
+                parameter_name
+            ] = parameter_data
+        """
+        # TODO: Factorize with archetype objects
+        if attached_to not in scheme[archetype_category]:
+            scheme[archetype_category].setdefault(
+                attached_to,
+                {
+                    DESCRIPTION: archetype_scheme.pop(DESCRIPTION, None),
+                    PARAMETERS: dict(),
+                    TYPE: archetype_scheme.pop(TYPE, None),
+                },
             )
-            module_scheme: Dict[str, Dict[str, Any]] = module.to_scheme()
-            for scheme_name, scheme_group in module_scheme.items():
-                # Archetypes
-                if scheme_name == ARCHETYPES.capitalize():
-                    scheme.setdefault(scheme_name, dict())
-                    for archetype_name, archetype_data in scheme_group.items():
-                        _ = archetype_data.pop(CATEGORY, None)
-                        scheme[scheme_name].setdefault(
-                            archetype_name,
-                            {
-                                DESCRIPTION: None,
-                                PARAMETERS: dict(),
-                                TYPE: None,
-                            },
-                        )
-                        for (
-                            parameter_name,
-                            parameter_data,
-                        ) in archetype_data.items():
-                            scheme[scheme_name][archetype_name][PARAMETERS][
-                                parameter_name
-                            ] = parameter_data
-                scheme_category: str = scheme_group.pop(CATEGORY, None)
-                # Boundary objects
-                if (
-                    scheme_name not in scheme
-                ) and scheme_category == boundary_object_category:
-                    scheme[boundary_object_category].setdefault(
-                        scheme_name,
-                        {
-                            DESCRIPTION: boundary_object_scheme.pop(
-                                DESCRIPTION, None
-                            ),
-                            PARAMETERS: dict(),
-                            TYPE: boundary_object_scheme.pop(TYPE, None),
-                        },
-                    )
-                    for (
-                        parameter_name,
-                        parameter_data,
-                    ) in boundary_object_scheme.items():
-                        scheme[boundary_object_category][scheme_name][
-                            PARAMETERS
-                        ][parameter_name] = parameter_data
-                # Element objects
-                if scheme_name == element_object_category:
-                    element_object_archetype_name: str = next(
-                        iter(scheme_group)
-                    )
-                    scheme_category: str = scheme_group[
-                        element_object_archetype_name
-                    ].pop(CATEGORY, None)
-                    attached_to: str = scheme_group[
-                        element_object_archetype_name
-                    ].pop(ATTACHED_TO, None)
-                    element_object_name: str = next(
-                        iter(scheme_group[element_object_archetype_name])
-                    )
-                    scheme[element_object_category].setdefault(
-                        element_object_name,
-                        {
-                            DESCRIPTION: scheme_group[
-                                element_object_archetype_name
-                            ][element_object_name].pop(DESCRIPTION, None),
-                            PARAMETERS: dict(),
-                            TYPE: element_object_scheme.pop(
-                                TYPE, element_object_archetype_name
-                            ),
-                            ATTACHED_TO: attached_to,
-                        },
-                    )
-                    for (
-                        parameter_name,
-                        parameter_data,
-                    ) in boundary_object_scheme.items():
-                        scheme[element_object_category][element_object_name][
-                            PARAMETERS
-                        ][parameter_name] = parameter_data
-                    # TODO: Factorize with archetype objects
-                    if attached_to not in scheme[boundary_object_category]:
-                        scheme.setdefault(ARCHETYPES.capitalize(), dict())
-                        scheme[ARCHETYPES.capitalize()].setdefault(
-                            attached_to,
-                            {
-                                DESCRIPTION: None,
-                                PARAMETERS: dict(),
-                                TYPE: None,
-                            },
-                        )
-                # Module and structure objects
-                if scheme_name != ARCHETYPES.capitalize():
-                    # Modules' parameters
-                    if scheme_name in modules:
-                        for (
-                            parameter_name,
-                            parameter_data,
-                        ) in scheme_group.items():
-                            scheme[module_category].setdefault(
-                                scheme_name,
-                                {
-                                    DESCRIPTION: None,
-                                    PARAMETERS: dict(),
-                                    TYPE: None,
-                                },
-                            )
-                            scheme[module_category][scheme_name][PARAMETERS][
-                                parameter_name
-                            ] = parameter_data
-                    # Structured and boundary objects' parameters
-                    if (scheme_name not in modules) and (
-                        scheme_name != element_object_category
-                    ):
-                        category: str = (
-                            boundary_object_category
-                            if scheme_category == boundary_object_category
-                            else structure_object_category
-                        )
-                        for (
-                            parameter_name,
-                            parameter_data,
-                        ) in scheme_group.items():
-                            scheme[category].setdefault(
-                                scheme_name,
-                                {
-                                    DESCRIPTION: None,
-                                    PARAMETERS: dict(),
-                                    TYPE: None,
-                                },
-                            )
-                            scheme[category][scheme_name][PARAMETERS][
-                                parameter_name
-                            ] = parameter_data
-        return scheme
+            for (
+                parameter_name,
+                parameter_data,
+            ) in archetype_scheme.items():
+                scheme[archetype_category][attached_to][PARAMETERS][
+                    parameter_name
+                ] = parameter_data
+
+    @classmethod
+    def _set_module_objects_scheme(
+        clas,
+        scheme,
+        scheme_group,
+        scheme_name,
+        scheme_category,
+        modules,
+        boundary_object_category,
+        element_object_category,
+        structure_object_category,
+        module_category,
+    ):
+        # Modules' parameters
+        if scheme_name in modules:
+            for (
+                parameter_name,
+                parameter_data,
+            ) in scheme_group.items():
+                scheme[module_category].setdefault(
+                    scheme_name,
+                    {
+                        DESCRIPTION: None,
+                        PARAMETERS: dict(),
+                        TYPE: None,
+                    },
+                )
+                scheme[module_category][scheme_name][PARAMETERS][
+                    parameter_name
+                ] = parameter_data
+        # Structured and boundary objects' parameters
+        if (scheme_name not in modules) and (
+            scheme_name != element_object_category
+        ):
+            category: str = (
+                boundary_object_category
+                if scheme_category == boundary_object_category
+                else structure_object_category
+            )
+            for (
+                parameter_name,
+                parameter_data,
+            ) in scheme_group.items():
+                scheme[category].setdefault(
+                    scheme_name,
+                    {
+                        DESCRIPTION: None,
+                        PARAMETERS: dict(),
+                        TYPE: None,
+                    },
+                )
+                scheme[category][scheme_name][PARAMETERS][parameter_name] = (
+                    parameter_data
+                )
 
     # TODO: To be finished
     @classmethod

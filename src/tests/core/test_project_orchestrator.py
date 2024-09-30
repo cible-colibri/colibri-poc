@@ -2,6 +2,7 @@
 Tests for the `project_orchestrator.py` module.
 """
 
+import json
 from pathlib import Path
 from typing import List
 from unittest.mock import MagicMock, patch
@@ -235,7 +236,7 @@ def test_project_orchestrator_generate_scheme() -> None:
             "ElementObject",
             "Modules",
             "StructureObject",
-            "Archetypes",
+            "Archetype",
         ]
     )
     assert set(scheme["StructureObject"].keys()) == set(
@@ -262,7 +263,7 @@ def test_project_orchestrator_generate_scheme() -> None:
             "WeatherModel",
         ]
     )
-    assert set(scheme["Archetypes"].keys()) == set(
+    assert set(scheme["Archetype"].keys()) == set(
         [
             "Emitter",
             "Boundary",
@@ -277,6 +278,48 @@ def test_project_orchestrator_generate_scheme() -> None:
 
 
 if __name__ == "__main__":
-    test_project_orchestrator()
-    test_project_orchestrator_with_iterations()
-    test_project_orchestrator_generate_scheme()
+    # test_project_orchestrator()
+    # test_project_orchestrator_with_iterations()
+    # test_project_orchestrator_generate_scheme()
+    """
+    module_collection: List[str] = [
+        "LayerWallLosses",
+    ]
+    scheme = ProjectOrchestrator.generate_scheme(modules=module_collection)
+    print(scheme.keys())
+    print(scheme["Archetype"].keys())
+    print(scheme["Archetype"]["Layer"].keys())
+    print(scheme["Archetype"]["Layer"]["parameters"].keys())
+    """
+
+    import json
+
+    from colibri.datamodel.dataset import DataSet
+    from colibri.modules import LayerWallLosses
+
+    print(json.dumps(LayerWallLosses.to_scheme(), indent=2))
+
+    modules = [
+        # "AcvExploitationOnly",
+        # "CircularEconomyIndicator",
+        # "LimitedGenerator",
+        # "OccupantModel",
+        "LayerWallLosses",
+        # "ThermalSpaceSimplified",
+        # "WeatherModel",
+    ]
+    scheme = ProjectOrchestrator.generate_scheme(modules=modules)
+    # print(json.dumps(scheme, indent=2))
+    with open("titi.json", "w") as _f:
+        json.dump(scheme, _f, indent=2)
+    house_1 = DataSet(modules=modules)
+    house_1.add_archetype(
+        "Boundary",
+        archetype_id="mur_exterieur_1",
+        label="Mur exterieur",
+        layers=[
+            {"type": "layer", "type_id": "isolant_1"},
+            {"type": "layer", "type_id": "beton_1"},
+        ],
+    )
+    print(house_1.archetype_collection["Boundary_types"]["mur_exterieur_1"])

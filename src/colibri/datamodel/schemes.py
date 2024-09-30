@@ -10,6 +10,7 @@ from colibri.config.constants import (
     DEFAULT,
     DESCRIPTION,
     FORMAT,
+    LINEAR_JUNCTION,
     LOGGER,
     MAX,
     MIN,
@@ -26,7 +27,7 @@ if TYPE_CHECKING:
 
 @unique
 class ColibriCategories(Enum):
-    ARCHETYPES = "Archetypes"
+    ARCHETYPES = "Archetype"
     BOUNDARY_OBJECTS = "BoundaryObject"
     ELEMENT_OBJECTS = "ElementObject"
     STRUCTURE_OBJECTS = "StructureObject"
@@ -93,12 +94,13 @@ class Scheme:
                     parameter_value=kwargs[parameter_name],
                 )
                 if parameter_name == SEGMENTS:
+                    segments: List[Dict[str, Any]] = []
                     for segment in kwargs[parameter_name]:
-                        segment
-                        boundary: Segment = Segment(
-                            dataset=self,
-                            verbose=self.verbose,
+                        formatted_segment: Dict[str, Any] = (
+                            self._format_segment(segment=segment)
                         )
+                        segments.append(formatted_segment)
+                    self.data[parameter_name] = segments
                 else:
                     self.data[parameter_name] = kwargs[parameter_name]
             else:
@@ -146,6 +148,16 @@ class Scheme:
                             LOGGER.info(
                                 f"\n{parameter_name.capitalize()} set to '{default_value}'."
                             )
+
+    def _format_segment(self, segment) -> Dict[str, Any]:
+        formatted_segment: Dict[str, Any] = {
+            "id": segment.id,
+            "label": segment.label,
+            "points": segment.points,
+            "length": segment.length,
+            "junction": segment.junction,
+        }
+        return formatted_segment
 
     # TODO: See code to add more functionalities and improve stuff
     def check_user_input(
@@ -519,6 +531,42 @@ class Module(Scheme):
         super().__init__(
             category=ColibriCategories.MODULES,
             type_name=type_name,
+            dataset=dataset,
+            verbose=verbose,
+        )
+
+
+class LinearJunction(StructureObject):
+    """Class to create specific linear junctions."""
+
+    def __init__(
+        self,
+        dataset: DataSet,
+        verbose: bool = True,
+    ) -> None:
+        """Initialize a new LinearJunction instance
+
+        Parameters
+        ----------
+        dataset : DataSet = None
+            DataSet object in which the structure object creation will be used
+        verbose: bool = True
+            Print information if set to true
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        super().__init__(
+            type_name="LinearJunction",
             dataset=dataset,
             verbose=verbose,
         )
