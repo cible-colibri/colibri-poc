@@ -3,7 +3,7 @@ Helper classes or functions for the `colibri` package.
 """
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
 from colibri.utils.data_utils import turn_format_to_string
 from colibri.utils.enums_utils import (
@@ -43,6 +43,7 @@ class Attachment:
     from_element_object: Optional[str] = None
     description: Optional[str] = None
     format: Optional[str] = None
+    default_value: Optional[Any] = None
 
     def __post_init__(self) -> None:
         """Additional initialization/validation of the new Attachment instance."""
