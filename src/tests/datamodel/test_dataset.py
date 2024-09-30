@@ -12,7 +12,6 @@ from colibri.datamodel.dataset import DataSet
 from colibri.utils.exceptions_utils import UserInputError
 
 
-@pytest.mark.xfail(reason="in progress...")
 def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
     """Test the DataSet class."""
     # Test 1
@@ -52,9 +51,11 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
     assert dataset.archetype_collection[f"{type_name}_types"][archetype_id] == {
         "lca_impact_properties": "None",
         "installation_year": "2",
+        "label": "layer-001",
         "service_life": "55",
         "constitutive_materials": "None",
         "end_of_life_properties": "None",
+        "id": "layer-001",
         "thickness": "0.1",
         "thermal_conductivity": "0.25",
         "specific_heat": "200",
@@ -176,11 +177,12 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
     dataset_2: DataSet = DataSet(modules=modules_2)
     assert dataset_2.modules == modules_2
     with pytest.raises(Exception) as exception_information:
-        dataset_2.add_archetype(type_name="Layer", archetype_id="layer-001")
+        dataset_2.add_archetype(
+            type_name="WrongArchetypeName", archetype_id="layer-001"
+        )
     assert exception_information.typename == ValueError.__name__
-    print(str(exception_information.value))
     assert (
-        "Layer is not a available archetype. Please, choose among : ['Emitter']."
+        "WrongArchetypeName is not a available archetype. Please, choose among: ['Boundary', 'Layer', 'Emitter']."
         in str(exception_information.value)
     )
     # Test 3
@@ -188,8 +190,7 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
     with caplog.at_level(logging.INFO):
         assert dataset_3.describe(type_name="Layer") is None
         assert (
-            "List of parameters for the Layer (Archetypes) object"
-            in caplog.text
+            "List of parameters for the Layer (Archetype) object" in caplog.text
         )
         assert "thickness: Thickness of the layer. [m]" in caplog.text
         assert (
@@ -197,7 +198,7 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
             in caplog.text
         )
     # Test 4
-    number_of_elements_to_be_added: int = 15
+    number_of_elements_to_be_added: int = 27
     house_1: DataSet = DataSet(modules=modules)
     inputs: Iterator = iter(["default to all"] * number_of_elements_to_be_added)
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
@@ -306,7 +307,7 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
         )
         assert "id: Unique identifier (ID) of the space. [-]" in caplog.text
         assert "q_needs: Needs of the space. [W]" in caplog.text
-
+    # Spaces
     house_1.add_structure_object(
         type_name="Space",
         structure_object_id="living_room_1",
@@ -325,6 +326,7 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
         altitude=0,
         use="kitchen",
     )
+    # Boundaries and segments
     segments_mur_salon_sud, area_mur_salon_sud = (
         house_1.create_segment_and_compute_area_from_coordinates(
             ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
@@ -345,7 +347,7 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
         side_1="exterior",
         side_2="living_room_1",
         tilt=90,
-        segments=[segments_mur_salon_sud],
+        segments=segments_mur_salon_sud,
         area=area_mur_salon_sud,
         origin_3d=(0, 0, 0),
     )
@@ -615,12 +617,76 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
         area=area_plancher_cuisine,
         origin_3d=(0, 6, 2.5),
     )
-    import json
+    # Junctions
+    house_1.link_boundaries(
+        boundary_ids=["mur_salon_sud_1", "mur_salon_ouest_1"],
+        segment_ids=[
+            "s_mur_salon_sud_et_mur_salon_ouest",
+            "s_mur_salon_ouest_et_mur_salon_sud",
+        ],
+        id="j_mur_salon_sud_et_mur_salon_ouest",
+    )
+    house_1.link_boundaries(
+        boundary_ids=["mur_salon_ouest_1", "mur_salon_nord_1"],
+        segment_ids=[
+            "s_mur_salon_ouest_et_mur_salon_nord",
+            "s_mur_salon_nord_et_mur_salon_ouest",
+        ],
+        id="j_mur_salon_ouest_et_mur_salon_nord",
+    )
+    house_1.link_boundaries(
+        boundary_ids=["mur_salon_nord_1", "mur_salon_est_1"],
+        segment_ids=[
+            "s_mur_salon_nord_et_mur_salon_est",
+            "s_mur_salon_est_et_mur_salon_nord",
+        ],
+        id="j_mur_salon_nord_et_mur_salon_est",
+    )
+    house_1.link_boundaries(
+        boundary_ids=[
+            "mur_salon_est_1",
+            "mur_cuisine_nord_1",
+            "mur_salon_cuisine",
+        ],
+        segment_ids=[
+            "s_mur_salon_est_et_mur_salon_cuisine",
+            "s_mur_cuisine_nord_et_mur_salon_est",
+            "s_mur_salon_cuisine_et_mur_salon_est",
+        ],
+        id="j_mur_salon_est_et_mur_salon_cuisine",
+    )
+    house_1.link_boundaries(
+        boundary_ids=["mur_cuisine_nord_1", "mur_cuisine_est_1"],
+        segment_ids=[
+            "s_mur_cuisine_nord_et_mur_cuisine_est",
+            "s_mur_cuisine_est_et_mur_cuisine_nord",
+        ],
+        id="j_mur_cuisine_nord_et_mur_cuisine_est",
+    )
+    house_1.link_boundaries(
+        boundary_ids=["mur_cuisine_est_1", "mur_cuisine_sud_1"],
+        segment_ids=[
+            "s_mur_cuisine_est_et_mur_cuisine_sud",
+            "s_mur_cuisine_sud_et_mur_cuisine_est",
+        ],
+        id="j_mur_cuisine_est_et_mur_cuisine_sud",
+    )
+    house_1.link_boundaries(
+        boundary_ids=[
+            "mur_cuisine_sud_1",
+            "mur_salon_sud_1",
+            "mur_salon_cuisine",
+        ],
+        segment_ids=[
+            "s_mur_cuisine_sud_et_mur_salon_sud",
+            "s_mur_salon_sud_et_mur_cuisine_sud",
+            "s_mur_salon_cuisine_et_mur_salon_sud",
+        ],
+        id="j_mur_cuisine_sud_et_mur_salon_sud",
+    )
 
-    print(json.dumps(house_1.to_dict(), indent=2))
 
-
-def ex_2():
+if __name__ == "__main__":
     from contextlib import contextmanager
     from unittest.mock import MagicMock
 
@@ -644,76 +710,3 @@ def ex_2():
         "+q_needs: Needs of the space. [W]"
     )
     test_dataset(caplog=caplog_mockup, monkeypatch=MonkeyPatch())
-
-
-def ex_1():
-    modules: List[str] = [
-        "AcvExploitationOnly",
-        "LimitedGenerator",
-        "OccupantModel",
-        "LayerWallLosses",
-        "ThermalSpaceSimplified",
-        "WeatherModel",
-    ]
-    house_1: DataSet = DataSet(modules=modules, verbose=False)
-    segments_mur_salon_sud, area_mur_salon_sud = (
-        house_1.create_segment_and_compute_area_from_coordinates(
-            ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
-            ordered_names=[
-                "s_mur_salon_sud_et_mur_salon_ouest",
-                "s_mur_salon_sud_plafond",
-                "s_mur_salon_sud_et_mur_cuisine_sud",
-                "s_mur_salon_sud_plancher",
-            ],
-        )
-    )
-    print(segments_mur_salon_sud)
-    print(area_mur_salon_sud)
-
-
-if __name__ == "__main__":
-    # ex_1()
-    ex_2()
-    x = False
-    if x:
-        modules: List[str] = [
-            "AcvExploitationOnly",
-            "LimitedGenerator",
-            "OccupantModel",
-            "LayerWallLosses",
-            "ThermalSpaceSimplified",
-            "WeatherModel",
-        ]
-        house_1: DataSet = DataSet(modules=modules, verbose=False)
-        segments_plancher_cuisine, area_plancher_cuisine = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2], [6, 2], [6, 0]],
-                ordered_names=[
-                    "s_plancher_mur_salon_cuisine",
-                    "s_plancher_mur_cuisine_nord",
-                    "s_plancher_mur_cuisine_est",
-                    "s_plancher_mur_cuisine_sud",
-                ],
-            )
-        )
-        house_1.add_boundary(
-            boundary_id="plancher_cuisine",
-            archetype_id="plancher_1",
-            label="Plafond cuisine",
-            azimuth=0,
-            side_1="kitchen_1",
-            side_2="ground",
-            tilt=0,
-            segments=segments_plancher_cuisine,
-            area=area_plancher_cuisine,
-            origin_3d=(0, 6, 2.5),
-            object_collection=[],
-            spaces=[],
-            q_walls=[2.3],
-        )
-    from colibri.modules import LimitedGenerator
-
-    limited_generator: LimitedGenerator = LimitedGenerator(
-        name="limited_generator-1"
-    )
-    print(dir(limited_generator))

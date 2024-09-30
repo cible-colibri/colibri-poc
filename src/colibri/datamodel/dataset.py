@@ -143,7 +143,7 @@ class DataSet(ClassMixin):
         if type_name not in self.archetype_names:
             raise ValueError(
                 f"{type_name} is not a available archetype. "
-                f"Please, choose among : {self.archetype_names}."
+                f"Please, choose among: {self.archetype_names}."
             )
         if archetype_id is None:
             archetype_id: str = input(
@@ -259,7 +259,7 @@ class DataSet(ClassMixin):
         if type_name not in self.structure_object_names:
             raise ValueError(
                 f"{type_name} is not a available structure object. "
-                f"Please, choose among : {self.structure_object_names}."
+                f"Please, choose among: {self.structure_object_names}."
             )
         if structure_object_id is None:
             structure_object_id: str = input(
