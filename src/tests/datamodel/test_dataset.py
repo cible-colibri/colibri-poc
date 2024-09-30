@@ -3,7 +3,7 @@ Test for the `dataset.py` module.
 """
 
 import logging
-from typing import Iterator, List
+from typing import Any, Dict, Iterator, List
 
 import pytest
 from pytest import LogCaptureFixture, MonkeyPatch
@@ -78,6 +78,12 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
         assert "Thermal conductivity of the layer." in caplog.text
         assert "format: float" in caplog.text
         assert "unit: W/(m.K)" in caplog.text
+    with caplog.at_level(logging.INFO):
+        assert dataset.doc() is None
+        assert "add_archetype" in caplog.text
+        assert "create_segment_and_compute_area_from_coordinates" in caplog.text
+        assert "add_structure_object" in caplog.text
+        assert "link_boundaries" in caplog.text
     inputs: Iterator = iter(["no"])
     monkeypatch.setattr("builtins.input", lambda _: next(inputs))
     dataset.add_archetype(
@@ -198,6 +204,82 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
             in caplog.text
         )
     # Test 4
+    dataset_4: DataSet = DataSet(modules=modules, verbose=True)
+    inputs: Iterator = iter(["no", "no", "default to all"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    dataset_4.add_archetype(type_name=type_name, kwargs=None)
+    # Test 5
+    dataset_5: DataSet = DataSet(modules=modules, verbose=True)
+    dataset_5.unique_ids = ["layer-id-1234"]
+    inputs: Iterator = iter(["layer-id-1234", "no", "default to all"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    dataset_5.add_archetype(type_name=type_name)
+    # Test 6
+    dataset_6: DataSet = DataSet(modules=modules, verbose=True)
+    dataset_6.archetype_collection["Layer_types"] = {
+        "layer-id-1234": {
+            "id": "layer-id-1234",
+            "label": "layer-id-1234",
+            "lca_impact_properties": None,
+            "installation_year": 1,
+            "service_life": 50,
+            "constitutive_materials": [
+                {"share": 1, "material_type": "concrete"}
+            ],
+            "end_of_life_properties": None,
+            "thickness": 0.3,
+            "thermal_conductivity": 1.75,
+            "specific_heat": 900,
+            "density": 2500,
+            "material_type": "concrete",
+            "emissivity": 0.92,
+            "light_reflectance": 0.8,
+            "albedo": 0.25,
+        },
+    }
+    inputs: Iterator = iter(["layer-id-1234", "no", "default to all", "yes"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    dataset_6.add_archetype(type_name=type_name, kwargs=None)
+    assert dataset_6.compute_segment_length(
+        point_1=[2, 4], point_2=[4, 6]
+    ) == pytest.approx(2.83, abs=0.05)
+    assert dataset_6.compute_segment_length(
+        point_1=[2, 3], point_2=[9, 11]
+    ) == pytest.approx(10.63, abs=0.05)
+    with pytest.raises(UserInputError) as exception_information:
+        ordered_coordinates = [[0, 0], [0, 2.5], [4, 2.5], [4, 0]]
+        ordered_names = (
+            [
+                "s_mur_salon_ouest_et_mur_salon_nord",
+                "s_mur_salon_ouest_plafond",
+                "s_mur_salon_ouest_et_mur_salon_sud",
+            ],
+        )
+        dataset_6.create_segment_and_compute_area_from_coordinates(
+            ordered_coordinates=ordered_coordinates, ordered_names=ordered_names
+        )
+    assert exception_information.typename == UserInputError.__name__
+    assert "Segment names ('ordered_names') has not the same length" in str(
+        exception_information.value
+    )
+    inputs: Iterator = iter(
+        [
+            "[0,0]",
+            "[0,2.5]",
+            "[4, 2.5]",
+            "toto",
+            "[4, 0]",
+            "end",
+            "s_mur_salon_ouest_et_mur_salon_nord",
+            "no",
+            "no to all",
+        ]
+    )
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+    dataset_6.create_segment_and_compute_area_from_coordinates(
+        ordered_coordinates=None, ordered_names=None
+    )
+    # Test 7
     number_of_elements_to_be_added: int = 27
     house_1: DataSet = DataSet(modules=modules)
     inputs: Iterator = iter(["default to all"] * number_of_elements_to_be_added)
@@ -684,9 +766,73 @@ def test_dataset(caplog: LogCaptureFixture, monkeypatch: MonkeyPatch) -> None:
         ],
         id="j_mur_cuisine_sud_et_mur_salon_sud",
     )
+    house_1_dataset: Dict[str, Any] = house_1.to_dict()
+    assert "simulation_parameters" in house_1_dataset["project"]
+    assert "module_collection" in house_1_dataset["project"]
+    assert "building_land" in house_1_dataset["project"]
+    assert "node_collection" in house_1_dataset["project"]
+    assert "boundary_collection" in house_1_dataset["project"]
+    assert "archetype_collection" in house_1_dataset["project"]
 
 
 if __name__ == "__main__":
+
+    def test_dataset_2(monkeypatch: MonkeyPatch):
+        modules: List[str] = [
+            "AcvExploitationOnly",
+            "LimitedGenerator",
+            "OccupantModel",
+            "LayerWallLosses",
+            "ThermalSpaceSimplified",
+            "WeatherModel",
+        ]
+        type_name: str = "Layer"
+        dataset_6: DataSet = DataSet(modules=modules, verbose=True)
+        dataset_6.archetype_collection["Layer_types"] = {
+            "layer-id-1234": {
+                "id": "layer-id-1234",
+                "label": "layer-id-1234",
+                "lca_impact_properties": None,
+                "installation_year": 1,
+                "service_life": 50,
+                "constitutive_materials": [
+                    {"share": 1, "material_type": "concrete"}
+                ],
+                "end_of_life_properties": None,
+                "thickness": 0.3,
+                "thermal_conductivity": 1.75,
+                "specific_heat": 900,
+                "density": 2500,
+                "material_type": "concrete",
+                "emissivity": 0.92,
+                "light_reflectance": 0.8,
+                "albedo": 0.25,
+            },
+        }
+        inputs: Iterator = iter(
+            ["layer-id-1234", "no", "default to all", "yes"]
+        )
+        monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+        dataset_6.add_archetype(type_name=type_name, kwargs=None)
+        inputs: Iterator = iter(
+            [
+                "[0,0]",
+                "[0,2.5]",
+                "[4, 2.5]",
+                "[4, 0]",
+                "end",
+                "s_mur_salon_ouest_et_mur_salon_nord",
+                "no",
+                "no to all",
+            ]
+        )
+        monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+        dataset_6.create_segment_and_compute_area_from_coordinates(
+            ordered_coordinates=None, ordered_names=None
+        )
+
+    test_dataset_2(monkeypatch=MonkeyPatch())
+    """
     from contextlib import contextmanager
     from unittest.mock import MagicMock
 
@@ -710,3 +856,4 @@ if __name__ == "__main__":
         "+q_needs: Needs of the space. [W]"
     )
     test_dataset(caplog=caplog_mockup, monkeypatch=MonkeyPatch())
+    """

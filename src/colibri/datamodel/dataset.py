@@ -163,6 +163,7 @@ class DataSet(ClassMixin):
                         f"the archetype id has been set to '{archetype_id}'"
                     )
         self.unique_ids.append(archetype_id)
+        print(kwargs)
         if kwargs is None:
             kwargs = dict()
         label: str = kwargs.get("label", None)
@@ -189,20 +190,19 @@ class DataSet(ClassMixin):
         # Test if an archetype with the same characteristics already exists.
         # If so, ask if a second one should be created
         does_archetype_already_exist: bool = False
-        if f"{type_name}_types" in self.archetype_names:
-            for archetype_key, archetype_item in self.archetype_collection[
-                f"{type_name}_types"
-            ].items():
-                are_archetypes_the_same: bool = are_dictionaries_equal(
-                    dict_1=archetype_item,
-                    dict_2=archetype.data,
-                    keys_to_be_excluded=["label"],
-                )
-                if are_archetypes_the_same:
-                    does_archetype_already_exist = True
-                    same_archetype_id = archetype_key
-                    same_archetype_label = archetype_item["label"]
-                    break
+        for archetype_key, archetype_item in self.archetype_collection.get(
+            f"{type_name}_types", dict()
+        ).items():
+            are_archetypes_the_same: bool = are_dictionaries_equal(
+                dict_1=archetype_item,
+                dict_2=archetype.data,
+                keys_to_be_excluded=["label"],
+            )
+            if are_archetypes_the_same:
+                does_archetype_already_exist = True
+                same_archetype_id = archetype_key
+                same_archetype_label = archetype_item["label"]
+                break
         if does_archetype_already_exist:
             choice: str = input(
                 f"A identical archetype already exists with the same "
@@ -697,33 +697,46 @@ class DataSet(ClassMixin):
         >>> None
         """
         if ordered_coordinates is None:
-            user_input = "start"
-            ordered_coordinates = [[0, 0]]
-            print(
-                "\nPlease enter each coordinates in the format [x, y] to describe the shape of the boundary in its 2D reference frame."
-                "\nPLEASE RESPECT THE CLOCKWISE ORDER OF THE POINT BY FOLLOWING SEGMENT BETWEEN EACH POINT.\nTYPE '' OR 'end' when finished."
-                "\nThe first point always starts with [0, 0] and has already been provided (no need to set it again)."
-                "\nPlace the other points relative to this one, ideally considering it as the bottom-left point of your shape (in order to have positive x and y values ideally)"
+            ordered_coordinate: str = "[0,0]"
+            point_index: int = 1
+            ordered_coordinates: List[Tuple[float, float]] = [
+                ast.literal_eval(ordered_coordinate)
+            ]
+            LOGGER.info(
+                f"Point number {point_index} saved: {ordered_coordinate}."
             )
-            i = 2
-            print("Point number 1 : [0,0] saved \n")
-            while user_input not in ["end", ""]:
-                user_input = input(
-                    f"Please enter point number {i} in the format [x, y] (type 'end' if you have entered all points) ==> "
+            LOGGER.info(
+                "Please, enter the other points relative to this one, ideally"
+                "considering it as the bottom-left point of the shape "
+                "(in order to have positive x and y values).\n"
+                "Each point's coordinates must be in the format [x,y] "
+                "to describe the shape of the boundary in its 2D reference "
+                "frame.\n"
+                "Please respect the clockwise order of the points by "
+                "following segment between each point.\n"
+                "Type 'end' or '' when finished:"
+            )
+            while ordered_coordinate.lower().strip("'") not in ["end", ""]:
+                ordered_coordinate: str = input(
+                    f"Please, enter point number {point_index} "
+                    f"(format [x,y], type 'end' if finished):\n"
                 )
                 try:
-                    if isinstance(ast.literal_eval(user_input), list):
-                        ordered_coordinates.append(ast.literal_eval(user_input))
-                        print(
-                            f"Point number {i} : {ast.literal_eval(user_input)} saved \n"
-                        ) if self.logs else None
-                        i += 1
-
-                except Exception as e:
-                    print(e)
-                    if user_input not in ["end", ""]:
-                        print(
-                            f"{user_input} is not a valid coordinnates or a valid end of input. If you have finished setting your coordinnates, type 'end' in the next prompt ==> "
+                    formatted_ordered_coordinate: Tuple[float, float] = (
+                        ast.literal_eval(ordered_coordinate)
+                    )
+                    ordered_coordinates.append(formatted_ordered_coordinate)
+                    if self.verbose:
+                        LOGGER.info(
+                            f"Point number {point_index} saved: {ordered_coordinate}."
+                        )
+                    point_index += 1
+                except Exception as error:
+                    if ordered_coordinate not in ["end", ""]:
+                        LOGGER.error(
+                            f"{ordered_coordinate} is not valid: {error}."
+                            f"If you have finished setting the coordinates, "
+                            f"type 'end'."
                         )
         segments: List[Segment] = []
         no_to_all: bool = False
@@ -747,7 +760,9 @@ class DataSet(ClassMixin):
                     no_to_all = True
                 if segment_id.lower().strip("'") == "no" or no_to_all:
                     segment_id = self.generate_unique_id("Segment")
-            if len(ordered_names) != len(ordered_coordinates):
+            if (ordered_names is not None) and (
+                len(ordered_names) != len(ordered_coordinates)
+            ):
                 raise UserInputError(
                     "Segment names ('ordered_names') has not the same length "
                     "as segment coordinates ('ordered_coordinates').\n"
@@ -756,9 +771,12 @@ class DataSet(ClassMixin):
                 )
             if not segment_id:
                 segment_id = ordered_names[index]
+            ordered_name: str = (
+                segment_id if ordered_names is None else ordered_names[index]
+            )
             segment: Segment = Segment(
                 id=segment_id,
-                label=ordered_names[index],
+                label=ordered_name,
                 points=[point_1, point_2],
                 junction=None,
                 length=self.compute_segment_length(
@@ -777,11 +795,39 @@ class DataSet(ClassMixin):
         return segments, area
 
     def to_dict(self) -> Dict[str, Any]:
-        """"""
+        """Export complete dataset as a dictionary
+
+        Returns
+        -------
+        Dict[str, Any]
+            Dictionary representation of the dataset
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
         return {
-            "structure_object_collection": self.structure_object_collection,  # Segment
-            # "boundary_collection": self.boundary_collection,
-            "archetype_collection": self.archetype_collection,
+            "project": {
+                "simulation_parameters": dict(),
+                "module_collection": dict(),
+                "building_land": dict(),
+                "node_collection": {
+                    "space_collection": self.structure_object_collection.get(
+                        "Space_collection", dict()
+                    ),
+                    "linear_junction_collection": self.structure_object_collection.get(
+                        "LinearJunction_collection", dict()
+                    ),
+                },
+                "boundary_collection": self.structure_object_collection.get(
+                    "Boundary_collection", dict()
+                ),
+                "archetype_collection": self.archetype_collection,
+            }
         }
 
     @staticmethod
@@ -804,38 +850,13 @@ class DataSet(ClassMixin):
 
         Raises
         ------
-        None
-
-        Examples
-        --------
-        >>> None
-        """
-        x_1, y_1 = point_1
-        x_2, y_2 = point_2
-        segment_length: float = math.sqrt((x_2 - x_1) ** 2 + (y_2 - y_1) ** 2)
-        return segment_length
-
-    @staticmethod
-    def compute_segment_length(
-        point_1: Tuple[float, float], point_2: Tuple[float, float]
-    ) -> float:
-        """Compute euclidian distance between two point [x,y]
-
-        Parameters
-        ----------
-        point_1: Tuple[float, float]
-            Point no. 1
-        point_2: Tuple[float, float]
-            Point no. 2
-
-        Returns
-        -------
-        segment_length: float:
-            Euclidian distance between two point [x,y]
-
-        Raises
-        ------
-        None
+        TypeError
+            Raise an error if one of the point is None
+            as Python cannot unpack non-iterable NoneType object
+            or if one of the point's values is None (or not
+            matching number types)
+        ValueError
+            Raise an error if there are too many values ot unpack
 
         Examples
         --------
@@ -884,541 +905,3 @@ class DataSet(ClassMixin):
             area += (x1 * y2) - (x2 * y1)
         area = abs(area) / 2.0
         return area
-
-
-if __name__ == "__main__":
-    """
-    modules: List[str] = [
-        "AcvExploitationOnly",
-        "CicularEconomyIndicator",
-        "LimitedGenerator",
-        "OccupantModel",
-        "LayerWallLosses",
-        "ThermalSpaceSimplified",
-        "WeatherModel",
-    ]
-    house_1: DataSet = DataSet(modules=modules, verbose=False)
-    segments_mur_salon_sud, area_mur_salon_sud = (
-        house_1.create_segment_and_compute_area_from_coordinates(
-            ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
-            ordered_names=[
-                "s_mur_salon_sud_et_mur_salon_ouest",
-                "s_mur_salon_sud_plafond",
-                "s_mur_salon_sud_et_mur_cuisine_sud",
-                "s_mur_salon_sud_plancher",
-            ],
-        )
-    )
-    house_1.add_structure_object(
-        type_name="Boundary",
-        structure_object_id="mur_salon_sud_1",
-        label="Mur salon sud",
-        archetype_id="mur_exterieur_1",
-        azimuth=180,
-        side_1="exterior",
-        side_2="living_room_1",
-        tilt=90,
-        segments=segments_mur_salon_sud,
-        area=area_mur_salon_sud,
-        origin_3d=(0, 0, 0),
-    )
-    """
-    from unittest.mock import patch
-
-    modules = [
-        "AcvExploitationOnly",
-        "CircularEconomyIndicator",
-        "LimitedGenerator",
-        "OccupantModel",
-        "LayerWallLosses",
-        "ThermalSpaceSimplified",
-        "WeatherModel",
-    ]
-    house_1 = DataSet(modules=modules)
-    # Default values are used for all parameters that are not set directly
-    with patch("builtins.input", return_value="default to all"):
-        # Default thermal properties are already set to concrete values
-        house_1.add_archetype(
-            "Layer",
-            archetype_id="beton_1",
-            label="béton 20cm",
-            thickness=0.2,
-        )
-        house_1.add_archetype(
-            "Layer",
-            archetype_id="isolant_1",
-            label="isolant 15cm pour mur verticaux",
-            thickness=0.15,
-            thermal_conductivity=0.035,
-            specific_heat=1030,
-            density=25,
-            material_type="insulation",
-            constitutive_material_type="rock wood",
-        )
-        house_1.add_archetype(
-            "Layer",
-            archetype_id="isolant_toiture",
-            label="isolant 10cm pour toiture",
-            thickness=0.1,
-            thermal_conductivity=0.035,
-            specific_heat=1030,
-            density=25,
-            material_type="insulation",
-            constitutive_material_type="rock wood",
-        )
-        house_1.add_archetype(
-            "Layer",
-            archetype_id="isolant_plancher",
-            label="isolant 5cm pour plancher",
-            thickness=0.05,
-            thermal_conductivity=0.035,
-            specific_heat=1030,
-            density=25,
-            material_type="insulation",
-            constitutive_material_type="rock wood",
-        )
-        house_1.add_archetype(
-            "Layer",
-            archetype_id="vide_10",
-            label="vide 10cm",
-            thickness=0.1,
-            thermal_conductivity=0.025,
-            specific_heat=1000,
-            density=1.293,
-            material_type="insulation",
-            constitutive_material_type="air",
-        )
-        house_1.add_archetype(
-            "Layer",
-            archetype_id="ba_13",
-            label="BA13",
-            thickness=0.013,
-            thermal_conductivity=0.25,
-            specific_heat=1000,
-            density=850,
-            material_type="plaster",
-            constitutive_material_type="plaster",
-        )
-    # Default values are used for all parameters that are not set directly
-    with patch("builtins.input", return_value="default to all"):
-        # Boundaries (walls, roof, floor...)
-        house_1.add_archetype(
-            "Boundary",
-            archetype_id="mur_exterieur_1",
-            label="Mur exterieur",
-            layers=[
-                {"type": "layer", "type_id": "isolant_1"},
-                {"type": "layer", "type_id": "beton_1"},
-            ],
-        )
-        house_1.add_archetype(
-            "Boundary",
-            archetype_id="toiture_1",
-            label="Plancher haut",
-            layers=[
-                {"type": "layer", "type_id": "beton_1"},
-                {"type": "layer", "type_id": "isolant_toiture"},
-            ],
-        )
-        house_1.add_archetype(
-            "Boundary",
-            archetype_id="plancher_1",
-            label="Plancher bas",
-            layers=[
-                {"type": "layer", "type_id": "isolant_plancher"},
-                {"type": "layer", "type_id": "beton_1"},
-            ],
-        )
-        house_1.add_archetype(
-            "Boundary",
-            archetype_id="cloison_1",
-            label="Cloison BA13",
-            layers=[
-                {"type": "layer", "type_id": "ba_13"},
-                {"type": "layer", "type_id": "vide_10"},
-                {"type": "layer", "type_id": "ba_13"},
-            ],
-        )
-    # Default values are used for all parameters that are not set directly
-    with patch("builtins.input", return_value="default to all"):
-        # Spaces
-        house_1.add_structure_object(
-            type_name="Space",
-            structure_object_id="living_room_1",
-            label="salon",
-            reference_area=20.9,
-            volume=20.9 * 2.5,
-            altitude=0,
-            use="living room",
-        )
-        house_1.add_structure_object(
-            "Space",
-            structure_object_id="kitchen_1",
-            label="cuisine",
-            reference_area=9.52,
-            volume=9.52 * 2.5,
-            altitude=0,
-            use="kitchen",
-        )
-    # Default values are used for all parameters that are not set directly
-    with patch("builtins.input", return_value="default to all"):
-        # Boundaries
-        segments_mur_salon_sud, area_mur_salon_sud = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
-                ordered_names=[
-                    "s_mur_salon_sud_et_mur_salon_ouest",
-                    "s_mur_salon_sud_plafond",
-                    "s_mur_salon_sud_et_mur_cuisine_sud",
-                    "s_mur_salon_sud_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_salon_sud_1",
-            label="Mur salon sud",
-            archetype_id="mur_exterieur_1",
-            azimuth=180,
-            side_1="exterior",
-            side_2="living_room_1",
-            tilt=90,
-            segments=segments_mur_salon_sud,
-            area=area_mur_salon_sud,
-            origin_3d=(0, 0, 0),
-        )
-        segments_mur_salon_ouest, area_mur_salon_ouest = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [4, 2.5], [4, 0]],
-                ordered_names=[
-                    "s_mur_salon_ouest_et_mur_salon_nord",
-                    "s_mur_salon_ouest_plafond",
-                    "s_mur_salon_ouest_et_mur_salon_sud",
-                    "s_mur_salon_ouest_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_salon_ouest_1",
-            archetype_id="mur_exterieur_1",
-            label="Mur salon ouest",
-            azimuth=270,
-            side_1="exterior",
-            side_2="living_room_1",
-            tilt=90,
-            segments=segments_mur_salon_ouest,
-            area=area_mur_salon_ouest,
-            origin_3d=(0, 4, 0),
-        )
-        segments_mur_salon_nord, area_mur_salon_nord = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
-                ordered_names=[
-                    "s_mur_salon_nord_et_mur_salon_est",
-                    "s_mur_salon_nord_plafond",
-                    "s_mur_salon_nord_et_mur_salon_ouest",
-                    "s_mur_salon_nord_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_salon_nord_1",
-            archetype_id="mur_exterieur_1",
-            label="Mur salon nord",
-            azimuth=0,
-            side_1="exterior",
-            side_2="living_room_1",
-            tilt=90,
-            segments=segments_mur_salon_nord,
-            area=area_mur_salon_nord,
-            origin_3d=(6, 4, 0),
-        )
-        segments_mur_salon_est, area_mur_salon_est = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [2, 2.5], [2, 0]],
-                ordered_names=[
-                    "s_mur_salon_est_et_mur_salon_cuisine",
-                    "s_mur_salon_est_plafond",
-                    "s_mur_salon_est_et_mur_salon_nord",
-                    "s_mur_salon_est_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_salon_est_1",
-            archetype_id="mur_exterieur_1",
-            label="Mur salon nord",
-            azimuth=90,
-            side_1="exterior",
-            side_2="living_room_1",
-            tilt=90,
-            segments=segments_mur_salon_est,
-            area=area_mur_salon_est,
-            origin_3d=(6, 2, 0),
-        )
-        segments_mur_salon_cuisine, area_mur_salon_cuisine = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [2, 2.5], [2, 0]],
-                ordered_names=[
-                    "s_mur_salon_cuisine_et_mur_salon_sud",
-                    "s_mur_salon_cuisine_plafond",
-                    "s_mur_salon_cuisine_et_mur_salon_est",
-                    "s_mur_salon_cuisine_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_salon_cuisine",
-            archetype_id="cloison_1",
-            label="Mur salon nord",
-            azimuth=90,
-            side_1="kitchen_1",
-            side_2="living_room_1",
-            tilt=90,
-            segments=segments_mur_salon_cuisine,
-            area=area_mur_salon_cuisine,
-            origin_3d=(6, 0, 0),
-        )
-        segments_mur_cuisine_nord, area_mur_cuisine_nord = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
-                ordered_names=[
-                    "s_mur_cuisine_nord_et_mur_cuisine_est",
-                    "s_mur_cuisine_nord_plafond",
-                    "s_mur_cuisine_nord_et_mur_salon_est",
-                    "s_mur_cuisine_nord_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_cuisine_nord_1",
-            archetype_id="mur_exterieur_1",
-            label="Mur salon nord",
-            azimuth=0,
-            side_1="exterior",
-            side_2="kitchen_1",
-            tilt=90,
-            segments=segments_mur_cuisine_nord,
-            area=area_mur_cuisine_nord,
-            origin_3d=(12, 2, 0),
-        )
-        segments_mur_cuisine_est, area_mur_cuisine_est = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [2, 2.5], [2, 0]],
-                ordered_names=[
-                    "s_mur_cuisine_est_et_mur_cuisine_sud",
-                    "s_mur_cuisine_est_plafond",
-                    "s_mur_cuisine_est_et_mur_cuisine_nord",
-                    "s_mur_cuisine_est_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_cuisine_est_1",
-            archetype_id="mur_exterieur_1",
-            label="Mur salon nord",
-            azimuth=90,
-            side_1="exterior",
-            side_2="kitchen_1",
-            tilt=90,
-            segments=segments_mur_cuisine_est,
-            area=area_mur_cuisine_est,
-            origin_3d=(12, 0, 0),
-        )
-        segments_mur_cuisine_sud, area_mur_cuisine_sud = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2.5], [6, 2.5], [6, 0]],
-                ordered_names=[
-                    "s_mur_cuisine_sud_et_mur_salon_sud",
-                    "s_mur_cuisine_sud_plafond",
-                    "s_mur_cuisine_sud_et_mur_cuisine_est",
-                    "s_mur_cuisine_sud_plancher",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="mur_cuisine_sud_1",
-            archetype_id="mur_exterieur_1",
-            label="Mur salon nord",
-            azimuth=180,
-            side_1="exterior",
-            side_2="kitchen_1",
-            tilt=90,
-            segments=segments_mur_cuisine_sud,
-            area=area_mur_cuisine_sud,
-            origin_3d=(6, 0, 0),
-        )
-        segments_plafond_salon, area_plafond_salon = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 4], [6, 4], [6, 2], [6, 0]],
-                ordered_names=[
-                    "s_plafond_mur_salon_ouest",
-                    "s_plafond_mur_salon_nord",
-                    "s_plafond_mur_salon_est",
-                    "s_plafond_salon_mur_cuisine",
-                    "s_plafond_mur_salon_sud",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="plafond_salon",
-            archetype_id="toiture_1",
-            label="Plafond salon",
-            azimuth=0,
-            side_1="exterior",
-            side_2="living_room_1",
-            tilt=0,
-            segments=segments_plafond_salon,
-            area=area_plafond_salon,
-            origin_3d=(0, 0, 2.5),
-        )
-        segments_plancher_salon, area_plancher_salon = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 4], [6, 4], [6, 2], [6, 0]],
-                ordered_names=[
-                    "s_plancher_mur_salon_ouest",
-                    "s_plancher_mur_salon_nord",
-                    "s_plancher_mur_salon_est",
-                    "s_plancher_mur_salon_cuisine",
-                    "s_plancher_mur_salon_sud",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="plancher_salon",
-            archetype_id="plancher_1",
-            label="Plancher salon",
-            azimuth=0,
-            side_1="living_room_1",
-            side_2="ground",
-            tilt=180,
-            segments=segments_plancher_salon,
-            area=area_plancher_salon,
-            origin_3d=(0, 0, 0),
-        )
-        segments_plafond_cuisine, area_plafond_cuisine = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2], [6, 2], [6, 0]],
-                ordered_names=[
-                    "s_plafond_cuisine_mur_salon_cuisine",
-                    "s_plafond_mur_cuisine_nord",
-                    "s_plafond_mur_cuisine_est",
-                    "s_plafond_mur_cuisine_sud",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="plafond_cuisine",
-            archetype_id="toiture_1",
-            label="Plafond cuisine",
-            azimuth=0,
-            side_1="exterior",
-            side_2="kitchen_1",
-            tilt=0,
-            segments=segments_plafond_cuisine,
-            area=area_plafond_cuisine,
-            origin_3d=(0, 6, 2.5),
-        )
-        segments_plancher_cuisine, area_plancher_cuisine = (
-            house_1.create_segment_and_compute_area_from_coordinates(
-                ordered_coordinates=[[0, 0], [0, 2], [6, 2], [6, 0]],
-                ordered_names=[
-                    "s_plancher_mur_salon_cuisine",
-                    "s_plancher_mur_cuisine_nord",
-                    "s_plancher_mur_cuisine_est",
-                    "s_plancher_mur_cuisine_sud",
-                ],
-            )
-        )
-        house_1.add_structure_object(
-            type_name="Boundary",
-            structure_object_id="plancher_cuisine",
-            archetype_id="plancher_1",
-            label="Plafond cuisine",
-            azimuth=0,
-            side_1="kitchen_1",
-            side_2="ground",
-            tilt=0,
-            segments=segments_plancher_cuisine,
-            area=area_plancher_cuisine,
-            origin_3d=(0, 6, 2.5),
-        )
-    # Default values are used for all parameters that are not set directly
-    with patch("builtins.input", return_value="default to all"):
-        # Between walls: vertical linear junction
-        house_1.link_boundaries(
-            boundary_ids=["mur_salon_sud_1", "mur_salon_ouest_1"],
-            segment_ids=[
-                "s_mur_salon_sud_et_mur_salon_ouest",
-                "s_mur_salon_ouest_et_mur_salon_sud",
-            ],
-            id="j_mur_salon_sud_et_mur_salon_ouest",
-        )
-        house_1.link_boundaries(
-            boundary_ids=["mur_salon_ouest_1", "mur_salon_nord_1"],
-            segment_ids=[
-                "s_mur_salon_ouest_et_mur_salon_nord",
-                "s_mur_salon_nord_et_mur_salon_ouest",
-            ],
-            id="j_mur_salon_ouest_et_mur_salon_nord",
-        )
-        house_1.link_boundaries(
-            boundary_ids=["mur_salon_nord_1", "mur_salon_est_1"],
-            segment_ids=[
-                "s_mur_salon_nord_et_mur_salon_est",
-                "s_mur_salon_est_et_mur_salon_nord",
-            ],
-            id="j_mur_salon_nord_et_mur_salon_est",
-        )
-        house_1.link_boundaries(
-            boundary_ids=[
-                "mur_salon_est_1",
-                "mur_cuisine_nord_1",
-                "mur_salon_cuisine",
-            ],
-            segment_ids=[
-                "s_mur_salon_est_et_mur_salon_cuisine",
-                "s_mur_cuisine_nord_et_mur_salon_est",
-                "s_mur_salon_cuisine_et_mur_salon_est",
-            ],
-            id="j_mur_salon_est_et_mur_salon_cuisine",
-        )
-        house_1.link_boundaries(
-            boundary_ids=["mur_cuisine_nord_1", "mur_cuisine_est_1"],
-            segment_ids=[
-                "s_mur_cuisine_nord_et_mur_cuisine_est",
-                "s_mur_cuisine_est_et_mur_cuisine_nord",
-            ],
-            id="j_mur_cuisine_nord_et_mur_cuisine_est",
-        )
-        house_1.link_boundaries(
-            boundary_ids=["mur_cuisine_est_1", "mur_cuisine_sud_1"],
-            segment_ids=[
-                "s_mur_cuisine_est_et_mur_cuisine_sud",
-                "s_mur_cuisine_sud_et_mur_cuisine_est",
-            ],
-            id="j_mur_cuisine_est_et_mur_cuisine_sud",
-        )
-        house_1.link_boundaries(
-            boundary_ids=[
-                "mur_cuisine_sud_1",
-                "mur_salon_sud_1",
-                "mur_salon_cuisine",
-            ],
-            segment_ids=[
-                "s_mur_cuisine_sud_et_mur_salon_sud",
-                "s_mur_salon_sud_et_mur_cuisine_sud",
-                "s_mur_salon_cuisine_et_mur_salon_sud",
-            ],
-            id="j_mur_cuisine_sud_et_mur_salon_sud",
-        )
