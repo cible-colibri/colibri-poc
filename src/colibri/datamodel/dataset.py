@@ -79,6 +79,7 @@ class DataSet(ClassMixin):
             self.structure_object_collection: Dict[str, Any] = dict()
             self.boundary_collection: Dict[str, Any] = dict()
             self.archetype_collection: Dict[str, Any] = dict()
+            self.module_collection: Dict[str, Any] = dict()
             self.unique_ids: List[str] = []
             # By default, DataSet is set for 3D representation of buildings.
             # If 3D info are not given, it will be set as False (1D model)
@@ -163,8 +164,7 @@ class DataSet(ClassMixin):
                         f"the archetype id has been set to '{archetype_id}'"
                     )
         self.unique_ids.append(archetype_id)
-        print(kwargs)
-        if kwargs is None:
+        if not kwargs:
             kwargs = dict()
         label: str = kwargs.get("label", None)
         if label is None:
@@ -287,7 +287,7 @@ class DataSet(ClassMixin):
                         f"the structure object id has been set to '{structure_object_id}'"
                     )
         self.unique_ids.append(structure_object_id)
-        if kwargs is None:
+        if not kwargs:
             kwargs = dict()
         kwargs.update({"id": structure_object_id})
         label: str = kwargs.get("label", None)
@@ -369,7 +369,7 @@ class DataSet(ClassMixin):
                         f"the boundary id has been set to '{boundary_id}'"
                     )
         self.unique_ids.append(boundary_id)
-        if kwargs is None:
+        if not kwargs:
             kwargs = dict()
         kwargs.update({"id": boundary_id})
         label: str = kwargs.get("label", None)
@@ -456,7 +456,7 @@ class DataSet(ClassMixin):
                     f"No segment with the id {segment_ids[index]} "
                     f"was found in {boundary_ids[index]} boundary"
                 )
-        if kwargs is None:
+        if not kwargs:
             kwargs = dict()
         if ("length" in kwargs) and (kwargs["length"] != segments[0]["length"]):
             LOGGER.warning(
@@ -500,8 +500,10 @@ class DataSet(ClassMixin):
                 f"{BOUNDARY.capitalize()}_collection"
             ][boundary_id]["segments"]:
                 if segment["id"] == segments[index]["id"]:
-                    # print(segment)
-                    # segment["junction"] = {"nodes_type" : "linear_junction", "nodes_id" :inputs["id"]}
+                    segment["junction"] = {
+                        "type": "linear_junction",
+                        "type_id": kwargs["id"],
+                    }
                     break
         if self.verbose:
             LOGGER.info(
@@ -794,6 +796,20 @@ class DataSet(ClassMixin):
             )
         return segments, area
 
+    def set_module_parameters(
+        self, module_name: str, **kwargs: Optional[Dict[str, Any]]
+    ) -> None:
+        if module_name not in self.module_names:
+            raise UserInputError(
+                f"Unknown module '{module_name}'. "
+                f"Possible modules: {self.module_names}."
+            )
+        module: Module = Module(
+            type_name=module_name, dataset=self, verbose=self.verbose
+        )
+        module.initialize_data(kwargs)
+        self.module_collection[module_name] = module.data
+
     def to_dict(self) -> Dict[str, Any]:
         """Export complete dataset as a dictionary
 
@@ -812,8 +828,14 @@ class DataSet(ClassMixin):
         """
         return {
             "project": {
-                "simulation_parameters": dict(),
-                "module_collection": dict(),
+                "id": self.generate_unique_id("project"),
+                "simulation_parameters": {
+                    "time_steps": 168,
+                    "verbose": False,
+                    "iterate_for_convergence": True,
+                    "maximum_number_of_iterations": 10,
+                },
+                "module_collection": self.module_collection,
                 "building_land": dict(),
                 "node_collection": {
                     "space_collection": self.structure_object_collection.get(
