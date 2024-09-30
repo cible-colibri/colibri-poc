@@ -35,6 +35,7 @@ class Generator(Model, metaclass=abc.ABCMeta):
             attached_to=Attachment(
                 category=ColibriProjectObjects.SPACE,
                 description="Needs of the space.",
+                default_value=0.0,
                 format=float,
             ),
         )
