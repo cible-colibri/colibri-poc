@@ -11,10 +11,12 @@ Documentation de ``colibri``
    :maxdepth: 2
    :caption: Tables des matières
 
+   ./installation/installation.rst
    ./architecture/architecture.rst
    ./operating_mode/operating-mode.rst
-   ./development/development.rst
    ./examples/examples.rst
+   ./contribution/contribution.rst
+   ./development/development.rst
    ./api/api.rst
 
 ******************

@@ -13,7 +13,6 @@ calcul global (à savoir la simulation).
 - Exécuter la simulation (calcul global) ;
 - Finaliser la simulation.
 
-^^^^^^^^^^^^^^^^^^^^^
 Préparation du moteur
 ^^^^^^^^^^^^^^^^^^^^^
 

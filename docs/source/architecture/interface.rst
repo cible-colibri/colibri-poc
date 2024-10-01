@@ -9,7 +9,6 @@ processus de calcul afin de mettre à disposition les sorties pour d'autres
 modules. Les entrées et sorties sont des données dynamiques de calcul appelées
 **variables de simulation**.
 
-^^^^^^^^^^^^^^^^^^^^^^^
 Variables de simulation
 ^^^^^^^^^^^^^^^^^^^^^^^
 

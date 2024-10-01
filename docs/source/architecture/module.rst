@@ -12,7 +12,6 @@ Un module est nécessairement défini par rapport à une interface, dont il hér
 les entrées et sorties (variable de simulation) pour être interchangeable avec
 un autre module issu de la même interface.
 
-^^^^^^^^^^
 Paramètres
 ^^^^^^^^^^
 
