@@ -5,10 +5,12 @@ default:
   tags:
     - docker
 
+
 stages:
   - test
   - sonarqube
   - documentation
+  - deploy_documentation
 
 
 variables:
@@ -68,3 +70,14 @@ pages:
   artifacts:
     paths:
       - public
+
+
+job_deploy_documentation:
+  stage: deploy_documentation
+  image: $JOB_DOC_AND_TEST_IMAGE_URL
+  variables:
+    BRANCH: $CI_COMMIT_BRANCH
+    JOB_NAME: pages
+    PROJECT_ID: $CI_PROJECT_ID
+    TRIGGER_URL: pages-priv/dee-docs/colibri_documentation
+
