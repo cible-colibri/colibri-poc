@@ -80,4 +80,4 @@ job_deploy_documentation:
     JOB_NAME: pages
     PROJECT_ID: $CI_PROJECT_ID
     TRIGGER_URL: pages-priv/dee-docs/colibri_documentation
-
+  trigger: $TRIGGER_URL
