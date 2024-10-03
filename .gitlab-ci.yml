@@ -74,7 +74,6 @@ pages:
 
 job_deploy_documentation:
   stage: deploy_documentation
-  image: $JOB_DOC_AND_TEST_IMAGE_URL
   variables:
     BRANCH: $CI_COMMIT_BRANCH
     JOB_NAME: pages
