@@ -63,6 +63,12 @@ def test_simplified_wall_losses() -> None:
         assert wall_losses.q_walls["kitchen-restroom"] == pytest.approx(
             39, abs=1
         )
+        assert (
+            wall_losses.has_converged(
+                time_step=time_step, number_of_iterations=1
+            )
+            is True
+        )
     wall_losses_2: SimplifiedWallLosses = SimplifiedWallLosses(
         name="wall-losses-2",
     )

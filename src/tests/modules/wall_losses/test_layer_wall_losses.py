@@ -95,6 +95,12 @@ def test_layer_wall_losses() -> None:
         assert wall_losses.q_walls["kitchen-restroom"] == pytest.approx(
             40, abs=1
         )
+        assert (
+            wall_losses.has_converged(
+                time_step=time_step, number_of_iterations=1
+            )
+            is True
+        )
     wall_losses_2: LayerWallLosses = LayerWallLosses(
         name="wall-losses-2",
     )
