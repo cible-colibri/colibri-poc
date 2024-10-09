@@ -42,6 +42,7 @@ def test_occupant_model() -> None:
     occupant.run(time_step=2, number_of_iterations=2)
     assert occupant.gains["kitchen"] == pytest.approx(0, abs=1)
     assert occupant.setpoint_temperatures == {"kitchen": 16}
+    assert occupant.has_converged(time_step=1, number_of_iterations=2) is True
 
 
 if __name__ == "__main__":
