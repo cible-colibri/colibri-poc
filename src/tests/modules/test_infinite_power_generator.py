@@ -73,6 +73,7 @@ def test_infinite_power_generator() -> None:
     generator.run(time_step=1, number_of_iterations=1)
     assert generator.q_provided["kitchen"] == pytest.approx(450, abs=1)
     assert generator.q_consumed["kitchen"] == pytest.approx(500, abs=1)
+    assert generator.has_converged(time_step=1, number_of_iterations=1) is True
 
 
 if __name__ == "__main__":

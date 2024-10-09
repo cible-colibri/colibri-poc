@@ -81,6 +81,12 @@ def test_circular_economy_indicator() -> None:
     assert isinstance(circular_economy_indicator, CircularEconomy)
     circular_economy_indicator.end_simulation()
     assert circular_economy_indicator.circularity_score == 0.7
+    assert (
+        circular_economy_indicator.has_converged(
+            time_step=1, number_of_iterations=1
+        )
+        is True
+    )
 
 
 if __name__ == "__main__":

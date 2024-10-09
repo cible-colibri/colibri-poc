@@ -15,7 +15,6 @@ from colibri.modules import (
 )
 
 
-@pytest.mark.xfail(reason="in progress...")
 def test_thermal_building() -> None:
     """Test the thermal_building class."""
     # Create a building (from SimpleBuilding model) and add it to the project orchestrator
@@ -25,6 +24,10 @@ def test_thermal_building() -> None:
     assert isinstance(multi_zone_building, ThermalBuilding) is True
     assert isinstance(multi_zone_building, Building) is True
     assert multi_zone_building.name == "building-1"
+    assert (
+        multi_zone_building.has_converged(time_step=1, number_of_iterations=1)
+        is True
+    )
 
 
 @pytest.mark.xfail(reason="in progress...")
