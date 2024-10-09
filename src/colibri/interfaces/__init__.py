@@ -10,6 +10,7 @@ from colibri.interfaces.modules import (
     WallLosses,
     Weather,
 )
+from colibri.interfaces.modules.building import Building
 from colibri.interfaces.project_objects import (
     BoundaryObject,
     ElementObject,
@@ -21,6 +22,7 @@ __all__ = [
     "AirFlow",
     "Archetype",
     "BoundaryObject",
+    "Building",
     "ElementObject",
     "Generator",
     "Occupants",

@@ -94,3 +94,6 @@ class InfinitePowerGenerator(Generator):
     def end_time_step(self, time_step: int) -> None: ...
 
     def end_simulation(self) -> None: ...
+
+    def has_converged(self, time_step: int, number_of_iterations: int) -> bool:
+        return True

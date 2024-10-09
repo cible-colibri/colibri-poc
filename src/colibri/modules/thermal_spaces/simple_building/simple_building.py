@@ -388,7 +388,7 @@ class SimpleBuilding(ThermalSpace):
     def post_initialize(self) -> None:
         # TODO: SLOWER alternative to original model
         #       Originally in initialize() with weather = self.project.get_weather()
-        #       So, pre-calculate setpoint for all(!) time steps
+        #       So, pre-compute setpoint for all(!) time steps
         #       (heating or cooling default setpoint)
         #       This demonstrates how to create a link to a different model
         #       (the weather data model) :
@@ -444,6 +444,9 @@ class SimpleBuilding(ThermalSpace):
     def end_time_step(self, time_step: int) -> None: ...
 
     def end_simulation(self) -> None: ...
+
+    def has_converged(self, time_step: int, number_of_iterations: int) -> bool:
+        return True
 
 
 if __name__ == "__main__":

@@ -69,6 +69,11 @@ class Module(ClassMixin, MetaFieldMixin):
     @abc.abstractmethod
     def end_simulation(self) -> None: ...
 
+    @abc.abstractmethod
+    def has_converged(
+        self, time_step: int, number_of_iterations: int
+    ) -> bool: ...
+
     def save_time_step(self, time_step: int) -> None:
         """Save the output fields' value for the given time step
 

@@ -206,6 +206,9 @@ class WeatherEpw(Weather):
 
     def end_simulation(self) -> None: ...
 
+    def has_converged(self, time_step: int, number_of_iterations: int) -> bool:
+        return True
+
     def read_epw_file(self) -> None:
         epw_columns: Tuple = (
             "year",

@@ -1,4 +1,7 @@
 from colibri.modules.acvs.acv_exploitation import AcvExploitationOnly
+from colibri.modules.air_flows.air_flow_building.air_flow_building import (
+    AirFlowBuilding,
+)
 from colibri.modules.circular_economy.circular_economy_indicator import (
     CircularEconomyIndicator,
 )
@@ -8,6 +11,9 @@ from colibri.modules.generators.infinite_power_generator import (
 )
 from colibri.modules.generators.limited_generator import LimitedGenerator
 from colibri.modules.occupants.occupant import OccupantModel
+from colibri.modules.thermal_spaces.detailed_building.thermal_building import (
+    ThermalBuilding,
+)
 from colibri.modules.thermal_spaces.simple_building.simple_building import (
     SimpleBuilding,
 )
@@ -23,6 +29,7 @@ from colibri.modules.weathers.weather_model import WeatherModel
 
 __all__ = [
     "AcvExploitationOnly",
+    "AirFlowBuilding",
     "CircularEconomyIndicator",
     "CustomModule",
     "InfinitePowerGenerator",
@@ -30,6 +37,7 @@ __all__ = [
     "LimitedGenerator",
     "OccupantModel",
     "SimplifiedWallLosses",
+    "ThermalBuilding",
     "ThermalSpaceSimplified",
     "WeatherEpw",
     "WeatherModel",

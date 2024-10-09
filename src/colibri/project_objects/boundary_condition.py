@@ -2,8 +2,10 @@
 BoundaryCondition class, which represent the boundary condition structure object.
 """
 
+from typing import Any, Dict
+
 from colibri.interfaces import StructureObject
-from colibri.utils.enums_utils import Roles, Units
+from colibri.utils.enums_utils import Units
 
 
 class BoundaryCondition(StructureObject):
@@ -19,6 +21,7 @@ class BoundaryCondition(StructureObject):
         self,
         id: str,
         label: str,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """Initialize a new BoundaryCondition instance."""
         super().__init__()
@@ -44,6 +47,8 @@ class BoundaryCondition(StructureObject):
             attached_to=None,
             required=None,
         )
+        for attribute_name, attribute_value in kwargs.items():
+            setattr(self, attribute_name, attribute_value)
 
 
 if __name__ == "__main__":

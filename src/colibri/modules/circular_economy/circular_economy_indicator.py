@@ -128,6 +128,9 @@ class CircularEconomyIndicator(CircularEconomy):
                         ]
                     )
 
+    def has_converged(self, time_step: int, number_of_iterations: int) -> bool:
+        return True
+
 
 if __name__ == "__main__":
     from colibri.interfaces import ElementObject

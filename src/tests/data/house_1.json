@@ -178,11 +178,6 @@
                     "psi": 0.5,
                     "length": 6.0
                 }
-            },
-            "building_collection": {
-                "building_1": {
-                    "id": "building_1"
-                }
             }
         },
         "boundary_collection": {
