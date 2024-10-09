@@ -36,6 +36,7 @@ __all__ = [
     "LayerWallLosses",
     "LimitedGenerator",
     "OccupantModel",
+    "SimpleBuilding",
     "SimplifiedWallLosses",
     "ThermalBuilding",
     "ThermalSpaceSimplified",
