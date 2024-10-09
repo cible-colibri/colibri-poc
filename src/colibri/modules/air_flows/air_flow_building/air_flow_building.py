@@ -512,6 +512,7 @@ class AirFlowBuilding(AirFlow):
         --------
         >>> None
         """
+        flow_rates: List[Dict[str, Any]] = []
         for flow_path in self.flow_paths:
             path: List[str] = flow_path["path"]
             sign: int = flow_path["flow_sign"]
@@ -529,10 +530,10 @@ class AirFlowBuilding(AirFlow):
             for space in self.project_data.spaces:
                 if (path[0] == space.id) and (flow_rate < 0):
                     # from other space into current space
-                    self.flow_rates.append([path[1], path[0], -flow_rate])
+                    flow_rates.append([path[1], path[0], -flow_rate])
                 if (path[1] == space.id) and (flow_rate > 0):
-                    self.flow_rates.append([path[0], path[1], flow_rate])
-
+                    flow_rates.append([path[0], path[1], flow_rate])
+        self.flow_rates = flow_rates
 
 if __name__ == "__main__":
     import pandas as pd
