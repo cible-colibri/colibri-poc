@@ -169,7 +169,7 @@ def space_temperature_control_simple(
                 states=states, index_states=index_states, label="spaces_air"
             )
         # Obtain ideal control values (temperature and power) from linear interpolation
-        for index, temperature_setpoint in range(temperature_setpoints):
+        for index, temperature_setpoint in enumerate(temperature_setpoints):
             delta_estimated: float = (
                 estimated_zone_temperatures[index, 1]
                 - estimated_zone_temperatures[index, 0]
