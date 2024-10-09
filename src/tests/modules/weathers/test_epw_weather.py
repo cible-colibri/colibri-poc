@@ -15,7 +15,7 @@ from colibri.modules import WeatherEpw
 def test_weather_model() -> None:
     """Test the WeatherEpw class."""
     epw_file_path: Path = (
-        Path(__file__).resolve().parents[1]
+        Path(__file__).resolve().parents[2]
         / "data"
         / "weather"
         / "epw"
@@ -40,6 +40,10 @@ def test_weather_model() -> None:
         )
         assert weather.ground_temperatures[time_step] == pytest.approx(
             expected_ground_temperatures[time_step], abs=0.001
+        )
+        assert (
+            weather.has_converged(time_step=time_step, number_of_iterations=1)
+            is True
         )
     weather_2: WeatherEpw = WeatherEpw(
         name="weather-1",

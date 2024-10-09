@@ -27,6 +27,10 @@ def test_weather_model() -> None:
             weather.exterior_air_temperature
             == corrected_temperatures[time_step]
         )
+        assert (
+            weather.has_converged(time_step=time_step, number_of_iterations=1)
+            is True
+        )
 
 
 if __name__ == "__main__":
