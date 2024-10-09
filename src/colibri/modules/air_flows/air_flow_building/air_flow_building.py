@@ -535,6 +535,7 @@ class AirFlowBuilding(AirFlow):
                     flow_rates.append([path[0], path[1], flow_rate])
         self.flow_rates = flow_rates
 
+
 if __name__ == "__main__":
     import pandas as pd
     from pandas import DataFrame

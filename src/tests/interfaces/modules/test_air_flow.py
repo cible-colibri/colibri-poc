@@ -2,16 +2,18 @@
 Tests for the `air_flow.py` interface.
 """
 
-import pytest
+import pandas as pd
 
 from colibri.interfaces import AirFlow, Module
 
 
-@pytest.mark.xfail(reason="in progress...")
 def test_air_flow() -> None:
     """Test the AirFLow class."""
     air_flow: AirFlow = AirFlow(
         name="air-flow-1",
+        space_temperatures=dict(),
+        sky_temperatures=pd.Series(dtype=float),
+        exterior_air_temperatures=pd.Series(dtype=float),
         pressures=dict(),
         flow_rates=dict(),
     )
