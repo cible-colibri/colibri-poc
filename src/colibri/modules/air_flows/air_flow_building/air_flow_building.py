@@ -394,10 +394,10 @@ class AirFlowBuilding(AirFlow):
                                 delta_pressure_law=connection["pressure_curve"],
                             )
                         )
-                boundary_condition.pressure += pressure_difference_correction
-                self.boundary_pressures[boundary_index, 0] = (
-                    boundary_condition.pressure
-                )
+            boundary_condition.pressure += pressure_difference_correction
+            self.boundary_pressures[boundary_index, 0] = (
+                boundary_condition.pressure
+            )
         # Fan flow rates (imposed flow rates in pressure model)
         for flow in self.flows:
             connection: str = flow[0]["connection"]
