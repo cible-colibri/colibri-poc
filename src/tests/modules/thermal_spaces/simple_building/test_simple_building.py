@@ -159,6 +159,7 @@ def test_simple_building_cooling_only() -> None:
     assert np.median(building.zone_temperature_series) == pytest.approx(
         27, abs=0.2
     )
+    assert building.has_converged(time_step=1, number_of_iterations=1) is True
 
 
 if __name__ == "__main__":

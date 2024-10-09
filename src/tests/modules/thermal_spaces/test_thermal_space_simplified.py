@@ -41,6 +41,12 @@ def test_thermal_space_simplified() -> None:
         gains={space.label: 300},
     )
     assert thermal_space_simplified.project_data is None
+    assert (
+        thermal_space_simplified.has_converged(
+            time_step=1, number_of_iterations=1
+        )
+        is True
+    )
 
 
 if __name__ == "__main__":
