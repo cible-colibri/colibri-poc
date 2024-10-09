@@ -37,6 +37,7 @@ def test_compute_ventilation_losses() -> None:
 
 def test_get_operation_mode() -> None:
     """Test the get_operation_mode function."""
+    # Test no. 1
     operation_mode: Tuple[List[str], ndarray] = get_operation_mode(
         indoor_temperatures=np.array([20.0, 20.0]),
         outdoor_temperature=5.0,
@@ -51,7 +52,7 @@ def test_get_operation_mode() -> None:
     assert operation_mode[0][1] == "free_float"
     assert math.isnan(operation_mode[1][0]) is True
     assert math.isnan(operation_mode[1][1]) is True
-
+    # Test no. 2
     operation_mode: Tuple[List[str], ndarray] = get_operation_mode(
         indoor_temperatures=np.array([18.5, 17.0]),
         outdoor_temperature=5.0,
@@ -66,7 +67,7 @@ def test_get_operation_mode() -> None:
     assert operation_mode[0][1] == "heating"
     assert operation_mode[1][0] == pytest.approx(19.0, abs=0.25)
     assert operation_mode[1][1] == pytest.approx(21.0, abs=0.25)
-
+    # Test no. 3
     operation_mode: Tuple[List[str], ndarray] = get_operation_mode(
         indoor_temperatures=np.array([16.0, 27.0]),
         outdoor_temperature=30.0,
@@ -81,7 +82,7 @@ def test_get_operation_mode() -> None:
     assert operation_mode[0][1] == "cooling"
     assert math.isnan(operation_mode[1][0]) is True
     assert operation_mode[1][1] == pytest.approx(24.0, abs=0.25)
-
+    # Test no. 4
     operation_mode: Tuple[List[str], ndarray] = get_operation_mode(
         indoor_temperatures=np.array([16.0, 16.0]),
         outdoor_temperature=14.0,
@@ -96,9 +97,24 @@ def test_get_operation_mode() -> None:
     assert operation_mode[0][1] == "free_float"
     assert math.isnan(operation_mode[1][0]) is True
     assert math.isnan(operation_mode[1][1]) is True
-
+    # Test no. 5
     operation_mode: Tuple[List[str], ndarray] = get_operation_mode(
         indoor_temperatures=np.array([16.0, 16.0]),
+        outdoor_temperature=17.0,
+        heating_setpoints=np.array([20.0, 20.0]),
+        cooling_setpoints=np.array([20.0, 20.0]),
+        operating_modes=["heating", "heating"],
+    )
+    assert isinstance(operation_mode, tuple) is True
+    assert isinstance(operation_mode[0], list) is True
+    assert isinstance(operation_mode[1], ndarray) is True
+    assert operation_mode[0][0] == "free_float"
+    assert operation_mode[0][1] == "free_float"
+    assert math.isnan(operation_mode[1][0]) is True
+    assert math.isnan(operation_mode[1][1]) is True
+    # Test no. 6
+    operation_mode: Tuple[List[str], ndarray] = get_operation_mode(
+        indoor_temperatures=np.array([21.0, 21.0]),
         outdoor_temperature=17.0,
         heating_setpoints=np.array([20.0, 20.0]),
         cooling_setpoints=np.array([20.0, 20.0]),
@@ -115,7 +131,8 @@ def test_get_operation_mode() -> None:
 
 def test_space_temperature_control_simple() -> None:
     """Test the space_temperature_control_simple function."""
-    x = space_temperature_control_simple(
+    # Test no. 1
+    estimated_thermal_outputs: ndarray = space_temperature_control_simple(
         operating_modes=["free_float", "free_float"],
         temperature_setpoints=np.array([np.nan, np.nan]),
         system_matrix=np.array(
@@ -197,9 +214,195 @@ def test_space_temperature_control_simple() -> None:
         convective_internal_gains=np.array([80.0, 80.0]),
         radiative_internal_gains=np.array([120.0, 120.0]),
         internal_temperatures={"living_room_1": 20.0, "kitchen_1": 20.0},
-        flows=np.array([]),
+        flows=[],
     )
-    print(x)
+    assert estimated_thermal_outputs[0] == pytest.approx(0.0, abs=0.025)
+    assert estimated_thermal_outputs[1] == pytest.approx(0.0, abs=0.025)
+    # Test no. 2
+    estimated_thermal_outputs: ndarray = space_temperature_control_simple(
+        operating_modes=["free_float", "free_float"],
+        temperature_setpoints=np.array([np.nan, np.nan]),
+        system_matrix=np.array(
+            [
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 9.9, 4.2, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.0, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+            ]
+        ),
+        control_matrix=np.array(
+            [
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+            ]
+        ),
+        states_last=np.array(
+            [
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+            ]
+        ),
+        input_signals=np.array(
+            [10.0, 10.0, 2.9, 2.9, 2.9, 2.9, -4.26, -4.26, -4.26]
+        ),
+        index_states={
+            "boundaries": {"start_index": 0, "n_elements": 8},
+            "windows": {"start_index": 6, "n_elements": 2},
+            "spaces_mean_radiant": {"start_index": 8, "n_elements": 2},
+            "spaces_air": {"start_index": 10, "n_elements": 2},
+        },
+        index_inputs={
+            "ground_temperature": {"start_index": 0, "n_elements": 1},
+            "exterior_air_temperature": {"start_index": 1, "n_elements": 4},
+            "exterior_radiant_temperature": {
+                "start_index": 13,
+                "n_elements": 12,
+            },
+            "radiative_gain_boundary_external": {
+                "start_index": 25,
+                "n_elements": 12,
+            },
+            "space_radiative_gain": {"start_index": 37, "n_elements": 2},
+            "space_convective_gain": {"start_index": 39, "n_elements": 2},
+        },
+        radiative_share_hvac=np.array([0.0, 0.0]),
+        max_heating_power=np.array([10_000, 10_000]),
+        max_cooling_power=np.array([10_000, 10_000]),
+        ventilation_gain_coefficients=np.array([63327.7, 28845.9]),
+        efficiency_heat_recovery=0.0,
+        convective_internal_gains=np.array([80.0, 80.0]),
+        radiative_internal_gains=np.array([120.0, 120.0]),
+        internal_temperatures={"living_room_1": 20.0, "kitchen_1": 20.0},
+        flows=[["living_room_1", "kitchen", 2.5]],
+    )
+    assert estimated_thermal_outputs[0] == pytest.approx(0.0, abs=0.025)
+    assert estimated_thermal_outputs[1] == pytest.approx(0.0, abs=0.025)
+    # Test no. 3
+    estimated_thermal_outputs: ndarray = space_temperature_control_simple(
+        operating_modes=["heating", "cooling"],
+        temperature_setpoints=np.array([17, 14]),
+        system_matrix=np.array(
+            [
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 9.9, 4.2, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.0, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 1.1],
+            ]
+        ),
+        control_matrix=np.array(
+            [
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 9.9, 4.2, 4.6, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1, 4.9, 5.5, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+                [4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 4.9, 2.1, 2.3, 1.1],
+            ]
+        ),
+        states_last=np.array(
+            [
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+                20.0,
+            ]
+        ),
+        input_signals=np.array(
+            [
+                10.0,
+                10.0,
+                2.9,
+                2.9,
+                2.9,
+                2.9,
+                -4.26,
+                -4.26,
+                -4.26,
+                10.0,
+            ]
+        ),
+        index_states={
+            "boundaries": {"start_index": 0, "n_elements": 2},
+            "windows": {"start_index": 3, "n_elements": 1},
+            "spaces_mean_radiant": {"start_index": 2, "n_elements": 3},
+            "spaces_air": {"start_index": 8, "n_elements": 2},
+        },
+        index_inputs={
+            "ground_temperature": {"start_index": 0, "n_elements": 1},
+            "exterior_air_temperature": {"start_index": 1, "n_elements": 4},
+            "exterior_radiant_temperature": {
+                "start_index": 13,
+                "n_elements": 12,
+            },
+            "radiative_gain_boundary_external": {
+                "start_index": 25,
+                "n_elements": 12,
+            },
+            "space_radiative_gain": {"start_index": 6, "n_elements": 2},
+            "space_convective_gain": {"start_index": 7, "n_elements": 2},
+        },
+        radiative_share_hvac=np.array([0.0, 0.0]),
+        max_heating_power=np.array([10_000, 10_000]),
+        max_cooling_power=np.array([10_000, 10_000]),
+        ventilation_gain_coefficients=np.array([63327.7, 28845.9]),
+        efficiency_heat_recovery=0.0,
+        convective_internal_gains=np.array([80.0, 80.0]),
+        radiative_internal_gains=np.array([120.0, 120.0]),
+        internal_temperatures={"living_room_1": 20.0, "kitchen_1": 20.0},
+        flows=[["living_room_1", "kitchen", 2.5]],
+    )
+    assert estimated_thermal_outputs[0] == pytest.approx(9_199.3, abs=1.0)
+    assert estimated_thermal_outputs[1] == pytest.approx(-397.5, abs=1.0)
 
 
 if __name__ == "__main__":
