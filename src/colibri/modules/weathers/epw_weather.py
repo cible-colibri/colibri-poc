@@ -190,6 +190,8 @@ class WeatherEpw(Weather):
         )
         self.global_horizontal_radiations = self._weather_data["GloHorzRad"]
 
+        return True
+
     def post_initialize(self) -> None: ...
 
     def run(self, time_step: int, number_of_iterations: int) -> None:

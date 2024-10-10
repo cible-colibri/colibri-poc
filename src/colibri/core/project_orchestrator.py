@@ -114,10 +114,10 @@ class ProjectOrchestrator:
         self._initialize_models()
         # Pass information (models' values) to connected models
         # if required by post-initialization
-        self._substitute_links_values_for_post_initialization()
+        #self._substitute_links_values_for_post_initialization()
         # Use post-initialization for models which relies on
         # the initialization of others
-        self._post_initialize_models()
+        #self._post_initialize_models()
         # Run the simulation (for each time step)
         for time_step in range(0, self.time_steps):
             # Print time step evolution if needed
@@ -736,10 +736,7 @@ class ProjectOrchestrator:
             to_module=to_module,
             to_field=to_field,
         )
-        if to_module.get_field(to_field).use_post_initialization is True:
-            self.post_initialization_links.append(link)
-        else:
-            self.links.append(link)
+        self.links.append(link)
 
     def _substitute_parameter_links_values(self):
         """"""
@@ -784,6 +781,7 @@ class ProjectOrchestrator:
 
     def _initialize_models(self) -> None:
         """Run the initialize method of each model in the project
+        re-try until all models are initialized to solve dependencies between models
 
         Returns
         -------
@@ -797,8 +795,22 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            model.initialize()
+        done : bool = False
+        max_iterations = 3
+
+        i = 0
+        while not done and i < max_iterations:
+            all_done = True
+            for model in self.models:
+                if not model.is_initialized:
+                    model_done = model.initialize()
+                    if not model_done:
+                        all_done = False
+                    else:
+                        model.is_initialized = True
+            self._substitute_links_values(0)
+            done = all_done
+            i = i + 1
 
     def _post_initialize_models(self) -> None:
         """Run the post_initialize method of each model in the project
