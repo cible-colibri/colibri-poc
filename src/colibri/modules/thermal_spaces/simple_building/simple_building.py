@@ -138,7 +138,6 @@ class SimpleBuilding(ThermalSpace):
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
             ),
-            use_post_initialization=True,
         )
         self.exterior_air_temperature = self.define_input(
             name="exterior_air_temperature",
@@ -174,7 +173,6 @@ class SimpleBuilding(ThermalSpace):
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
             ),
-            use_post_initialization=True,
         )
         self.global_horizontal_radiation = self.define_input(
             name="global_horizontal_radiation",
@@ -396,9 +394,6 @@ class SimpleBuilding(ThermalSpace):
             )
 
         return True
-
-    def post_initialize(self) -> None:
-        pass
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         heating_season: bool = self.heating_seasons[time_step]

@@ -51,7 +51,6 @@ class AirFlow(Module, metaclass=abc.ABCMeta):
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
             ),
-            use_post_initialization=True,
         )
         self.exterior_air_temperatures = self.define_input(
             name="exterior_air_temperatures",
@@ -64,7 +63,6 @@ class AirFlow(Module, metaclass=abc.ABCMeta):
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
             ),
-            use_post_initialization=True,
         )
         self.pressures = self.define_output(
             name="pressures",

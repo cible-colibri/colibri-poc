@@ -202,9 +202,6 @@ class AirFlowBuilding(AirFlow):
 
         return True
 
-    def post_initialize(self) -> None:
-        pass
-
     def run(self, time_step: int, number_of_iterations: int) -> None:
         if self.has_pressure_model is False:
             return None

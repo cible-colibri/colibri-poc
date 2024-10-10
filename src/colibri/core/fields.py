@@ -160,8 +160,6 @@ class SimulationVariable(Field):
         Specify which project object the simulation variable is attached to
     role : Optional[Roles] = None
         Role of the simulation variable
-    use_post_initialization: bool = False
-        Update value with that of another model after post-initialization
     """
 
     linked_to: List[SimulationVariable] = field(default_factory=list)
@@ -170,4 +168,3 @@ class SimulationVariable(Field):
     convergence_tolerance: float = 0.1
     maximum_number_of_iterations: int = 10
     required: Optional[List[Parameter]] = None
-    use_post_initialization: bool = False

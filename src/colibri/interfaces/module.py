@@ -56,9 +56,6 @@ class Module(ClassMixin, MetaFieldMixin):
     def initialize(self) -> None: ...
 
     @abc.abstractmethod
-    def post_initialize(self) -> None: ...
-
-    @abc.abstractmethod
     def run(self, time_step: int, number_of_iterations: int) -> None: ...
 
     @abc.abstractmethod
