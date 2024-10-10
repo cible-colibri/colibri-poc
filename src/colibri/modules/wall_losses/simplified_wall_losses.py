@@ -63,8 +63,6 @@ class SimplifiedWallLosses(WallLosses):
 
     def initialize(self) -> None: ...
 
-    def post_initialize(self) -> None: ...
-
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for boundary in self.project_data.boundaries:
             # TODO: How to handle multiple spaces?

@@ -138,20 +138,6 @@ class SimpleBuilding(ThermalSpace):
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
             ),
-            use_post_initialization=True,
-        )
-        self.exterior_air_temperatures = self.define_input(
-            name="exterior_air_temperatures",
-            default_value=exterior_air_temperatures,
-            description="Exterior air temperatures.",
-            format=Series,
-            min=0,
-            max=float("inf"),
-            unit=Units.DEGREE_CELSIUS,
-            attached_to=Attachment(
-                category=ColibriProjectObjects.PROJECT,
-            ),
-            use_post_initialization=True,
         )
         self.exterior_air_temperature = self.define_input(
             name="exterior_air_temperature",
@@ -187,7 +173,6 @@ class SimpleBuilding(ThermalSpace):
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
             ),
-            use_post_initialization=True,
         )
         self.global_horizontal_radiation = self.define_input(
             name="global_horizontal_radiation",
@@ -378,6 +363,7 @@ class SimpleBuilding(ThermalSpace):
         )
 
     def initialize(self) -> None:
+
         height: float = 2.5
         self.volume = self.area_floor * self.number_of_floors * height
         self.area_windows = self.global_area_walls * self.window_to_wall_ratio
@@ -385,16 +371,12 @@ class SimpleBuilding(ThermalSpace):
             1 - self.window_to_wall_ratio
         )
 
-    def post_initialize(self) -> None:
-        # TODO: SLOWER alternative to original model
-        #       Originally in initialize() with weather = self.project.get_weather()
-        #       So, pre-compute setpoint for all(!) time steps
-        #       (heating or cooling default setpoint)
-        #       This demonstrates how to create a link to a different model
-        #       (the weather data model) :
-        #       this model (the SimpleBuilding) cannot run without it!
-        #       It is recommended to reduce such dependencies to the minimum
-        #       PS: Connections between weather and model were not working in previous case
+        if self.exterior_air_temperatures is None:
+            return False
+
+        if self.global_horizontal_radiations is None:
+            return False
+
         self.zone_setpoint_temperatures: Series = (
             np.zeros(len(self.exterior_air_temperatures))
             + self.zone_setpoint_heating
@@ -410,6 +392,8 @@ class SimpleBuilding(ThermalSpace):
             self.zone_setpoint_temperatures[heating_season == False] = (
                 self.zone_setpoint_cooling
             )
+
+        return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         heating_season: bool = self.heating_seasons[time_step]
