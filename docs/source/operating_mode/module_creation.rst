@@ -31,7 +31,6 @@ Tous les modules contiennent des fonctions suivantes :
 - ``get_link``
 - ``initialize``
 - ``is_field_linked``
-- ``post_initialize``
 - ``run``
 - ``save_time_step``
 - ``to_scheme``
