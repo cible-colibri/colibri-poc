@@ -69,7 +69,6 @@ class ProjectOrchestrator:
 
     name: str = "project-orchestrator-1"
     links: List[Link] = field(default_factory=list)
-    post_initialization_links: List[Link] = field(default_factory=list)
     models: List[Module] = field(default_factory=list)
     time_steps: int = 168
     verbose: bool = False
@@ -112,12 +111,7 @@ class ProjectOrchestrator:
         self._initialize_module_output_series()
         # Initialize models (run models' initialize method)
         self._initialize_models()
-        # Pass information (models' values) to connected models
-        # if required by post-initialization
-        self._substitute_links_values_for_post_initialization()
-        # Use post-initialization for models which relies on
-        # the initialization of others
-        self._post_initialize_models()
+
         # Run the simulation (for each time step)
         for time_step in range(0, self.time_steps):
             # Print time step evolution if needed
@@ -736,10 +730,7 @@ class ProjectOrchestrator:
             to_module=to_module,
             to_field=to_field,
         )
-        if to_module.get_field(to_field).use_post_initialization is True:
-            self.post_initialization_links.append(link)
-        else:
-            self.links.append(link)
+        self.links.append(link)
 
     def _substitute_parameter_links_values(self):
         """"""
@@ -784,6 +775,7 @@ class ProjectOrchestrator:
 
     def _initialize_models(self) -> None:
         """Run the initialize method of each model in the project
+        re-try until all models are initialized to solve dependencies between models
 
         Returns
         -------
@@ -797,26 +789,22 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            model.initialize()
+        done : bool = False
+        max_iterations = 3
 
-    def _post_initialize_models(self) -> None:
-        """Run the post_initialize method of each model in the project
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
-
-        Examples
-        --------
-        >>> None
-        """
-        for model in self.models:
-            model.post_initialize()
+        i = 0
+        while not done and i < max_iterations:
+            all_done = True
+            for model in self.models:
+                if not model.is_initialized:
+                    model_done = model.initialize()
+                    if not model_done:
+                        all_done = False
+                    else:
+                        model.is_initialized = True
+            self._substitute_links_values(0)
+            done = all_done
+            i = i + 1
 
     def _run_models(self, time_step: int, number_of_iterations: int) -> None:
         """Run the run method of each model in the project
@@ -870,28 +858,6 @@ class ProjectOrchestrator:
         >>> None
         """
         for link in self.links:
-            new_value: Any = getattr(link.from_module, link.from_field)
-            setattr(link.to_module, link.to_field, new_value)
-
-    def _substitute_links_values_for_post_initialization(self) -> None:
-        """Pass information (models' values) to connected models
-        by substituting the output links' value to the input links' value
-        only on simulation variables which have use_post_initialization
-        set to True
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
-
-        Examples
-        --------
-        >>> None
-        """
-        for link in self.post_initialization_links:
             new_value: Any = getattr(link.from_module, link.from_field)
             setattr(link.to_module, link.to_field, new_value)
 

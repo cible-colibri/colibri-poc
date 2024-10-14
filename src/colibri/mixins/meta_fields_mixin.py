@@ -127,7 +127,6 @@ class MetaFieldMixin:
         min: Any,
         max: Any,
         attached_to: Attachment,
-        use_post_initialization: bool = False,
     ) -> Any:
         """Define a input (set all information into _fields_metadata)
         and return its default value
@@ -150,8 +149,6 @@ class MetaFieldMixin:
             Max value of the input
         attached_to : Attachment
             Specify which project object the input is attached to
-        use_post_initialization : bool = False
-            Update value with that of another model after post-initialization
 
         Returns
         -------
@@ -176,7 +173,6 @@ class MetaFieldMixin:
             min=min,
             max=max,
             attached_to=attached_to,
-            use_post_initialization=use_post_initialization,
         )
         return default_value
 
@@ -251,7 +247,6 @@ class MetaFieldMixin:
         max: Any,
         attached_to: Optional[Attachment] = None,
         required: Optional[List[Parameter]] = None,
-        use_post_initialization: bool = False,
     ) -> Any:
         """Define the field (set all information into _fields_metadata)
         and return its default value
@@ -278,8 +273,6 @@ class MetaFieldMixin:
             Project object from which the field is attached to
         required : Optional[List[Parameter]] = None
             List of required parameters inside the parameter
-        use_post_initialization : bool = False
-            Update value with that of another model after post-initialization
 
         Returns
         -------
@@ -329,7 +322,6 @@ class MetaFieldMixin:
             maximum_number_of_iterations=maximum_number_of_iterations,
             attached_to=attached_to,
             required=required,
-            use_post_initialization=use_post_initialization,
         )
         return default_value
 

@@ -157,11 +157,16 @@ class AirFlowBuilding(AirFlow):
         self.number_of_steps = 0
 
     def initialize(self) -> None:
+        if self.sky_temperatures is None:
+            return False
+
+        if self.exterior_air_temperatures is None:
+            return False
+
         if self.has_pressure_model is True:
             self._has_module_converged = False
             self.internal_solver = "fully_iterative"
 
-    def post_initialize(self) -> None:
         self.number_of_steps = len(self.sky_temperatures)
         compute_boundary_conditions(
             exterior_air_temperatures=self.exterior_air_temperatures,
@@ -194,6 +199,8 @@ class AirFlowBuilding(AirFlow):
             self._has_module_converged = True
         # For convergence plot of pressure model
         self.found = []
+
+        return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         if self.has_pressure_model is False:

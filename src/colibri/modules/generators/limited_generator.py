@@ -82,8 +82,6 @@ class LimitedGenerator(Generator):
 
     def initialize(self) -> None: ...
 
-    def post_initialize(self) -> None: ...
-
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for space in self.project_data.spaces:
             emitters: list = [

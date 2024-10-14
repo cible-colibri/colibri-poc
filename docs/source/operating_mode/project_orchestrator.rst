@@ -10,7 +10,6 @@ Le ``ProjectOrchestrator`` connait tous les modules, qui contiennent tous les
 fonctions suivantes :
 
 - ``initialize``
-- ``post_initialize``
 - ``run``
 - ``end_iteration``
 - ``end_time_step``

@@ -68,8 +68,6 @@ class WeatherModel(Weather):
             for temperature in self.scenario_exterior_air_temperatures
         ]
 
-    def post_initialize(self) -> None: ...
-
     def run(self, time_step: int, number_of_iterations: int) -> None:
         self.exterior_air_temperature = (
             self.corrected_exterior_air_temperatures[time_step]
