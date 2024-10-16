@@ -53,7 +53,7 @@ def test_thermal_building_case_1() -> None:
         epw_file_path=epw_file_path,
         constant_ground_temperature=10.0,
     )
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=weather)
     # Create project data
     project_file: Path = (
         Path(__file__).resolve().parents[3] / "data" / "house_1.json"
@@ -61,15 +61,15 @@ def test_thermal_building_case_1() -> None:
     project_data: ProjectData = ProjectData(
         name="project_data", data=project_file
     )
-    project_orchestrator.add_model(project_data)
+    project_orchestrator.add_module(module=project_data)
     # Create a building (from SimpleBuilding model) and add it to the project orchestrator
     multi_zone_building: ThermalBuilding = ThermalBuilding(
         name="building-1", blind_position=1
     )
-    project_orchestrator.add_model(model=multi_zone_building)
+    project_orchestrator.add_module(module=multi_zone_building)
     # Add air flow model
     air_flow_building: AirFlowBuilding = AirFlowBuilding(name="air-flow-1")
-    project_orchestrator.add_model(air_flow_building)
+    project_orchestrator.add_module(module=air_flow_building)
     # Link modules
     project_orchestrator.add_link(
         weather, "sky_temperatures", air_flow_building, "sky_temperatures"

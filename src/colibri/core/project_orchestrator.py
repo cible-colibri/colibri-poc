@@ -69,7 +69,7 @@ class ProjectOrchestrator:
 
     name: str = "project-orchestrator-1"
     links: List[Link] = field(default_factory=list)
-    models: List[Module] = field(default_factory=list)
+    modules: List[Module] = field(default_factory=list)
     time_steps: int = 168
     verbose: bool = False
     iterate_for_convergence: bool = False
@@ -103,15 +103,14 @@ class ProjectOrchestrator:
         """
         # Start counter to keep track of time for performance
         starting_time = time.perf_counter()
-        # Pass parameters information (models' values) to connected models
+        # Pass parameters information (modules' values) to connected modules
         self._substitute_parameter_links_values()
         self._substitute_parameter_links_values_2()
-        # Add a variable series for each output of each model to store results
+        # Add a variable series for each output of each module to store results
         # at each time step
         self._initialize_module_output_series()
-        # Initialize models (run models' initialize method)
-        self._initialize_models()
-
+        # Initialize modules (run modules' initialize method)
+        self._initialize_modules()
         # Run the simulation (for each time step)
         for time_step in range(0, self.time_steps):
             # Print time step evolution if needed
@@ -128,11 +127,11 @@ class ProjectOrchestrator:
                     LOGGER.info(f"Iteration: {self._number_of_iterations}")
                 self._has_converged = True
                 # TODO: Check if it must be before or after
-                # run_models (see initial state)
-                # Pass information (models' values) to connected models
+                # run_modules (see initial state)
+                # Pass information (modules' values) to connected modules
                 self._substitute_links_values(time_step=time_step)
-                # Run models (run models' run method)
-                self._run_models(
+                # Run modules (run modules' run method)
+                self._run_modules(
                     time_step=time_step,
                     number_of_iterations=self._number_of_iterations,
                 )
@@ -140,13 +139,13 @@ class ProjectOrchestrator:
                 self._set_convergence(time_step=time_step)
                 # Increment the number of iterations for convergence purposes
                 self._number_of_iterations += 1
-                # End iteration (run models' iteration_done method)
+                # End iteration (run modules' iteration_done method)
                 self._end_iteration(time_step=time_step)
-            # Save the model's data for the given time step
+            # Save the module's data for the given time step
             self._save_module_data(time_step=time_step)
-            # End time step (run models' end_time_step method)
+            # End time step (run modules' end_time_step method)
             self._end_time_step(time_step=time_step)
-        # End simulation (run models' end_simulation method)
+        # End simulation (run modules' end_simulation method)
         self._end_simulation()
         # Show plots if show_plots is set to True
         if show_plots:
@@ -158,12 +157,12 @@ class ProjectOrchestrator:
         }
         return information
 
-    def add_model(self, model: Module) -> ProjectOrchestrator:
-        """Add a model to the project
+    def add_module(self, module: Module) -> ProjectOrchestrator:
+        """Add a module to the project
 
         Parameters
         ----------
-        model : Module
+        module : Module
             Module to add
 
         Returns
@@ -179,22 +178,22 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        self.models.append(model)
-        model.project = self
+        self.modules.append(module)
+        module.project = self
         return self
 
-    def get_models_by_class(self, class_name: str) -> List[Module]:
-        """Get all models given a class name
+    def get_modules_by_class(self, class_name: str) -> List[Module]:
+        """Get all modules given a class name
 
         Parameters
         ----------
         class_name : str
-            Name of the class of the model
+            Name of the class of the module
 
         Returns
         -------
         List[Module]
-            List of models with the given a class name
+            List of modules with the given a class name
 
         Raises
         ------
@@ -205,23 +204,23 @@ class ProjectOrchestrator:
         >>> None
         """
         return [
-            model
-            for model in self.models
-            if model.__class__.__name__ == class_name
+            module
+            for module in self.modules
+            if module.__class__.__name__ == class_name
         ]
 
     def get_module_by_name(self, name: str) -> Union[Module, None]:
-        """Get a model given its name
+        """Get a module given its name
 
         Parameters
         ----------
         name : str
-            Name of the model
+            Name of the module
 
         Returns
         -------
         Union[Module, None]
-            Module with the given name or None if no model with that name
+            Module with the given name or None if no module with that name
 
         Raises
         ------
@@ -231,15 +230,15 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        models: List[Module] = [
-            model for model in self.models if model.name == name
+        modules: List[Module] = [
+            module for module in self.modules if module.name == name
         ]
-        if not models:
+        if not modules:
             return None
-        return models[0]
+        return modules[0]
 
     def add_plot(
-        self, name: str, model: Module, variable_name: str
+        self, name: str, module: Module, variable_name: str
     ) -> ProjectOrchestrator:
         """Add plot to the project
 
@@ -247,7 +246,7 @@ class ProjectOrchestrator:
         ----------
         name : str
             Name of the plot
-        model : Module
+        module : Module
             Module from which the variable to be plotted is taken
         variable_name : str
             Name of the variable to be plotted
@@ -265,7 +264,7 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        plot: Plot = Plot(name=name, model=model, variable_name=variable_name)
+        plot: Plot = Plot(name=name, module=module, variable_name=variable_name)
         self._plots.setdefault(name, [])
         self._plots[name].append(plot)
 
@@ -330,16 +329,16 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        # Find inputs, outputs and parameters for each model
+        # Find inputs, outputs and parameters for each module
         inputs: List[Tuple[Type, str]] = [
-            (model, input_variable.name)
-            for model in self.models
-            for input_variable in model.inputs
+            (module, input_variable.name)
+            for module in self.modules
+            for input_variable in module.inputs
         ]
         outputs: List[Tuple[Type, str]] = [
-            (model, output_variable.name)
-            for model in self.models
-            for output_variable in model.outputs
+            (module, output_variable.name)
+            for module in self.modules
+            for output_variable in module.outputs
         ]
         # Find all output/input combinations
         output_input_combinations: List[Tuple[str, str]] = list(
@@ -349,20 +348,20 @@ class ProjectOrchestrator:
             output_module_variable, input_module_variable = (
                 output_input_combination
             )
-            output_model, output_variable = output_module_variable
-            input_model, input_variable = input_module_variable
+            output_module, output_variable = output_module_variable
+            input_module, input_variable = input_module_variable
             is_same_variable: bool = output_variable == input_variable
-            is_different_model: bool = output_model != input_model
-            if is_same_variable and is_different_model:
+            is_different_module: bool = output_module != input_module
+            if is_same_variable and is_different_module:
                 self.add_link(
-                    output_model,
+                    output_module,
                     output_variable,
-                    input_model,
+                    input_module,
                     input_variable,
                 )
                 if self.verbose is True:
                     LOGGER.info(
-                        f"Link {output_model.name}.{output_variable} to {input_model.name}.{input_variable}"
+                        f"Link {output_module.name}.{output_variable} to {input_module.name}.{input_variable}"
                     )
 
     @classmethod
@@ -696,7 +695,7 @@ class ProjectOrchestrator:
         project_data: ProjectData = ProjectData(
             name="project-data-1", data=project_data
         )
-        project.add_model(model=project_data)
+        project.add_module(module=project_data)
         """
         for module_name in project_data[PROJECT][MODULE_COLLECTION]:
             module_instance: Module = create_class_instance(
@@ -704,7 +703,7 @@ class ProjectOrchestrator:
                 class_parameters=dict(),
                 output_type=ColibriObjectTypes.MODULE,
             )
-            project.add_model(model=module_instance)
+            project.add_module(module=module_instance)
         project.create_links_automatically()
         return project
 
@@ -740,20 +739,20 @@ class ProjectOrchestrator:
                 setattr(link.to_module, link.to_field, from_field)
 
     def _substitute_parameter_links_values_2(self):
-        for module in self.models:
+        for module in self.modules:
             parameters: List[Parameter] = module.parameters
             for parameter in parameters:
                 parameter_format: str = turn_format_to_string(
                     field_format=parameter.format
                 )
                 if parameter_format == "ProjectData":
-                    project_data: Module = self.get_models_by_class(
+                    project_data: Module = self.get_modules_by_class(
                         class_name="ProjectData"
                     )[0]
                     setattr(module, parameter.name, project_data)
 
     def _initialize_module_output_series(self) -> None:
-        """Create a variable for each output of each model to store results at
+        """Create a variable for each output of each module to store results at
          each time step
 
         Returns
@@ -768,14 +767,15 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            for variable in model.outputs:
+        for module in self.modules:
+            for variable in module.outputs:
                 serie_name: str = f"{variable.name}{SERIES_EXTENSION_NAME}"
-                setattr(model, serie_name, [0] * self.time_steps)
+                setattr(module, serie_name, [0] * self.time_steps)
 
-    def _initialize_models(self) -> None:
-        """Run the initialize method of each model in the project
-        re-try until all models are initialized to solve dependencies between models
+    def _initialize_modules(self) -> None:
+        """Run the initialize method of each module in the project
+        re-try until all modules are initialized to solve dependencies
+        between modules
 
         Returns
         -------
@@ -789,25 +789,25 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        done : bool = False
-        max_iterations = 3
-
-        i = 0
-        while not done and i < max_iterations:
-            all_done = True
-            for model in self.models:
-                if not model.is_initialized:
-                    model_done = model.initialize()
-                    if not model_done:
-                        all_done = False
-                    else:
-                        model.is_initialized = True
+        is_initialization_completed: bool = False
+        maximum_initialization_iterations: int = 3
+        initialization_iteration: int = 0
+        while (not is_initialization_completed) and (
+            initialization_iteration < maximum_initialization_iterations
+        ):
+            are_modules_initialized: bool = True
+            for module in self.modules:
+                if module._is_initialized is True:
+                    continue
+                module._is_initialized = module.initialize()
+                if module._is_initialized is False:
+                    are_modules_initialized = False
             self._substitute_links_values(0)
-            done = all_done
-            i = i + 1
+            is_initialization_completed = are_modules_initialized
+            initialization_iteration += 1
 
-    def _run_models(self, time_step: int, number_of_iterations: int) -> None:
-        """Run the run method of each model in the project
+    def _run_modules(self, time_step: int, number_of_iterations: int) -> None:
+        """Run the run method of each module in the project
 
         Parameters
         ----------
@@ -828,16 +828,16 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
+        for module in self.modules:
             if self.verbose:
-                LOGGER.info(f"Computing: {model.name}")
-            model.run(
+                LOGGER.info(f"Computing: {module.name}")
+            module.run(
                 time_step=time_step,
                 number_of_iterations=number_of_iterations,
             )
 
     def _substitute_links_values(self, time_step: int) -> None:
-        """Pass information (models' values) to connected models
+        """Pass information (modules' values) to connected modules
         by substituting the output links' value to the input links' value
 
         Parameters
@@ -890,7 +890,7 @@ class ProjectOrchestrator:
             self._non_convergence_time_steps.append(time_step)
 
     def _end_iteration(self, time_step: int) -> None:
-        """Run the end_iteration method of each model in the project
+        """Run the end_iteration method of each module in the project
 
         Parameters
         ----------
@@ -909,11 +909,11 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            model.end_iteration(time_step=time_step)
+        for module in self.modules:
+            module.end_iteration(time_step=time_step)
 
     def _save_module_data(self, time_step: int) -> None:
-        """Run the save_time_step method of each model in the project
+        """Run the save_time_step method of each module in the project
 
         Parameters
         ----------
@@ -932,11 +932,11 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            model.save_time_step(time_step=time_step)
+        for module in self.modules:
+            module.save_time_step(time_step=time_step)
 
     def _end_time_step(self, time_step: int) -> None:
-        """Run the end_time_step method of each model in the project
+        """Run the end_time_step method of each module in the project
 
         Parameters
         ----------
@@ -955,11 +955,11 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            model.end_time_step(time_step=time_step)
+        for module in self.modules:
+            module.end_time_step(time_step=time_step)
 
     def _end_simulation(self) -> None:
-        """Run the end_simulation method of each model in the project
+        """Run the end_simulation method of each module in the project
 
         Returns
         -------
@@ -973,8 +973,8 @@ class ProjectOrchestrator:
         --------
         >>> None
         """
-        for model in self.models:
-            model.end_simulation()
+        for module in self.modules:
+            module.end_simulation()
 
 
 if __name__ == "__main__":
@@ -1028,7 +1028,7 @@ if __name__ == "__main__":
             time_steps=72,
         )
 
-        # Create models
+        # Create modules
         project_file: Path = Path(
             r"D:\developments\sandbox\colibri\src\tests\data\house_1.json"
         )
@@ -1135,16 +1135,16 @@ if __name__ == "__main__":
             ],
         )
 
-        # Add models
-        project.add_model(model=project_data)
-        project.add_model(model=acv_exploitation_only)
-        project.add_model(
-            model=limited_power_generator,  # infinite_power_generator
+        # Add modules
+        project.add_module(module=project_data)
+        project.add_module(module=acv_exploitation_only)
+        project.add_module(
+            module=limited_power_generator,  # infinite_power_generator
         )  # limited_power_generator)
-        project.add_model(model=layer_wall_losses)  # simplified_wall_losses)
-        project.add_model(model=thermal_space_simplified)
-        project.add_model(model=occupants)
-        project.add_model(model=weather)
+        project.add_module(module=layer_wall_losses)  # simplified_wall_losses)
+        project.add_module(module=thermal_space_simplified)
+        project.add_module(module=occupants)
+        project.add_module(module=weather)
 
         # Add links
         project.create_links_automatically()

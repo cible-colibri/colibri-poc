@@ -69,7 +69,7 @@ class OccupantModel(Occupants):
             ],
         )
 
-    def initialize(self) -> None: ...
+    def initialize(self) -> bool: ...
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for space in self.project_data.spaces:

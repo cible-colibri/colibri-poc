@@ -2,6 +2,7 @@
 Helper functions for the ThermalBuilding class.
 """
 
+import math
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -65,7 +66,7 @@ def estimate_convective_heat_coefficient(
     if (to_exterior is False) and (element_type == "window"):
         h_conv = 3.0
     # Opaque
-    if (to_exterior is False) and (element_type == "window"):
+    if (to_exterior is False) and (element_type != "window"):
         h_conv = h_conv_values[str(tilt)][mode]
     return h_conv
 
@@ -113,15 +114,18 @@ def estimate_radiative_heat_coefficient(
     return h_rad
 
 
-def create_elements_indices(spaces: List[Space]) -> Dict[str, int]:
+def create_elements_indices(
+    spaces: List[Space], boundaries: List[Boundary]
+) -> Dict[str, int]:
     """Create an index for each element (in the matrix), which creates a map
        between IDs and rows' index
-
 
     Parameters
     ----------
     spaces : List[Space]
         List of spaces
+    boundaries : List[Boundary]
+        List of boundaries
 
     Returns
     -------
@@ -136,37 +140,31 @@ def create_elements_indices(spaces: List[Space]) -> Dict[str, int]:
     --------
     >>> None
     """
-
-    boundaries: List[Boundary] = [
-        boundary for space in spaces for boundary in space.boundaries
-    ]
     windows: List[ElementObject] = [
         boundary_object
         for boundary in boundaries
         for boundary_object in boundary.object_collection
-        if boundary_object.__class__.__name__ == "Window"
+        if boundary_object.__class__.__name__.lower() == "window"
     ]
     elements_indices: Dict[str, int] = dict()
     node_number: int = 0
     for boundary in boundaries:
         number_of_nodes: int = len(boundary.thermal_masses)
         for node in range(number_of_nodes):
-            elements_indices[boundary.label + "__node_nb_" + str(node)] = (
-                node_number
-            )
+            elements_indices[boundary.id + "_node_" + str(node)] = node_number
             node_number += 1
     for window in windows:
-        elements_indices[window.label + "__ext"] = node_number
+        elements_indices[window.id + "_ext"] = node_number
         node_number += 1
-        elements_indices[window.label + "__int"] = node_number
+        elements_indices[window.id + "_int"] = node_number
         node_number += 1
     # Mean radiant nodes
     for space in spaces:
-        elements_indices[space.label + "__mr"] = node_number
+        elements_indices[space.id + "_mr"] = node_number
         node_number += 1
     # Air nodes
     for space in spaces:
-        elements_indices[space.label + "__air"] = node_number
+        elements_indices[space.id + "_air"] = node_number
         node_number += 1
     return elements_indices
 
@@ -230,6 +228,7 @@ def generate_euler_exponential_system_and_control_matrices(
 
 def generate_system_and_control_matrices(
     spaces: List[Space],
+    boundaries: List[Boundary],
 ) -> Tuple[
     ndarray,
     ndarray,
@@ -243,6 +242,8 @@ def generate_system_and_control_matrices(
     ----------
     spaces : List[Space]
         List of spaces
+    boundaries : List[Boundary]
+        List of boundaries
 
     Returns
     -------
@@ -260,14 +261,11 @@ def generate_system_and_control_matrices(
     --------
     >>> None
     """
-    boundaries: List[Boundary] = [
-        boundary for space in spaces for boundary in space.boundaries
-    ]
     windows: list[ElementObject] = [
         boundary_object
         for boundary in boundaries
         for boundary_object in boundary.object_collection
-        if boundary_object.__class__.__name__ == "Window"
+        if boundary_object.__class__.__name__.lower() == "window"
     ]
     number_of_spaces: int = len(spaces)
     number_of_windows: int = len(windows)
@@ -328,7 +326,9 @@ def generate_system_and_control_matrices(
     )
     mcp = np.zeros(total_number_of_nodes)
     # Map between elements' ID and matrix rows' index
-    element_row_indices: Dict[str, int] = create_elements_indices(spaces=spaces)
+    element_row_indices: Dict[str, int] = create_elements_indices(
+        spaces=spaces, boundaries=boundaries
+    )
     # Now fill in system (A) and control (B) matrices with known indices
     # i0_boundaries = 0
     control_matrix_flux_indexing: List[List[int]] = []
@@ -342,6 +342,7 @@ def generate_system_and_control_matrices(
                 # Fill in negative on diag(A) and positive in
                 # control_matrix (B) if exterior
                 if side == "exterior":
+                    # [xx]print("\nexterior")
                     # Surface exchange with external air node, fill in
                     # control matrix (B) only with convective coefficients
                     h_conv: float = estimate_convective_heat_coefficient(
@@ -349,6 +350,14 @@ def generate_system_and_control_matrices(
                         tilt=boundary.tilt,
                         to_exterior=True,
                     )
+                    # [xx]print(
+                    #    "Boundary: ",
+                    #    boundary.id,
+                    #    "surface : ",
+                    #    side,
+                    #    "hconv : ",
+                    #    h_conv,
+                    # )
                     # Index for air temperature of each boundary is equal
                     # to the number of boundary
                     index_to_air: int = (
@@ -365,6 +374,14 @@ def generate_system_and_control_matrices(
                         temperature_surface=10.0,
                         temperature_client=0.0,
                     )
+                    # [xx]print(
+                    #    "Boundary: ",
+                    #    boundary.id,
+                    #    "surface : ",
+                    #    side,
+                    #    "hrad : ",
+                    #    h_rad,
+                    # )
                     # Index for mean radiant external temperature of each
                     # boundary is equal to the number of boundary
                     index_to_tmr: int = (
@@ -376,6 +393,9 @@ def generate_system_and_control_matrices(
                     control_matrix[node_number, index_to_tmr] += (
                         h_rad * boundary.area
                     )
+                    # [xx]print(
+                    #    f"B[{node_number}, {index_to_tmr}] += {h_rad * boundary.area} ({control_matrix[node_number, index_to_tmr]})"
+                    # )
                     # Flux indexing and scaling (applied at the end of
                     # this function, to allow calculation of diagonal of A)
                     # Radiative flux is in W/m², i.e. coefficient is the
@@ -390,8 +410,12 @@ def generate_system_and_control_matrices(
                             boundary.area,
                         ]
                     )
+                    # [xx]print(
+                    #    f"flux_B_indexing.append([{[node_number,input_indices['radiative_gain_boundary_external']['start_index']+ boundary_number,boundary.area,]}])"
+                    # )
                 # Fill in control matrix (B) only
                 elif side == "ground":
+                    # [xx]print("\nground")
                     # 1m distance and conductivity of 2.0 W/m/K,
                     # could be made for specific ground
                     resistance_ground_1m: float = 1.0 / 2.0
@@ -401,8 +425,12 @@ def generate_system_and_control_matrices(
                     control_matrix[node_number, index_ground] += (
                         1 / resistance_ground_1m * boundary.area
                     )
+                    # [xx]print(
+                    #    f"B[{node_number}, {index_ground}] += {1 / resistance_ground_1m * boundary.area} ({control_matrix[node_number, index_ground]})"
+                    # )
                 # Fill in control matrix (B) only
                 elif side == "boundary":
+                    # [xx]print("\nboundary")
                     # Remark: in case of specification of "boundary",
                     # the field "exterior_air_temperature" is used,
                     # and "exterior_radiant_temperature" not connected
@@ -416,15 +444,27 @@ def generate_system_and_control_matrices(
                     control_matrix[node_number, index_boundary] += (
                         1 / resistance_boundary * boundary.area
                     )
+                    # [xx]print(
+                    #    f"B[{node_number}, {index_boundary}] += {1 / resistance_boundary * boundary.area} ({control_matrix[node_number, index_boundary]})"
+                    # )
                 # Internal air space, fill inside A only
                 else:
+                    # [xx]print("\nelse")
                     # Search corresponding air node index
                     h_conv: float = estimate_convective_heat_coefficient(
                         element_type="opaque",
                         tilt=boundary.tilt,
                     )
+                    # [xx]print(
+                    #    "Boundary: ",
+                    #    boundary.id,
+                    #    "surface : ",
+                    #    side,
+                    #    "hconv : ",
+                    #    h_conv,
+                    # )
                     index_to_air_node: int = list(element_row_indices).index(
-                        side + "__air"
+                        side + "_air"
                     )
                     system_matrix[node_number, index_to_air_node] += (
                         h_conv * boundary.area
@@ -432,6 +472,12 @@ def generate_system_and_control_matrices(
                     system_matrix[index_to_air_node, node_number] += (
                         h_conv * boundary.area
                     )
+                    # [xx]print(
+                    #    f"A[{node_number}, {index_to_air_node}] += {h_conv * boundary.area} ({system_matrix[node_number, index_to_air_node]})"
+                    # )
+                    # [xx]print(
+                    #    f"A[{index_to_air_node}, {node_number}] += {h_conv * boundary.area} ({system_matrix[index_to_air_node, node_number]})"
+                    # )
                     # Search corresponding air node index
                     h_rad: float = estimate_radiative_heat_coefficient(
                         emissivity=boundary.emissivities[0],
@@ -439,7 +485,7 @@ def generate_system_and_control_matrices(
                         temperature_client=20.0,
                     )
                     index_to_tmr_node: int = list(element_row_indices).index(
-                        side + "__mr"
+                        side + "_mr"
                     )
                     system_matrix[node_number, index_to_tmr_node] += (
                         h_rad * boundary.area
@@ -447,11 +493,17 @@ def generate_system_and_control_matrices(
                     system_matrix[index_to_tmr_node, node_number] += (
                         h_rad * boundary.area
                     )
+                    # [xx]print(
+                    #    f"A[{node_number}, {index_to_tmr_node}] += {h_conv * boundary.area} ({system_matrix[node_number, index_to_tmr_node]})"
+                    # )
+                    # [xx]print(
+                    #    f"A[{index_to_tmr_node}, {node_number}] += {h_conv * boundary.area} ({system_matrix[index_to_tmr_node, node_number]})"
+                    # )
                     # Flux indexing (applied at the end of this function,
                     # to allow calculation of diagonal of A)
                     for space_number, space in enumerate(spaces):
                         for element in space.envelope_elements:
-                            if element == boundary.label:
+                            if element == boundary.id:
                                 radiative_share: float = (
                                     space.envelope_elements[element][
                                         "radiative_share"
@@ -468,15 +520,24 @@ def generate_system_and_control_matrices(
                                         radiative_share,
                                     ]
                                 )
+                                # [xx]print(
+                                #    f"flux_B_indexing.append([{[node_number, input_indices['space_radiative_gain']['start_index'] + space_number, radiative_share, ]}])"
+                                # )
                 # Conduction towards next (node = 0) or previous node (node == number_of_nodes)
                 if node == 0:
                     system_matrix[node_number, node_number + 1] += (
                         1 / boundary.resistances[node] * boundary.area
                     )
+                    # [xx]print(
+                    #    f"A[{node_number}, {node_number+1}] += {1 / boundary.resistances[node] * boundary.area}"
+                    # )
                 if node == number_of_nodes - 1:
                     system_matrix[node_number, node_number - 1] += (
                         1 / boundary.resistances[node - 1] * boundary.area
                     )
+                    # [xx]print(
+                    #    f"A[{node_number}, {node_number-1}] += {1 / boundary.resistances[node-1] * boundary.area}"
+                    # )
             # Internal material nodes, only conduction
             else:
                 system_matrix[node_number, node_number + 1] = (
@@ -485,14 +546,23 @@ def generate_system_and_control_matrices(
                 system_matrix[node_number, node_number - 1] = (
                     1 / boundary.resistances[node - 1] * boundary.area
                 )
+                # [xx]print(
+                #    f"A[{node_number}, {node_number + 1}] += {1 / boundary.resistances[node] * boundary.area}"
+                # )
+                # [xx]print(
+                #    f"A[{node_number}, {node_number - 1}] += {1 / boundary.resistances[node - 1] * boundary.area}"
+                # )
             mcp[node_number] = boundary.thermal_masses[node]
+            # [xx]print(f"mcp[{node_number}] = {mcp[node_number]}")
             node_number += 1
+    # [xx]print("\nwindows")
     # Now node_number is the first index of windows
     for window in windows:
         # Window in this model has 2 nodes:
         # internal surface node and external surface node
         for node in range(2):
             side: str = window.side_1 if node == 0 else window.side_2
+            # [xx]print(f"window side: {side}")
             # Fill in control matrix (B) if to exterior
             if side == "exterior":
                 # Surface exchange with external air node,
@@ -511,6 +581,9 @@ def generate_system_and_control_matrices(
                 control_matrix[node_number, index_to_air] += (
                     h_conv * window.area
                 )
+                # [xx]print(
+                #    f"B[{node_number}, {index_to_air}] += {h_conv * window.area})"
+                # )
                 # Long wave radiation coefficients
                 # Radiant coefficient at external surface towards outside
                 h_rad: float = estimate_radiative_heat_coefficient(
@@ -525,6 +598,9 @@ def generate_system_and_control_matrices(
                     + window.boundary_number
                 )
                 control_matrix[node_number, index_to_tmr] += h_rad * window.area
+                # [xx]print(
+                #    f"B[{node_number}, {index_to_tmr}] += {h_rad * window.area})"
+                # )
                 # Flux indexing (applied at the end of this function,
                 # to allow calculation of diagonal of A)
                 # Radiative flux is in W/m², i.e. coefficient is the area of the element
@@ -539,6 +615,9 @@ def generate_system_and_control_matrices(
                         window.area * window.absorption,
                     ]
                 )
+                # [xx]print(
+                #    f"flux_B_indexing.append([{[node_number, input_indices['radiative_gain_boundary_external']['start_index'] + window.boundary_number, window.area * window.absorption, ]}])"
+                # )
                 # TODO: solar transmission into zone
             # Internal air space, fill inside system matrix (A) only
             else:
@@ -550,7 +629,7 @@ def generate_system_and_control_matrices(
                     element_type="window", tilt=window.tilt
                 )
                 index_to_air_node = list(element_row_indices).index(
-                    side + "__air"
+                    side + "_air"
                 )
                 system_matrix[node_number, index_to_air_node] += (
                     h_conv * window.area
@@ -565,7 +644,7 @@ def generate_system_and_control_matrices(
                     temperature_client=20.0,
                 )
                 index_to_tmr_node: int = list(element_row_indices).index(
-                    side + "__mr"
+                    side + "_mr"
                 )
                 system_matrix[node_number, index_to_tmr_node] += (
                     h_rad * window.area
@@ -577,7 +656,7 @@ def generate_system_and_control_matrices(
                 # to allow calculation of diagonal of A)
                 for space_number, space in enumerate(spaces):
                     for env in space.envelope_elements:
-                        if env == window.label:
+                        if env == window.id:
                             radiative_share = space.envelope_elements[env][
                                 "radiative_share"
                             ]
@@ -613,12 +692,16 @@ def generate_system_and_control_matrices(
             mcp[node_number] = 1.0 * window.area
             node_number += 1
     # Mean radiant nodes, already filled in in boundaries and windows!
+    # [xx]print("\nspaces")
     for space in spaces:
         mcp[node_number] = space.volume * CP_AIR * DENSITY_AIR
+        # [xx]print(f"mcp[{node_number}] = {space.volume * CP_AIR * DENSITY_AIR}")
         node_number += 1
     # Air nodes
+    # [xx]print("\nspaces")
     for space_number, space in enumerate(spaces):
         mcp[node_number] = space.volume * CP_AIR * DENSITY_AIR
+        # [xx]print(f"mcp[{node_number}] = {space.volume * CP_AIR * DENSITY_AIR}")
         # Flux indexing (applied at the end of this function, to allow calculation of diagonal of A)
         # Convective gain to space air node
         control_matrix_flux_indexing.append(
@@ -629,9 +712,16 @@ def generate_system_and_control_matrices(
                 1,
             ]
         )
+        # [xx]print(
+        #    f"flux_B_indexing.append([{[node_number, input_indices['space_convective_gain']['start_index'] + space_number, 1, ]}])"
+        # )
         node_number += 1
     # Compute diagonal of A with leaving coefficients
-    for node_number in range(number_of_nodes):
+    # [xx]print("\ndiagonal")
+    for node_number in range(total_number_of_nodes):
+        # [xx]print(
+        #    f"A[{node_number}, {node_number}] -= {np.sum(system_matrix[node_number, :]) + np.sum(control_matrix[node_number, :])}"
+        # )
         system_matrix[node_number, node_number] -= np.sum(
             system_matrix[node_number, :]
         ) + np.sum(control_matrix[node_number, :])
@@ -640,7 +730,7 @@ def generate_system_and_control_matrices(
         # Connect flux by scaling factor flux[2]
         control_matrix[flux[0], flux[1]] = flux[2]
     # correct cp values (are in kJ/kg/K for the moment)
-    for node_number in range(number_of_nodes):
+    for node_number in range(total_number_of_nodes):
         system_matrix[node_number, :] /= mcp[node_number]
         control_matrix[node_number, :] /= mcp[node_number]
     return system_matrix, control_matrix, state_indices, input_indices
@@ -831,13 +921,15 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
     # Generate the resistances between all nodes in all layers
     # of a boundary (wall, ceiling, floor)
     # Load properties
-    thicknesses: float = boundary.thicknesses
-    thermal_conductivities: float = boundary.thermal_conductivities
-    densities: float = boundary.densities
-    specific_heats: float = boundary.specific_heats
-    discretization_layers: List[int] = (
-        boundary.discretization_layers
-    )  # Number of discretization layers
+    thicknesses: float = [layer.thickness for layer in boundary.layers]
+    thermal_conductivities: float = [
+        layer.thermal_conductivity for layer in boundary.layers
+    ]
+    densities: float = [layer.density for layer in boundary.layers]
+    specific_heats: float = [layer.specific_heat for layer in boundary.layers]
+    # Number of discretization layers
+    # TODO: Check how this information should be retrieved?
+    discretization_layers: List[int] = [1 for _ in boundary.layers]
     # Create discretization variables
     number_of_nodes: int = (
         sum(discretization_layers) + 2
@@ -877,7 +969,7 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
                     + thickness
                     / (discretization_layers[layer_index] + 1)
                     / thermal_conductivities[layer_index],
-                    3,
+                    4,
                 )
                 thermal_masses[node_number] = (
                     thicknesses[layer_index - 1]
@@ -898,7 +990,7 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
                     thickness
                     / (discretization_layers[layer_index] + 1)
                     / thermal_conductivities[layer_index],
-                    3,
+                    4,
                 )
                 thermal_masses[node_number] = (
                     thickness
@@ -913,7 +1005,7 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
         thickness
         / (discretization_layers[layer_index] + 1)
         / thermal_conductivities[layer_index],
-        3,
+        4,
     )
     thermal_masses[node_number] = (
         thickness
@@ -922,10 +1014,11 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
         * densities[layer_index]
         * specific_heats[layer_index]
     )
-    # Compute distance between nodes
     boundary.resistances = resistances
-    boundary.u_value = round(1.0 / np.sum(resistances), 3)
+    boundary.u_value = round(1.0 / np.sum(resistances), 4)
     boundary.thermal_masses = thermal_masses * boundary.area
+    boundary.emissivities = [layer.emissivity for layer in boundary.layers]
+    boundary.albedos = [layer.albedo for layer in boundary.layers]
 
 
 def set_radiative_shares(spaces: List[Space]) -> None:
@@ -953,28 +1046,29 @@ def set_radiative_shares(spaces: List[Space]) -> None:
         space.envelope_area = 0.0
         space.envelope_elements = dict()
         for boundary in space.boundaries:
-            # TODO: c'est pas beau et peut planter si on ne nomme pas pareil
-            if ("floor" in boundary.label) or ("plancher" in boundary.label):
+            # NOTE: A tilt of 180.0 => floor
+            #       math.isclose() is used to avoid rounding problems
+            if math.isclose(boundary.tilt, 180.0, abs_tol=1.0) is True:
                 type_of_element: str = "floor"
             else:
                 type_of_element: str = "other"
             # If it is an internal wall in a space, both sides are accounted for (very simplified)
             # This side is in contact with the current space
-            if boundary.side_1 == space.label:
+            if boundary.side_1 == space.id:
                 if type_of_element != "floor":
                     space.envelope_area += boundary.area
                 if boundary.side_2 == "exterior":
                     u_value = boundary.u_value
                 else:
                     u_value = 0.0
-                space.envelope_elements[boundary.label] = {
+                space.envelope_elements[boundary.id] = {
                     "type": type_of_element,
                     "area": boundary.area,
                     "side": "side_1",
                     "u_value": u_value,
                 }
             if (
-                boundary.side_2 == space.label
+                boundary.side_2 == space.id
             ):  # this side is in contact with the current space
                 if type_of_element != "floor":
                     space.envelope_area += boundary.area
@@ -982,7 +1076,7 @@ def set_radiative_shares(spaces: List[Space]) -> None:
                     u_value = boundary.u_value
                 else:
                     u_value = 0.0
-                space.envelope_elements[boundary.label] = {
+                space.envelope_elements[boundary.id] = {
                     "type": type_of_element,
                     "area": boundary.area,
                     "side": "side_2",
@@ -993,14 +1087,14 @@ def set_radiative_shares(spaces: List[Space]) -> None:
             boundary_object
             for boundary in space.boundaries
             for boundary_object in boundary.object_collection
-            if boundary_object.__class__.__name__ == "Window"
+            if boundary_object.__class__.__name__.lower() == "window"
         ]
         for window in windows:
             # If it is an internal wall in a space, both sides are accounted for (very simplified)
             # This side is in contact with the current space
-            if window.side_1 == space.label:
+            if window.side_1 == space.id:
                 space.envelope_area += window.area
-                space.envelope_elements[window.label] = {
+                space.envelope_elements[window.id] = {
                     "type": "window",
                     "area": window.area,
                     "side": "side_1",
@@ -1009,9 +1103,9 @@ def set_radiative_shares(spaces: List[Space]) -> None:
                     "u_value": window.u_value,
                 }
             # this side is in contact with the current space
-            if window.side_2 == space.label:
+            if window.side_2 == space.id:
                 space.envelope_area += window.area
-                space.envelope_elements[window.label] = {
+                space.envelope_elements[window.id] = {
                     "type": "window",
                     "area": window.area,
                     "side": "side_1",
@@ -1033,7 +1127,7 @@ def set_radiative_shares(spaces: List[Space]) -> None:
                         / space.envelope_area
                         * (1 - floor_rad_share)
                     ),
-                    3,
+                    4,
                 )
             space.envelope_elements[element]["radiative_share"] = rad_share
             checker += rad_share
@@ -1081,7 +1175,7 @@ def set_u_values(spaces: List[Space]) -> None:
             u_wall /= wall_area
         if window_area > 0:
             u_window /= window_area
-        space.u_wall = round(u_wall, 3)
-        space.u_window = round(u_window, 3)
-        space.wall_area = round(wall_area, 2)
-        space.window_area = round(window_area, 2)
+        space.u_wall = round(u_wall, 4)
+        space.u_window = round(u_window, 4)
+        space.wall_area = round(wall_area, 3)
+        space.window_area = round(window_area, 3)

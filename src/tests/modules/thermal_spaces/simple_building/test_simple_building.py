@@ -35,10 +35,10 @@ def test_simple_building_heating_only() -> None:
     weather: WeatherEpw = WeatherEpw(
         name="weather-1", epw_file_path=epw_file_path
     )
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=weather)
     # Create a building (from SimpleBuilding model) and add it to the project orchestrator
     building: SimpleBuilding = SimpleBuilding("building-1")
-    project_orchestrator.add_model(model=building)
+    project_orchestrator.add_module(module=building)
     # Link temperature and radiation from weather to building (for post-initialization)
     project_orchestrator.add_link(
         weather,
@@ -116,14 +116,14 @@ def test_simple_building_cooling_only() -> None:
     weather: WeatherEpw = WeatherEpw(
         name="weather-1", epw_file_path=epw_file_path
     )
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=weather)
     # Create a building (from SimpleBuilding model) and add it to the project orchestrator
     building: SimpleBuilding = SimpleBuilding(
         "building-1",
         is_cooling_on=True,
         is_heating_on=False,
     )
-    project_orchestrator.add_model(model=building)
+    project_orchestrator.add_module(module=building)
     # Link temperature and radiation from weather to building (for post-initialization)
     project_orchestrator.add_link(
         weather,

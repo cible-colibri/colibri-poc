@@ -52,13 +52,13 @@ def test_prototype_with_links(mock_show: MagicMock) -> None:
         ],
     )
     # Add models
-    project_orchestrator.add_model(model=project_data)
-    project_orchestrator.add_model(model=acv_exploitation_only)
-    project_orchestrator.add_model(model=infinite_power_generator)
-    project_orchestrator.add_model(model=simplified_wall_losses)
-    project_orchestrator.add_model(model=thermal_space_simplified)
-    project_orchestrator.add_model(model=occupants)
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=project_data)
+    project_orchestrator.add_module(module=acv_exploitation_only)
+    project_orchestrator.add_module(module=infinite_power_generator)
+    project_orchestrator.add_module(module=simplified_wall_losses)
+    project_orchestrator.add_module(module=thermal_space_simplified)
+    project_orchestrator.add_module(module=occupants)
+    project_orchestrator.add_module(module=weather)
     # Add links
     project_orchestrator.add_link(
         weather,
@@ -154,13 +154,13 @@ def test_prototype_with_links_created_automatically(
         ],
     )
     # Add models
-    project_orchestrator.add_model(model=project_data)
-    project_orchestrator.add_model(model=acv_exploitation_only)
-    project_orchestrator.add_model(model=infinite_power_generator)
-    project_orchestrator.add_model(model=simplified_wall_losses)
-    project_orchestrator.add_model(model=thermal_space_simplified)
-    project_orchestrator.add_model(model=occupants)
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=project_data)
+    project_orchestrator.add_module(module=acv_exploitation_only)
+    project_orchestrator.add_module(module=infinite_power_generator)
+    project_orchestrator.add_module(module=simplified_wall_losses)
+    project_orchestrator.add_module(module=thermal_space_simplified)
+    project_orchestrator.add_module(module=occupants)
+    project_orchestrator.add_module(module=weather)
     # Add links
     project_orchestrator.create_links_automatically()
     # Add plots
@@ -215,13 +215,13 @@ def test_prototype_variant_with_links_automatically(
         ],
     )
     # Add models
-    project_orchestrator.add_model(model=project_data)
-    project_orchestrator.add_model(model=acv_exploitation_only)
-    project_orchestrator.add_model(model=limited_power_generator)
-    project_orchestrator.add_model(model=layer_wall_losses)
-    project_orchestrator.add_model(model=thermal_space_simplified)
-    project_orchestrator.add_model(model=occupants)
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=project_data)
+    project_orchestrator.add_module(module=acv_exploitation_only)
+    project_orchestrator.add_module(module=limited_power_generator)
+    project_orchestrator.add_module(module=layer_wall_losses)
+    project_orchestrator.add_module(module=thermal_space_simplified)
+    project_orchestrator.add_module(module=occupants)
+    project_orchestrator.add_module(module=weather)
     # Add links
     project_orchestrator.create_links_automatically()
     # Add plots

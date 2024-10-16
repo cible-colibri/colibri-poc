@@ -7,7 +7,7 @@ description = "COLIBRI package"
 readme = "README.md"
 requires-python = ">=3.11"
 keywords = ["simulation"]
-dependencies = ["matplotlib", "numpy", "pandas", "scipy"]
+dependencies = ["ephem", "matplotlib", "numpy", "pandas", "pvlib", "scipy"]
 
 [project.optional-dependencies]
 doc = ["nbsphinx", "numpydoc", "sphinx", "sphinx-rtd-theme"]

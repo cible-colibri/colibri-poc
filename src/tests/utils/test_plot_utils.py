@@ -13,9 +13,9 @@ def test_plot() -> None:
     """Test the Plot class."""
     acv: AcvExploitationOnly = AcvExploitationOnly(name="acv")
     setattr(acv, "co2_impact_series", [0, 1, 2, 3, 4])
-    plot: Plot = Plot(name="plot-acv", model=acv, variable_name="co2_impact")
+    plot: Plot = Plot(name="plot-acv", module=acv, variable_name="co2_impact")
     assert plot.name == "plot-acv"
-    assert plot.model is acv
+    assert plot.module is acv
     assert plot.variable_name == "co2_impact"
     assert hasattr(plot, "add_plot_to_figure")
     figure: Figure = plt.figure(figsize=(10, 8))
@@ -28,7 +28,7 @@ def test_plot() -> None:
         "co2_impact_series",
         [{"fake-0": 0, "fake-1": 1}, {"fake-0": 0, "fake-1": 2}],
     )
-    plot: Plot = Plot(name="plot-acv-2", model=acv, variable_name="co2_impact")
+    plot: Plot = Plot(name="plot-acv-2", module=acv, variable_name="co2_impact")
     figure: Figure = plt.figure(figsize=(10, 8))
     assert figure.axes == []
     plot.add_plot_to_figure(figure=figure, location=222)

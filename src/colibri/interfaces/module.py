@@ -50,10 +50,10 @@ class Module(ClassMixin, MetaFieldMixin):
         super().__init__()
         self.name = name
         self.project = project
-        self.is_initialized = False
+        self._is_initialized = False
 
     @abc.abstractmethod
-    def initialize(self) -> None: ...
+    def initialize(self) -> bool: ...
 
     @abc.abstractmethod
     def run(self, time_step: int, number_of_iterations: int) -> None: ...

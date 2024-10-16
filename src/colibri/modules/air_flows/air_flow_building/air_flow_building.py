@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 from numpy import ndarray
-from pandas import Series
+from pandas import DataFrame, Series
 
 from colibri.config.constants import UNIT_CONVERTER
 from colibri.core import ProjectData
@@ -156,17 +156,17 @@ class AirFlowBuilding(AirFlow):
         self._has_module_converged = False
         self.number_of_steps = 0
 
-    def initialize(self) -> None:
-        if self.sky_temperatures is None:
+    def initialize(self) -> bool:
+        # Sky temperatures and exterior air temperatures come
+        # from another module, so as long as they are None,
+        # this module is not initialized (return False)
+        if (self.sky_temperatures is None) or (
+            self.exterior_air_temperatures is None
+        ):
             return False
-
-        if self.exterior_air_temperatures is None:
-            return False
-
         if self.has_pressure_model is True:
             self._has_module_converged = False
             self.internal_solver = "fully_iterative"
-
         self.number_of_steps = len(self.sky_temperatures)
         compute_boundary_conditions(
             exterior_air_temperatures=self.exterior_air_temperatures,

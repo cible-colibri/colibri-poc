@@ -6,9 +6,12 @@ import abc
 from typing import Dict
 
 import numpy as np
+from pandas import Series
 
 from colibri.interfaces.module import Module
+from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
+    ColibriProjectObjects,
     Units,
 )
 
@@ -16,7 +19,14 @@ from colibri.utils.enums_utils import (
 class Building(Module, metaclass=abc.ABCMeta):
     """Class representing a building (interface)."""
 
-    def __init__(self, name: str, blind_position: float) -> None:
+    def __init__(
+        self,
+        name: str,
+        blind_position: float,
+        sky_temperatures: Series,
+        direct_radiations: Series,
+        diffuse_radiations: Series,
+    ) -> None:
         """Initialize a new Building instance."""
         super().__init__(name=name)
         self.blind_position = self.define_input(
@@ -28,6 +38,42 @@ class Building(Module, metaclass=abc.ABCMeta):
             max=1,
             unit=Units.UNITLESS,
             attached_to=None,
+        )
+        self.sky_temperatures = self.define_input(
+            name="sky_temperatures",
+            default_value=sky_temperatures,
+            description="Sky temperatures.",
+            format=Series,
+            min=0,
+            max=float("inf"),
+            unit=Units.DEGREE_CELSIUS,
+            attached_to=Attachment(
+                category=ColibriProjectObjects.PROJECT,
+            ),
+        )
+        self.direct_radiations = self.define_input(
+            name="direct_radiations",
+            default_value=direct_radiations,
+            description="Direct radiations.",
+            format=Series,
+            min=0,
+            max=float("inf"),
+            unit=Units.WATT_PER_SQUARE_METER,
+            attached_to=Attachment(
+                category=ColibriProjectObjects.PROJECT,
+            ),
+        )
+        self.diffuse_radiations = self.define_input(
+            name="diffuse_radiations",
+            default_value=diffuse_radiations,
+            description="Diffuse radiations.",
+            format=Series,
+            min=0,
+            max=float("inf"),
+            unit=Units.WATT_PER_SQUARE_METER,
+            attached_to=Attachment(
+                category=ColibriProjectObjects.PROJECT,
+            ),
         )
         self.emitters_radiative_gains = self.define_input(
             name="emitters_radiative_gains",

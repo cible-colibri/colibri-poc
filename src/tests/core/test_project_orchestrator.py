@@ -56,9 +56,9 @@ def test_project_orchestrator(mock_show: MagicMock) -> None:
         name="simplified_wall_losses"
     )
     # Add models
-    project_orchestrator_example.add_model(model=project_data)
-    project_orchestrator_example.add_model(model=simplified_wall_losses)
-    project_orchestrator_example.add_model(model=weather)
+    project_orchestrator_example.add_module(module=project_data)
+    project_orchestrator_example.add_module(module=simplified_wall_losses)
+    project_orchestrator_example.add_module(module=weather)
     # Get models by name
     assert (
         project_orchestrator_example.get_module_by_name(
@@ -137,9 +137,9 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
         name="simplified_wall_losses"
     )
     # Add models
-    project_orchestrator_example.add_model(model=project_data)
-    project_orchestrator_example.add_model(model=simplified_wall_losses)
-    project_orchestrator_example.add_model(model=weather)
+    project_orchestrator_example.add_module(module=project_data)
+    project_orchestrator_example.add_module(module=simplified_wall_losses)
+    project_orchestrator_example.add_module(module=weather)
     # Create link automatically
     project_orchestrator_example.create_links_automatically()
     # Add plots
@@ -193,9 +193,9 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
         name="simplified_wall_losses"
     )
     # Add models
-    project_orchestrator_example_2.add_model(model=project_data)
-    project_orchestrator_example_2.add_model(model=simplified_wall_losses)
-    project_orchestrator_example_2.add_model(model=weather)
+    project_orchestrator_example_2.add_module(module=project_data)
+    project_orchestrator_example_2.add_module(module=simplified_wall_losses)
+    project_orchestrator_example_2.add_module(module=weather)
     # Create link automatically
     project_orchestrator_example_2.create_links_automatically()
     # Add plots

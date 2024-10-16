@@ -145,7 +145,7 @@ class LayerWallLosses(WallLosses):
             ],
         )
 
-    def initialize(self) -> None: ...
+    def initialize(self) -> bool: ...
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for boundary in self.project_data.boundaries:

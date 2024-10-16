@@ -165,7 +165,7 @@ class WeatherEpw(Weather):
         )
         self._weather_data: Optional[Series] = None
 
-    def initialize(self) -> None:
+    def initialize(self) -> bool:
         self.read_epw_file()
         # Compute ground temperatures
         if self.constant_ground_temperature is not None:

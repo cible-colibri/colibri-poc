@@ -362,21 +362,20 @@ class SimpleBuilding(ThermalSpace):
             attached_to=None,
         )
 
-    def initialize(self) -> None:
-
+    def initialize(self) -> bool:
         height: float = 2.5
         self.volume = self.area_floor * self.number_of_floors * height
         self.area_windows = self.global_area_walls * self.window_to_wall_ratio
         self.area_walls = self.global_area_walls * (
             1 - self.window_to_wall_ratio
         )
-
-        if self.exterior_air_temperatures is None:
+        # Exterior air temperatures and global horizontal radiations come
+        # from another module, so as long as they are None,
+        # this module is not initialized (return False)
+        if (self.exterior_air_temperatures is None) or (
+            self.global_horizontal_radiations is None
+        ):
             return False
-
-        if self.global_horizontal_radiations is None:
-            return False
-
         self.zone_setpoint_temperatures: Series = (
             np.zeros(len(self.exterior_air_temperatures))
             + self.zone_setpoint_heating
@@ -392,7 +391,6 @@ class SimpleBuilding(ThermalSpace):
             self.zone_setpoint_temperatures[heating_season == False] = (
                 self.zone_setpoint_cooling
             )
-
         return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
@@ -458,14 +456,14 @@ if __name__ == "__main__":
     weather: WeatherEpw = WeatherEpw(
         name="weather-1", epw_file_path=epw_file_path
     )
-    project_orchestrator.add_model(model=weather)
+    project_orchestrator.add_module(module=weather)
     # Create a building (from SimpleBuilding model) and add it to the project orchestrator
     building: SimpleBuilding = SimpleBuilding(
         "building-1",
         is_cooling_on=False,
         is_heating_on=True,
     )
-    project_orchestrator.add_model(model=building)
+    project_orchestrator.add_module(module=building)
     # Link temperature and radiation from weather to building (for post-initialization)
     project_orchestrator.add_link(
         weather,

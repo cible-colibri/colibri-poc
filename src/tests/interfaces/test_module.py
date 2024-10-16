@@ -26,7 +26,7 @@ def test_model() -> None:
                 attached_to=None,
             )
 
-        def initialize(self) -> None: ...
+        def initialize(self) -> bool: ...
 
         def run(self, time_step: int, number_of_iterations: int) -> None: ...
 
@@ -82,7 +82,7 @@ def test_model() -> None:
                 attached_to=None,
             )
 
-        def initialize(self) -> None: ...
+        def initialize(self) -> bool: ...
 
         def run(self, time_step: int, number_of_iterations: int) -> None: ...
 
@@ -115,7 +115,7 @@ def test_model() -> None:
     assert (
         isinstance(model_example.get_link(field_name="my_field"), Link) is True
     )
-    project_example.add_model(model=model_example_variant)
+    project_example.add_module(module=model_example_variant)
     project_example._initialize_module_output_series()
     model_example_variant.my_output_field = 35
     model_example_variant.save_time_step(1)

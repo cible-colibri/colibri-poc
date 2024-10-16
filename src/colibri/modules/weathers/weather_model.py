@@ -60,7 +60,7 @@ class WeatherModel(Weather):
             unit=Units.DEGREE_CELSIUS,
         )
 
-    def initialize(self) -> None:
+    def initialize(self) -> bool:
         mean_altitude = sum(self.altitudes) / len(self.altitudes)
         self.corrected_exterior_air_temperatures: List[float] = [
             temperature

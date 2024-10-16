@@ -18,7 +18,7 @@ class Plot:
     """Class representing a plot."""
 
     name: str
-    model: Module
+    module: Module
     variable_name: str
 
     def add_plot_to_figure(self, figure: Figure, location: int) -> None:
@@ -41,10 +41,10 @@ class Plot:
         """
         axis: Axes = figure.add_subplot(location)
         axis.set_title(self.name)
-        series: List = getattr(self.model, f"{self.variable_name}_series")
-        variable: Variable = self.model.get_field(self.variable_name)
+        series: List = getattr(self.module, f"{self.variable_name}_series")
+        variable: SimulationVariable = self.module.get_field(self.variable_name)
         if not isinstance(series[0], dict):
-            axis.plot(series, label=f"{self.model.name}.{self.variable_name}")
+            axis.plot(series, label=f"{self.module.name}.{self.variable_name}")
         if isinstance(series[0], dict):
             variables: dict = dict()
             for series_variable in series[-1]:
@@ -53,6 +53,6 @@ class Plot:
                 for k, v in step.items():
                     variables[k].append(v)
             for variable_name, values in variables.items():
-                axis.plot(values, label=f"{self.model.name}.{variable_name}")
+                axis.plot(values, label=f"{self.module.name}.{variable_name}")
         axis.set_ylabel(f"[{variable.unit.value}]")
         axis.legend(loc="upper right", numpoints=1)
