@@ -31,6 +31,7 @@ class ColibriObjectTypes(Enum):
 class ErrorMessages(Enum):
     ATTACHMENT_ERROR = "Attachment error."
     COLIBRI_MODULE_NOT_FOUND_ERROR = "Colibri module not found."
+    INITIALIZATION_ERROR = "Colibri project could not be initialized."
     LINK_ERROR = "Link error."
     UNAUTHORIZED_COLIBRI_MODULE_ERROR = "Colibri module not authorized."
     UNIT_ERROR = "Unit error."

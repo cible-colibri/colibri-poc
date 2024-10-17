@@ -7,7 +7,7 @@ from __future__ import annotations
 import itertools
 import time
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Set, Tuple, Type, Union
 
 from matplotlib import pyplot as plt
 from matplotlib.pyplot import Figure
@@ -56,7 +56,7 @@ from colibri.utils.enums_utils import (
     ColibriObjectTypes,
     Roles,
 )
-from colibri.utils.exceptions_utils import LinkError
+from colibri.utils.exceptions_utils import InitializationError, LinkError
 from colibri.utils.plot_utils import Plot
 
 if TYPE_CHECKING:
@@ -792,19 +792,31 @@ class ProjectOrchestrator:
         is_initialization_completed: bool = False
         maximum_initialization_iterations: int = 3
         initialization_iteration: int = 0
+        modules_not_initialized: Set[str] = set(
+            [module.name for module in self.modules]
+        )
         while (not is_initialization_completed) and (
             initialization_iteration < maximum_initialization_iterations
         ):
             are_modules_initialized: bool = True
             for module in self.modules:
-                if module._is_initialized is True:
+                if module.has_been_initialized() is True:
                     continue
                 module._is_initialized = module.initialize()
-                if module._is_initialized is False:
+                if module.has_been_initialized() is False:
                     are_modules_initialized = False
+                if module.has_been_initialized() is True:
+                    modules_not_initialized.remove(module.name)
             self._substitute_links_values(0)
             is_initialization_completed = are_modules_initialized
             initialization_iteration += 1
+        if is_initialization_completed is False:
+            error_message: str = (
+                f"{InitializationError.description} "
+                f"Modules not initialized: "
+                f"{modules_not_initialized}."
+            )
+            raise InitializationError(error_message)
 
     def _run_modules(self, time_step: int, number_of_iterations: int) -> None:
         """Run the run method of each module in the project

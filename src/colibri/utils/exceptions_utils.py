@@ -27,6 +27,13 @@ class ColibriModuleNotFoundError(ColibriException):
     description: str = ErrorMessages.COLIBRI_MODULE_NOT_FOUND_ERROR.value
 
 
+class InitializationError(ColibriException):
+    """Exception when there is an error with the initialization
+    of the modules."""
+
+    description: str = ErrorMessages.INITIALIZATION_ERROR.value
+
+
 class LinkError(ColibriException):
     """Exception when there is a link error
     (e.g., an input variable is linked more than once."""

@@ -175,3 +175,22 @@ class Module(ClassMixin, MetaFieldMixin):
             if (link.to_module == self) and (link.to_field == field_name):
                 return link
         return None
+
+    def has_been_initialized(self) -> bool:
+        """Return True if the module has been initialized (properly)
+
+        Returns
+        -------
+        bool
+            Return self._is_initialized, which is True only if the module
+             has been initialized
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        return self._is_initialized
