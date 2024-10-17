@@ -129,7 +129,7 @@ class ProjectOrchestrator:
                 # TODO: Check if it must be before or after
                 # run_modules (see initial state)
                 # Pass information (modules' values) to connected modules
-                self._substitute_links_values(time_step=time_step)
+                self._substitute_links_values()
                 # Run modules (run modules' run method)
                 self._run_modules(
                     time_step=time_step,
@@ -597,16 +597,6 @@ class ProjectOrchestrator:
         scheme[scheme_category][attached_to][PARAMETERS][
             element_object_name
         ] = scheme_group[element_object_archetype_name][element_object_name]
-
-        """
-        for (
-            parameter_name,
-            parameter_data,
-        ) in boundary_object_scheme.items():
-            scheme[element_object_category][element_object_name][PARAMETERS][
-                parameter_name
-            ] = parameter_data
-        """
         # TODO: Factorize with archetype objects
         if attached_to not in scheme[archetype_category]:
             scheme[archetype_category].setdefault(
@@ -627,7 +617,7 @@ class ProjectOrchestrator:
 
     @classmethod
     def _set_module_objects_scheme(
-        clas,
+        cls,
         scheme,
         scheme_group,
         scheme_name,
@@ -813,7 +803,7 @@ class ProjectOrchestrator:
                     are_modules_initialized = False
                 if module.has_been_initialized() is True:
                     modules_not_initialized.remove(module.name)
-            self._substitute_links_values(0)
+            self._substitute_links_values()
             is_initialization_completed = are_modules_initialized
             initialization_iteration += 1
         if is_initialization_completed is False:
@@ -854,14 +844,9 @@ class ProjectOrchestrator:
                 number_of_iterations=number_of_iterations,
             )
 
-    def _substitute_links_values(self, time_step: int) -> None:
+    def _substitute_links_values(self) -> None:
         """Pass information (modules' values) to connected modules
         by substituting the output links' value to the input links' value
-
-        Parameters
-        ----------
-        time_step : int
-            Current time step of the simulation
 
         Returns
         -------
@@ -993,266 +978,3 @@ class ProjectOrchestrator:
         """
         for module in self.modules:
             module.end_simulation()
-
-
-if __name__ == "__main__":
-
-    def test_project_creation() -> None:
-        # Create project
-        project_data: dict = {
-            "project": {
-                "id": "project-12",
-                "simulation_parameters": {
-                    "time_steps": 48,
-                    "verbose": False,
-                    "iterate_for_convergence": True,
-                    "maximum_number_of_iterations": 10,
-                },
-                "module_collection": {
-                    "AcvExploitationOnly": {},
-                    "LimitedGenerator": {},
-                    "OccupantModel": {},
-                    "SimplifiedWallLosses": {},
-                    "ThermalSpaceSimplified": {},
-                    "WeatherModel": {},
-                },
-            },
-        }
-        project: ProjectOrchestrator = ProjectOrchestrator.create_project(
-            project_data=project_data
-        )
-        print(project)
-        # project.run()
-
-    def test_links() -> None:
-        from pathlib import Path
-
-        from colibri.core.project_data import ProjectData
-        from colibri.modules import (
-            AcvExploitationOnly,
-            InfinitePowerGenerator,
-            LayerWallLosses,
-            LimitedGenerator,
-            OccupantModel,
-            SimplifiedWallLosses,
-            ThermalSpaceSimplified,
-            WeatherModel,
-        )
-
-        # Create project
-        project: ProjectOrchestrator = ProjectOrchestrator(
-            name="my-project",
-            verbose=False,
-            time_steps=72,
-        )
-
-        # Create modules
-        project_file: Path = Path(
-            r"D:\developments\sandbox\colibri\src\tests\data\house_1.json"
-        )
-        project_data: ProjectData = ProjectData(
-            name="project_data", data=project_file
-        )
-
-        acv_exploitation_only: AcvExploitationOnly = AcvExploitationOnly(
-            name="acv"
-        )
-        infinite_power_generator: InfinitePowerGenerator = (
-            InfinitePowerGenerator(name="infinite_power_generator")
-        )
-        LOGGER.info(infinite_power_generator)
-        limited_power_generator: LimitedGenerator = LimitedGenerator(
-            name="limited_power_generator"
-        )
-        simplified_wall_losses: SimplifiedWallLosses = SimplifiedWallLosses(
-            name="simplified_wall_losses"
-        )
-        thermal_space_simplified: ThermalSpaceSimplified = (
-            ThermalSpaceSimplified(name="thermal_space_simplified")
-        )
-        layer_wall_losses: LayerWallLosses = LayerWallLosses(
-            name="layer_wall_losses"
-        )
-        LOGGER.info(layer_wall_losses)
-        occupants: OccupantModel = OccupantModel(name="occupants")
-        weather: WeatherModel = WeatherModel(
-            name="weather",
-            scenario_exterior_air_temperatures=[
-                16,
-                11,
-                18,
-                15,
-                6,
-                10,
-                14,
-                17,
-                13,
-                14,
-                7,
-                15,
-                19,
-                7,
-                18,
-                13,
-                12,
-                18,
-                5,
-                19,
-                19,
-                5,
-                9,
-                6,
-                10,
-                10,
-                16,
-                18,
-                11,
-                19,
-                5,
-                19,
-                18,
-                11,
-                17,
-                18,
-                11,
-                14,
-                13,
-                11,
-                13,
-                16,
-                17,
-                17,
-                16,
-                16,
-                19,
-                9,
-                17,
-                12,
-                19,
-                19,
-                19,
-                19,
-                18,
-                11,
-                6,
-                5,
-                7,
-                17,
-                17,
-                15,
-                12,
-                15,
-                5,
-                15,
-                10,
-                18,
-                12,
-                14,
-                20,
-                6,
-            ],
-        )
-
-        # Add modules
-        project.add_module(module=project_data)
-        project.add_module(module=acv_exploitation_only)
-        project.add_module(
-            module=limited_power_generator,  # infinite_power_generator
-        )  # limited_power_generator)
-        project.add_module(module=layer_wall_losses)  # simplified_wall_losses)
-        project.add_module(module=thermal_space_simplified)
-        project.add_module(module=occupants)
-        project.add_module(module=weather)
-
-        # Add links
-        project.create_links_automatically()
-
-        """
-        project.add_link(
-            project_data, "boundaries", simplified_wall_losses, "boundaries"
-        )
-        project.add_link(project_data, "spaces", thermal_space_simplified, "spaces")
-        project.add_link(
-            project_data, "spaces", infinite_power_generator, "spaces"
-        )  # limited_power_generator, "spaces")
-        project.add_link(project_data, "spaces", occupants, "spaces")
-        project.add_link(
-            weather,
-            "exterior_air_temperature",
-            simplified_wall_losses,
-            "exterior_air_temperature",
-        )
-        project.add_link(
-            thermal_space_simplified,
-            "inside_air_temperatures",
-            simplified_wall_losses,
-            "inside_air_temperatures",
-        )
-        project.add_link(
-            simplified_wall_losses, "q_walls", thermal_space_simplified, "q_walls"
-        )
-        project.add_link(
-            thermal_space_simplified,
-            "q_needs",
-            infinite_power_generator,
-            "q_needs",  # limited_power_generator, "q_needs"
-        )
-        project.add_link(
-            infinite_power_generator,  # limited_power_generator,
-            "q_provided",
-            thermal_space_simplified,
-            "q_provided",
-        )
-        project.add_link(
-            infinite_power_generator,  # limited_power_generator,
-            "q_consumed",
-            acv_exploitation_only,
-            "q_consumed",
-        )
-        project.add_link(
-            occupants,
-            "setpoint_temperatures",
-            thermal_space_simplified,
-            "setpoint_temperatures",
-        )
-        project.add_link(occupants, "gains", thermal_space_simplified, "gains")
-        """
-
-        # Add plots
-        project.add_plot("Weather", weather, "exterior_air_temperature")
-        project.add_plot(
-            "Tint", thermal_space_simplified, "inside_air_temperatures"
-        )
-        project.add_plot(
-            "Qwall", layer_wall_losses, "q_walls"
-        )  # simplified_wall_losses, "q_walls")
-        project.add_plot(
-            "Qprovided", limited_power_generator, "q_provided"
-        )  # limited_power_generator, "q_provided")
-
-        # Run project
-        project.run()
-
-        # Plots
-        project.plot()
-
-    def test_scheme_creation() -> None:
-        import json
-
-        module_collection: List[str] = [
-            "AcvExploitationOnly",
-            "LimitedGenerator",
-            "OccupantModel",
-            "LayerWallLosses",
-            "ThermalSpaceSimplified",
-            "WeatherModel",
-        ]
-        scheme = ProjectOrchestrator.generate_scheme(modules=module_collection)
-        print(json.dumps(scheme, indent=2))
-        with open("toto.json", "w") as _f:
-            json.dump(scheme, _f, indent=2)
-
-    # test_scheme_creation()
-    test_links()
-    # from colibri.modules import LayerWallLosses
-    # print(LayerWallLosses.to_scheme()["ElementObject"])

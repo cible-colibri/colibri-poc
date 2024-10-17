@@ -127,6 +127,7 @@ class ThermalBuilding(Building):
             unit=Units.UNITLESS,
             attached_to=None,
             required=[
+                # Space
                 Parameter(
                     name="setpoint_heating",
                     default_value=19.0,
@@ -164,6 +165,56 @@ class ThermalBuilding(Building):
                     ),
                 ),
                 Parameter(
+                    name="air_change_rate",
+                    default_value=0.41,
+                    description="Air change rate (ACH) of the space.",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.UNITLESS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="heating_set_point",
+                    default_value=20.0,
+                    description="Heating set point temperature of the space.",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.DEGREE_CELSIUS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="cooling_set_point",
+                    default_value=27.0,
+                    description="Cooling set point temperature of the space.",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.DEGREE_CELSIUS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                # TODO: Make format an enum?
+                Parameter(
+                    name="operating_modes",
+                    default_value=["heating", "cooling"],
+                    description="Operating modes of the space.",
+                    format=List[str],
+                    min=None,
+                    max=None,
+                    unit=Units.UNITLESS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                # Boundary
+                Parameter(
                     name="u_value",
                     default_value=0.0,
                     description="Thermal conductance of the boundary.",
@@ -176,19 +227,7 @@ class ThermalBuilding(Building):
                         from_archetype=True,
                     ),
                 ),
-                Parameter(
-                    name="u_value",
-                    default_value=0.0,
-                    description="Thermal conductance of the window.",
-                    format=float,
-                    min=0,
-                    max=float("inf"),
-                    unit=Units.WATT_PER_SQUARE_METER_PER_KELVIN,
-                    attached_to=Attachment(
-                        category=ColibriProjectObjects.ELEMENT_OBJECT,
-                        class_name="Window",
-                    ),
-                ),
+                # Windows
                 Parameter(
                     name="area",
                     default_value=0.0,
@@ -252,6 +291,33 @@ class ThermalBuilding(Building):
                     attached_to=Attachment(
                         category=ColibriProjectObjects.ELEMENT_OBJECT,
                         class_name="Window",
+                    ),
+                ),
+                # Emitters
+                Parameter(
+                    name="nominal_heating_power",
+                    default_value=10_000.0,
+                    description="Nominal heating power of the emitter.",
+                    format=float,
+                    min=0.0,
+                    max=float("inf"),
+                    unit=Units.WATT,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.ELEMENT_OBJECT,
+                        class_name="Emitter",
+                    ),
+                ),
+                Parameter(
+                    name="nominal_cooling_power",
+                    default_value=10_000.0,
+                    description="Nominal cooling power of the emitter.",
+                    format=float,
+                    min=0.0,
+                    max=float("inf"),
+                    unit=Units.WATT,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.ELEMENT_OBJECT,
+                        class_name="Emitter",
                     ),
                 ),
             ],
@@ -1088,7 +1154,7 @@ if __name__ == "__main__":
     from pandas import DataFrame
 
     from colibri.core import ProjectData
-    from colibri.interfaces import BoundaryObject, ElementObject
+    from colibri.interfaces import BoundaryObject
     from colibri.project_objects import Boundary, Space
 
     data: DataFrame = pd.read_csv(

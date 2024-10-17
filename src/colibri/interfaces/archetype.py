@@ -14,7 +14,7 @@ class Archetype(ClassMixin, MetaFieldMixin):
 
     TYPE: str = "archetype"
     DESCRIPTION: str = (
-        "An archetype groups objects' properties together " "to be reusable."
+        "An archetype groups objects' properties together to be reusable."
     )
 
     def __init__(
