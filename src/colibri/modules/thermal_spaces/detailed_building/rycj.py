@@ -921,12 +921,12 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
     # Generate the resistances between all nodes in all layers
     # of a boundary (wall, ceiling, floor)
     # Load properties
-    thicknesses: float = [layer.thickness for layer in boundary.layers]
-    thermal_conductivities: float = [
+    thicknesses: List[float] = [layer.thickness for layer in boundary.layers]
+    thermal_conductivities: List[float] = [
         layer.thermal_conductivity for layer in boundary.layers
     ]
-    densities: float = [layer.density for layer in boundary.layers]
-    specific_heats: float = [layer.specific_heat for layer in boundary.layers]
+    densities: List[float] = [layer.density for layer in boundary.layers]
+    specific_heats: List[float] = [layer.specific_heat for layer in boundary.layers]
     # Number of discretization layers
     # TODO: Check how this information should be retrieved?
     discretization_layers: List[int] = [1 for _ in boundary.layers]
