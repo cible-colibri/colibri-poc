@@ -31,6 +31,7 @@ from colibri.interfaces import (
 )
 from colibri.project_objects import (
     Boundary,
+    BoundaryCondition,
     LinearJunction,
     PunctualJunction,
     Segment,
@@ -79,8 +80,24 @@ class ProjectData(Module):
                 unit=Units.UNITLESS,
                 attached_to=None,
             )
+            boundary_conditions: List[BoundaryCondition] = (
+                self.get_boundary_conditions()
+            )
+            self.boundary_conditions: List[BoundaryCondition] = (
+                self.define_output(
+                    name="boundary_conditions",
+                    default_value=boundary_conditions,
+                    description="Boundary conditions of the project.",
+                    format=List["BoundaryCondition"],
+                    min=None,
+                    max=None,
+                    unit=Units.UNITLESS,
+                    attached_to=None,
+                )
+            )
 
-    def initialize(self) -> bool: ...
+    def initialize(self) -> bool:
+        return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None: ...
 
@@ -179,6 +196,9 @@ class ProjectData(Module):
                     boundary.spaces.append(space)
             boundaries.append(boundary)
         return boundaries
+
+    def get_boundary_conditions(self) -> List[BoundaryCondition]:
+        return []
 
     def get_segments(
         self,

@@ -12,6 +12,8 @@ from colibri.utils.enums_utils import (
 )
 
 
+# TODO: Make inputs/outputs from this interface the same for all
+#       weather models
 class Weather(Module, metaclass=abc.ABCMeta):
     """Weather interface (IM_4)."""
 

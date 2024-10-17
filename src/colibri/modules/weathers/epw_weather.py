@@ -26,8 +26,8 @@ class WeatherEpw(Weather):
         rolling_time_window: int = 48,
         rolling_exterior_air_temperatures: Optional[Series] = None,
         exterior_air_temperatures: Optional[Series] = None,
-        solar_direct: Optional[Series] = None,
-        solar_diffuse: Optional[Series] = None,
+        direct_radiations: Optional[Series] = None,
+        diffuse_radiations: Optional[Series] = None,
         global_horizontal_radiation: Optional[Series] = None,
     ):
         super().__init__(
@@ -123,9 +123,9 @@ class WeatherEpw(Weather):
             unit=Units.DEGREE,
             attached_to=None,
         )
-        self.solar_diffuse: Series = self.define_output(
-            name="solar_direct",
-            default_value=solar_direct,
+        self.direct_radiations: Series = self.define_output(
+            name="direct_radiations",
+            default_value=direct_radiations,
             description="Direct solar radiation.",
             format=Series,
             min=0,
@@ -133,9 +133,9 @@ class WeatherEpw(Weather):
             unit=Units.WATT_PER_SQUARE_METER,
             attached_to=None,
         )
-        self.solar_diffuse = self.define_output(
-            name="solar_diffuse",
-            default_value=solar_diffuse,
+        self.diffuse_radiations = self.define_output(
+            name="diffuse_radiations",
+            default_value=diffuse_radiations,
             description="Diffuse solar radiation.",
             format=Series,
             min=0,
@@ -256,8 +256,8 @@ class WeatherEpw(Weather):
             .values.flatten()
             .tolist()
         )
-        self.solar_direct = self._weather_data["direct_radiation"]
-        self.solar_diffuse = self._weather_data["diffuse_radiation"]
+        self.direct_radiations = self._weather_data["direct_radiation"]
+        self.diffuse_radiations = self._weather_data["diffuse_radiation"]
         self.exterior_air_temperatures = self._weather_data.temperature
         # Compute sky temperature
         dew_temperature: Series = self._weather_data["DewPoint"]

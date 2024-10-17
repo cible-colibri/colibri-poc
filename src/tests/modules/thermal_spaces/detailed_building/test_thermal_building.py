@@ -81,6 +81,21 @@ def test_thermal_building_case_1() -> None:
         "exterior_air_temperatures",
     )
     project_orchestrator.add_link(
+        weather, "sky_temperatures", multi_zone_building, "sky_temperatures"
+    )
+    project_orchestrator.add_link(
+        weather,
+        "exterior_air_temperatures",
+        multi_zone_building,
+        "exterior_air_temperatures",
+    )
+    project_orchestrator.add_link(
+        weather, "direct_radiations", multi_zone_building, "direct_radiations"
+    )
+    project_orchestrator.add_link(
+        weather, "diffuse_radiations", multi_zone_building, "diffuse_radiations"
+    )
+    project_orchestrator.add_link(
         air_flow_building, "flow_rates", multi_zone_building, "flow_rates"
     )
     project_orchestrator.add_link(

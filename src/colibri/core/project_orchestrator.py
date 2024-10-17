@@ -733,10 +733,13 @@ class ProjectOrchestrator:
 
     def _substitute_parameter_links_values(self):
         """"""
+        # TODO: Check if it is parameters or simulation variables or both
         for link in self.links:
             to_parameter: Parameter = link.to_module.get_field(link.to_field)
             if to_parameter is None:
-                raise LinkError(f"Parameter {link.to_field} was not found in module {link.to_module.name}.")
+                raise LinkError(
+                    f"Parameter {link.to_field} was not found in module {link.to_module.name}."
+                )
             if to_parameter.role is Roles.PARAMETERS:
                 from_field = getattr(link.from_module, link.from_field)
                 setattr(link.to_module, link.to_field, from_field)

@@ -24,6 +24,7 @@ class Building(Module, metaclass=abc.ABCMeta):
         name: str,
         blind_position: float,
         sky_temperatures: Series,
+        exterior_air_temperatures: Series,
         direct_radiations: Series,
         diffuse_radiations: Series,
     ) -> None:
@@ -46,6 +47,18 @@ class Building(Module, metaclass=abc.ABCMeta):
             format=Series,
             min=0,
             max=float("inf"),
+            unit=Units.DEGREE_CELSIUS,
+            attached_to=Attachment(
+                category=ColibriProjectObjects.PROJECT,
+            ),
+        )
+        self.exterior_air_temperatures = self.define_input(
+            name="exterior_air_temperatures",
+            default_value=exterior_air_temperatures,
+            description="Exterior air temperatures.",
+            format=Series,
+            min=-100,
+            max=100,
             unit=Units.DEGREE_CELSIUS,
             attached_to=Attachment(
                 category=ColibriProjectObjects.PROJECT,
