@@ -1,9 +1,13 @@
 """
 Enumerations for the `colibri` package.
 """
-
+from dataclasses import dataclass
 from enum import Enum, unique
 
+@dataclass
+class ProjectObjectCategories:
+    name: str
+    path: str
 
 @unique
 class ColibriProjectObjects(Enum):
@@ -14,6 +18,21 @@ class ColibriProjectObjects(Enum):
     PROJECT = "Project"
     SPACE = "Space"
 
+@unique
+class ColibriProjectPaths(Enum):
+    ARCHETYPE = ProjectObjectCategories(ColibriProjectObjects.ARCHETYPE, "project.archetype_collection")
+    BOUNDARY = ProjectObjectCategories(ColibriProjectObjects.BOUNDARY, "project.boundary_collection")
+    BOUNDARY_OBJECT = ProjectObjectCategories(ColibriProjectObjects.BOUNDARY_OBJECT, "project.boundary_collection.object_collection")
+    ELEMENT_OBJECT = ProjectObjectCategories(ColibriProjectObjects.ELEMENT_OBJECT, ".")
+    PROJECT = ProjectObjectCategories(ColibriProjectObjects.PROJECT, "project")
+    SPACE = ProjectObjectCategories(ColibriProjectObjects.SPACE, "project.node_collection.space.collection")
+
+    def get_path_from_object_type(object_type):
+        paths = [oc.value.path for oc in ColibriProjectPaths if oc.value.name.value == object_type]
+        if len(paths) == 1:
+            return paths[0]
+        return None
+# TODO : unify with ColibriCategories in dataset.py
 
 @unique
 class ColibriCategories(Enum):

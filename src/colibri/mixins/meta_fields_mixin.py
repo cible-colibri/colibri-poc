@@ -32,7 +32,7 @@ from colibri.utils.data_utils import turn_format_to_string
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
     Roles,
-    Units,
+    Units, ColibriProjectPaths,
 )
 from colibri.utils.exceptions_utils import AttachmentError
 
@@ -521,7 +521,7 @@ class MetaFieldMixin:
             if default_value is not None:
                 field_data.update({DEFAULT: default_value})
             # Regular field
-            if (
+            if ( #why?
                 category
                 not in [
                     ColibriProjectObjects.BOUNDARY_OBJECT,
@@ -578,3 +578,34 @@ class MetaFieldMixin:
                 scheme[ELEMENT_OBJECT][from_element_object][field_name] = (
                     field_data
                 )
+
+    @classmethod
+    def to_template(cls) -> Dict[str, Any]:
+        scheme = cls.to_scheme()
+
+        from colibri import DataSet
+        data_set = DataSet(modules=[str(cls)])
+        project_dict = data_set.to_dict()
+
+        for scheme_object, variables in scheme.items():
+            path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
+            if not path and 'category' in variables:
+                path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
+                variables.pop('category', None)
+            if path is None and scheme_object == 'Archetypes':
+                path = ColibriProjectPaths.get_path_from_object_type('Archetype')
+            if path:
+                level = project_dict
+                for attribute in path.split('.'):
+                    if not attribute in level:
+                        level[attribute] = {}
+                    level = level[attribute]
+                object_name = scheme_object + '1'
+                if object_name not in level:
+                    level[object_name] = {}
+                    level = level[object_name]
+                for name, variable in variables.items():
+                    if 'default' in variable:
+                        level[name] = variable['default']
+
+        return project_dict
