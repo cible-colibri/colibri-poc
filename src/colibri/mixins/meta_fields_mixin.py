@@ -592,20 +592,22 @@ class MetaFieldMixin:
             if not path and 'category' in variables:
                 path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
                 variables.pop('category', None)
-            if path is None and scheme_object == 'Archetypes':
-                path = ColibriProjectPaths.get_path_from_object_type('Archetype')
+            #if path is None and scheme_object == 'Archetypes':
+            #    path = ColibriProjectPaths.get_path_from_object_type('Archetype')
             if path:
                 level = project_dict
                 for attribute in path.split('.'):
                     if not attribute in level:
                         level[attribute] = {}
                     level = level[attribute]
-                object_name = scheme_object + '1'
+                object_name = scheme_object
                 if object_name not in level:
                     level[object_name] = {}
                     level = level[object_name]
                 for name, variable in variables.items():
                     if 'default' in variable:
                         level[name] = variable['default']
+
+        project_dict['project']['archetype_collection'] = scheme['Archetypes']
 
         return project_dict

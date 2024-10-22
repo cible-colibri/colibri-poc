@@ -25,7 +25,7 @@ class ColibriProjectPaths(Enum):
     BOUNDARY_OBJECT = ProjectObjectCategories(ColibriProjectObjects.BOUNDARY_OBJECT, "project.boundary_collection.object_collection")
     ELEMENT_OBJECT = ProjectObjectCategories(ColibriProjectObjects.ELEMENT_OBJECT, ".")
     PROJECT = ProjectObjectCategories(ColibriProjectObjects.PROJECT, "project")
-    SPACE = ProjectObjectCategories(ColibriProjectObjects.SPACE, "project.node_collection.space.collection")
+    SPACE = ProjectObjectCategories(ColibriProjectObjects.SPACE, "project.node_collection.space_collection")
 
     def get_path_from_object_type(object_type):
         paths = [oc.value.path for oc in ColibriProjectPaths if oc.value.name.value == object_type]
