@@ -12,9 +12,11 @@ def test_field_mixin() -> None:
     lg = LimitedGenerator("lg-1")
 
     #scheme1 = acv.to_template()
-    scheme2 = lg.to_template()
+    scheme2 = LimitedGenerator.to_template()
 
-    lg2 = LimitedGenerator("lg-2")
-    lg2.from_template(scheme2)
+    lg2 : LimitedGenerator = LimitedGenerator.from_template(scheme2)
 
+    lg2.run()
+
+    print(lg2.q_consumed)
     pass
