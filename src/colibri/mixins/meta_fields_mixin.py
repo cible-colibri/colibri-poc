@@ -604,14 +604,13 @@ class MetaFieldMixin:
                     else:
                         level = level[attribute]
                 object_name = scheme_object
+                id = scheme_object + "1"
                 if 'object_collection' not in level:
-                    id = scheme_object + "1"
                     level[attribute] = {id: {}}
-                    level = level[attribute][id]
-                else:
-                    level = level['object_collection']
+
+                object_dict = {}
                 if object_name not in level:
-                    level['type'] = object_name
+                    object_dict['type'] = object_name
                     model_class = get_class(
                         class_name=object_name,
                         output_type=ColibriObjectTypes.PROJECT_OBJECT,
@@ -619,11 +618,16 @@ class MetaFieldMixin:
                     model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
                     required_parameters: List[str] = model_metadata.args[1:]
                     for parameter in required_parameters:
-                        level[parameter] = None
+                        object_dict[parameter] = None
 
                 for name, variable in variables.items():
                     if 'default' in variable:
-                        level[name] = variable['default']
+                        object_dict[name] = variable['default']
+
+                if 'object_collection' in level:
+                    level['object_collection'] = [object_dict]
+                else:
+                    level[attribute][id] = object_dict
 
         project_dict['project']['archetype_collection'] = scheme['Archetypes']
 
