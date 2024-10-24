@@ -309,37 +309,3 @@ class ProjectData(Module):
             ARCHETYPE_COLLECTION
         ][archetype_type_key][archetype_type_id]
         return archetype_data
-
-
-if __name__ == "__main__":
-    from colibri.config.constants import LOGGER
-
-    project_file_example: Path = Path(
-        r"D:\developments\sandbox\colibri\src\tests\data\house_1.json"
-    )
-    project_data_example: ProjectData = ProjectData(
-        name="project-data",
-        data=project_file_example,
-    )
-    for boundary_example in project_data_example.boundaries:
-        print(f"{boundary_example.id = } [{boundary_example.label = }]")
-        for segment in boundary_example.segments:
-            print(f"{segment = }")
-            print(f"{segment.junction = }")
-        for collection_object in boundary_example.object_collection:
-            print(f"{collection_object = }")
-        print("")
-
-    """
-    print(project_data_example)
-    print(project_data_example.spaces)
-    print(project_data_example.boundaries)
-    print(project_data_example.boundaries[1])
-    print(project_data_example.boundaries[1].label)
-    print(project_data_example.boundaries[1].object_collection)
-    for boundary_example in project_data_example.boundaries:
-        print(
-            f"{boundary_example.id} [{boundary_example.label}]: "
-            f"{boundary_example.segments} vs {boundary_example.object_collection}"
-        )
-    """
