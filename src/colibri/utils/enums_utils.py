@@ -32,7 +32,7 @@ class ColibriProjectPaths(Enum):
     )
     BOUNDARY_OBJECT = ProjectObjectCategories(
         ColibriProjectObjects.BOUNDARY_OBJECT,
-        "project.boundary_collection.object_collection",
+        "project.boundary_collection.Boundary.object_collection",
     )
     ELEMENT_OBJECT = ProjectObjectCategories(
         ColibriProjectObjects.ELEMENT_OBJECT, "."

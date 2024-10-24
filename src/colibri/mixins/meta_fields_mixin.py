@@ -523,7 +523,7 @@ class MetaFieldMixin:
             if default_value is not None:
                 field_data.update({DEFAULT: default_value})
             # Regular field
-            if (  # why?
+            if (
                 category
                 not in [
                     ColibriProjectObjects.BOUNDARY_OBJECT,
@@ -588,54 +588,69 @@ class MetaFieldMixin:
 
         scheme = cls.to_scheme()
 
-        data_set = DataSet(modules=[str(cls)])
-        project_dict = data_set.to_dict()
+        project_dict = {}
 
         for scheme_object, variables in scheme.items():
             path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
-            if not path and "category" in variables:
-                path = ColibriProjectPaths.get_path_from_object_type(
-                    variables["category"]
-                )
-                variables.pop("category", None)
-            # if path is None and scheme_object == 'Archetypes':
-            #    path = ColibriProjectPaths.get_path_from_object_type('Archetype')
+            if not path and 'category' in variables:
+                path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
+                variables.pop('category', None)
             if path:
                 level = project_dict
-                for attribute in path.split("."):
-                    if not attribute in level:
-                        level[attribute] = {}
-                    else:
-                        level = level[attribute]
+                for attribute in path.split('.'):
+                    if attribute not in level:
+                        if attribute == 'Boundary':
+                            model_class = get_class(
+                                class_name='Boundary',
+                                output_type=ColibriObjectTypes.PROJECT_OBJECT,
+                            )
+                            model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                            required_parameters: List[str] = model_metadata.args[1:]
+                            level['Boundary'] = {k: None for k in required_parameters}
+                            level['Boundary']['object_collection'] = []
+                            level['Boundary']['segments'] = []
+                            level['Boundary']['side_1'] = 'Space1'
+                        else:
+                            level[attribute] = {}
+                    level = level[attribute]
+
                 object_name = scheme_object
                 id = scheme_object + "1"
-                if "object_collection" not in level:
-                    level[attribute] = {id: {}}
 
                 object_dict = {}
                 if object_name not in level:
-                    object_dict["type"] = object_name
+                    object_dict['type'] = object_name
+                    object_dict['type_id'] = object_name + '1'
                     model_class = get_class(
                         class_name=object_name,
                         output_type=ColibriObjectTypes.PROJECT_OBJECT,
                     )
-                    model_metadata: FullArgSpec = getfullargspec(
-                        model_class.__init__
-                    )
+                    model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
                     required_parameters: List[str] = model_metadata.args[1:]
                     for parameter in required_parameters:
-                        object_dict[parameter] = None
+                        if parameter != 'boundaries':
+                            object_dict[parameter] = None
 
                 for name, variable in variables.items():
-                    if "default" in variable:
-                        object_dict[name] = variable["default"]
+                    if 'default' in variable:
+                        object_dict[name] = variable['default']
 
-                if "object_collection" in level:
-                    level["object_collection"] = [object_dict]
+                if isinstance(level, list):
+                    level.append(object_dict)
                 else:
-                    level[attribute][id] = object_dict
+                    level[id] = object_dict
+        archetypes = scheme['Archetypes']
+        archetypes_instance = {}
 
-        project_dict["project"]["archetype_collection"] = scheme["Archetypes"]
+        for k,v in archetypes.items():
+            name = k + "1"
+            archetypes_instance[k] = { name: {k_: v_['default'] for k_, v_ in v.items() if k_ != "category"}}
+
+        archetypes_instance['Emitter_types'] = archetypes_instance['Emitter']
+        del archetypes_instance['Emitter']
+        project_dict['project']['archetype_collection'] = archetypes_instance
+
+        project_dict['project']['module_collection'] = {cls.__name__ : {}}
 
         return project_dict
 
@@ -676,6 +691,11 @@ class MetaFieldMixin:
         model_metadata: FullArgSpec = getfullargspec(cls.__init__)
         required_parameters: List[str] = model_metadata.args[1:]
         parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}
+        module_collection: Dict[str, Dict[str, Any]] = template["project"]["module_collection"]
+        # Module needs some specific parameters
+        if cls.__name__ in module_collection:
+            parameters.update(module_collection[cls.__name__])
+        # Module needs ProjectData instance "project_data"
         if ProjectData.INSTANCE_NAME in required_parameters:
             parameters.update({ProjectData.INSTANCE_NAME: project_data})
         return cls(**parameters)
