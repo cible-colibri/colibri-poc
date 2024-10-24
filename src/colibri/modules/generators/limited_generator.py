@@ -51,7 +51,7 @@ class LimitedGenerator(Generator):
             required=[
                 Parameter(
                     name="pn",
-                    default_value=0.9,
+                    default_value=500.0,
                     description="Nominal power.",
                     format=float,
                     min=0,

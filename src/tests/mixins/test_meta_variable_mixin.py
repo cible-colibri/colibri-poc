@@ -265,7 +265,7 @@ def test_to_scheme():
             "category": "BoundaryObject",
             "pn": {
                 "choices": None,
-                "default": None,
+                "default": 500.0,
                 "description": "Nominal power.",
                 "format": "float",
                 "max": "inf",

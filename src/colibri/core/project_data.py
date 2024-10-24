@@ -294,7 +294,7 @@ class ProjectData(Module):
                     for parameter_name, parameter_value in class_parameters.items()
                 }
             )
-        if is_element_data_dict and (not does_element_have_archetype):
+        if is_element_data_dict and (not does_element_have_archetype) and (class_signature is not None):
             return class_signature(**{
                     parameter_name: self.create_element_object(
                         element_data=parameter_value
