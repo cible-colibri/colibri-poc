@@ -632,6 +632,33 @@ class MetaFieldMixin:
     # TODO: Any -> Module instance
     @classmethod
     def from_template(cls, template: Dict[str, Any]) -> object:
+        """Create a module instance ready to be used from a template
+        specific to the module
+
+        Parameters
+        ----------
+        template: Dict[str, Any]
+            Specific template for the module
+
+        Returns
+        -------
+        object
+            Module instance
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> limited_generator = LimitedGenerator.from_template(template=template)
+        >>> limited_generator.initialize()
+        >>> limited_generator.run(time_step=1, number_of_iterations=1)
+        >>> limited_generator.end_time_step(time_step=1)
+        >>> limited_generator.end_iteration(time_step=1)
+        >>> limited_generator.end_simulation()
+        >>> limited_generator.q_consumed
+        """
         from colibri.core import ProjectData
         project_data: ProjectData = ProjectData(name="project-data-1", data=template)
         for space in project_data.spaces:
