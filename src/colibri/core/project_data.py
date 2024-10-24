@@ -249,7 +249,9 @@ class ProjectData(Module):
         return junction
 
     def create_element_object(
-        self, element_data: Union[Dict[str, Any], List[Dict[str, Any]]], class_signature: Optional[Type] = None,
+        self,
+        element_data: Union[Dict[str, Any], List[Dict[str, Any]]],
+        class_signature: Optional[Type] = None,
     ):
         is_element_data_list: bool = isinstance(element_data, list)
         is_element_data_dict: bool = isinstance(element_data, dict)
@@ -294,13 +296,19 @@ class ProjectData(Module):
                     for parameter_name, parameter_value in class_parameters.items()
                 }
             )
-        if is_element_data_dict and (not does_element_have_archetype) and (class_signature is not None):
-            return class_signature(**{
+        if (
+            is_element_data_dict
+            and (not does_element_have_archetype)
+            and (class_signature is not None)
+        ):
+            return class_signature(
+                **{
                     parameter_name: self.create_element_object(
                         element_data=parameter_value
                     )
                     for parameter_name, parameter_value in element_data.items()
-                })
+                }
+            )
 
     def get_archetype_data(self, object_data: dict) -> Dict[str, Any]:
         """Get archetype data associated to an object

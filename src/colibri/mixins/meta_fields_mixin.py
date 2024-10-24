@@ -30,9 +30,11 @@ from colibri.utils.colibri_utils import (
 )
 from colibri.utils.data_utils import turn_format_to_string
 from colibri.utils.enums_utils import (
+    ColibriObjectTypes,
     ColibriProjectObjects,
+    ColibriProjectPaths,
     Roles,
-    Units, ColibriProjectPaths, ColibriObjectTypes,
+    Units,
 )
 from colibri.utils.exceptions_utils import AttachmentError
 
@@ -521,7 +523,7 @@ class MetaFieldMixin:
             if default_value is not None:
                 field_data.update({DEFAULT: default_value})
             # Regular field
-            if ( #why?
+            if (  # why?
                 category
                 not in [
                     ColibriProjectObjects.BOUNDARY_OBJECT,
@@ -581,8 +583,8 @@ class MetaFieldMixin:
 
     @classmethod
     def to_template(cls) -> Dict[str, Any]:
-        from colibri.utils.class_utils import get_class
         from colibri import DataSet
+        from colibri.utils.class_utils import get_class
 
         scheme = cls.to_scheme()
 
@@ -591,45 +593,49 @@ class MetaFieldMixin:
 
         for scheme_object, variables in scheme.items():
             path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
-            if not path and 'category' in variables:
-                path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
-                variables.pop('category', None)
-            #if path is None and scheme_object == 'Archetypes':
+            if not path and "category" in variables:
+                path = ColibriProjectPaths.get_path_from_object_type(
+                    variables["category"]
+                )
+                variables.pop("category", None)
+            # if path is None and scheme_object == 'Archetypes':
             #    path = ColibriProjectPaths.get_path_from_object_type('Archetype')
             if path:
                 level = project_dict
-                for attribute in path.split('.'):
+                for attribute in path.split("."):
                     if not attribute in level:
                         level[attribute] = {}
                     else:
                         level = level[attribute]
                 object_name = scheme_object
                 id = scheme_object + "1"
-                if 'object_collection' not in level:
+                if "object_collection" not in level:
                     level[attribute] = {id: {}}
 
                 object_dict = {}
                 if object_name not in level:
-                    object_dict['type'] = object_name
+                    object_dict["type"] = object_name
                     model_class = get_class(
                         class_name=object_name,
                         output_type=ColibriObjectTypes.PROJECT_OBJECT,
                     )
-                    model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                    model_metadata: FullArgSpec = getfullargspec(
+                        model_class.__init__
+                    )
                     required_parameters: List[str] = model_metadata.args[1:]
                     for parameter in required_parameters:
                         object_dict[parameter] = None
 
                 for name, variable in variables.items():
-                    if 'default' in variable:
-                        object_dict[name] = variable['default']
+                    if "default" in variable:
+                        object_dict[name] = variable["default"]
 
-                if 'object_collection' in level:
-                    level['object_collection'] = [object_dict]
+                if "object_collection" in level:
+                    level["object_collection"] = [object_dict]
                 else:
                     level[attribute][id] = object_dict
 
-        project_dict['project']['archetype_collection'] = scheme['Archetypes']
+        project_dict["project"]["archetype_collection"] = scheme["Archetypes"]
 
         return project_dict
 
@@ -664,6 +670,7 @@ class MetaFieldMixin:
         >>> limited_generator.q_consumed
         """
         from colibri.core import ProjectData
+
         name: str = f"{ProjectData.INSTANCE_NAME}_1"
         project_data: ProjectData = ProjectData(name=name, data=template)
         model_metadata: FullArgSpec = getfullargspec(cls.__init__)

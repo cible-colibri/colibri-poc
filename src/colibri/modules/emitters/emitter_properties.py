@@ -197,7 +197,9 @@ class EmitterProperties(Emitter):
             # TODO: Check when there are more than one space for an emitter
             space_id: str = emitter_properties["spaces"][0]
             is_electric: bool = emitter_properties["emitter_type"] == "electric"
-            is_hydraulic: bool = emitter_properties["emitter_type"] == "hydraulic"
+            is_hydraulic: bool = (
+                emitter_properties["emitter_type"] == "hydraulic"
+            )
             is_cooling_mode: bool = self.operating_modes[space_id] == "cooling"
             is_heating_mode: bool = self.operating_modes[space_id] == "heating"
             # Electric emitters
@@ -223,9 +225,13 @@ class EmitterProperties(Emitter):
                 emitter_properties["electric_load"] = None
                 inlet_temperature: float = emitter_properties["temperature_out"]
                 if is_hydraulic and is_cooling_mode:
-                    inlet_temperature = emitter_properties["nominal_cooling_supply_temperature"]
+                    inlet_temperature = emitter_properties[
+                        "nominal_cooling_supply_temperature"
+                    ]
                 if is_hydraulic and is_heating_mode:
-                    inlet_temperature = emitter_properties["nominal_heating_supply_temperature"]
+                    inlet_temperature = emitter_properties[
+                        "nominal_heating_supply_temperature"
+                    ]
                 emitter_properties["temperature_in"] = inlet_temperature
                 emitter_properties["phi_radiative"] = (
                     self.heat_demands[space_id]
