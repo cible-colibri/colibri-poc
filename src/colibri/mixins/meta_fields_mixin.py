@@ -32,7 +32,7 @@ from colibri.utils.data_utils import turn_format_to_string
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
     Roles,
-    Units,
+    Units, ColibriProjectPaths, ColibriObjectTypes,
 )
 from colibri.utils.exceptions_utils import AttachmentError
 
@@ -521,7 +521,7 @@ class MetaFieldMixin:
             if default_value is not None:
                 field_data.update({DEFAULT: default_value})
             # Regular field
-            if (
+            if ( #why?
                 category
                 not in [
                     ColibriProjectObjects.BOUNDARY_OBJECT,
@@ -578,3 +578,93 @@ class MetaFieldMixin:
                 scheme[ELEMENT_OBJECT][from_element_object][field_name] = (
                     field_data
                 )
+
+    @classmethod
+    def to_template(cls) -> Dict[str, Any]:
+        from colibri.utils.class_utils import get_class
+        from colibri import DataSet
+
+        scheme = cls.to_scheme()
+
+        data_set = DataSet(modules=[str(cls)])
+        project_dict = data_set.to_dict()
+
+        for scheme_object, variables in scheme.items():
+            path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
+            if not path and 'category' in variables:
+                path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
+                variables.pop('category', None)
+            #if path is None and scheme_object == 'Archetypes':
+            #    path = ColibriProjectPaths.get_path_from_object_type('Archetype')
+            if path:
+                level = project_dict
+                for attribute in path.split('.'):
+                    if not attribute in level:
+                        level[attribute] = {}
+                    else:
+                        level = level[attribute]
+                object_name = scheme_object
+                if 'object_collection' not in level:
+                    id = scheme_object + "1"
+                    level[attribute] = {id: {}}
+                    level = level[attribute][id]
+                else:
+                    level = level['object_collection']
+                if object_name not in level:
+                    level['type'] = object_name
+                    model_class = get_class(
+                        class_name=object_name,
+                        output_type=ColibriObjectTypes.PROJECT_OBJECT,
+                    )
+                    model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                    required_parameters: List[str] = model_metadata.args[1:]
+                    for parameter in required_parameters:
+                        level[parameter] = None
+
+                for name, variable in variables.items():
+                    if 'default' in variable:
+                        level[name] = variable['default']
+
+        project_dict['project']['archetype_collection'] = scheme['Archetypes']
+
+        return project_dict
+
+    # TODO: Any -> Module instance
+    @classmethod
+    def from_template(cls, template: Dict[str, Any]) -> object:
+        """Create a module instance ready to be used from a template
+        specific to the module
+
+        Parameters
+        ----------
+        template: Dict[str, Any]
+            Specific template for the module
+
+        Returns
+        -------
+        object
+            Module instance
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> limited_generator = LimitedGenerator.from_template(template=template)
+        >>> limited_generator.initialize()
+        >>> limited_generator.run(time_step=1, number_of_iterations=1)
+        >>> limited_generator.end_time_step(time_step=1)
+        >>> limited_generator.end_iteration(time_step=1)
+        >>> limited_generator.end_simulation()
+        >>> limited_generator.q_consumed
+        """
+        from colibri.core import ProjectData
+        name: str = f"{ProjectData.INSTANCE_NAME}_1"
+        project_data: ProjectData = ProjectData(name=name, data=template)
+        model_metadata: FullArgSpec = getfullargspec(cls.__init__)
+        required_parameters: List[str] = model_metadata.args[1:]
+        parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}
+        if ProjectData.INSTANCE_NAME in required_parameters:
+            parameters.update({ProjectData.INSTANCE_NAME: project_data})
+        return cls(**parameters)

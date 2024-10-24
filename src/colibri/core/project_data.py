@@ -7,18 +7,15 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from colibri.config.constants import (
     ARCHETYPE_COLLECTION,
     BOUNDARY_COLLECTION,
     COLLECTION,
     JUNCTION,
-    LINEAR_JUNCTION,
     NODE_COLLECTION,
     PROJECT,
-    PUNCTUAL_JUNCTION,
-    SEGMENT,
     SEGMENTS,
     SPACE,
     SPACE_COLLECTION,
@@ -50,7 +47,9 @@ from colibri.utils.enums_utils import (
 class ProjectData(Module):
     """Class representing the project's data (structure of the project)."""
 
-    def __init__(self, name: str, data: Union[dict, Path]):
+    INSTANCE_NAME: str = "project_data"
+
+    def __init__(self, name: str, data: Union[dict, Path]) -> None:
         """Initialize a new ProjectData instance."""
         super().__init__(name=name)
         self.project_file = data if isinstance(data, Path) is True else False
@@ -185,7 +184,8 @@ class ProjectData(Module):
         for boundary_name, boundary_data in boundary_collection.items():
             segments_data: Dict[str, Any] = boundary_data.pop(SEGMENTS, [])
             boundary: Boundary = self.create_element_object(
-                element_data=boundary_data
+                element_data=boundary_data,
+                class_signature=Boundary,
             )
             boundary.segments = self.get_segments(
                 segments_data=segments_data,
@@ -249,7 +249,7 @@ class ProjectData(Module):
         return junction
 
     def create_element_object(
-        self, element_data: Union[Dict[str, Any], List[Dict[str, Any]]]
+        self, element_data: Union[Dict[str, Any], List[Dict[str, Any]]], class_signature: Optional[Type] = None,
     ):
         is_element_data_list: bool = isinstance(element_data, list)
         is_element_data_dict: bool = isinstance(element_data, dict)
@@ -294,6 +294,13 @@ class ProjectData(Module):
                     for parameter_name, parameter_value in class_parameters.items()
                 }
             )
+        if is_element_data_dict and (not does_element_have_archetype):
+            return class_signature(**{
+                    parameter_name: self.create_element_object(
+                        element_data=parameter_value
+                    )
+                    for parameter_name, parameter_value in element_data.items()
+                })
 
     def get_archetype_data(self, object_data: dict) -> Dict[str, Any]:
         """Get archetype data associated to an object
@@ -326,37 +333,3 @@ class ProjectData(Module):
             ARCHETYPE_COLLECTION
         ][archetype_type_key][archetype_type_id]
         return archetype_data
-
-
-if __name__ == "__main__":
-    from colibri.config.constants import LOGGER
-
-    project_file_example: Path = Path(
-        r"D:\developments\sandbox\colibri\src\tests\data\house_1.json"
-    )
-    project_data_example: ProjectData = ProjectData(
-        name="project-data",
-        data=project_file_example,
-    )
-    for boundary_example in project_data_example.boundaries:
-        print(f"{boundary_example.id = } [{boundary_example.label = }]")
-        for segment in boundary_example.segments:
-            print(f"{segment = }")
-            print(f"{segment.junction = }")
-        for collection_object in boundary_example.object_collection:
-            print(f"{collection_object = }")
-        print("")
-
-    """
-    print(project_data_example)
-    print(project_data_example.spaces)
-    print(project_data_example.boundaries)
-    print(project_data_example.boundaries[1])
-    print(project_data_example.boundaries[1].label)
-    print(project_data_example.boundaries[1].object_collection)
-    for boundary_example in project_data_example.boundaries:
-        print(
-            f"{boundary_example.id} [{boundary_example.label}]: "
-            f"{boundary_example.segments} vs {boundary_example.object_collection}"
-        )
-    """

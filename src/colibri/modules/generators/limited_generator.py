@@ -51,7 +51,7 @@ class LimitedGenerator(Generator):
             required=[
                 Parameter(
                     name="pn",
-                    default_value=None,
+                    default_value=0.9,
                     description="Nominal power.",
                     format=float,
                     min=0,
@@ -88,7 +88,7 @@ class LimitedGenerator(Generator):
                 boundary_object
                 for boundary in space.boundaries
                 for boundary_object in boundary.object_collection
-                if boundary_object.type == "emitter"
+                if boundary_object.type.lower() == "emitter"
             ]
             max_q: float = sum([emitter.pn for emitter in emitters])
             q_needs: float = self.q_needs.get(
@@ -115,14 +115,61 @@ class LimitedGenerator(Generator):
 
 
 if __name__ == "__main__":
-    import json
+    from typing import Any
 
     limited_generator: LimitedGenerator = LimitedGenerator(
         name="limited-generator-1"
     )
-    print(f"{limited_generator = }")
-    print(f"{limited_generator.inputs = }")
-    print(f"{limited_generator.outputs = }")
-    print(f"{limited_generator.parameters = }")
-    print(f"{LimitedGenerator.to_scheme() = }")
-    print(json.dumps(LimitedGenerator.to_scheme(), indent=2))
+    template: Dict[str, Any] = LimitedGenerator.to_template()
+    template: Dict[str, Any] = {
+        "project": {
+            "id": "project-123",
+            "simulation_parameters": {
+                "time_steps": 168,
+                "verbose": False,
+                "iterate_for_convergence": True,
+                "maximum_number_of_iterations": 10
+            },
+            "module_collection": {
+            },
+            "building_land": {},
+            "node_collection": {
+                "space_collection": {
+                    "space-1": {
+                        "id": "space-1",
+                        "label": "space-1",
+                        "q_needs": 75.0
+                    }
+                }
+            },
+            "boundary_collection": {
+                "boundary-1": {
+                    "id": "boundary-1",
+                    "label": "boundary-1",
+                    "side_1": "space-1",
+                    "side_2": "exterior",
+                    "area": None,
+                    "azimuth": None,
+                    "tilt": None,
+                    "origin": None,
+                    "segments": [],
+                    "object_collection": [{"id": "emitter-1", "type": "Emitter", "type_id": "emitter_archetype_1", "pn": 200}]
+                }
+            },
+            "archetype_collection": {
+                "Emitter_types": {
+                    "emitter_archetype_1": {
+                        "efficiency": 0.9,
+                    },
+                }
+            }
+        }
+    }
+    limited_generator_2: LimitedGenerator = LimitedGenerator.from_template(template=template)
+    limited_generator_2.initialize()
+    limited_generator_2.run(time_step=1, number_of_iterations=1)
+    limited_generator_2.end_time_step(time_step=1)
+    limited_generator_2.end_iteration(time_step=1)
+    limited_generator_2.end_simulation()
+    print(limited_generator_2.q_provided)
+    print(limited_generator_2.q_consumed)
