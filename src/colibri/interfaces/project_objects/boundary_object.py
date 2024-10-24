@@ -148,7 +148,7 @@ if __name__ == "__main__":
     boundary_object: BoundaryObject = BoundaryObject(
         id="window_2",
         label="South kitchen window",
-        type="window",
+        type="Window",
         type_id="typical_window",
         x_relative_position=1.0,
         y_relative_position=1.0,

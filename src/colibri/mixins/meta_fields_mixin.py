@@ -5,6 +5,7 @@ related to fields' metadata for the `colibri` package.
 
 from __future__ import annotations
 
+import inspect
 from inspect import FullArgSpec, getfullargspec
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
@@ -32,7 +33,7 @@ from colibri.utils.data_utils import turn_format_to_string
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
     Roles,
-    Units, ColibriProjectPaths,
+    Units, ColibriProjectPaths, ColibriObjectTypes,
 )
 from colibri.utils.exceptions_utils import AttachmentError
 
@@ -581,9 +582,11 @@ class MetaFieldMixin:
 
     @classmethod
     def to_template(cls) -> Dict[str, Any]:
+        from colibri.utils.class_utils import get_class
+        from colibri import DataSet
+
         scheme = cls.to_scheme()
 
-        from colibri import DataSet
         data_set = DataSet(modules=[str(cls)])
         project_dict = data_set.to_dict()
 
@@ -599,11 +602,26 @@ class MetaFieldMixin:
                 for attribute in path.split('.'):
                     if not attribute in level:
                         level[attribute] = {}
-                    level = level[attribute]
+                    else:
+                        level = level[attribute]
                 object_name = scheme_object
+                if 'object_collection' not in level:
+                    id = scheme_object + "1"
+                    level[attribute] = {id: {}}
+                    level = level[attribute][id]
+                else:
+                    level = level['object_collection']
                 if object_name not in level:
-                    level[object_name] = {}
-                    level = level[object_name]
+                    level['type'] = object_name
+                    model_class = get_class(
+                        class_name=object_name,
+                        output_type=ColibriObjectTypes.PROJECT_OBJECT,
+                    )
+                    model_metadata: FullArgSpec = inspect.getfullargspec(model_class.__init__)
+                    required_parameters: List[str] = model_metadata.args[1:]
+                    for parameter in required_parameters:
+                        level[parameter] = None
+
                 for name, variable in variables.items():
                     if 'default' in variable:
                         level[name] = variable['default']
@@ -611,3 +629,10 @@ class MetaFieldMixin:
         project_dict['project']['archetype_collection'] = scheme['Archetypes']
 
         return project_dict
+
+    def from_template(self, scheme) -> None:
+        from colibri import ProjectData
+        project_data = ProjectData("ProjectData", scheme)
+
+        for k,v in scheme.items():
+            pass

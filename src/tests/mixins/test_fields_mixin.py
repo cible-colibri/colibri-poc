@@ -14,4 +14,7 @@ def test_field_mixin() -> None:
     #scheme1 = acv.to_template()
     scheme2 = lg.to_template()
 
+    lg2 = LimitedGenerator("lg-2")
+    lg2.from_template(scheme2)
+
     pass

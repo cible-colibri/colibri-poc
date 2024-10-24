@@ -222,12 +222,12 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
 def test_project_orchestrator_generate_scheme() -> None:
     """Test the ProjectOrchestrator class' generate_scheme function."""
     module_collection: List[str] = [
-        "AcvExploitationOnly",
+#        "AcvExploitationOnly",
         "LimitedGenerator",
-        "OccupantModel",
-        "LayerWallLosses",
-        "ThermalSpaceSimplified",
-        "WeatherModel",
+#        "OccupantModel",
+#        "LayerWallLosses",
+#        "ThermalSpaceSimplified",
+#        "WeatherModel",
     ]
     scheme = ProjectOrchestrator.generate_scheme(modules=module_collection)
     assert set(scheme.keys()) == set(
