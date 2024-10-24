@@ -145,8 +145,6 @@ if __name__ == "__main__":
             "boundary_collection": {
                 "boundary-1": {
                     "id": "boundary-1",
-                    "type": "Boundary",
-                    "type_id": "boundary_archetype_1",
                     "label": "boundary-1",
                     "side_1": "space-1",
                     "side_2": "exterior",
@@ -159,10 +157,6 @@ if __name__ == "__main__":
                 }
             },
             "archetype_collection": {
-                "Boundary_types": {
-                    "boundary_archetype_1": {
-                    },
-                },
                 "Emitter_types": {
                     "emitter_archetype_1": {
                         "efficiency": 0.9,

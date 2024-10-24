@@ -660,7 +660,8 @@ class MetaFieldMixin:
         >>> limited_generator.q_consumed
         """
         from colibri.core import ProjectData
-        project_data: ProjectData = ProjectData(name="project-data-1", data=template)
+        name: str = f"{ProjectData.INSTANCE_NAME}_1"
+        project_data: ProjectData = ProjectData(name=name, data=template)
         for space in project_data.spaces:
             print(space.boundaries)
         for boundary in project_data.boundaries:
@@ -668,6 +669,6 @@ class MetaFieldMixin:
         model_metadata: FullArgSpec = getfullargspec(cls.__init__)
         required_parameters: List[str] = model_metadata.args[1:]
         parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}
-        if "project_data" in required_parameters:
-            parameters.update({"project_data": project_data})
+        if ProjectData.INSTANCE_NAME in required_parameters:
+            parameters.update({ProjectData.INSTANCE_NAME: project_data})
         return cls(**parameters)
