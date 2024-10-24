@@ -634,6 +634,10 @@ class MetaFieldMixin:
     def from_template(cls, template: Dict[str, Any]) -> object:
         from colibri.core import ProjectData
         project_data: ProjectData = ProjectData(name="project-data-1", data=template)
+        for space in project_data.spaces:
+            print(space.boundaries)
+        for boundary in project_data.boundaries:
+            print(boundary.object_collection)
         model_metadata: FullArgSpec = getfullargspec(cls.__init__)
         required_parameters: List[str] = model_metadata.args[1:]
         parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}

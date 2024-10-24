@@ -138,17 +138,18 @@ if __name__ == "__main__":
                     "space-1": {
                         "id": "space-1",
                         "label": "space-1",
-                        "boundaries": [],
-                        "q_needs": 0.0
+                        "q_needs": 75.0
                     }
                 }
             },
             "boundary_collection": {
                 "boundary-1": {
                     "id": "boundary-1",
+                    "type": "Boundary",
+                    "type_id": "boundary_archetype_1",
                     "label": "boundary-1",
-                    "side_1": None,
-                    "side_2": None,
+                    "side_1": "space-1",
+                    "side_2": "exterior",
                     "area": None,
                     "azimuth": None,
                     "tilt": None,
