@@ -672,6 +672,11 @@ class MetaFieldMixin:
         model_metadata: FullArgSpec = getfullargspec(cls.__init__)
         required_parameters: List[str] = model_metadata.args[1:]
         parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}
+        module_collection: Dict[str, Dict[str, Any]] = template["project"]["module_collection"]
+        # Module needs some specific parameters
+        if cls.__name__ in module_collection:
+            parameters.update(module_collection[cls.__name__])
+        # Module needs ProjectData instance "project_data"
         if ProjectData.INSTANCE_NAME in required_parameters:
             parameters.update({ProjectData.INSTANCE_NAME: project_data})
         return cls(**parameters)
