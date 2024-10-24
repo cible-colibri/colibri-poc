@@ -625,8 +625,14 @@ class MetaFieldMixin:
                     level.append(object_dict)
                 else:
                     level[id] = object_dict
+        archetypes = scheme['Archetypes']
+        archetypes_instance = {}
 
-        project_dict['project']['archetype_collection'] = scheme['Archetypes']
+        for k,v in archetypes.items():
+            name = k + "1"
+            archetypes_instance[k] = { name: v}
+
+        project_dict['project']['archetype_collection'] = archetypes
 
         return project_dict
 
