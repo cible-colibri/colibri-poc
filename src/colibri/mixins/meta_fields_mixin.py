@@ -648,6 +648,8 @@ class MetaFieldMixin:
         del archetypes_instance['Emitter']
         project_dict['project']['archetype_collection'] = archetypes_instance
 
+        project_dict['project']['module_collection'] = {cls.__name__ : {}}
+
         return project_dict
 
     # TODO: Any -> Module instance
