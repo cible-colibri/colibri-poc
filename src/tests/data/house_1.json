@@ -373,7 +373,7 @@
                     },
                     {
                         "id": "emitter_1",
-                        "type": "Emitter",
+                        "type": "emitter",
                         "type_id": "electric_convector",
                         "on_side": "side_1_to_side_2",
                         "x_relative_position": 3,
