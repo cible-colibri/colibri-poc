@@ -7,18 +7,15 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 from colibri.config.constants import (
     ARCHETYPE_COLLECTION,
     BOUNDARY_COLLECTION,
     COLLECTION,
     JUNCTION,
-    LINEAR_JUNCTION,
     NODE_COLLECTION,
     PROJECT,
-    PUNCTUAL_JUNCTION,
-    SEGMENT,
     SEGMENTS,
     SPACE,
     SPACE_COLLECTION,
@@ -168,7 +165,8 @@ class ProjectData(Module):
         for boundary_name, boundary_data in boundary_collection.items():
             segments_data: Dict[str, Any] = boundary_data.pop(SEGMENTS, [])
             boundary: Boundary = self.create_element_object(
-                element_data=boundary_data
+                element_data=boundary_data,
+                class_=Boundary,
             )
             boundary.segments = self.get_segments(
                 segments_data=segments_data,
@@ -225,7 +223,7 @@ class ProjectData(Module):
         return junction
 
     def create_element_object(
-        self, element_data: Union[Dict[str, Any], List[Dict[str, Any]]]
+        self, element_data: Union[Dict[str, Any], List[Dict[str, Any]]], class_: Optional[Type] = None,
     ):
         is_element_data_list: bool = isinstance(element_data, list)
         is_element_data_dict: bool = isinstance(element_data, dict)
@@ -270,6 +268,8 @@ class ProjectData(Module):
                     for parameter_name, parameter_value in class_parameters.items()
                 }
             )
+        if is_element_data_dict and (not does_element_have_archetype):
+            return class_(**element_data)
 
     def get_archetype_data(self, object_data: dict) -> Dict[str, Any]:
         """Get archetype data associated to an object

@@ -5,7 +5,6 @@ related to fields' metadata for the `colibri` package.
 
 from __future__ import annotations
 
-import inspect
 from inspect import FullArgSpec, getfullargspec
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
@@ -617,7 +616,7 @@ class MetaFieldMixin:
                         class_name=object_name,
                         output_type=ColibriObjectTypes.PROJECT_OBJECT,
                     )
-                    model_metadata: FullArgSpec = inspect.getfullargspec(model_class.__init__)
+                    model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
                     required_parameters: List[str] = model_metadata.args[1:]
                     for parameter in required_parameters:
                         level[parameter] = None
@@ -630,9 +629,14 @@ class MetaFieldMixin:
 
         return project_dict
 
-    def from_template(self, scheme) -> None:
-        from colibri import ProjectData
-        project_data = ProjectData("ProjectData", scheme)
-
-        for k,v in scheme.items():
-            pass
+    # TODO: Any -> Module instance
+    @classmethod
+    def from_template(cls, template: Dict[str, Any]) -> object:
+        from colibri.core import ProjectData
+        project_data: ProjectData = ProjectData(name="project-data-1", data=template)
+        model_metadata: FullArgSpec = getfullargspec(cls.__init__)
+        required_parameters: List[str] = model_metadata.args[1:]
+        parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}
+        if "project_data" in required_parameters:
+            parameters.update({"project_data": project_data})
+        return cls(**parameters)
