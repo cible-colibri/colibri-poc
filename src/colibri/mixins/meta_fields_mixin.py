@@ -582,31 +582,25 @@ class MetaFieldMixin:
     @classmethod
     def to_template(cls) -> Dict[str, Any]:
         from colibri.utils.class_utils import get_class
-        from colibri import DataSet
 
         scheme = cls.to_scheme()
 
-        data_set = DataSet(modules=[str(cls)])
-        project_dict = data_set.to_dict()
+        project_dict = {}
 
         for scheme_object, variables in scheme.items():
             path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
             if not path and 'category' in variables:
                 path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
                 variables.pop('category', None)
-            #if path is None and scheme_object == 'Archetypes':
-            #    path = ColibriProjectPaths.get_path_from_object_type('Archetype')
             if path:
                 level = project_dict
                 for attribute in path.split('.'):
-                    if not attribute in level:
+                    if attribute not in level:
                         level[attribute] = {}
-                    else:
-                        level = level[attribute]
+                    level = level[attribute]
+
                 object_name = scheme_object
                 id = scheme_object + "1"
-                if 'object_collection' not in level:
-                    level[attribute] = {id: {}}
 
                 object_dict = {}
                 if object_name not in level:
@@ -624,10 +618,7 @@ class MetaFieldMixin:
                     if 'default' in variable:
                         object_dict[name] = variable['default']
 
-                if 'object_collection' in level:
-                    level['object_collection'] = [object_dict]
-                else:
-                    level[attribute][id] = object_dict
+                level[id] = object_dict
 
         project_dict['project']['archetype_collection'] = scheme['Archetypes']
 

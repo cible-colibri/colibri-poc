@@ -22,7 +22,7 @@ class ColibriProjectObjects(Enum):
 class ColibriProjectPaths(Enum):
     ARCHETYPE = ProjectObjectCategories(ColibriProjectObjects.ARCHETYPE, "project.archetype_collection")
     BOUNDARY = ProjectObjectCategories(ColibriProjectObjects.BOUNDARY, "project.boundary_collection")
-    BOUNDARY_OBJECT = ProjectObjectCategories(ColibriProjectObjects.BOUNDARY_OBJECT, "project.boundary_collection.object_collection")
+    BOUNDARY_OBJECT = ProjectObjectCategories(ColibriProjectObjects.BOUNDARY_OBJECT, "project.boundary_collection.Boundary.object_collection")
     ELEMENT_OBJECT = ProjectObjectCategories(ColibriProjectObjects.ELEMENT_OBJECT, ".")
     PROJECT = ProjectObjectCategories(ColibriProjectObjects.PROJECT, "project")
     SPACE = ProjectObjectCategories(ColibriProjectObjects.SPACE, "project.node_collection.space_collection")
