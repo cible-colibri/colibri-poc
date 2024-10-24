@@ -15,8 +15,8 @@ def test_field_mixin() -> None:
     scheme2 = LimitedGenerator.to_template()
 
     lg2 : LimitedGenerator = LimitedGenerator.from_template(scheme2)
-
-    lg2.run()
+    lg2.initialize()
+    lg2.run(1,1)
 
     print(lg2.q_consumed)
     pass

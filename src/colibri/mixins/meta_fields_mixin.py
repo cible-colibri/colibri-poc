@@ -596,8 +596,17 @@ class MetaFieldMixin:
                 level = project_dict
                 for attribute in path.split('.'):
                     if attribute not in level:
-                        if attribute == 'object_collection':
-                            level[attribute] = []
+                        if attribute == 'Boundary':
+                            model_class = get_class(
+                                class_name='Boundary',
+                                output_type=ColibriObjectTypes.PROJECT_OBJECT,
+                            )
+                            model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                            required_parameters: List[str] = model_metadata.args[1:]
+                            level['Boundary'] = {k: None for k in required_parameters}
+                            level['Boundary']['object_collection'] = []
+                            level['Boundary']['segments'] = []
+                            level['Boundary']['side_1'] = 'Space1'
                         else:
                             level[attribute] = {}
                     level = level[attribute]
@@ -608,6 +617,7 @@ class MetaFieldMixin:
                 object_dict = {}
                 if object_name not in level:
                     object_dict['type'] = object_name
+                    object_dict['type_id'] = object_name + '1'
                     model_class = get_class(
                         class_name=object_name,
                         output_type=ColibriObjectTypes.PROJECT_OBJECT,
@@ -615,7 +625,8 @@ class MetaFieldMixin:
                     model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
                     required_parameters: List[str] = model_metadata.args[1:]
                     for parameter in required_parameters:
-                        object_dict[parameter] = None
+                        if parameter != 'boundaries':
+                            object_dict[parameter] = None
 
                 for name, variable in variables.items():
                     if 'default' in variable:
@@ -630,9 +641,12 @@ class MetaFieldMixin:
 
         for k,v in archetypes.items():
             name = k + "1"
-            archetypes_instance[k] = { name: v}
+            archetypes_instance[k] = { name: {k_: v_['default'] for k_, v_ in v.items() if k_ != "category"}}
 
-        project_dict['project']['archetype_collection'] = archetypes
+        archetypes_instance['Emitter_types'] = archetypes_instance['Emitter']
+        archetypes_instance['Emitter_types']
+        del archetypes_instance['Emitter']
+        project_dict['project']['archetype_collection'] = archetypes_instance
 
         return project_dict
 
