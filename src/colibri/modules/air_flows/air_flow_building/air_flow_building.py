@@ -193,16 +193,18 @@ class AirFlowBuilding(AirFlow):
             self.internal_solver = Solvers.FULLY_ITERATIVE
         # Simulate without pressure model
         if not self.has_pressure_model:
-            self.flow_paths = self.nodes = self.flow_array = []
+            self.flow_paths = self.nodes = self.flow_rates = []
             self.pressures = 0
             self.previous_pressures = 0
             self._has_module_converged = True
         # For convergence plot of pressure model
         self.found = []
-
         return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
+        print(
+            f"[airflow ({time_step}, {number_of_iterations})] {self.space_temperatures = }"
+        )
         if self.has_pressure_model is False:
             return None
         # Maximum number of internal (th-p) iterations
@@ -243,9 +245,9 @@ class AirFlowBuilding(AirFlow):
         # Save pressures for next time step as initial guess
         self.previous_pressures = self.pressures
 
-        print(
-            f"[{time_step = } | {number_of_iterations = }] {self.flow_rates = } | {self.pressures = }"
-        )
+        # print(
+        #    f"[{time_step = } | {number_of_iterations = }] {self.flow_rates = } | {self.pressures = }"
+        # )
 
     def end_iteration(self, time_step: int) -> None: ...
 

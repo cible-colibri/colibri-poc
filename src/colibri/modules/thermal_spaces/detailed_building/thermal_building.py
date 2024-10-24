@@ -13,7 +13,7 @@ from pandas import DatetimeIndex, Series
 
 from colibri.core import ProjectData
 from colibri.core.fields import Parameter
-from colibri.interfaces import Building, ElementObject
+from colibri.interfaces import BoundaryObject, Building
 from colibri.modules.modules_constants import CP_AIR, DENSITY_AIR
 from colibri.modules.thermal_spaces.detailed_building.controls import (
     compute_ventilation_losses,
@@ -44,17 +44,38 @@ class ThermalBuilding(Building):
         blind_position: float = 1.0,
         sky_temperatures: Series = None,
         exterior_air_temperatures: Series = None,
+        rolling_exterior_air_temperatures: Series = None,
         direct_radiations: Series = None,
         diffuse_radiations: Series = None,
+        ground_temperatures: Series = None,
+        emitter_properties: Dict[str, Dict[str, Any]] = None,
+        flow_rates: List[List[Any]] = None,
+        heat_fluxes: Dict[str, float] = None,
+        operating_modes: Dict[str, str] = None,
         project_data: Optional[ProjectData] = None,
     ) -> None:
+        """Initialize a new ThermalBuilding instance."""
+        if emitter_properties is None:
+            emitter_properties: Dict[str, Dict[str, Any]] = dict()
+        if flow_rates is None:
+            flow_rates: List[List[Any]] = []
+        if heat_fluxes is None:
+            heat_fluxes: Dict[str, float] = dict()
+        if operating_modes is None:
+            operating_modes: Dict[str, str] = dict()
         super().__init__(
             name=name,
             blind_position=blind_position,
             sky_temperatures=sky_temperatures,
             exterior_air_temperatures=exterior_air_temperatures,
+            rolling_exterior_air_temperatures=rolling_exterior_air_temperatures,
             direct_radiations=direct_radiations,
             diffuse_radiations=diffuse_radiations,
+            ground_temperatures=ground_temperatures,
+            flow_rates=flow_rates,
+            emitter_properties=emitter_properties,
+            heat_fluxes=heat_fluxes,
+            operating_modes=operating_modes,
         )
         self.name = name
         # TODO: Associate to the project (time_step) instead of module?
@@ -331,13 +352,14 @@ class ThermalBuilding(Building):
         self.operating_mode = None
         self.setpoints = None
         self.index_states = None
-        self.index_inputs = None
+        self.input_signals_indices = None
         self.system_matrix_exponential = None
         self.control_matrix_exponential = None
         self.states = None
         self.previous_states = None
         self._has_module_converged = False
         self.ventilation_gains = None
+        self.previous_heat_fluxes = None
         # TODO: See how to get those? Module parameters?
         self.latitude = 47.73
         self.longitude = 2.4
@@ -350,8 +372,10 @@ class ThermalBuilding(Building):
         if (
             (self.sky_temperatures is None)
             or (self.exterior_air_temperatures is None)
+            or (self.rolling_exterior_air_temperatures is None)
             or (self.direct_radiations is None)
             or (self.diffuse_radiations is None)
+            or (self.ground_temperatures is None)
         ):
             return False
         # Simulation parameters
@@ -365,20 +389,34 @@ class ThermalBuilding(Building):
         number_of_spaces: int = len(self.project_data.spaces)
         self.heating_setpoints = np.zeros(number_of_spaces)
         self.cooling_setpoints = np.zeros(number_of_spaces)
-        self.operating_modes: List[str] = []
+        self.operating_modes = dict()
         for space_index, space in enumerate(self.project_data.spaces):
             self.heating_setpoints[space_index] = space.heating_set_point
             self.cooling_setpoints[space_index] = space.cooling_set_point
-            self.operating_modes += space.operating_modes
-        self.operating_modes = np.unique(self.operating_modes)
+            self.operating_modes[space.id] = space.operating_modes
         # Initialize outputs
         self.emitters_radiative_gains = np.zeros(number_of_spaces)
         self.emitters_convective_gains = np.zeros(number_of_spaces)
         self.emitters_latent_gains = np.zeros(number_of_spaces)
-        self.heat_fluxes = np.zeros(number_of_spaces)
+        self.heat_fluxes = {
+            space.id: 0.0
+            for space_index, space in enumerate(self.project_data.spaces)
+        }
+        self.space_temperatures = {
+            space.id: space.inside_air_temperature
+            for space in self.project_data.spaces
+        }
         return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
+        ep = {
+            e: {"electric_load": p.get("electric_load", 0.0)}
+            for e, p in self.emitter_properties.items()
+        }
+        print(f"[building ({time_step}, {number_of_iterations})] {ep = }")
+        print(
+            f"[building ({time_step}, {number_of_iterations})] {self.flow_rates = }"
+        )
         # Control modes
         if number_of_iterations == 1:
             # Compute operation mode based on the results of the last time step
@@ -389,54 +427,27 @@ class ThermalBuilding(Building):
             )
             self.operating_mode, self.setpoints = get_operation_mode(
                 indoor_temperatures=self.air_temperatures,
-                outdoor_temperature=self.my_weather.rolling_external_temperature[
+                outdoor_temperature=self.rolling_exterior_air_temperatures[
                     time_step
                 ],
-                heating_setpoints=self.setpoint_heating_vec,
-                cooling_setpoints=self.setpoint_cooling_vec,
+                heating_setpoints=self.heating_setpoints,
+                cooling_setpoints=self.cooling_setpoints,
                 operating_modes=self.operating_modes,
             )
             # Reset parameters for next time step
             # Set to True at each time step, before iterating
             self._has_module_converged = False
             self.found = []
-            # Impose supply temperature from generator based on operating mode
-            for index, space in enumerate(self.project_data.spaces):
-                emitters: List[ElementObject] = [
-                    boundary_object
-                    for boundary in space.boundaries
-                    for boundary_object in boundary.object_collection
-                    if boundary_object.__class__.__name__ == "Emitter"
-                ]
-                for emitter in emitters:
-                    # TODO: Créer un paramètre hydraulique.
-                    #       Est-ce que c'est à faire ici ce truc ?
-                    is_hydro_emitter: bool = emitter.type == "HydroEmitter"
-                    is_cooling_mode: bool = (
-                        self.operating_mode[index] == "cooling"
-                    )
-                    is_heating_mode: bool = (
-                        self.operating_mode[index] == "heating"
-                    )
-                    # TODO: last, pas last ? Pas initialisé en tout cas
-                    inlet_temperature: float = emitter.temperature_out
-                    if is_hydro_emitter and is_cooling_mode:
-                        inlet_temperature = (
-                            emitter.nominal_cooling_supply_temperature
-                        )
-                    if is_hydro_emitter and is_heating_mode:
-                        inlet_temperature = (
-                            emitter.nominal_heating_supply_temperature
-                        )
-                    emitter.temperature_in = inlet_temperature
         # Thermal model one at each time step, not in iteration
         self.compute_thermal_building_module_iteration(time_step=time_step)
         self.compute_convergence_flag(threshold=1e-1)
         # for convergence plotting
-        self.found.append(np.sum(self.hvac_flux_vec))
+        self.found.append(np.sum(self.heat_fluxes))
         self.store_space_temperatures_in_building()
 
-    def end_iteration(self, time_step: int) -> None: ...
+    def end_iteration(self, time_step: int) -> None:
+        self.previous_states = self.states
+        self.previous_heat_fluxes = self.heat_fluxes
 
     def end_time_step(self, time_step: int) -> None: ...
 
@@ -471,11 +482,14 @@ class ThermalBuilding(Building):
         # Compute the global u-values for final balances of outputs (not for calculation)
         set_u_values(spaces=self.project_data.spaces)
         # Create A (system) and B (control) matrices
-        system_matrix, control_matrix, self.index_states, self.index_inputs = (
-            generate_system_and_control_matrices(
-                spaces=self.project_data.spaces,
-                boundaries=self.project_data.boundaries,
-            )
+        (
+            system_matrix,
+            control_matrix,
+            self.index_states,
+            self.input_signals_indices,
+        ) = generate_system_and_control_matrices(
+            spaces=self.project_data.spaces,
+            boundaries=self.project_data.boundaries,
         )
         """
         print("\n\n\n")
@@ -499,13 +513,13 @@ class ThermalBuilding(Building):
             )
         )
         # Initialise several things
-        number_of_inputs: int = np.shape(control_matrix)[1]
-        number_of_states: int = np.shape(control_matrix)[0]
-        input_signals: int = np.zeros(number_of_inputs)
+        self.number_of_inputs: int = np.shape(control_matrix)[1]
+        self.number_of_states: int = np.shape(control_matrix)[0]
+        self.input_signals = np.zeros(self.number_of_inputs)
         # States in order: boundary nodes, window nodes, air nodes, mean radiant nodes
-        self.states = np.zeros(number_of_states) + 20.0
+        self.states = np.zeros(self.number_of_states) + 20.0
         # States in order: boundary nodes, window nodes, air nodes, mean radiant nodes
-        self.previous_states = np.zeros(number_of_states) + 20.0
+        self.previous_states = np.zeros(self.number_of_states) + 20.0
         # Generate global dict where results can be saved
         # TODO: Mettre dans la définition de la classe ?
         #       Mais pb connaissance de la taille des vecteurs
@@ -548,10 +562,10 @@ class ThermalBuilding(Building):
         ).values
         direct_radiation: ndarray = self.direct_radiations
         diffuse_radiation: ndarray = self.diffuse_radiations
-        solar_bound_arriving_flux_matrix: ndarray = np.zeros(
+        solar_boundary_arriving_fluxes: ndarray = np.zeros(
             (number_of_boundaries, self.number_of_simulation_steps)
         )
-        solar_transmitted_flux_matrix = np.zeros(
+        solar_transmitted_fluxes = np.zeros(
             (number_of_spaces, self.number_of_simulation_steps)
         )
         for boundary_index, boundary in enumerate(self.project_data.boundaries):
@@ -574,7 +588,7 @@ class ThermalBuilding(Building):
             boundary.direct_radiation = direct_radiation_on_plane
             boundary.diffuse_radiation = diffuse_radiation_on_plane
             boundary.angle_of_incidence = angle_of_incidence
-            solar_bound_arriving_flux_matrix[boundary_index, :] = (
+            solar_boundary_arriving_fluxes[boundary_index, :] = (
                 direct_radiation_on_plane + diffuse_radiation_on_plane
             )
         for space_index, space in enumerate(self.project_data.spaces):
@@ -643,12 +657,12 @@ class ThermalBuilding(Building):
                                 * window_transmission_factor
                                 * diffuse_radiation_on_plane
                             )  # [Brau88]
-                            solar_transmitted_flux_matrix[i, :] += (
+                            solar_transmitted_fluxes[i, :] += (
                                 direct_transmission + diffuse_transmission
                             ) * space.envelope_list[env]["area"]
             i += 1
             """
-        return solar_bound_arriving_flux_matrix, solar_transmitted_flux_matrix
+        return solar_boundary_arriving_fluxes, solar_transmitted_fluxes
 
     @staticmethod
     def sun_height_azimuth_and_weather_index(
@@ -709,18 +723,21 @@ class ThermalBuilding(Building):
     def initialize_system_parameters(self):
         number_of_spaces: int = len(self.project_data.spaces)
         # Heating and cooling system parameters
-        self.hvac_flux_vec_last = np.zeros(number_of_spaces)
+        self.previous_heat_fluxes = {
+            space.id: 0.0
+            for space_index, space in enumerate(self.project_data.spaces)
+        }
         self.window_losses = np.zeros(number_of_spaces)
         self.wall_losses = np.zeros(number_of_spaces)
         self.convective_gains_vec = np.zeros(number_of_spaces)
         self.radiative_gains_vec = np.zeros(number_of_spaces)
-        self.radiative_share_hvac_vec = np.zeros(number_of_spaces)
+        self.radiative_shares = np.zeros(number_of_spaces)
         self.convective_internal_gains_vec = np.zeros(number_of_spaces)
         self.radiative_internal_gains_vec = np.zeros(number_of_spaces)
-        self.max_heating_power_vec = np.zeros(
+        self.max_heating_powers = np.zeros(
             number_of_spaces
         )  # #TODO: update each time step for hydronic
-        self.max_cooling_power_vec = np.zeros(
+        self.max_cooling_powers = np.zeros(
             number_of_spaces
         )  # #TODO: update each time step for hydronic
         # Ventilation parameters
@@ -729,7 +746,7 @@ class ThermalBuilding(Building):
         self.efficiency_heat_recovery = 0.0
         self.ventilation_gain_multiplier = np.zeros(number_of_spaces)
         for space_index, space in enumerate(self.project_data.spaces):
-            emitters: List[ElementObject] = [
+            emitters: List[BoundaryObject] = [
                 boundary_object
                 for boundary in space.boundaries
                 for boundary_object in boundary.object_collection
@@ -739,13 +756,11 @@ class ThermalBuilding(Building):
                 # TODO: Quid si plusieurs émetteurs mais pas du même mode ?
                 #       ou pas du même radiative share ?
                 #       (ex: poële + plancher chauffant)
-                self.radiative_share_hvac_vec[space_index] = emitters[
-                    0
-                ].radiative_share
-                self.max_heating_power_vec[space_index] = emitters[
+                self.radiative_shares[space_index] = emitters[0].radiative_share
+                self.max_heating_powers[space_index] = emitters[
                     0
                 ].nominal_heating_power
-                self.max_cooling_power_vec[space_index] = emitters[
+                self.max_cooling_powers[space_index] = emitters[
                     0
                 ].nominal_cooling_power
             self.ventilation_gain_multiplier[space_index] = (
@@ -774,10 +789,13 @@ class ThermalBuilding(Building):
         --------
         >>> None
         """
-        self._has_module_converged = (
-            np.max(np.abs(self.heat_fluxes - self.previous_heat_fluxes))
-            <= threshold
-        )
+        _has_module_converged: List[bool] = []
+        for space_id, heat_flux in self.heat_fluxes.items():
+            _has_module_converged.append(
+                np.abs(heat_flux - self.previous_heat_fluxes[space_id])
+                <= threshold
+            )
+        self._has_module_converged = all(_has_module_converged)
 
     def compute_thermal_building_module_iteration(self, time_step: int) -> None:
         # Weather data
@@ -799,7 +817,7 @@ class ThermalBuilding(Building):
             + self.internal_gains * self.radiative_share_internal_gains
         )
         # TODO: Comment faire pour initialiser plus tôt toutes ces matrices ?
-        self.input_signals = np.zeros(self.n_inputs)
+        self.input_signals = np.zeros(self.number_of_inputs)
         set_input_signals_from_index(
             input_signals=self.input_signals,
             input_signals_indices=self.input_signals_indices,
@@ -816,14 +834,14 @@ class ThermalBuilding(Building):
             input_signals=self.input_signals,
             input_signals_indices=self.input_signals_indices,
             label="exterior_radiant_temperature",
-            value_to_set=exterior_air_temperature,
+            value_to_set=exterior_radiant_temperature,
         )
         set_input_signals_from_index(
             input_signals=self.input_signals,
             input_signals_indices=self.input_signals_indices,
             label="radiative_gain_boundary_external",
-            value_to_set=self.solar_bound_arriving_flux_matrix[:, time_step]
-            * self.boundary_absorption_array,
+            value_to_set=self.solar_boundary_arriving_fluxes[:, time_step]
+            * self.boundary_absorptions,
         )
         # Ventilation preprocessing
         ventilation_gain_coefficient = (
@@ -839,7 +857,7 @@ class ThermalBuilding(Building):
         )
         # emitter preprocessing
         for space_index, space in enumerate(self.project_data.spaces):
-            emitters: List[ElementObject] = [
+            emitters: List[BoundaryObject] = [
                 boundary_object
                 for boundary in space.boundaries
                 for boundary_object in boundary.object_collection
@@ -854,45 +872,46 @@ class ThermalBuilding(Building):
                     thermal_output_max = emitter.nominal_UA * (
                         emitter.temperature_in - air_temperatures[space_index]
                     )
-                    self.max_heating_power_vec[space_index] = max(
+                    self.max_heating_powers[space_index] = max(
                         0.0, thermal_output_max
                     )
-                    self.max_cooling_power_vec[space_index] = abs(
+                    self.max_cooling_powers[space_index] = abs(
                         min(0.0, thermal_output_max)
                     )
                 else:
-                    self.max_heating_power_vec[space_index] = (
+                    self.max_heating_powers[space_index] = (
                         emitter.nominal_heating_power
                     )
-                    self.max_cooling_power_vec[space_index] = (
+                    self.max_cooling_powers[space_index] = (
                         emitter.nominal_cooling_power
                     )
-        # space heating control
-        self.hvac_flux_vec = space_temperature_control_simple(
+        # Space heating control
+        self.heat_fluxes = space_temperature_control_simple(
             operating_modes=self.operating_modes,
-            temperature_setpoints=self.setpoint,
+            temperature_setpoints=self.setpoints,
             system_matrix=self.system_matrix_exponential,
             control_matrix=self.control_matrix_exponential,
             states_last=self.states,
             input_signals=self.input_signals,
             index_states=self.index_states,
-            index_inputs=self.index_inputs,
+            input_signals_indices=self.input_signals_indices,
             radiative_share_hvac=self.radiative_share_sensor,
-            max_heating_power=self.max_heating_power,
-            max_cooling_power=self.max_cooling_power,
+            max_heating_power=self.max_heating_powers,
+            max_cooling_power=self.max_cooling_powers,
             ventilation_gain_coefficients=ventilation_gain_coefficient,
             efficiency_heat_recovery=self.efficiency_heat_recovery,
             convective_internal_gains=self.convective_internal_gains,
             radiative_internal_gains=self.radiative_internal_gains,
             internal_temperatures=self.space_temperatures,
-            flows=self.flows,
+            flow_rates=self.flow_rates,
+            space_names=[space.id for space in self.project_data.spaces],
         )
 
-        # now apply the hvac_flux_vec and simulate the building a last time to obtain all results
+        # now apply the heat_fluxes and simulate the building a last time to obtain all results
 
         # recalculate ventilation losses
         if (
-            self.flow_array == 0 or len(self.flow_array) == 0
+            self.flow_rates == 0 or len(self.flow_rates) == 0
         ):  # without pressure calculation, only use air change rates for all rooms
             # update coefficient for flow x cp x dT
             air_temperatures = get_states_from_index(
@@ -904,15 +923,16 @@ class ThermalBuilding(Building):
         else:
             # with flow matrix and airflow calculation
             self.ventilation_gains = compute_ventilation_losses(
-                flows=self.flow_array,
+                flow_rates=self.flow_rates,
                 air_temperatures=self.space_temperatures,
                 outdoor_temperature=exterior_air_temperature,
                 efficiency_heat_recovery=self.efficiency_heat_recovery,
             )
-
-        # set heat flux from controller for "official building simulation"
-        self.convective_gains_vec = (
-            self.hvac_flux_vec * (1 - self.radiative_share_hvac_vec)
+        # Set heat flux from controller for "official building simulation"
+        # TODO: Find a better way to deal with heat_fluxes
+        #       being a dictionary and rest being arrays
+        self.convective_gains = (
+            list(self.heat_fluxes.values()) * (1 - self.radiative_shares)
             + self.ventilation_gains
             + self.convective_internal_gains_vec
         )
@@ -920,17 +940,17 @@ class ThermalBuilding(Building):
             input_signals=self.input_signals,
             input_signals_indices=self.input_signals_indices,
             label="space_convective_gain",
-            value_to_set=self.convective_gains_vec,
+            value_to_set=self.convective_gains,
         )
-        self.radiative_gains_vec = (
-            self.hvac_flux_vec * self.radiative_share_hvac_vec
+        self.radiative_gains = (
+            list(self.heat_fluxes.values()) * self.radiative_shares
             + self.radiative_internal_gains_vec
         )
         set_input_signals_from_index(
             input_signals=self.input_signals,
             input_signals_indices=self.input_signals_indices,
             label="space_radiative_gain",
-            value_to_set=self.radiative_gains_vec,
+            value_to_set=self.radiative_gains,
         )
         # apply corrected flux to the model
         self.states = run_state_space(
@@ -940,7 +960,7 @@ class ThermalBuilding(Building):
             input_signals=self.input_signals,
         )
         # for outputs
-        self.window_gains = self.solar_transmitted_flux_matrix[:, time_step]
+        self.window_gains = self.solar_transmitted_fluxes[:, time_step]
         # TODO: idem voir si dans une classe Space on veut y associer des résultats ou pas, si oui à chaque pas de temps ? en assessment en reprenant l'ensemble des matrices calculees ?
 
         # for i, space in enumerate(self.Spaces):
@@ -972,7 +992,7 @@ class ThermalBuilding(Building):
         self.results["solar_diffuse"] = np.zeros(
             (1, self.number_of_simulation_steps)
         )
-        self.results["hvac_flux_vec"] = np.zeros(
+        self.results["heat_fluxes"] = np.zeros(
             (number_of_spaces, self.number_of_simulation_steps)
         )
         self.results["setpoint"] = np.zeros(
@@ -997,7 +1017,7 @@ class ThermalBuilding(Building):
                 "ground_temperature",
                 "solar_direct",
                 "solar_diffuse",
-                "hvac_flux_vec",
+                "heat_fluxes",
                 "spaces_air",
                 "spaces_mean_radiant",
                 "windows",
@@ -1013,6 +1033,15 @@ class ThermalBuilding(Building):
         # Turn on this one to check simulation speed without data storage
         else:
             self.results["results"] = []
+
+    def store_space_temperatures_in_building(self) -> None:
+        air_temperatures = get_states_from_index(
+            states=self.states,
+            index_states=self.index_states,
+            label="spaces_air",
+        )
+        for space_index, space in enumerate(self.project_data.spaces):
+            self.space_temperatures[space.id] = air_temperatures[space_index]
 
 
 def radiation_process(
@@ -1145,466 +1174,3 @@ def radiation_process(
         direct_radiation_on_plane,
         angle_of_incidence,
     )
-
-
-if __name__ == "__main__":
-    from pandas import DataFrame
-
-    from colibri.core import ProjectData
-    from colibri.interfaces import BoundaryObject
-    from colibri.project_objects import Boundary, Space
-
-    data: DataFrame = pd.read_csv(
-        r"D:\developments\versioned\colibri\colibri\src\colibri\sky_temperatures.csv",
-        sep=";",
-        names=[
-            "sky_temperatures",
-            "exterior_air_temperatures",
-            "direct_radiations",
-            "diffuse_radiations",
-        ],
-        header=1,
-    )
-    space_1: Space = Space(
-        id="living_room_1",
-        label="living-room",
-        volume=52.25,
-        reference_area=20.9,
-        occupant_gains=200,
-        air_change_rate=0.41,
-        heating_set_point=20.0,
-        cooling_set_point=27.0,
-        operating_modes=["heating", "cooling"],
-    )
-    space_2: Space = Space(
-        id="kitchen_1",
-        label="kitchen",
-        volume=23.8,
-        reference_area=9.52,
-        occupant_gains=200,
-        air_change_rate=0.41,
-        heating_set_point=20.0,
-        cooling_set_point=27.0,
-        operating_modes=["heating", "cooling"],
-    )
-    layer_1: ElementObject = ElementObject.create_instance(
-        class_name="Layer",
-        fields={
-            "id": "beton_1",
-            "label": "béton 20cm",
-            "thermal_conductivity": 1.75,
-            "specific_heat": 0.9,
-            "density": 2_500,
-            "thickness": 0.2,
-            "constitutive_materials": [
-                {"share": 1, "constitutive_material_type": "cement"}
-            ],
-            "lca_impact_properties": None,
-            "end_of_life_properties": None,
-            "material_type": "concrete",
-            "light_reflectance": 0.8,
-            "albedo": 0.25,
-            "emissivity": 0.92,
-            "installation_year": 0.92,
-            "service_life": 50,
-        },
-    )
-    layer_2: ElementObject = ElementObject.create_instance(
-        class_name="Layer",
-        fields={
-            "id": "isolant_1",
-            "label": "isolant 15cm pour mur verticaux",
-            "thermal_conductivity": 0.035,
-            "specific_heat": 1.03,
-            "density": 25,
-            "thickness": 0.15,
-            "constitutive_materials": [
-                {"share": 1, "constitutive_material_type": "cement"}
-            ],
-            "lca_impact_properties": None,
-            "end_of_life_properties": None,
-            "material_type": "insulation",
-            "light_reflectance": 0.8,
-            "albedo": 0.25,
-            "emissivity": 0.92,
-            "installation_year": 0.92,
-            "service_life": 50,
-        },
-    )
-    layer_3: ElementObject = ElementObject.create_instance(
-        class_name="Layer",
-        fields={
-            "id": "isolant_toiture",
-            "label": "isolant 10cm pour toiture",
-            "thermal_conductivity": 0.035,
-            "specific_heat": 1.03,
-            "density": 25,
-            "thickness": 0.1,
-            "constitutive_materials": [
-                {"share": 1, "constitutive_material_type": "cement"}
-            ],
-            "lca_impact_properties": None,
-            "end_of_life_properties": None,
-            "material_type": "insulation",
-            "light_reflectance": 0.8,
-            "albedo": 0.25,
-            "emissivity": 0.92,
-            "installation_year": 0.92,
-            "service_life": 50,
-        },
-    )
-    layer_4: ElementObject = ElementObject.create_instance(
-        class_name="Layer",
-        fields={
-            "id": "isolant_plancher",
-            "label": "isolant 5cm pour plancher",
-            "thermal_conductivity": 0.035,
-            "specific_heat": 1.03,
-            "density": 25,
-            "thickness": 0.05,
-            "constitutive_materials": [
-                {"share": 1, "constitutive_material_type": "cement"}
-            ],
-            "lca_impact_properties": None,
-            "end_of_life_properties": None,
-            "material_type": "insulation",
-            "light_reflectance": 0.8,
-            "albedo": 0.25,
-            "emissivity": 0.92,
-            "installation_year": 0.92,
-            "service_life": 50,
-        },
-    )
-    layer_5: ElementObject = ElementObject.create_instance(
-        class_name="Layer",
-        fields={
-            "id": "vide_10",
-            "label": "vide 10cm",
-            "thermal_conductivity": 0.025,
-            "specific_heat": 1,
-            "density": 1.293,
-            "thickness": 0.1,
-            "constitutive_materials": [
-                {"share": 1, "constitutive_material_type": "cement"}
-            ],
-            "lca_impact_properties": None,
-            "end_of_life_properties": None,
-            "material_type": "insulation",
-            "light_reflectance": 0.8,
-            "albedo": 0.25,
-            "emissivity": 0.92,
-            "installation_year": 0.92,
-            "service_life": 50,
-        },
-    )
-    layer_6: ElementObject = ElementObject.create_instance(
-        class_name="Layer",
-        fields={
-            "id": "ba_13",
-            "label": "BA13",
-            "thermal_conductivity": 0.25,
-            "specific_heat": 1,
-            "density": 850,
-            "thickness": 0.013,
-            "constitutive_materials": [
-                {"share": 1, "constitutive_material_type": "cement"}
-            ],
-            "lca_impact_properties": None,
-            "end_of_life_properties": None,
-            "material_type": "plaster",
-            "light_reflectance": 0.8,
-            "albedo": 0.25,
-            "emissivity": 0.92,
-            "installation_year": 0.92,
-            "service_life": 50,
-        },
-    )
-    layers_1: List[ElementObject] = [layer_2, layer_1]
-    layers_2: List[ElementObject] = [layer_1, layer_3]
-    layers_3: List[ElementObject] = [layer_4, layer_1]
-    layers_4: List[ElementObject] = [layer_5, layer_6, layer_5]
-    window_1: BoundaryObject = BoundaryObject(
-        id="window_1",
-        label="Fenetre 1 vantail",
-        type="window",
-        type_id="typical_window",
-        x_length=0.6,
-        y_length=0.8,
-        x_relative_position=1.0,
-        y_relative_position=1.0,
-        z_relative_position=0.0,
-        on_side="side_1_to_side_2",
-        emissivities=[0.85, 0.85],
-        absorption=0.08,
-        u_value=3.0,
-        transmittance=0.7475 * (1 - 0.035),
-    )
-    window_2: BoundaryObject = BoundaryObject(
-        id="window_2",
-        label="Fenetre 1 vantail",
-        type="window",
-        type_id="typical_window",
-        x_length=0.6,
-        y_length=0.8,
-        x_relative_position=3.0,
-        y_relative_position=1.0,
-        z_relative_position=0.0,
-        on_side="side_1_to_side_2",
-        emissivities=[0.85, 0.85],
-        absorption=0.08,
-        u_value=3.0,
-        transmittance=0.7475 * (1 - 0.035),
-    )
-    window_3: BoundaryObject = BoundaryObject(
-        id="window_3",
-        label="Fenetre 1 vantail",
-        type="window",
-        type_id="typical_window",
-        x_length=0.6,
-        y_length=0.8,
-        x_relative_position=4.0,
-        y_relative_position=1.0,
-        z_relative_position=0.0,
-        on_side="side_1_to_side_2",
-        emissivities=[0.85, 0.85],
-        absorption=0.08,
-        u_value=3.0,
-        transmittance=0.7475 * (1 - 0.035),
-    )
-    window_4: BoundaryObject = BoundaryObject(
-        id="window_4",
-        label="Fenetre 1 vantail",
-        type="window",
-        type_id="typical_window",
-        x_length=0.6,
-        y_length=0.8,
-        x_relative_position=0.7,
-        y_relative_position=1,
-        z_relative_position=0.0,
-        on_side="side_1_to_side_2",
-        emissivities=[0.85, 0.85],
-        absorption=0.08,
-        u_value=3.0,
-        transmittance=0.7475 * (1 - 0.035),
-    )
-    boundary_1: Boundary = Boundary(
-        id="mur_salon_sud_1",
-        label="Mur salon sud",
-        side_1="exterior",
-        side_2="living_room_1",
-        azimuth=180,
-        tilt=90,
-        area=15.0,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-    )
-    boundary_2: Boundary = Boundary(
-        id="mur_salon_ouest_1",
-        label="Mur salon ouest",
-        side_1="exterior",
-        side_2="living_room_1",
-        azimuth=270,
-        tilt=90,
-        area=9.04,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-        object_collection=[window_1, window_2],
-    )
-    boundary_3: Boundary = Boundary(
-        id="mur_salon_nord_1",
-        label="Mur salon nord",
-        side_1="exterior",
-        side_2="living_room_1",
-        azimuth=0,
-        tilt=90,
-        area=15.0,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-    )
-    boundary_4: Boundary = Boundary(
-        id="mur_salon_est_1",
-        label="Mur salon est",
-        side_1="exterior",
-        side_2="living_room_1",
-        azimuth=90,
-        tilt=90,
-        area=5.0,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-    )
-    boundary_5: Boundary = Boundary(
-        id="plancher_salon",
-        label="Plancher salon",
-        side_1="living_room_1",
-        side_2="ground",
-        azimuth=0,
-        tilt=180,
-        area=24.0,
-        origin=None,
-        segments=None,
-        u_value=0.648,
-        layers=layers_3,
-    )
-    boundary_6: Boundary = Boundary(
-        id="plafond_salon",
-        label="Plafond salon",
-        side_1="exterior",
-        side_2="living_room_1",
-        azimuth=0,
-        tilt=0,
-        area=24.0,
-        origin=None,
-        segments=None,
-        u_value=0.336,
-        layers=layers_2,
-    )
-    boundary_7: Boundary = Boundary(
-        id="mur_salon_cuisine",
-        label="Mur salon cuisine",
-        side_1="kitchen_1",
-        side_2="living_room_1",
-        azimuth=90,
-        tilt=90,
-        area=5.0,
-        origin=None,
-        segments=None,
-        u_value=0.243,
-        layers=layers_4,
-    )
-    boundary_8: Boundary = Boundary(
-        id="mur_cuisine_nord_1",
-        label="Mur cuisine nord",
-        side_1="exterior",
-        side_2="kitchen_1",
-        azimuth=0,
-        tilt=90,
-        area=14.52,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-        object_collection=[window_3],
-    )
-    boundary_9: Boundary = Boundary(
-        id="mur_cuisine_est_1",
-        label="Mur cuisine est",
-        side_1="exterior",
-        side_2="kitchen_1",
-        azimuth=90,
-        tilt=90,
-        area=4.52,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-        object_collection=[window_4],
-    )
-    boundary_10: Boundary = Boundary(
-        id="mur_cuisine_sud_1",
-        label="Mur cuisine sud",
-        side_1="exterior",
-        side_2="kitchen_1",
-        azimuth=180,
-        tilt=90,
-        area=15,
-        origin=None,
-        segments=None,
-        u_value=0.227,
-        layers=layers_1,
-    )
-    boundary_11: Boundary = Boundary(
-        id="plancher_cuisine",
-        label="Plancher cuisine",
-        side_1="kitchen_1",
-        side_2="ground",
-        azimuth=0,
-        tilt=180,
-        area=12.0,
-        origin=None,
-        segments=None,
-        u_value=0.648,
-        layers=layers_3,
-    )
-    boundary_12: Boundary = Boundary(
-        id="plafond_cuisine",
-        label="Plafond cuisine",
-        side_1="exterior",
-        side_2="kitchen_1",
-        azimuth=0,
-        tilt=0,
-        area=12.0,
-        origin=None,
-        segments=None,
-        u_value=0.336,
-        layers=layers_2,
-    )
-    boundaries: List[Boundary] = [
-        boundary_1,
-        boundary_2,
-        boundary_3,
-        boundary_4,
-        boundary_7,
-        boundary_8,
-        boundary_9,
-        boundary_10,
-        boundary_6,
-        boundary_5,
-        boundary_12,
-        boundary_11,
-    ]
-    space_1.boundaries = [
-        boundary_1,
-        boundary_2,
-        boundary_3,
-        boundary_4,
-        boundary_5,
-        boundary_6,
-        boundary_7,
-    ]
-    space_2.boundaries = [
-        boundary_7,
-        boundary_8,
-        boundary_9,
-        boundary_10,
-        boundary_11,
-        boundary_12,
-    ]
-    spaces: List[Space] = [space_1, space_2]
-    project_data: ProjectData = ProjectData(name="project-data-1", data=None)
-    project_data.spaces = spaces
-    project_data.boundaries = boundaries
-    # TODO: Add that to project_data
-    for boundary_index, boundary in enumerate(boundaries):
-        windows: List[BoundaryObject] = [
-            boundary_object
-            for boundary_object in boundary.object_collection
-            if boundary_object.type.lower() == "window"
-        ]
-        for window in windows:
-            window.side_1 = boundary.side_1
-            window.side_2 = boundary.side_2
-            window.tilt = boundary.tilt
-            window.azimuth = boundary.azimuth
-            window.boundary_number = boundary_index
-            window.boundary_id = boundary.id
-            window.area = window.x_length * window.y_length
-    thermal_building: ThermalBuilding = ThermalBuilding(
-        name="thermal-building-1",
-        project_data=project_data,
-    )
-    thermal_building.sky_temperatures = data["sky_temperatures"].to_numpy()
-    thermal_building.exterior_air_temperatures = data[
-        "exterior_air_temperatures"
-    ].to_numpy()
-    thermal_building.direct_radiations = data["direct_radiations"].to_numpy()
-    thermal_building.diffuse_radiations = data["diffuse_radiations"].to_numpy()
-    is_initialized: bool = thermal_building.initialize()
-    print(is_initialized)

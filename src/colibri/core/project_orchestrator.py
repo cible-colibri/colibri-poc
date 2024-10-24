@@ -723,7 +723,7 @@ class ProjectOrchestrator:
 
     def _substitute_parameter_links_values(self):
         """"""
-        # TODO: Check if it is parameters or simulation variables or both
+        # TODO: Check if it is parameters or simulation variables or both (error message)
         for link in self.links:
             to_parameter: Parameter = link.to_module.get_field(link.to_field)
             if to_parameter is None:
@@ -843,6 +843,7 @@ class ProjectOrchestrator:
                 time_step=time_step,
                 number_of_iterations=number_of_iterations,
             )
+        print("")
 
     def _substitute_links_values(self) -> None:
         """Pass information (modules' values) to connected modules

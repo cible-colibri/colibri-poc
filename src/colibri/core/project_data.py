@@ -190,6 +190,10 @@ class ProjectData(Module):
             boundary.segments = self.get_segments(
                 segments_data=segments_data,
             )
+            # Add boundary information to boundary object
+            for boundary_object in boundary.object_collection:
+                boundary_object.boundary = boundary
+            # Add boundary/space information to space/boundary
             for space in self.spaces:
                 if space.id in [boundary.side_1, boundary.side_2]:
                     space.boundaries.append(boundary)

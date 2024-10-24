@@ -251,7 +251,7 @@ def generate_system_and_control_matrices(
         - system_matrix (A)
         - control_matrix (B)
         - state_indices
-        - input_indices
+        - input_signals_indices
 
     Raises
     ------
@@ -293,7 +293,7 @@ def generate_system_and_control_matrices(
             "n_elements": number_of_spaces,
         },
     }
-    input_indices = {
+    input_signals_indices = {
         "ground_temperature": {"start_index": 0, "n_elements": 1},
         "exterior_air_temperature": {
             "start_index": 1,
@@ -361,7 +361,9 @@ def generate_system_and_control_matrices(
                     # Index for air temperature of each boundary is equal
                     # to the number of boundary
                     index_to_air: int = (
-                        input_indices["exterior_air_temperature"]["start_index"]
+                        input_signals_indices["exterior_air_temperature"][
+                            "start_index"
+                        ]
                         + boundary_number
                     )
                     control_matrix[node_number, index_to_air] += (
@@ -385,7 +387,7 @@ def generate_system_and_control_matrices(
                     # Index for mean radiant external temperature of each
                     # boundary is equal to the number of boundary
                     index_to_tmr: int = (
-                        input_indices["exterior_radiant_temperature"][
+                        input_signals_indices["exterior_radiant_temperature"][
                             "start_index"
                         ]
                         + boundary_number
@@ -403,15 +405,15 @@ def generate_system_and_control_matrices(
                     control_matrix_flux_indexing.append(
                         [
                             node_number,
-                            input_indices["radiative_gain_boundary_external"][
-                                "start_index"
-                            ]
+                            input_signals_indices[
+                                "radiative_gain_boundary_external"
+                            ]["start_index"]
                             + boundary_number,
                             boundary.area,
                         ]
                     )
                     # [xx]print(
-                    #    f"flux_B_indexing.append([{[node_number,input_indices['radiative_gain_boundary_external']['start_index']+ boundary_number,boundary.area,]}])"
+                    #    f"flux_B_indexing.append([{[node_number,input_signals_indices['radiative_gain_boundary_external']['start_index']+ boundary_number,boundary.area,]}])"
                     # )
                 # Fill in control matrix (B) only
                 elif side == "ground":
@@ -419,9 +421,9 @@ def generate_system_and_control_matrices(
                     # 1m distance and conductivity of 2.0 W/m/K,
                     # could be made for specific ground
                     resistance_ground_1m: float = 1.0 / 2.0
-                    index_ground: int = input_indices["ground_temperature"][
-                        "start_index"
-                    ]
+                    index_ground: int = input_signals_indices[
+                        "ground_temperature"
+                    ]["start_index"]
                     control_matrix[node_number, index_ground] += (
                         1 / resistance_ground_1m * boundary.area
                     )
@@ -438,7 +440,9 @@ def generate_system_and_control_matrices(
                     # boundary temperature
                     resistance_boundary: float = 1e-10
                     index_boundary: int = (
-                        input_indices["exterior_air_temperature"]["start_index"]
+                        input_signals_indices["exterior_air_temperature"][
+                            "start_index"
+                        ]
                         + boundary_number
                     )
                     control_matrix[node_number, index_boundary] += (
@@ -513,15 +517,15 @@ def generate_system_and_control_matrices(
                                 control_matrix_flux_indexing.append(
                                     [
                                         node_number,
-                                        input_indices["space_radiative_gain"][
-                                            "start_index"
-                                        ]
+                                        input_signals_indices[
+                                            "space_radiative_gain"
+                                        ]["start_index"]
                                         + space_number,
                                         radiative_share,
                                     ]
                                 )
                                 # [xx]print(
-                                #    f"flux_B_indexing.append([{[node_number, input_indices['space_radiative_gain']['start_index'] + space_number, radiative_share, ]}])"
+                                #    f"flux_B_indexing.append([{[node_number, input_signals_indices['space_radiative_gain']['start_index'] + space_number, radiative_share, ]}])"
                                 # )
                 # Conduction towards next (node = 0) or previous node (node == number_of_nodes)
                 if node == 0:
@@ -575,7 +579,9 @@ def generate_system_and_control_matrices(
                 # Index for air temperature of each boundary is equal to
                 # the number of boundary
                 index_to_air: int = (
-                    input_indices["exterior_air_temperature"]["start_index"]
+                    input_signals_indices["exterior_air_temperature"][
+                        "start_index"
+                    ]
                     + window.boundary_number
                 )
                 control_matrix[node_number, index_to_air] += (
@@ -594,7 +600,9 @@ def generate_system_and_control_matrices(
                 # Index for mean radiant external temperature of each boundary
                 # is equal to the number of boundary
                 index_to_tmr: int = (
-                    input_indices["exterior_radiant_temperature"]["start_index"]
+                    input_signals_indices["exterior_radiant_temperature"][
+                        "start_index"
+                    ]
                     + window.boundary_number
                 )
                 control_matrix[node_number, index_to_tmr] += h_rad * window.area
@@ -608,15 +616,15 @@ def generate_system_and_control_matrices(
                 control_matrix_flux_indexing.append(
                     [
                         node_number,
-                        input_indices["radiative_gain_boundary_external"][
-                            "start_index"
-                        ]
+                        input_signals_indices[
+                            "radiative_gain_boundary_external"
+                        ]["start_index"]
                         + window.boundary_number,
                         window.area * window.absorption,
                     ]
                 )
                 # [xx]print(
-                #    f"flux_B_indexing.append([{[node_number, input_indices['radiative_gain_boundary_external']['start_index'] + window.boundary_number, window.area * window.absorption, ]}])"
+                #    f"flux_B_indexing.append([{[node_number, input_signals_indices['radiative_gain_boundary_external']['start_index'] + window.boundary_number, window.area * window.absorption, ]}])"
                 # )
                 # TODO: solar transmission into zone
             # Internal air space, fill inside system matrix (A) only
@@ -664,9 +672,9 @@ def generate_system_and_control_matrices(
                             control_matrix_flux_indexing.append(
                                 [
                                     node_number,
-                                    input_indices["space_radiative_gain"][
-                                        "start_index"
-                                    ]
+                                    input_signals_indices[
+                                        "space_radiative_gain"
+                                    ]["start_index"]
                                     + space_number,
                                     radiative_share,
                                 ]
@@ -707,13 +715,13 @@ def generate_system_and_control_matrices(
         control_matrix_flux_indexing.append(
             [
                 node_number,
-                input_indices["space_convective_gain"]["start_index"]
+                input_signals_indices["space_convective_gain"]["start_index"]
                 + space_number,
                 1,
             ]
         )
         # [xx]print(
-        #    f"flux_B_indexing.append([{[node_number, input_indices['space_convective_gain']['start_index'] + space_number, 1, ]}])"
+        #    f"flux_B_indexing.append([{[node_number, input_signals_indices['space_convective_gain']['start_index'] + space_number, 1, ]}])"
         # )
         node_number += 1
     # Compute diagonal of A with leaving coefficients
@@ -733,7 +741,7 @@ def generate_system_and_control_matrices(
     for node_number in range(total_number_of_nodes):
         system_matrix[node_number, :] /= mcp[node_number]
         control_matrix[node_number, :] /= mcp[node_number]
-    return system_matrix, control_matrix, state_indices, input_indices
+    return system_matrix, control_matrix, state_indices, input_signals_indices
 
 
 def get_states_from_index(
@@ -926,7 +934,9 @@ def set_boundary_discretization_properties(boundary: Boundary) -> None:
         layer.thermal_conductivity for layer in boundary.layers
     ]
     densities: List[float] = [layer.density for layer in boundary.layers]
-    specific_heats: List[float] = [layer.specific_heat for layer in boundary.layers]
+    specific_heats: List[float] = [
+        layer.specific_heat for layer in boundary.layers
+    ]
     # Number of discretization layers
     # TODO: Check how this information should be retrieved?
     discretization_layers: List[int] = [1 for _ in boundary.layers]

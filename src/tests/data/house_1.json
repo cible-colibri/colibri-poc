@@ -378,16 +378,6 @@
                         "y_relative_position": 1,
                         "z_relative_position": 0,
                         "junctions": []
-                    },
-                    {
-                        "id": "emitter_1",
-                        "type": "emitter",
-                        "type_id": "electric_convector",
-                        "on_side": "side_1_to_side_2",
-                        "x_relative_position": 3,
-                        "y_relative_position": 1,
-                        "z_relative_position": 0,
-                        "junctions": []
                     }
                 ]
             },
@@ -1559,12 +1549,15 @@
             "emitter_types": {
                 "electric_convector": {
                     "label": "electric convector standard",
+                    "emitter_type": "electric",
                     "efficiency": 0.3,
                     "pn": 150,
                     "radiative_share": 0.5,
                     "time_constant": 3600,
                     "nominal_heating_power": 10000,
-                    "nominal_cooling_power": 10000
+                    "nominal_cooling_power": 10000,
+                    "mode": "heating",
+                    "space_coverage": 1.0
                 }
             }
         }

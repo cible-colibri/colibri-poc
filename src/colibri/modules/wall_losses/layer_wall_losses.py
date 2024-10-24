@@ -26,7 +26,7 @@ class Materials(Enum):
 
 
 class LayerWallLosses(WallLosses):
-    """Class representing a wall losses sing walls' layers."""
+    """Class representing wall losses with wall layers."""
 
     def __init__(
         self,

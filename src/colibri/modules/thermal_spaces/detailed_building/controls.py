@@ -89,7 +89,7 @@ def space_temperature_control_simple(
     states_last: ndarray,
     input_signals: ndarray,
     index_states: Dict[str, Dict[str, int]],
-    index_inputs: Dict[str, Dict[str, int]],
+    input_signals_indices: Dict[str, Dict[str, int]],
     radiative_share_hvac: ndarray,
     max_heating_power: ndarray,
     max_cooling_power: ndarray,
@@ -98,8 +98,9 @@ def space_temperature_control_simple(
     convective_internal_gains: ndarray,
     radiative_internal_gains: ndarray,
     internal_temperatures: Dict[str, float],
-    flows: List[List[Any]],
-):
+    flow_rates: List[List[Any]],
+    space_names: List[str],
+) -> Dict[str, float]:
     space_air_temperatures: ndarray = get_states_from_index(
         states=states_last,
         index_states=index_states,
@@ -110,13 +111,13 @@ def space_temperature_control_simple(
     estimated_thermal_outputs: ndarray = np.zeros(number_of_spaces)
     phi_inj: ndarray = np.zeros((number_of_spaces, 2))
     outdoor_temperature: float = input_signals[1]
-    if (not flows) or (flows == 0):
+    if (not flow_rates) or (flow_rates == 0):
         ventilation_gains: ndarray = (
             outdoor_temperature - space_air_temperatures
         ) * ventilation_gain_coefficients
     else:
         ventilation_gains: ndarray = compute_ventilation_losses(
-            flows=flows,
+            flow_rates=flow_rates,
             air_temperatures=internal_temperatures,
             outdoor_temperature=outdoor_temperature,
             efficiency_heat_recovery=efficiency_heat_recovery,
@@ -145,7 +146,7 @@ def space_temperature_control_simple(
             )
             set_input_signals_from_index(
                 input_signals=input_signals,
-                input_signals_indices=index_inputs,
+                input_signals_indices=input_signals_indices,
                 label="space_convective_gain",
                 value_to_set=convective_gains,
             )
@@ -154,7 +155,7 @@ def space_temperature_control_simple(
             )
             set_input_signals_from_index(
                 input_signals=input_signals,
-                input_signals_indices=index_inputs,
+                input_signals_indices=input_signals_indices,
                 label="space_radiative_gain",
                 value_to_set=radiative_gains,
             )
@@ -207,11 +208,15 @@ def space_temperature_control_simple(
                 )
             else:
                 estimated_thermal_outputs[index] = 0.0
-    return estimated_thermal_outputs
+    heat_fluxes: Dict[str, float] = {
+        space_id: estimated_thermal_outputs[space_index]
+        for space_index, space_id in enumerate(space_names)
+    }
+    return heat_fluxes
 
 
 def compute_ventilation_losses(
-    flows: List[List[Any]],
+    flow_rates: List[List[Any]],
     air_temperatures: Dict[str, float],
     outdoor_temperature: float,
     efficiency_heat_recovery: float,
@@ -220,7 +225,7 @@ def compute_ventilation_losses(
 
     Parameters
     ----------
-    flows: List[List[Any]]
+    flow_rates: List[List[Any]]
         Flow rates
     air_temperatures: Dict[str, float]
         Air temperature per zone
@@ -243,28 +248,28 @@ def compute_ventilation_losses(
     >>> None
     """
     ventilation_losses = np.zeros(len(air_temperatures))
-    for index, (space_id, air_temperature_temperature) in enumerate(
+    for index, (space_id, air_temperature) in enumerate(
         air_temperatures.items()
     ):
-        for flow in flows:
-            flow_condition_name: str = flow[0]
-            flow_space_id: str = flow[1]
-            flow_value: float = flow[2]
+        for flow_rate in flow_rates:
+            flow_rate_condition_name: str = flow_rate[0]
+            flow_rate_space_id: str = flow_rate[1]
+            flow_rate_value: float = flow_rate[2]
             # Flow rate which gets in
-            if (flow_space_id == space_id) & (flow_value > 0):
+            if (flow_rate_space_id == space_id) & (flow_rate_value > 0):
                 ventilation_gain_coefficient = (
-                    1006.0 * 1.2 * flow_value / 3600.0
+                    1006.0 * 1.2 * flow_rate_value / 3600.0
                 )
-                # flow comes from outside
-                if "BC" in flow_condition_name:
+                # Flow comes from outside
+                if flow_rate_condition_name not in air_temperatures:
                     ventilation_losses[index] = (
-                        (outdoor_temperature - air_temperature_temperature)
+                        (outdoor_temperature - air_temperature)
                         * ventilation_gain_coefficient
                         * (1.0 - efficiency_heat_recovery)
                     )
                 else:
                     ventilation_losses[index] = (
-                        air_temperatures[flow_condition_name]
-                        - air_temperature_temperature
+                        air_temperatures[flow_rate_condition_name]
+                        - air_temperature
                     ) * ventilation_gain_coefficient
     return ventilation_losses

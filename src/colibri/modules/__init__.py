@@ -6,6 +6,7 @@ from colibri.modules.circular_economy.circular_economy_indicator import (
     CircularEconomyIndicator,
 )
 from colibri.modules.customs.custom_modules import CustomModule
+from colibri.modules.emitters.emitter_properties import EmitterProperties
 from colibri.modules.generators.infinite_power_generator import (
     InfinitePowerGenerator,
 )
@@ -32,6 +33,7 @@ __all__ = [
     "AirFlowBuilding",
     "CircularEconomyIndicator",
     "CustomModule",
+    "EmitterProperties",
     "InfinitePowerGenerator",
     "LayerWallLosses",
     "LimitedGenerator",

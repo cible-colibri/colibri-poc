@@ -1,6 +1,7 @@
 from colibri.interfaces.modules.acv import Acv
 from colibri.interfaces.modules.air_flow import AirFlow
 from colibri.interfaces.modules.circular_economy import CircularEconomy
+from colibri.interfaces.modules.emitter import Emitter
 from colibri.interfaces.modules.generators import Generator
 from colibri.interfaces.modules.occupants import Occupants
 from colibri.interfaces.modules.thermal_space import ThermalSpace
@@ -11,6 +12,7 @@ __all__ = [
     "Acv",
     "AirFlow",
     "CircularEconomy",
+    "Emitter",
     "Generator",
     "Occupants",
     "ThermalSpace",

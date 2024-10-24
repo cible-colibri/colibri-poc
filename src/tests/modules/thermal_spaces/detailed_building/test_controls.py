@@ -19,7 +19,7 @@ from colibri.modules.thermal_spaces.detailed_building.controls import (
 def test_compute_ventilation_losses() -> None:
     """Test the compute_ventilation_losses function."""
     ventilation_losses: ndarray = compute_ventilation_losses(
-        flows=[
+        flow_rates=[
             ["BC0", "living_room_1", 0.134],
             ["living_room_1", "kitchen_1", 0.134],
         ],
@@ -192,7 +192,7 @@ def test_space_temperature_control_simple() -> None:
             "spaces_mean_radiant": {"start_index": 8, "n_elements": 2},
             "spaces_air": {"start_index": 10, "n_elements": 2},
         },
-        index_inputs={
+        input_signals_indices={
             "ground_temperature": {"start_index": 0, "n_elements": 1},
             "exterior_air_temperature": {"start_index": 1, "n_elements": 4},
             "exterior_radiant_temperature": {
@@ -214,7 +214,7 @@ def test_space_temperature_control_simple() -> None:
         convective_internal_gains=np.array([80.0, 80.0]),
         radiative_internal_gains=np.array([120.0, 120.0]),
         internal_temperatures={"living_room_1": 20.0, "kitchen_1": 20.0},
-        flows=[],
+        flow_rates=[],
     )
     assert estimated_thermal_outputs[0] == pytest.approx(0.0, abs=0.025)
     assert estimated_thermal_outputs[1] == pytest.approx(0.0, abs=0.025)
@@ -279,7 +279,7 @@ def test_space_temperature_control_simple() -> None:
             "spaces_mean_radiant": {"start_index": 8, "n_elements": 2},
             "spaces_air": {"start_index": 10, "n_elements": 2},
         },
-        index_inputs={
+        input_signals_indices={
             "ground_temperature": {"start_index": 0, "n_elements": 1},
             "exterior_air_temperature": {"start_index": 1, "n_elements": 4},
             "exterior_radiant_temperature": {
@@ -301,7 +301,7 @@ def test_space_temperature_control_simple() -> None:
         convective_internal_gains=np.array([80.0, 80.0]),
         radiative_internal_gains=np.array([120.0, 120.0]),
         internal_temperatures={"living_room_1": 20.0, "kitchen_1": 20.0},
-        flows=[["living_room_1", "kitchen", 2.5]],
+        flow_rates=[["living_room_1", "kitchen", 2.5]],
     )
     assert estimated_thermal_outputs[0] == pytest.approx(0.0, abs=0.025)
     assert estimated_thermal_outputs[1] == pytest.approx(0.0, abs=0.025)
@@ -377,7 +377,7 @@ def test_space_temperature_control_simple() -> None:
             "spaces_mean_radiant": {"start_index": 2, "n_elements": 3},
             "spaces_air": {"start_index": 8, "n_elements": 2},
         },
-        index_inputs={
+        input_signals_indices={
             "ground_temperature": {"start_index": 0, "n_elements": 1},
             "exterior_air_temperature": {"start_index": 1, "n_elements": 4},
             "exterior_radiant_temperature": {
@@ -399,7 +399,7 @@ def test_space_temperature_control_simple() -> None:
         convective_internal_gains=np.array([80.0, 80.0]),
         radiative_internal_gains=np.array([120.0, 120.0]),
         internal_temperatures={"living_room_1": 20.0, "kitchen_1": 20.0},
-        flows=[["living_room_1", "kitchen", 2.5]],
+        flow_rates=[["living_room_1", "kitchen", 2.5]],
     )
     assert estimated_thermal_outputs[0] == pytest.approx(9_199.3, abs=1.0)
     assert estimated_thermal_outputs[1] == pytest.approx(-397.5, abs=1.0)

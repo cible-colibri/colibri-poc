@@ -17,6 +17,8 @@ from colibri.utils.enums_utils import (
 
 
 class SimplifiedWallLosses(WallLosses):
+    """Class representing wall losses without wall layers."""
+
     def __init__(
         self,
         name: str,
@@ -24,7 +26,8 @@ class SimplifiedWallLosses(WallLosses):
         exterior_air_temperature: float = 0.0,
         q_walls: Optional[Dict[str, float]] = None,
         project_data: Optional[ProjectData] = None,
-    ):
+    ) -> None:
+        """Initialize a new SimplifiedWallLosses instance."""
         if inside_air_temperatures is None:
             inside_air_temperatures: Dict[str, float] = dict()
         if q_walls is None:
