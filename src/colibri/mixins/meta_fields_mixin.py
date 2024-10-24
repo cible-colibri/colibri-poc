@@ -596,7 +596,10 @@ class MetaFieldMixin:
                 level = project_dict
                 for attribute in path.split('.'):
                     if attribute not in level:
-                        level[attribute] = {}
+                        if attribute == 'object_collection':
+                            level[attribute] = []
+                        else:
+                            level[attribute] = {}
                     level = level[attribute]
 
                 object_name = scheme_object
@@ -618,7 +621,10 @@ class MetaFieldMixin:
                     if 'default' in variable:
                         object_dict[name] = variable['default']
 
-                level[id] = object_dict
+                if isinstance(level, list):
+                    level.append(object_dict)
+                else:
+                    level[id] = object_dict
 
         project_dict['project']['archetype_collection'] = scheme['Archetypes']
 
