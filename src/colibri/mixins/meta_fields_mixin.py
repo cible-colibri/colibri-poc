@@ -614,7 +614,7 @@ class MetaFieldMixin:
 
         from colibri.utils.class_utils import get_class
 
-        scheme = cls.from_template()
+        scheme = cls.from_scheme()
 
         project_dict = {}
 
