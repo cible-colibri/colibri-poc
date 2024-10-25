@@ -583,10 +583,38 @@ class MetaFieldMixin:
 
     @classmethod
     def to_template(cls) -> Dict[str, Any]:
-        from colibri import DataSet
+        """Create a module instance ready to be used from a template
+        specific to the module
+
+        Parameters
+        ----------
+        cls
+            class module
+
+        Returns
+        -------
+        template: Dict[str, Any]
+            Module template (to be loaded with from_template())
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+            lg = LimitedGenerator("lg-1")
+
+            scheme = LimitedGenerator.to_template()
+
+            lg2 : LimitedGenerator = LimitedGenerator.from_template(scheme)
+            lg2.initialize()
+            lg2.run(1,1)
+
+        """
+
         from colibri.utils.class_utils import get_class
 
-        scheme = cls.to_scheme()
+        scheme = cls.from_template()
 
         project_dict = {}
 
@@ -676,6 +704,14 @@ class MetaFieldMixin:
 
         Examples
         --------
+            lg = LimitedGenerator("lg-1")
+
+            scheme = LimitedGenerator.to_template()
+
+            lg2 : LimitedGenerator = LimitedGenerator.from_template(scheme)
+            lg2.initialize()
+            lg2.run(1,1)
+
         >>> limited_generator = LimitedGenerator.from_template(template=template)
         >>> limited_generator.initialize()
         >>> limited_generator.run(time_step=1, number_of_iterations=1)

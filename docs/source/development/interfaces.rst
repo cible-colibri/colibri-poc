@@ -159,7 +159,7 @@ La paramètre ``attached_to`` permet d'attacher une entrée ou une sortie à un 
 
 La variable ``self.interface_input`` (dans l'exemple ``InterfaceModuleExample``
 plus haut) pourrait provenir d'un module (et donc d'une sortie d'une interface
-de module) qui pour chaque Project Object ``Space`` associe une valeur (par
+de module) qui pour chaque ProjectObject ``Space`` associe une valeur (par
 exemple la température d'air moyenne de l'espace). À chaque pas de temps,
 ``self.interface_input`` recevra un dictionnaire ``Dict[str, float]`` avec la
 valeur ``float`` pour chaque ``Space`` (dont le ``id`` est utilisée, d'où le
