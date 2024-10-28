@@ -1,6 +1,6 @@
 from typing import List
 
-from colibri import AcvExploitationOnly, LimitedGenerator
+from colibri import AcvExploitationOnly, LimitedGenerator, ProjectOrchestrator, ProjectData
 
 
 def test_field_mixin() -> None:
@@ -43,9 +43,14 @@ def test_generate_simple_house():
     for module in module_collection:
         module_template = module.to_template()
         template = merge_dicts_recursive(template, module_template)
-        pass
 
+    project_orchestrator: ProjectOrchestrator = ProjectOrchestrator(name="project1", verbose=False)
+    project_data: ProjectData = ProjectData(
+        name="project_data", data=template
+    )
     pass
+
+
 
 def merge_dicts_recursive(dict1, dict2):
     result = dict1.copy()  # Start with a copy of dict1

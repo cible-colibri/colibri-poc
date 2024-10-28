@@ -676,7 +676,7 @@ class MetaFieldMixin:
 
         for archetype_name, archetype_variables in archetypes.items():
             name = archetype_name + "1"
-            archetype_key = archetype_name.lower() + '_types'
+            archetype_key = archetype_name + '_types'
             archetypes_instance[archetype_key] = { name: {k: v['default'] for k, v in archetype_variables.items() if k != "category" } }
 
         if not 'project' in project_dict:
@@ -704,6 +704,11 @@ class MetaFieldMixin:
                     "type" : k,
                     'type_id' : k + '1',
                 })
+
+                archetype_type = attached_to + '_types'
+                archetype_name = attached_to + '1'
+                if archetype_type not in project_dict['project']['archetype_collection']:
+                    project_dict['project']['archetype_collection'][archetype_type] = {archetype_name : {}}
 
         return project_dict
 
