@@ -644,47 +644,66 @@ class MetaFieldMixin:
                     level = level[attribute]
 
                 object_name = scheme_object
-                id = scheme_object + "1"
+                if object_name != "Project":
+                    id = scheme_object + "1"
 
-                object_dict = {}
-                if object_name not in level:
-                    object_dict['type'] = object_name
-                    object_dict['type_id'] = object_name + '1'
-                    model_class = get_class(
-                        class_name=object_name,
-                        output_type=ColibriObjectTypes.PROJECT_OBJECT,
-                    )
-                    model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
-                    required_parameters: List[str] = model_metadata.args[1:]
-                    for parameter in required_parameters:
-                        if parameter != 'boundaries':
-                            object_dict[parameter] = None
+                    object_dict = {}
+                    if object_name not in level:
+                        object_dict['type'] = object_name
+                        object_dict['type_id'] = id
+                        model_class = get_class(
+                            class_name=object_name,
+                            output_type=ColibriObjectTypes.PROJECT_OBJECT,
+                        )
+                        model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                        required_parameters: List[str] = model_metadata.args[1:]
+                        for parameter in required_parameters:
+                            if parameter != 'boundaries':
+                                object_dict[parameter] = None
 
-                for name, variable in variables.items():
-                    if 'default' in variable:
-                        object_dict[name] = variable['default']
+                    for name, variable in variables.items():
+                        if 'default' in variable:
+                            object_dict[name] = variable['default']
 
-                if isinstance(level, list):
-                    level.append(object_dict)
-                else:
-                    level[id] = object_dict
+                    if isinstance(level, list):
+                        level.append(object_dict)
+                    else:
+                        level[id] = object_dict
         if not 'Archetypes' in scheme:
             scheme['Archetypes'] = {}
         archetypes = scheme['Archetypes']
         archetypes_instance = {}
 
-        for k,v in archetypes.items():
-            name = k + "1"
-            archetypes_instance[k] = { name: {k_: v_['default'] for k_, v_ in v.items() if k_ != "category"}}
+        for archetype_name, archetype_variables in archetypes.items():
+            name = archetype_name + "1"
+            archetype_key = archetype_name.lower() + '_types'
+            archetypes_instance[archetype_key] = { name: {k: v['default'] for k, v in archetype_variables.items() if k != "category" } }
 
-        if 'Emitter' in archetypes_instance:
-            archetypes_instance['Emitter_types'] = archetypes_instance['Emitter']
-            del archetypes_instance['Emitter']
         if not 'project' in project_dict:
             project_dict['project'] = {}
-        project_dict['project']['archetype_collection'] = archetypes_instance
+        if not 'archetype_collection' in project_dict['project']:
+            project_dict['project']['archetype_collection'] = {}
+        for k,v in archetypes_instance.items():
+            project_dict['project']['archetype_collection'][k] = v
 
         project_dict['project']['module_collection'] = {cls.__name__ : {}}
+        # TODO : add initial values
+
+        if 'ElementObject' in scheme:
+            for k,v in scheme['ElementObject'].items():
+                attached_to = v['attached_to']
+                path = ColibriProjectPaths.get_path_from_object_type(attached_to)
+
+                level = project_dict
+                for attribute in path.split('.'):
+                    level = level[attribute]
+
+                level = level[attached_to + '1']
+                level['object_collection'].append( {
+                    'id' : k + '1',
+                    "type" : k,
+                    'type_id' : k + '1',
+                })
 
         return project_dict
 

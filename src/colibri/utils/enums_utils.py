@@ -34,9 +34,9 @@ class ColibriProjectPaths(Enum):
         ColibriProjectObjects.BOUNDARY_OBJECT,
         "project.boundary_collection.Boundary.object_collection",
     )
-    ELEMENT_OBJECT = ProjectObjectCategories(
-        ColibriProjectObjects.ELEMENT_OBJECT, "."
-    )
+    # ELEMENT_OBJECT = ProjectObjectCategories(
+    #     ColibriProjectObjects.ELEMENT_OBJECT, "."
+    # )
     PROJECT = ProjectObjectCategories(ColibriProjectObjects.PROJECT, "project")
     SPACE = ProjectObjectCategories(
         ColibriProjectObjects.SPACE, "project.node_collection.space_collection"
