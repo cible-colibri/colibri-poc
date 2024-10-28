@@ -1,6 +1,7 @@
+from random import randint
 from typing import List
 
-from colibri import AcvExploitationOnly, LimitedGenerator, ProjectOrchestrator, ProjectData
+from colibri import AcvExploitationOnly, LimitedGenerator, ProjectOrchestrator, ProjectData, InfinitePowerGenerator
 
 
 def test_field_mixin() -> None:
@@ -25,29 +26,49 @@ def test_generate_simple_house():
     from colibri import WeatherModel
 
 
-    acv: AcvExploitationOnly = AcvExploitationOnly(
-        name="acv-1",
-        q_consumed={"kitchen": 350},
-        co2_impact=25.0,
+    acv_exploitation_only: AcvExploitationOnly = AcvExploitationOnly(name="acv")
+    infinite_power_generator: InfinitePowerGenerator = InfinitePowerGenerator(
+        name="infinite_power_generator"
     )
-    lg : LimitedGenerator = LimitedGenerator("lg-1")
-    occupant_model : OccupantModel = OccupantModel(name="occupants")
-    simplified_wall_losses: SimplifiedWallLosses = SimplifiedWallLosses(name="simplified_wall_losses")
-    thermal_space_simplified : ThermalSpaceSimplified = ThermalSpaceSimplified("thermal_space_simplified")
-    weather : WeatherModel = WeatherModel(name="weather")
+    thermal_space_simplified: ThermalSpaceSimplified = ThermalSpaceSimplified(
+        name="thermal_space_simplified"
+    )
+    simplified_wall_losses: SimplifiedWallLosses = SimplifiedWallLosses(
+        name="simplified_wall_losses"
+    )
+    occupants: OccupantModel = OccupantModel(name="occupants")
+    weather: WeatherModel = WeatherModel(
+        name="weather",
+        scenario_exterior_air_temperatures=[
+            randint(5, 20) for _ in range(0, 168)
+        ],
+    )
 
-
-    module_collection: List[Module] = [acv, occupant_model, lg, simplified_wall_losses, thermal_space_simplified, weather]
+    module_collection: List[Module] = [acv_exploitation_only, occupants, infinite_power_generator, simplified_wall_losses, thermal_space_simplified, weather]
 
     template = {}
     for module in module_collection:
         module_template = module.to_template()
         template = merge_dicts_recursive(template, module_template)
 
+    # run project from template
     project_orchestrator: ProjectOrchestrator = ProjectOrchestrator(name="project1", verbose=False)
     project_data: ProjectData = ProjectData(
-        name="project_data", data=template
-    )
+        name="project_data", data=template)
+
+    # Add models
+    project_orchestrator.add_module(module=project_data)
+    project_orchestrator.add_module(module=acv_exploitation_only)
+    project_orchestrator.add_module(module=infinite_power_generator)
+    project_orchestrator.add_module(module=simplified_wall_losses)
+    project_orchestrator.add_module(module=thermal_space_simplified)
+    project_orchestrator.add_module(module=occupants)
+    project_orchestrator.add_module(module=weather)
+
+    project_orchestrator.create_links_automatically()
+
+    project_orchestrator.run()
+
     pass
 
 

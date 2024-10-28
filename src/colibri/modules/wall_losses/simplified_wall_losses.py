@@ -61,6 +61,19 @@ class SimplifiedWallLosses(WallLosses):
                         from_archetype=True,
                     ),
                 ),
+                Parameter(
+                    name="inside_air_temperature",
+                    default_value=19.0,
+                    description="Temperature inside space",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.DEGREE_CELSIUS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                        from_archetype=False,
+                    ),
+                ),
             ],
         )
 
