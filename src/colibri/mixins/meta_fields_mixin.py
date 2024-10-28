@@ -674,8 +674,11 @@ class MetaFieldMixin:
             name = k + "1"
             archetypes_instance[k] = { name: {k_: v_['default'] for k_, v_ in v.items() if k_ != "category"}}
 
-        archetypes_instance['Emitter_types'] = archetypes_instance['Emitter']
-        del archetypes_instance['Emitter']
+        if 'Emitter' in archetypes_instance:
+            archetypes_instance['Emitter_types'] = archetypes_instance['Emitter']
+            del archetypes_instance['Emitter']
+        if not 'project' in project_dict:
+            project_dict['project'] = {}
         project_dict['project']['archetype_collection'] = archetypes_instance
 
         project_dict['project']['module_collection'] = {cls.__name__ : {}}
