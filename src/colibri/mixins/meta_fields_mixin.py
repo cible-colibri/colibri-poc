@@ -628,16 +628,17 @@ class MetaFieldMixin:
                 for attribute in path.split('.'):
                     if attribute not in level:
                         if attribute == 'Boundary':
+                            attribute = 'Boundary1'
                             model_class = get_class(
                                 class_name='Boundary',
                                 output_type=ColibriObjectTypes.PROJECT_OBJECT,
                             )
                             model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
                             required_parameters: List[str] = model_metadata.args[1:]
-                            level['Boundary'] = {k: None for k in required_parameters}
-                            level['Boundary']['object_collection'] = []
-                            level['Boundary']['segments'] = []
-                            level['Boundary']['side_1'] = 'Space1'
+                            level[attribute] = {k: None for k in required_parameters}
+                            level[attribute]['object_collection'] = []
+                            level[attribute]['segments'] = []
+                            level[attribute]['side_1'] = 'Space1'
                         else:
                             level[attribute] = {}
                     level = level[attribute]
@@ -667,6 +668,8 @@ class MetaFieldMixin:
                     level.append(object_dict)
                 else:
                     level[id] = object_dict
+        if not 'Archetypes' in scheme:
+            scheme['Archetypes'] = {}
         archetypes = scheme['Archetypes']
         archetypes_instance = {}
 
