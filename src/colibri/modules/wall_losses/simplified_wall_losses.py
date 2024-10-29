@@ -50,7 +50,7 @@ class SimplifiedWallLosses(WallLosses):
             required=[
                 Parameter(
                     name="u_value",
-                    default_value=None,
+                    default_value=1.5,
                     description="Thermal conductance.",
                     format=float,
                     min=0,

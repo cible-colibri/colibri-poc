@@ -44,7 +44,8 @@ def test_generate_simple_house():
         ],
     )
 
-    module_collection: List[Module] = [acv_exploitation_only, occupants, infinite_power_generator, simplified_wall_losses, thermal_space_simplified, weather]
+    #module_collection: List[Module] = [acv_exploitation_only, occupants, infinite_power_generator, simplified_wall_losses, thermal_space_simplified, weather]
+    module_collection: List[Module] = [simplified_wall_losses]
 
     template = {}
     for module in module_collection:

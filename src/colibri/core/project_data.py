@@ -178,9 +178,12 @@ class ProjectData(Module):
         >>> None
         """
         boundaries: List[Boundary] = []
-        boundary_collection: List[dict] = self.project_data[PROJECT][
-            BOUNDARY_COLLECTION
-        ]
+        boundary_collection: List[dict] = []
+        if BOUNDARY_COLLECTION in self.project_data[PROJECT]:
+            boundary_collection = self.project_data[PROJECT][BOUNDARY_COLLECTION]
+        else:
+            return []
+
         for boundary_name, boundary_data in boundary_collection.items():
             segments_data: Dict[str, Any] = boundary_data.pop(SEGMENTS, [])
             boundary: Boundary = self.create_element_object(
