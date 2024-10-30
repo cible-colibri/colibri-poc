@@ -78,8 +78,8 @@ def test_meta_fields_mixin() -> None:
         OtherClass()
     assert exception_information.typename == AttachmentError.__name__
     assert (
-        str(exception_information.value)
-        == "Required parameters are always relative to an attached object."
+            str(exception_information.value)
+            == "Required parameters are always relative to an attached object."
     )
 
 
@@ -91,8 +91,8 @@ def test_to_scheme():
                 "choices": None,
                 "default": None,
                 "description": "Origin (x,y,z) in the absolute reference of the first point of "
-                "the first segment of the boundary.It can be used to build the 3D "
-                "model without using segment information for rebuilding anything.",
+                               "the first segment of the boundary.It can be used to build the 3D "
+                               "model without using segment information for rebuilding anything.",
                 "format": "Tuple[float, float, float]",
                 "max": "inf",
                 "min": 0,
@@ -117,8 +117,8 @@ def test_to_scheme():
                 "unit": "°",
             },
             "description": "A boundary is a two-sided plane surface delimiting spaces and/or the "
-            "exterior.\n"
-            "A boundary can be fictive or concrete (wall, floor, roof...).",
+                           "exterior.\n"
+                           "A boundary can be fictive or concrete (wall, floor, roof...).",
             "id": {
                 "choices": None,
                 "default": None,
@@ -141,7 +141,7 @@ def test_to_scheme():
                 "choices": None,
                 "default": [],
                 "description": "Collection of objects associated to the boundary (windows, doors, "
-                "emitters, inlets, ...).",
+                               "emitters, inlets, ...).",
                 "format": "List[BoundaryObject]",
                 "max": None,
                 "min": None,
@@ -151,17 +151,17 @@ def test_to_scheme():
                 "choices": None,
                 "default": [],
                 "description": "Collection of segments forming the edges of the boundary or in "
-                "case of a non 3D description linears of interest for modeling. "
-                "Important: coordinates need to be set in CLOCKWISE order "
-                "regarding side_1 of the boundary. The coordinates of segments are "
-                "set in a 2D plane (boundaries are always planar) with a relative "
-                "reference point, where the first point of the boundary is "
-                "designated as x:0, y:0. If 3D is not used, the key 'points' is "
-                "set to None and only 'length' is used. Examples :[ {'id' : "
-                "'arrete_1', 'points' : [[x1,y1],[x2,y2]], 'length' : 10, "
-                "'junction' : {'nodes_type' : 'linear_junction','nodes_id' : "
-                "'junction_64'} ] Search for 'points', 'length', 'junction' to "
-                "know more...",
+                               "case of a non 3D description linears of interest for modeling. "
+                               "Important: coordinates need to be set in CLOCKWISE order "
+                               "regarding side_1 of the boundary. The coordinates of segments are "
+                               "set in a 2D plane (boundaries are always planar) with a relative "
+                               "reference point, where the first point of the boundary is "
+                               "designated as x:0, y:0. If 3D is not used, the key 'points' is "
+                               "set to None and only 'length' is used. Examples :[ {'id' : "
+                               "'arrete_1', 'points' : [[x1,y1],[x2,y2]], 'length' : 10, "
+                               "'junction' : {'nodes_type' : 'linear_junction','nodes_id' : "
+                               "'junction_64'} ] Search for 'points', 'length', 'junction' to "
+                               "know more...",
                 "format": "List[Segment]",
                 "max": None,
                 "min": None,
@@ -171,8 +171,8 @@ def test_to_scheme():
                 "choices": None,
                 "default": None,
                 "description": "Unique identifier (ID) of the space (or 'exterior' or 'ground' if "
-                "not connected to a space or a bundary_condition node) onto which "
-                "face 1 of the boundary is in contact.",
+                               "not connected to a space or a bundary_condition node) onto which "
+                               "face 1 of the boundary is in contact.",
                 "format": "str",
                 "max": None,
                 "min": None,
@@ -182,8 +182,8 @@ def test_to_scheme():
                 "choices": None,
                 "default": None,
                 "description": "Unique identifier (ID) of the space (or 'exterior' if not "
-                "connected to a space) onto which face 2 of the boundary is in "
-                "contact",
+                               "connected to a space) onto which face 2 of the boundary is in "
+                               "contact",
                 "format": "str",
                 "max": None,
                 "min": None,
@@ -202,8 +202,8 @@ def test_to_scheme():
                 "choices": None,
                 "default": None,
                 "description": "Inclination of the boundary (wall) relative to the horizontal; 0° "
-                ": horizontal facing upwards, 90° : vertical, 180° : horizontal "
-                "facing downwards.",
+                               ": horizontal facing upwards, 90° : vertical, 180° : horizontal "
+                               "facing downwards.",
                 "format": "int",
                 "max": 180,
                 "min": 0,
@@ -386,41 +386,67 @@ def test_to_scheme():
             },
         },
     }
+
     assert SimplifiedWallLosses.to_scheme() == {
-        "Boundary": {
-            "u_value": {
-                "choices": None,
-                "default": None,
-                "description": "Thermal conductance.",
-                "format": "float",
-                "max": "inf",
-                "min": 0,
-                "required": None,
-                "unit": "W/(m².K)",
+        'Space': {
+            'inside_air_temperatures': {
+                'description': 'Inside air temperature of the spaces.',
+                'format': 'Dict[str, float]',
+                'min': -100,
+                'max': 100,
+                'unit': '°C',
+                'choices': None,
+                'default': {}
             },
+            'inside_air_temperature': {
+                'description': 'Temperature inside space',
+                'format': 'float',
+                'min': 0,
+                'max': 'inf',
+                'unit': '°C',
+                'choices': None,
+                'default': 19.0,
+                'required': None
+            }
         },
-        "Project": {
-            "exterior_air_temperature": {
-                "choices": None,
-                "default": None,
-                "description": "Outside air temperature.",
-                "format": "float",
-                "max": 100,
-                "min": -100,
-                "unit": "°C",
-            },
+        'Project': {
+            'exterior_air_temperature': {
+                'description': 'Outside air temperature.',
+                'format': 'float',
+                'min': -100,
+                'max': 100,
+                'unit': '°C',
+                'choices': None,
+                'default': None
+            }
         },
-        "Space": {
-            "inside_air_temperatures": {
-                "choices": None,
-                "default": {},
-                "description": "Inside air temperature of the spaces.",
-                "format": "Dict[str, float]",
-                "max": 100,
-                "min": -100,
-                "unit": "°C",
-            },
+        'Boundary': {
+            'u_value': {
+                'description': 'Thermal conductance.',
+                'format': 'float',
+                'min': 0,
+                'max': 'inf',
+                'unit': 'W/(m².K)',
+                'choices': None,
+                'default': 1.5,
+                'required': None
+            }
         },
+        'Archetypes': {
+            'Boundary': {
+                'category': 'Boundary',
+                'u_value': {
+                    'description': 'Thermal conductance.',
+                    'format': 'float',
+                    'min': 0,
+                    'max': 'inf',
+                    'unit': 'W/(m².K)',
+                    'choices': None,
+                    'default': 1.5,
+                    'required': None
+                }
+            }
+        }
     }
 
 
