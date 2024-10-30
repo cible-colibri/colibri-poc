@@ -1,0 +1,95 @@
+{
+    "project": {
+        "boundary_collection": {
+            "Boundary1": {
+                "object_collection": {
+                    "Emitter1": {
+                        "type": "Emitter",
+                        "type_id": "Emitter1",
+                        "q_provided": {}
+                    },
+                    "Layer1": {
+                        "id": "Layer1",
+                        "type": "Layer",
+                        "type_id": "Layer1"
+                    }
+                },
+                "type": "Boundary",
+                "type_id": "Boundary1",
+                "id": "Boundary1",
+                "label": "Boundary1",
+                "side_1": "Space1",
+                "side_2": null,
+                "area": 0,
+                "azimuth": 0,
+                "tilt": 0,
+                "origin": null,
+                "spaces": [],
+                "u_value": 1.5
+            }
+        },
+        "archetype_collection": {
+            "Layer_types": {
+                "Layer1": {
+                    "lca_impact_properties": null,
+                    "installation_year": 1,
+                    "service_life": 50,
+                    "constitutive_materials": [
+                        {
+                            "share": 1,
+                            "material_type": "concrete"
+                        }
+                    ],
+                    "end_of_life_properties": null,
+                    "emissivity": 0.92,
+                    "light_reflectance": 0.8,
+                    "albedo": 0.25
+                }
+            },
+            "Boundary_types": {
+                "Boundary1": {
+                    "u_value": 1.5
+                }
+            },
+            "Emitter_types": {
+                "Emitter1": {
+                    "efficiency": 0.8
+                }
+            }
+        },
+        "module_collection": {
+            "AcvExploitationOnly": {},
+            "OccupantModel": {},
+            "InfinitePowerGenerator": {},
+            "SimplifiedWallLosses": {},
+            "ThermalSpaceSimplified": {},
+            "WeatherModel": {}
+        },
+        "node_collection": {
+            "space_collection": {
+                "Space1": {
+                    "type": "Space",
+                    "type_id": "Space1",
+                    "id": null,
+                    "label": null,
+                    "occupant_per_square_meter": 0,
+                    "occupantion": [],
+                    "occupant_gains": 0,
+                    "presence_setpoint_temperature": 19,
+                    "absence_setpoint_temperature": 19,
+                    "q_needs": 0.8,
+                    "inside_air_temperatures": {},
+                    "inside_air_temperature": 19.0,
+                    "setpoint_temperatures": {},
+                    "gains": {},
+                    "previous_inside_air_temperatures": {},
+                    "thermal_capacity": null,
+                    "height": 2.5,
+                    "setpoint_temperature": 19,
+                    "reference_area": 50,
+                    "gain": 0
+                }
+            }
+        }
+    }
+}

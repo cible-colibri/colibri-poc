@@ -1,5 +1,12 @@
+import json
+import os
+from importlib import resources
 from random import randint
 from typing import List
+
+from pkg_resources import resource_filename
+
+from colibri.config import data
 
 from colibri import AcvExploitationOnly, LimitedGenerator, ProjectOrchestrator, ProjectData, InfinitePowerGenerator
 
@@ -83,11 +90,21 @@ def test_generate_simple_house():
     # Run project_orchestrator
     project_orchestrator.run()
 
+    src_file_path = resource_filename('tests', 'data')
+    json_file_path = os.path.join(src_file_path, 'house_simple.json')
+
+    # uncomment to reset template
+    # with open(json_file_path, "w") as json_file:
+    #     json_file.write(json.dumps(template, indent=4))
+
+    with open(json_file_path, "r") as json_file:
+        json_str = json_file.read()
+        template_template = json.loads(json_str)
+
+    assert template == template_template
+
     # Plots
     #project_orchestrator.plot()
-
-    pass
-
 
 
 def merge_dicts_recursive(dict1, dict2):
