@@ -63,6 +63,19 @@ class InfinitePowerGenerator(Generator):
                         from_archetype=True,
                     ),
                 ),
+                Parameter(
+                    name="q_needs",
+                    default_value=0.8,
+                    description="Load of space",
+                    format=float,
+                    min=0.0,
+                    max=float("inf"),
+                    unit=Units.WATT,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                        from_archetype=False,
+                    ),
+                ),
             ],
         )
 

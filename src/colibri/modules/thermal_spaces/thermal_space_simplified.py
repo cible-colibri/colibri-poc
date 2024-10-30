@@ -86,7 +86,7 @@ class ThermalSpaceSimplified(ThermalSpace):
             required=[
                 Parameter(
                     name="height",
-                    default_value=None,
+                    default_value=2.5,
                     description="Height of the space.",
                     format=float,
                     min=0,
@@ -160,6 +160,46 @@ class ThermalSpaceSimplified(ThermalSpace):
                         category=ColibriProjectObjects.ELEMENT_OBJECT,
                         from_archetype=True,
                         class_name="Layer",
+                    ),
+                ),
+                Parameter(
+                    name="setpoint_temperature",
+                    default_value=19,
+                    description="Setpoint temperature.",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.DEGREE_CELSIUS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                        from_archetype=False,
+                    ),
+                ),
+                Parameter(
+                    name="reference_area",
+                    default_value=50,
+                    description="Reference area of the space's surface",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.SQUARE_METER,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                        from_archetype=False,
+                    ),
+                ),
+
+                Parameter(
+                    name="gain",
+                    default_value=0,
+                    description="gain",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.WATT,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                        from_archetype=False,
                     ),
                 ),
             ],

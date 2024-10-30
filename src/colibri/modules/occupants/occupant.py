@@ -4,7 +4,7 @@ OccupantModel class from Occupant interface.
 
 from __future__ import annotations
 
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from colibri.core import ProjectData
 from colibri.core.fields import Parameter
@@ -62,6 +62,66 @@ class OccupantModel(Occupants):
                     min=0,
                     max=float("inf"),
                     unit=Units.UNITLESS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="occupantion",
+                    default_value=[],
+                    description="space occupation for each timestep",
+                    format=List["float"],
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.UNITLESS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="occupant_per_square_meter",
+                    default_value=0,
+                    description="space occupation per square meter",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.UNITLESS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="occupant_gains",
+                    default_value=0,
+                    description="occupant gains",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.WATT,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="presence_setpoint_temperature",
+                    default_value=19,
+                    description="setpoint temperature when space is occupied",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.DEGREE_CELSIUS,
+                    attached_to=Attachment(
+                        category=ColibriProjectObjects.SPACE,
+                    ),
+                ),
+                Parameter(
+                    name="absence_setpoint_temperature",
+                    default_value=19,
+                    description="setpoint temperature when space is unoccupied",
+                    format=float,
+                    min=0,
+                    max=float("inf"),
+                    unit=Units.DEGREE_CELSIUS,
                     attached_to=Attachment(
                         category=ColibriProjectObjects.SPACE,
                     ),
