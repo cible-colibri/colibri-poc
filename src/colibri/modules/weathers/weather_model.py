@@ -17,7 +17,6 @@ class WeatherModel(Weather):
         exterior_air_temperature: float = 0.0,
         altitudes: List[float] = [0.0],
         scenario_exterior_air_temperatures: List[float] = [],
-        temperature_diminution_with_altitude: float = 0.0065,
     ):
         super().__init__(
             name=name, exterior_air_temperature=exterior_air_temperature
@@ -40,15 +39,6 @@ class WeatherModel(Weather):
             max=100,
             unit=Units.DEGREE_CELSIUS,
         )
-        self.temperature_diminution_with_altitude = self.define_parameter(
-            name="temperature_diminution_with_altitude",
-            default_value=temperature_diminution_with_altitude,
-            description="Temperature diminution with altitude.",
-            format=float,
-            min=0,
-            max=10,
-            unit=Units.DEGREE_CELSIUS_PER_METER,
-        )
         self.corrected_exterior_air_temperatures = self.define_parameter(
             name="corrected_exterior_air_temperatures",
             default_value=list(),
@@ -59,6 +49,7 @@ class WeatherModel(Weather):
             max=100,
             unit=Units.DEGREE_CELSIUS,
         )
+        self.temperature_diminution_with_altitude: float = 0.0065  # °C/m
 
     def initialize(self) -> bool:
         mean_altitude = sum(self.altitudes) / len(self.altitudes)

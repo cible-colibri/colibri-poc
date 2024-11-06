@@ -81,7 +81,6 @@
                     "setpoint_temperatures": {},
                     "gains": {},
                     "previous_inside_air_temperatures": {},
-                    "thermal_capacity": null,
                     "height": 2.5,
                     "setpoint_temperature": 19,
                     "reference_area": 50,

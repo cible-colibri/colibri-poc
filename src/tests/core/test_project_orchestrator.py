@@ -89,7 +89,7 @@ def test_project_orchestrator(mock_show: MagicMock) -> None:
         17.0,
     ]
     assert simplified_wall_losses.q_walls_series[0][
-        "Mur salon nord"
+        "mur_salon_nord_1"
     ] == pytest.approx(68.2, abs=1)
     with pytest.raises(LinkError) as exception_information:
         project_orchestrator_example.add_link(
@@ -159,7 +159,7 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
         17.0,
     ]
     assert simplified_wall_losses.q_walls_series[0][
-        "Mur salon nord"
+        "mur_salon_nord_1"
     ] == pytest.approx(68.2, abs=1)
     # Exceed iterations
     project_orchestrator_example_2: ProjectOrchestrator = ProjectOrchestrator(
@@ -215,7 +215,7 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
         17.0,
     ]
     assert simplified_wall_losses.q_walls_series[0][
-        "Mur salon nord"
+        "mur_salon_nord_1"
     ] == pytest.approx(68.2, abs=1)
 
 

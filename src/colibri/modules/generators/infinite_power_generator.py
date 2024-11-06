@@ -91,14 +91,14 @@ class InfinitePowerGenerator(Generator):
             ]
             number_of_emitters: int = len(emitters)
             q_needs: float = self.q_needs.get(
-                space.label,
+                space.id,
                 space.q_needs,
             )
             for emitter in emitters:
-                self.q_consumed[space.label] = q_needs / (
+                self.q_consumed[space.id] = q_needs / (
                     number_of_emitters * emitter.efficiency
                 )
-                self.q_provided[space.label] = q_needs / number_of_emitters
+                self.q_provided[space.id] = q_needs / number_of_emitters
 
     def end_iteration(self, time_step: int) -> None: ...
 

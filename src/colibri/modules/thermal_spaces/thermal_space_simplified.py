@@ -30,7 +30,6 @@ class ThermalSpaceSimplified(ThermalSpace):
         inside_air_temperatures: Optional[Dict[str, float]] = None,
         q_needs: Optional[Dict[str, float]] = None,
         annual_needs: Optional[Dict[str, float]] = None,
-        thermal_capacity: float = 1_230,
         project_data: Optional[ProjectData] = None,
     ) -> None:
         """Initialize a new ThermalSpaceSimplified instance."""
@@ -60,19 +59,6 @@ class ThermalSpaceSimplified(ThermalSpace):
             inside_air_temperatures=inside_air_temperatures,
             q_needs=q_needs,
             annual_needs=annual_needs,
-        )
-        self.thermal_capacity = self.define_parameter(
-            name="thermal_capacity",
-            default_value=thermal_capacity,
-            description="Thermal capacity.",
-            format=float,
-            min=0,
-            max=float("inf"),
-            unit=Units.JOULE_PER_CUBIC_METER_PER_DEGREE_CELSIUS,
-            attached_to=Attachment(
-                category=ColibriProjectObjects.SPACE,
-            ),
-            required=None,
         )
         self.project_data = self.define_parameter(
             name="project_data",
@@ -203,26 +189,33 @@ class ThermalSpaceSimplified(ThermalSpace):
                 ),
             ],
         )
+        self.thermal_capacity = 1_230.0  # J/(m³.K)
+        self.previous_setpoint_temperature = 20.0  # °C
+        self.temporary_annual_needs = dict()
 
     def initialize(self) -> bool:
         self.previous_setpoint_temperature = 20.0
+        self.temporary_annual_needs = {
+            space.id: 0.0 for space in self.project_data.spaces
+        }
+        return True
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for space in self.project_data.spaces:
             q_walls: float = sum(
                 [
-                    self.q_walls.get(boundary.label, 0.0)
+                    self.q_walls.get(boundary.id, 0.0)
                     for boundary in space.boundaries
                 ]
             )
-            self.q_needs[space.label] = (
+            self.q_needs[space.id] = (
                 (
                     self.setpoint_temperatures.get(
-                        space.label,
+                        space.id,
                         space.setpoint_temperature,
                     )
                     - self.previous_inside_air_temperatures.get(
-                        space.label,
+                        space.id,
                         space.inside_air_temperature,
                     )
                 )
@@ -231,7 +224,7 @@ class ThermalSpaceSimplified(ThermalSpace):
                 * space.height
                 + q_walls
                 - self.gains.get(
-                    space.label,
+                    space.id,
                     space.gain,
                 )
             )
@@ -242,38 +235,46 @@ class ThermalSpaceSimplified(ThermalSpace):
                 if boundary_object.type == "emitter"
             ]
             q_provided: float = sum(
+                # TODO: Use id instead of label
                 [
                     self.q_provided.get(emitter.label, 0.0)
                     for emitter in emitters
                 ]
             )
             q_effective: float = (
-                q_provided + self.gains.get(space.label, space.gain) - q_walls
+                q_provided + self.gains.get(space.id, space.gain) - q_walls
             )
-            self.inside_air_temperatures[space.label] = (
+            self.inside_air_temperatures[space.id] = (
                 self.previous_inside_air_temperatures.get(
-                    space.label,
+                    space.id,
                     space.inside_air_temperature,
                 )
                 + q_effective
                 / (self.thermal_capacity * space.reference_area * space.height)
             )
-            """
-            self.annual_needs[space.label] = (self.setpoint_temperatures.get(
-                        space.label,
+            self.temporary_annual_needs[space.id] += (
+                (
+                    self.setpoint_temperatures.get(
+                        space.id,
                         space.setpoint_temperature,
-                    ) - self.previous_setpoint_temperature
-                ) * (self.thermal_capacity * space.reference_area * space.height) + q_walls                - self.gains.get(
-                    space.label,
+                    )
+                    - self.previous_setpoint_temperature
+                )
+                * (self.thermal_capacity * space.reference_area * space.height)
+                + q_walls
+                - self.gains.get(
+                    space.id,
                     space.gain,
                 )
-            """
+            ) / space.reference_area
 
     def end_iteration(self, time_step: int) -> None: ...
 
     def end_time_step(self, time_step: int) -> None: ...
 
-    def end_simulation(self) -> None: ...
+    def end_simulation(self) -> None:
+        for space in self.project_data.spaces:
+            self.annual_needs[space.id] = self.temporary_annual_needs[space.id]
 
     def has_converged(self, time_step: int, number_of_iterations: int) -> bool:
         return True

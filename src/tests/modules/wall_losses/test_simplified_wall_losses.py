@@ -57,12 +57,8 @@ def test_simplified_wall_losses() -> None:
     assert wall_losses.name == "wall-losses-1"
     for time_step in range(0, 3):
         wall_losses.run(time_step=time_step, number_of_iterations=1)
-        assert wall_losses.q_walls["kitchen-living-room"] == pytest.approx(
-            62, abs=1
-        )
-        assert wall_losses.q_walls["kitchen-restroom"] == pytest.approx(
-            39, abs=1
-        )
+        assert wall_losses.q_walls["boundary-1"] == pytest.approx(62, abs=1)
+        assert wall_losses.q_walls["boundary-2"] == pytest.approx(39, abs=1)
         assert (
             wall_losses.has_converged(
                 time_step=time_step, number_of_iterations=1

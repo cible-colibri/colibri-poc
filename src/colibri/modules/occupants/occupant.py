@@ -79,6 +79,7 @@ class OccupantModel(Occupants):
                 ),
             ],
         )
+        # TODO: Use define_field maybe with no role?
         self.occupant_per_square_meter = 1.0 / 40.0
         self.occupant_gains = 100.0  # W
 
@@ -86,18 +87,18 @@ class OccupantModel(Occupants):
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for space in self.project_data.spaces:
-            self.gains[space.label] = (
+            self.gains[space.id] = (
                 space.occupation[time_step]
                 * self.occupant_per_square_meter
                 * space.reference_area
                 * self.occupant_gains
             )
             if space.occupation[time_step] > 0:
-                self.setpoint_temperatures[space.label] = (
+                self.setpoint_temperatures[space.id] = (
                     space.presence_setpoint_temperature
                 )
             else:
-                self.setpoint_temperatures[space.label] = (
+                self.setpoint_temperatures[space.id] = (
                     space.absence_setpoint_temperature
                 )
 

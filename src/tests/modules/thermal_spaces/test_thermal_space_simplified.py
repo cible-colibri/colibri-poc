@@ -2,6 +2,8 @@
 Tests for the `thermal_space_simplified.py` module.
 """
 
+import pytest
+
 from colibri.core import ProjectData
 from colibri.interfaces import ThermalSpace
 from colibri.modules import ThermalSpaceSimplified
@@ -26,19 +28,23 @@ def test_thermal_space_simplified() -> None:
         name="thermal-space-1",
         project_data=project_data,
         previous_inside_air_temperatures={space.label: 26},
-        # setpoint_temperatures={space.label: 26},
-        # gains={space.label: 500},
     )
     assert isinstance(thermal_space_simplified, ThermalSpaceSimplified) is True
     assert isinstance(thermal_space_simplified, ThermalSpace) is True
     assert thermal_space_simplified.name == "thermal-space-1"
     assert thermal_space_simplified.inside_air_temperatures == dict()
     assert thermal_space_simplified.annual_needs == dict()
+    thermal_space_simplified.initialize()
     thermal_space_simplified.run(time_step=1, number_of_iterations=1)
+    assert thermal_space_simplified.annual_needs == dict()
+    thermal_space_simplified.end_simulation()
+    assert thermal_space_simplified.annual_needs["space-1"] == pytest.approx(
+        18437, abs=1
+    )
     thermal_space_simplified: ThermalSpaceSimplified = ThermalSpaceSimplified(
         name="thermal-space-1",
-        setpoint_temperatures={space.label: 26},
-        gains={space.label: 300},
+        setpoint_temperatures={space.id: 26},
+        gains={space.id: 300},
     )
     assert thermal_space_simplified.project_data is None
     assert (

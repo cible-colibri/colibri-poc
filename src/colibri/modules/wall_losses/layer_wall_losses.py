@@ -151,7 +151,7 @@ class LayerWallLosses(WallLosses):
         for boundary in self.project_data.boundaries:
             # TODO: How to handle multiple spaces?
             inside_air_temperature: float = self.inside_air_temperatures.get(
-                boundary.spaces[0].label,
+                boundary.spaces[0].id,
                 boundary.spaces[0].inside_air_temperature,
             )
             thermal_resistance: float = 0.0
@@ -160,7 +160,7 @@ class LayerWallLosses(WallLosses):
                 thermal_conductivity: float = layer.thermal_conductivity
                 thermal_resistance += thickness / thermal_conductivity
             thermal_conductance: float = 1.0 / thermal_resistance
-            self.q_walls[boundary.label] = (
+            self.q_walls[boundary.id] = (
                 thermal_conductance
                 * boundary.area
                 * (inside_air_temperature - self.exterior_air_temperature)
