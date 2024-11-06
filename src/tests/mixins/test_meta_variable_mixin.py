@@ -4,8 +4,10 @@ Tests for the `meta_fields_mixin.py` module.
 
 import pytest
 
+from typing import Any, Dict, Type
 from colibri.mixins import MetaFieldMixin
 from colibri.modules import (
+    AcvExploitationOnly,
     LayerWallLosses,
     LimitedGenerator,
     SimplifiedWallLosses,
@@ -450,6 +452,63 @@ def test_to_scheme():
     }
 
 
+def test_from_template() -> None:
+    """Test the MetaFieldMixin class's from_template function."""
+    template: Dict[str, Any] = {
+        "project": {
+            "id": "project-123",
+            "simulation_parameters": {
+                "time_steps": 168,
+                "verbose": False,
+                "iterate_for_convergence": True,
+                "maximum_number_of_iterations": 10
+            },
+            "module_collection": {
+            },
+            "building_land": {},
+            "node_collection": {
+                "space_collection": {
+                    "space-1": {
+                        "id": "space-1",
+                        "label": "space-1",
+                        "q_needs": 75.0
+                    }
+                }
+            },
+            "boundary_collection": {
+                "boundary-1": {
+                    "id": "boundary-1",
+                    "label": "boundary-1",
+                    "side_1": "space-1",
+                    "side_2": "exterior",
+                    "area": None,
+                    "azimuth": None,
+                    "tilt": None,
+                    "origin": None,
+                    "segments": [],
+                    "object_collection": [{"id": "emitter-1", "type": "Emitter", "type_id": "emitter_archetype_1", "pn": 200}]
+                }
+            },
+            "archetype_collection": {
+                "Emitter_types": {
+                    "emitter_archetype_1": {
+                        "efficiency": 0.9,
+                    },
+                }
+            }
+        }
+    }
+    limited_generator: LimitedGenerator = LimitedGenerator.from_template(template=template)
+    limited_generator.initialize()
+    limited_generator.run(time_step=1, number_of_iterations=1)
+    limited_generator.end_time_step(time_step=1)
+    limited_generator.end_iteration(time_step=1)
+    limited_generator.end_simulation()
+    assert limited_generator.q_provided == {"space-1": 75.0}
+    assert limited_generator.q_consumed["space-1"] == pytest.approx(83.3, abs=0.5)
+
+
 if __name__ == "__main__":
     test_meta_fields_mixin()
     test_to_scheme()
+    test_from_template()
