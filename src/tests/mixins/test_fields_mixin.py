@@ -91,7 +91,7 @@ def test_generate_simple_house():
     project_orchestrator.run()
 
     src_file_path = resource_filename('tests', 'data')
-    json_file_path = os.path.join(src_file_path, 'house_simple.json')
+    json_file_path = os.path.join(src_file_path, 'house_minimal.json')
 
     # uncomment to reset template
     # with open(json_file_path, "w") as json_file:
