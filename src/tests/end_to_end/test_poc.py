@@ -81,7 +81,7 @@ def test_poc(
 
 
 @patch("matplotlib.pyplot.show")
-def test_prototype_variant_with_links_automatically(
+def test_poc_variant(
     mock_show: MagicMock,
 ) -> None:
     """Test a prototype's variant with links created automatically."""
@@ -92,7 +92,7 @@ def test_prototype_variant_with_links_automatically(
     )
     # Create models
     project_file: Path = (
-        Path(__file__).resolve().parents[1] / "data" / "house_1.json"
+        Path(__file__).resolve().parents[1] / "data" / "house_1_poc_variant.json"
     )
     project_data: ProjectData = ProjectData(
         name="project_data", data=project_file
@@ -141,7 +141,3 @@ def test_prototype_variant_with_links_automatically(
     project_orchestrator.plot()
 
 
-if __name__ == "__main__":
-    test_prototype_with_links()
-    test_prototype_with_links_created_automatically()
-    test_prototype_variant_with_links_automatically()
