@@ -67,7 +67,7 @@ class OccupantModel(Occupants):
                     ),
                 ),
                 Parameter(
-                    name="occupantion",
+                    name="occupation",
                     default_value=[],
                     description="space occupation for each timestep",
                     format=List["float"],

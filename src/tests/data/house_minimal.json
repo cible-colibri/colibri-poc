@@ -73,7 +73,7 @@
                     "id": null,
                     "label": null,
                     "occupant_per_square_meter": 0,
-                    "occupantion": [],
+                    "occupation": [],
                     "occupant_gains": 0,
                     "presence_setpoint_temperature": 19,
                     "absence_setpoint_temperature": 19,
