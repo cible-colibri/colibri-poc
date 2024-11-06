@@ -272,7 +272,13 @@
                     }
                 ],
                 "object_collection": [],
-                "boundary_condition_collection": []
+                "boundary_condition_collection": [
+                    {
+                        "id": "bc_salon_sud_1",
+                        "type": "boundary_condition",
+                        "type_id": "bc_0"
+                    }
+                ]
             },
             "mur_salon_ouest_1": {
                 "id": "mur_salon_ouest_1",
@@ -1539,6 +1545,13 @@
                     ],
                     "u_value": 0.244
                 }
+            },
+            "boundary_condition_types": {
+              "bc_0": {
+                  "id": "bc_0",
+                  "label": "Boundary condition no. 0",
+                  "temperature": 20
+              }
             },
             "window_types": {
                 "typical_window": {
