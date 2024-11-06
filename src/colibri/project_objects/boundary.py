@@ -25,9 +25,9 @@ class Boundary(StructureObject):
 
     def __init__(
         self,
-        id: str = 'Boundary1',
-        label: str = 'Boundary1',
-        side_1: str = 'Space1',
+        id: str = "Boundary1",
+        label: str = "Boundary1",
+        side_1: str = "Space1",
         side_2: str = None,
         area: float = 0,
         azimuth: int = 0,

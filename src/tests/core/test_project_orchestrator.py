@@ -258,8 +258,6 @@ def test_project_orchestrator_generate_scheme() -> None:
     )
     assert set(scheme["Modules"].keys()) == set(
         [
-            "AcvExploitationOnly",
-            "OccupantModel",
             "WeatherModel",
         ]
     )

@@ -180,7 +180,9 @@ class ProjectData(Module):
         boundaries: List[Boundary] = []
         boundary_collection: List[dict] = []
         if BOUNDARY_COLLECTION in self.project_data[PROJECT]:
-            boundary_collection = self.project_data[PROJECT][BOUNDARY_COLLECTION]
+            boundary_collection = self.project_data[PROJECT][
+                BOUNDARY_COLLECTION
+            ]
         else:
             return []
 

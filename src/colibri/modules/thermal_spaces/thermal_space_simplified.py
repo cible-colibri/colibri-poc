@@ -188,7 +188,6 @@ class ThermalSpaceSimplified(ThermalSpace):
                         from_archetype=False,
                     ),
                 ),
-
                 Parameter(
                     name="gain",
                     default_value=0,
@@ -205,7 +204,8 @@ class ThermalSpaceSimplified(ThermalSpace):
             ],
         )
 
-    def initialize(self) -> bool: ...
+    def initialize(self) -> bool:
+        self.previous_setpoint_temperature = 20.0
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for space in self.project_data.spaces:
@@ -258,6 +258,16 @@ class ThermalSpaceSimplified(ThermalSpace):
                 + q_effective
                 / (self.thermal_capacity * space.reference_area * space.height)
             )
+            """
+            self.annual_needs[space.label] = (self.setpoint_temperatures.get(
+                        space.label,
+                        space.setpoint_temperature,
+                    ) - self.previous_setpoint_temperature
+                ) * (self.thermal_capacity * space.reference_area * space.height) + q_walls                - self.gains.get(
+                    space.label,
+                    space.gain,
+                )
+            """
 
     def end_iteration(self, time_step: int) -> None: ...
 

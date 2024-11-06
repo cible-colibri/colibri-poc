@@ -92,7 +92,9 @@ def test_poc_variant(
     )
     # Create models
     project_file: Path = (
-        Path(__file__).resolve().parents[1] / "data" / "house_1_poc_variant.json"
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "house_1_poc_variant.json"
     )
     project_data: ProjectData = ProjectData(
         name="project_data", data=project_file
@@ -139,5 +141,3 @@ def test_poc_variant(
     project_orchestrator.run()
     # Plots
     project_orchestrator.plot()
-
-

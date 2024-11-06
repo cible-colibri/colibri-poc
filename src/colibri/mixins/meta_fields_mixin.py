@@ -546,7 +546,7 @@ class MetaFieldMixin:
                 and (from_element_object is None)
             ):
                 if category == ColibriProjectObjects.BOUNDARY:
-                    class_name = 'Boundary'
+                    class_name = "Boundary"
                 scheme.setdefault(ARCHETYPES.capitalize(), dict())
                 scheme[ARCHETYPES.capitalize()].setdefault(
                     class_name, {CATEGORY: category.value}
@@ -623,15 +623,17 @@ class MetaFieldMixin:
 
         for scheme_object, variables in scheme.items():
             path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
-            if not path and 'category' in variables:
-                path = ColibriProjectPaths.get_path_from_object_type(variables['category'])
-                variables.pop('category', None)
+            if not path and "category" in variables:
+                path = ColibriProjectPaths.get_path_from_object_type(
+                    variables["category"]
+                )
+                variables.pop("category", None)
             if path:
                 level = project_dict
-                for attribute in path.split('.'):
+                for attribute in path.split("."):
                     if attribute not in level:
-                        if attribute == 'Boundary':
-                            attribute = attribute + '1'
+                        if attribute == "Boundary":
+                            attribute = attribute + "1"
                         level[attribute] = {}
                     level = level[attribute]
 
@@ -641,80 +643,97 @@ class MetaFieldMixin:
 
                     object_dict = {}
                     if object_name not in level:
-                        object_dict['type'] = object_name
-                        object_dict['type_id'] = id
+                        object_dict["type"] = object_name
+                        object_dict["type_id"] = id
                         model_class = get_class(
                             class_name=object_name,
                             output_type=ColibriObjectTypes.PROJECT_OBJECT,
                         )
-                        model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                        model_metadata: FullArgSpec = getfullargspec(
+                            model_class.__init__
+                        )
                         required_parameters: List[str] = model_metadata.args[1:]
                         for parameter in required_parameters:
-                            if parameter != 'boundaries':
+                            if parameter != "boundaries":
                                 object_dict[parameter] = None
 
                     for name, variable in variables.items():
-                        if 'default' in variable:
-                            object_dict[name] = variable['default']
+                        if "default" in variable:
+                            object_dict[name] = variable["default"]
 
-                    if attribute == 'boundary_collection':
+                    if attribute == "boundary_collection":
                         model_class = get_class(
-                            class_name='Boundary',
+                            class_name="Boundary",
                             output_type=ColibriObjectTypes.PROJECT_OBJECT,
                         )
-                        model_metadata: FullArgSpec = getfullargspec(model_class.__init__)
+                        model_metadata: FullArgSpec = getfullargspec(
+                            model_class.__init__
+                        )
                         required_parameters: List[str] = model_metadata.args[1:]
                         model_instance = model_class()
                         for k in required_parameters:
                             object_dict[k] = getattr(model_instance, k)
-                        object_dict['object_collection'] = []
-                        object_dict['segments'] = []
-                        object_dict['side_1'] = 'Space1'
+                        object_dict["object_collection"] = []
+                        object_dict["segments"] = []
+                        object_dict["side_1"] = "Space1"
 
                     if isinstance(level, list):
                         level.append(object_dict)
                     else:
                         level[id] = object_dict
-        if not 'Archetypes' in scheme:
-            scheme['Archetypes'] = {}
-        archetypes = scheme['Archetypes']
+        if not "Archetypes" in scheme:
+            scheme["Archetypes"] = {}
+        archetypes = scheme["Archetypes"]
         archetypes_instance = {}
 
         for archetype_name, archetype_variables in archetypes.items():
             name = archetype_name + "1"
-            archetype_key = archetype_name + '_types'
-            archetypes_instance[archetype_key] = { name: {k: v['default'] for k, v in archetype_variables.items() if k != "category" } }
+            archetype_key = archetype_name + "_types"
+            archetypes_instance[archetype_key] = {
+                name: {
+                    k: v["default"]
+                    for k, v in archetype_variables.items()
+                    if k != "category"
+                }
+            }
 
-        if not 'project' in project_dict:
-            project_dict['project'] = {}
-        if not 'archetype_collection' in project_dict['project']:
-            project_dict['project']['archetype_collection'] = {}
-        for k,v in archetypes_instance.items():
-            project_dict['project']['archetype_collection'][k] = v
+        if not "project" in project_dict:
+            project_dict["project"] = {}
+        if not "archetype_collection" in project_dict["project"]:
+            project_dict["project"]["archetype_collection"] = {}
+        for k, v in archetypes_instance.items():
+            project_dict["project"]["archetype_collection"][k] = v
 
-        project_dict['project']['module_collection'] = {cls.__name__ : {}}
+        project_dict["project"]["module_collection"] = {cls.__name__: {}}
         # TODO : add initial values
 
-        if 'ElementObject' in scheme:
-            for k,v in scheme['ElementObject'].items():
-                attached_to = v['attached_to']
-                path = ColibriProjectPaths.get_path_from_object_type(attached_to)
+        if "ElementObject" in scheme:
+            for k, v in scheme["ElementObject"].items():
+                attached_to = v["attached_to"]
+                path = ColibriProjectPaths.get_path_from_object_type(
+                    attached_to
+                )
 
                 level = project_dict
-                for attribute in path.split('.'):
+                for attribute in path.split("."):
                     level = level[attribute]
 
-                level = level[attached_to + '1']
-                level['object_collection'][k + '1'] = {
-                    'id' : k + '1',
-                    "type" : k,
-                    'type_id' : k + '1',
+                level = level[attached_to + "1"]
+                level["object_collection"][k + "1"] = {
+                    "id": k + "1",
+                    "type": k,
+                    "type_id": k + "1",
                 }
 
-                archetype_type = attached_to + '_types'
-                archetype_name = attached_to + '1'
-                if archetype_type not in project_dict['project']['archetype_collection']:
-                    project_dict['project']['archetype_collection'][archetype_type] = {archetype_name : {}}
+                archetype_type = attached_to + "_types"
+                archetype_name = attached_to + "1"
+                if (
+                    archetype_type
+                    not in project_dict["project"]["archetype_collection"]
+                ):
+                    project_dict["project"]["archetype_collection"][
+                        archetype_type
+                    ] = {archetype_name: {}}
 
         return project_dict
 
@@ -763,7 +782,9 @@ class MetaFieldMixin:
         model_metadata: FullArgSpec = getfullargspec(cls.__init__)
         required_parameters: List[str] = model_metadata.args[1:]
         parameters: Dict[str, Any] = {"name": f"{cls.__name__.lower()}-1"}
-        module_collection: Dict[str, Dict[str, Any]] = template["project"]["module_collection"]
+        module_collection: Dict[str, Dict[str, Any]] = template["project"][
+            "module_collection"
+        ]
         # Module needs some specific parameters
         if cls.__name__ in module_collection:
             parameters.update(module_collection[cls.__name__])
