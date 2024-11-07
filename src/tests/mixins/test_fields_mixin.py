@@ -17,9 +17,6 @@ from colibri import (
 from colibri.config import data
 
 
-@pytest.mark.xfail(
-    reason="boundary object are missing arguments -> required_parameters: List[str] = ... does not seem to apply for boundary objects"
-)
 def test_field_mixin() -> None:
     scheme = LimitedGenerator.to_template()
     lg: LimitedGenerator = LimitedGenerator.from_template(scheme)
@@ -8887,8 +8884,15 @@ def merge_dicts_recursive(dict1, dict2):
                 # Recursively merge nested dictionaries
                 result[key] = merge_dicts_recursive(result[key], value)
             elif isinstance(result[key], list) and isinstance(value, list):
-                # Append lists
-                result[key].extend(value)
+                # Append lists, if id not present yet
+                has_object = False
+                for item in result[key]:
+                    for o in value:
+                        if 'id' in item and 'id' in o and item['id'] == o['id']:
+                            has_object = True
+                if not has_object:
+                    result[key].extend(value)
+
             else:
                 # Replace non-list, non-dict values with value from dict2
                 result[key] = value

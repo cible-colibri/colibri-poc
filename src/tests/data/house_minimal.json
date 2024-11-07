@@ -2,19 +2,21 @@
     "project": {
         "boundary_collection": {
             "Boundary1": {
-                "object_collection": {
-                    "Emitter1": {
+                "object_collection": [
+                    {
                         "type": "Emitter",
                         "type_id": "Emitter1",
                         "id": "Emitter1",
-                        "q_provided": {}
+                        "label": "Emitter1",
+                        "q_consumed": {}
                     },
-                    "Layer1": {
+                    {
                         "id": "Layer1",
                         "type": "Layer",
-                        "type_id": "Layer1"
+                        "type_id": "Layer1",
+                        "label": "Layer1"
                     }
-                },
+                ],
                 "type": "Boundary",
                 "type_id": "Boundary1",
                 "id": "Boundary1",
@@ -72,7 +74,7 @@
                     "type": "Space",
                     "type_id": "Space1",
                     "id": "Space1",
-                    "label": null,
+                    "label": "Space1",
                     "occupation": [],
                     "presence_setpoint_temperature": 19,
                     "absence_setpoint_temperature": 19,

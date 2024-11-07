@@ -22,10 +22,10 @@ class BoundaryObject(ClassMixin, MetaFieldMixin):
         label: str,
         type: str,
         type_id: str,
-        x_relative_position: float,
-        y_relative_position: float,
-        on_side: str,
-        z_relative_position: float = 0.0,
+        x_relative_position = 0.0,
+        y_relative_position = 0.0,
+        on_side = "",
+        z_relative_position = 0.0,
         **kwargs: Dict[str, Any],
     ) -> None:
         """Initialize a new BoundaryObject instance."""

@@ -634,7 +634,10 @@ class MetaFieldMixin:
                     if attribute not in level:
                         if attribute == "Boundary":
                             attribute = attribute + "1"
-                        level[attribute] = {}
+                        if attribute =='boundary_condition_collection' or attribute == 'object_collection':
+                            level[attribute] = []
+                        else:
+                            level[attribute] = {}
                     level = level[attribute]
 
                 object_name = scheme_object
@@ -646,6 +649,7 @@ class MetaFieldMixin:
                         object_dict["type"] = object_name
                         object_dict["type_id"] = id
                         object_dict["id"] = id
+                        object_dict["label"] = id
                         model_class = get_class(
                             class_name=object_name,
                             output_type=ColibriObjectTypes.PROJECT_OBJECT,
@@ -720,11 +724,17 @@ class MetaFieldMixin:
                     level = level[attribute]
 
                 level = level[attached_to + "1"]
-                level["object_collection"][k + "1"] = {
-                    "id": k + "1",
-                    "type": k,
-                    "type_id": k + "1",
-                }
+                level = level["object_collection"]
+                default_attributes = {
+                        "id": k + "1",
+                        "type": k,
+                        "type_id": k + "1",
+                        "label": k + "1"
+                    }
+                if type(level) is list:
+                    level.append(default_attributes)
+                else:
+                    level[k + "1"] = default_attributes
 
                 archetype_type = attached_to + "_types"
                 archetype_name = attached_to + "1"
