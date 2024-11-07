@@ -6,10 +6,7 @@
                     "Emitter1": {
                         "type": "Emitter",
                         "type_id": "Emitter1",
-                        "on_side": "side_1_to_side_2",
-                        "x_relative_position": 1,
-                        "y_relative_position": 1,
-                        "z_relative_position": 0,
+                        "id": "Emitter1",
                         "q_provided": {}
                     },
                     "Layer1": {
@@ -23,7 +20,7 @@
                 "id": "Boundary1",
                 "label": "Boundary1",
                 "side_1": "Space1",
-                "side_2": null,
+                "side_2": "exterior",
                 "area": 0,
                 "azimuth": 0,
                 "tilt": 0,
@@ -79,7 +76,7 @@
                     "occupation": [],
                     "presence_setpoint_temperature": 19,
                     "absence_setpoint_temperature": 19,
-                    "q_needs": 0.8,
+                    "q_needs": 0.0,
                     "inside_air_temperatures": {},
                     "inside_air_temperature": 19.0,
                     "setpoint_temperatures": {},

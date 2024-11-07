@@ -27,7 +27,6 @@ def test_field_mixin() -> None:
     lg.run(1, 1)
 
 
-@pytest.mark.xfail(reason="space has no id")
 def test_generate_simple_house():
     from colibri import (
         OccupantModel,
