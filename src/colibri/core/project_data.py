@@ -15,6 +15,7 @@ from colibri.config.constants import (
     COLLECTION,
     JUNCTION,
     NODE_COLLECTION,
+    OBJECT_COLLECTION,
     PROJECT,
     SEGMENTS,
     SPACE,
@@ -23,6 +24,7 @@ from colibri.config.constants import (
     TYPE_ID,
 )
 from colibri.interfaces import (
+    BoundaryObject,
     ElementObject,
     Module,
 )
@@ -36,7 +38,6 @@ from colibri.project_objects import (
 )
 from colibri.utils.class_utils import (
     create_class_instance,
-    get_class,
 )
 from colibri.utils.enums_utils import (
     ColibriObjectTypes,
@@ -252,6 +253,7 @@ class ProjectData(Module):
         self,
         element_data: Union[Dict[str, Any], List[Dict[str, Any]]],
         class_signature: Optional[Type] = None,
+        parameter_name: Optional[str] = None,
     ):
         # Object collection
         is_element_data_list: bool = isinstance(element_data, list)
@@ -262,7 +264,11 @@ class ProjectData(Module):
             return element_data
         if is_element_data_list:
             return [
-                self.create_element_object(element_data=element)
+                self.create_element_object(
+                    element_data=element,
+                    class_signature=class_signature,
+                    parameter_name=parameter_name,
+                )
                 for element in element_data
             ]
         does_element_have_archetype: bool = (TYPE in element_data) and (
@@ -277,11 +283,14 @@ class ProjectData(Module):
                 **archetype_data,
                 **element_data,
             }
-            class_signature: Type = get_class(
-                class_name=class_name,
-                output_type=ColibriObjectTypes.PROJECT_OBJECT,
-            )
-            print(f"{class_signature = } | {class_name = }")
+            if (class_signature is None) and (
+                parameter_name == OBJECT_COLLECTION
+            ):
+                class_signature: Type = BoundaryObject
+            if (class_signature is None) and (
+                parameter_name != OBJECT_COLLECTION
+            ):
+                class_signature: Type = ElementObject
             if class_signature.__name__ == ElementObject.__name__:
                 return class_signature.create_instance(
                     class_name=class_name,
@@ -292,10 +301,13 @@ class ProjectData(Module):
                         for parameter_name, parameter_value in class_parameters.items()
                     },
                 )
+            if class_signature.__name__ == BoundaryObject.__name__:
+                return class_signature(**class_parameters)
             return class_signature(
                 **{
                     parameter_name: self.create_element_object(
-                        element_data=parameter_value
+                        element_data=parameter_value,
+                        parameter_name=parameter_name,
                     )
                     for parameter_name, parameter_value in class_parameters.items()
                 }
@@ -308,7 +320,11 @@ class ProjectData(Module):
             return class_signature(
                 **{
                     parameter_name: self.create_element_object(
-                        element_data=parameter_value
+                        element_data=parameter_value,
+                        class_signature=BoundaryObject
+                        if parameter_name == OBJECT_COLLECTION
+                        else None,
+                        parameter_name=parameter_name,
                     )
                     for parameter_name, parameter_value in element_data.items()
                 }

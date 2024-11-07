@@ -489,8 +489,13 @@ def test_from_template() -> None:
                     "object_collection": [
                         {
                             "id": "emitter-1",
+                            "label": "Electrical emitter",
                             "type": "Emitter",
                             "type_id": "emitter_archetype_1",
+                            "on_side": "side_1_to_side_2",
+                            "x_relative_position": 1,
+                            "y_relative_position": 1,
+                            "z_relative_position": 0,
                             "pn": 200,
                         }
                     ],

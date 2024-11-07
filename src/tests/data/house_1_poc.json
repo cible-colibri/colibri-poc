@@ -97,6 +97,10 @@
                         "type": "emitter",
                         "label": "Electrical emitter",
                         "type_id": "electric_convector",
+                        "on_side": "side_1_to_side_2",
+                        "x_relative_position": 1,
+                        "y_relative_position": 1,
+                        "z_relative_position": 0,
                         "q_provided": {}
                     }
                 ]
@@ -144,6 +148,10 @@
                         "type": "emitter",
                         "label": "Electrical emitter",
                         "type_id": "electric_convector",
+                        "on_side": "side_1_to_side_2",
+                        "x_relative_position": 1,
+                        "y_relative_position": 1,
+                        "z_relative_position": 0,
                         "q_provided": {}
                     }
                 ]

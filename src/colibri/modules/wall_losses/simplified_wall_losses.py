@@ -82,15 +82,11 @@ class SimplifiedWallLosses(WallLosses):
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for boundary in self.project_data.boundaries:
-            print(f"{boundary.side_1 = }")
-            print(f"{boundary.side_2 = }")
             space_id: int = (
                 boundary.side_1
                 if boundary.side_1 != "exterior"
                 else boundary.side_2
             )
-            print(f"{space_id = }")
-            print(f"{[space.id for space in self.project_data.spaces] = }")
             space: Space = [
                 space
                 for space in self.project_data.spaces

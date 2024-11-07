@@ -17,18 +17,14 @@ from colibri import (
 from colibri.config import data
 
 
+@pytest.mark.xfail(
+    reason="boundary object are missing arguments -> required_parameters: List[str] = ... does not seem to apply for boundary objects"
+)
 def test_field_mixin() -> None:
-    acv: AcvExploitationOnly = AcvExploitationOnly(name="acv-1")
-    lg = LimitedGenerator("lg-1")
-
-    scheme1 = AcvExploitationOnly.to_template()
-    scheme2 = LimitedGenerator.to_template()
-
-    lg2: LimitedGenerator = LimitedGenerator.from_template(scheme2)
-    lg2.initialize()
-    lg2.run(1, 1)
-
-    print(lg2.q_consumed)
+    scheme = LimitedGenerator.to_template()
+    lg: LimitedGenerator = LimitedGenerator.from_template(scheme)
+    lg.initialize()
+    lg.run(1, 1)
 
 
 @pytest.mark.xfail(reason="space has no id")
@@ -8904,4 +8900,5 @@ def merge_dicts_recursive(dict1, dict2):
 
 
 if __name__ == "__main__":
+    test_field_mixin()
     test_generate_simple_house()

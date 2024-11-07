@@ -195,6 +195,9 @@ class ThermalSpaceSimplified(ThermalSpace):
 
     def initialize(self) -> bool:
         self.previous_setpoint_temperature = 20.0
+        self.inside_air_temperatures = {
+            space.id: 20.0 for space in self.project_data.spaces
+        }
         self.temporary_annual_needs = {
             space.id: 0.0 for space in self.project_data.spaces
         }
@@ -235,7 +238,6 @@ class ThermalSpaceSimplified(ThermalSpace):
                 if boundary_object.type == "emitter"
             ]
             q_provided: float = sum(
-                # TODO: Use id instead of label
                 [self.q_provided.get(emitter.id, 0.0) for emitter in emitters]
             )
             q_effective: float = (

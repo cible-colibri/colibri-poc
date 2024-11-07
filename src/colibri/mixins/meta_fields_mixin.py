@@ -620,7 +620,6 @@ class MetaFieldMixin:
         scheme = cls.to_scheme()
 
         project_dict = {}
-
         for scheme_object, variables in scheme.items():
             path = ColibriProjectPaths.get_path_from_object_type(scheme_object)
             if not path and "category" in variables:
@@ -631,6 +630,7 @@ class MetaFieldMixin:
             if path:
                 level = project_dict
                 for attribute in path.split("."):
+                    print(f"{attribute = }")
                     if attribute not in level:
                         if attribute == "Boundary":
                             attribute = attribute + "1"
@@ -638,6 +638,7 @@ class MetaFieldMixin:
                     level = level[attribute]
 
                 object_name = scheme_object
+                print(f"{object_name = }")
                 if object_name != "Project":
                     id = scheme_object + "1"
                     object_dict = {}
