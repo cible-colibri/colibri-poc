@@ -655,7 +655,7 @@ class MetaFieldMixin:
                         )
                         required_parameters: List[str] = model_metadata.args[1:]
                         for parameter in required_parameters:
-                            if parameter != "boundaries":
+                            if parameter != "boundaries" and parameter not in object_dict:
                                 object_dict[parameter] = None
 
                     for name, variable in variables.items():
