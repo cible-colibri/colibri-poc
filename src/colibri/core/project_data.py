@@ -178,14 +178,9 @@ class ProjectData(Module):
         >>> None
         """
         boundaries: List[Boundary] = []
-        boundary_collection: List[dict] = []
-        if BOUNDARY_COLLECTION in self.project_data[PROJECT]:
-            boundary_collection = self.project_data[PROJECT][
-                BOUNDARY_COLLECTION
-            ]
-        else:
-            return []
-
+        boundary_collection: Dict[str, Dict[str, Any]] = self.project_data[
+            PROJECT
+        ].get(BOUNDARY_COLLECTION, dict())
         for boundary_name, boundary_data in boundary_collection.items():
             segments_data: Dict[str, Any] = boundary_data.pop(SEGMENTS, [])
             boundary: Boundary = self.create_element_object(
@@ -258,8 +253,11 @@ class ProjectData(Module):
         element_data: Union[Dict[str, Any], List[Dict[str, Any]]],
         class_signature: Optional[Type] = None,
     ):
+        # Object collection
         is_element_data_list: bool = isinstance(element_data, list)
+        # Object
         is_element_data_dict: bool = isinstance(element_data, dict)
+        # If neither object nor collection, simple parameter
         if not (is_element_data_dict or is_element_data_list):
             return element_data
         if is_element_data_list:
@@ -283,6 +281,7 @@ class ProjectData(Module):
                 class_name=class_name,
                 output_type=ColibriObjectTypes.PROJECT_OBJECT,
             )
+            print(f"{class_signature = } | {class_name = }")
             if class_signature.__name__ == ElementObject.__name__:
                 return class_signature.create_instance(
                     class_name=class_name,

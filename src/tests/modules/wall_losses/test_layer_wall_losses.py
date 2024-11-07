@@ -54,7 +54,7 @@ def test_layer_wall_losses() -> None:
     boundary_1: Boundary = Boundary(
         id="boundary-1",
         label="kitchen-living-room",
-        side_1="kitchen",
+        side_1="space-1",
         side_2="living-room",
         area=4,
         azimuth=90,
@@ -65,7 +65,7 @@ def test_layer_wall_losses() -> None:
     boundary_2: Boundary = Boundary(
         id="boundary-2",
         label="kitchen-restroom",
-        side_1="kitchen",
+        side_1="space-1",
         side_2="restroom",
         area=2.5,
         azimuth=90,

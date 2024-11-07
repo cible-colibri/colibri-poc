@@ -640,11 +640,11 @@ class MetaFieldMixin:
                 object_name = scheme_object
                 if object_name != "Project":
                     id = scheme_object + "1"
-
                     object_dict = {}
                     if object_name not in level:
                         object_dict["type"] = object_name
                         object_dict["type_id"] = id
+                        object_dict["id"] = id
                         model_class = get_class(
                             class_name=object_name,
                             output_type=ColibriObjectTypes.PROJECT_OBJECT,
@@ -676,7 +676,7 @@ class MetaFieldMixin:
                         object_dict["object_collection"] = []
                         object_dict["segments"] = []
                         object_dict["side_1"] = "Space1"
-
+                        object_dict["side_2"] = "exterior"
                     if isinstance(level, list):
                         level.append(object_dict)
                     else:

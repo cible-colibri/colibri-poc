@@ -9,6 +9,7 @@ from typing import Dict, Optional
 from colibri.core import ProjectData
 from colibri.core.fields import Parameter
 from colibri.interfaces.modules.wall_losses import WallLosses
+from colibri.project_objects import Space
 from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
     ColibriProjectObjects,
@@ -81,10 +82,23 @@ class SimplifiedWallLosses(WallLosses):
 
     def run(self, time_step: int, number_of_iterations: int) -> None:
         for boundary in self.project_data.boundaries:
-            # TODO: How to handle multiple spaces?
+            print(f"{boundary.side_1 = }")
+            print(f"{boundary.side_2 = }")
+            space_id: int = (
+                boundary.side_1
+                if boundary.side_1 != "exterior"
+                else boundary.side_2
+            )
+            print(f"{space_id = }")
+            print(f"{[space.id for space in self.project_data.spaces] = }")
+            space: Space = [
+                space
+                for space in self.project_data.spaces
+                if space.id == space_id
+            ][0]
             inside_air_temperature: float = self.inside_air_temperatures.get(
-                boundary.spaces[0].id,
-                boundary.spaces[0].inside_air_temperature,
+                space_id,
+                space.inside_air_temperature,
             )
             self.q_walls[boundary.id] = (
                 boundary.u_value

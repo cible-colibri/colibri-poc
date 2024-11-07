@@ -236,10 +236,7 @@ class ThermalSpaceSimplified(ThermalSpace):
             ]
             q_provided: float = sum(
                 # TODO: Use id instead of label
-                [
-                    self.q_provided.get(emitter.label, 0.0)
-                    for emitter in emitters
-                ]
+                [self.q_provided.get(emitter.id, 0.0) for emitter in emitters]
             )
             q_effective: float = (
                 q_provided + self.gains.get(space.id, space.gain) - q_walls

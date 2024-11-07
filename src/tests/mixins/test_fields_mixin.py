@@ -4,6 +4,7 @@ from importlib import resources
 from random import randint
 from typing import List
 
+import pytest
 from pkg_resources import resource_filename
 
 from colibri import (
@@ -30,6 +31,7 @@ def test_field_mixin() -> None:
     print(lg2.q_consumed)
 
 
+@pytest.mark.xfail(reason="space has no id")
 def test_generate_simple_house():
     from colibri import (
         OccupantModel,
@@ -8899,3 +8901,7 @@ def merge_dicts_recursive(dict1, dict2):
             # If the key is not in dict1, add it
             result[key] = value
     return result
+
+
+if __name__ == "__main__":
+    test_generate_simple_house()

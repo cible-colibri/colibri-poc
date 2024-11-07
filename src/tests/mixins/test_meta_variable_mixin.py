@@ -513,8 +513,8 @@ def test_from_template() -> None:
     limited_generator.end_time_step(time_step=1)
     limited_generator.end_iteration(time_step=1)
     limited_generator.end_simulation()
-    assert limited_generator.q_provided == {"space-1": 75.0}
-    assert limited_generator.q_consumed["space-1"] == pytest.approx(
+    assert limited_generator.q_provided == {"emitter-1": 75.0}
+    assert limited_generator.q_consumed["emitter-1"] == pytest.approx(
         83.3, abs=0.5
     )
 

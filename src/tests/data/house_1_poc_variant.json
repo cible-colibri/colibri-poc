@@ -93,8 +93,9 @@
                 "origin": null,
                 "object_collection": [
                     {
+                        "id": "emitter-1",
                         "type": "emitter",
-                        "label": "emitter1",
+                        "label": "Electrical emitter",
                         "type_id": "electric_convector",
                         "q_provided": {}
                     }
@@ -139,8 +140,9 @@
                 "origin": null,
                 "object_collection": [
                     {
+                        "id": "emitter-1",
                         "type": "emitter",
-                        "label": "emitter1",
+                        "label": "Electrical emitter",
                         "type_id": "electric_convector",
                         "q_provided": {}
                     }

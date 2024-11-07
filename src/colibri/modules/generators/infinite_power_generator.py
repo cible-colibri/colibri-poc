@@ -63,19 +63,6 @@ class InfinitePowerGenerator(Generator):
                         from_archetype=True,
                     ),
                 ),
-                Parameter(
-                    name="q_needs",
-                    default_value=0.8,
-                    description="Load of space",
-                    format=float,
-                    min=0.0,
-                    max=float("inf"),
-                    unit=Units.WATT,
-                    attached_to=Attachment(
-                        category=ColibriProjectObjects.SPACE,
-                        from_archetype=False,
-                    ),
-                ),
             ],
         )
 
@@ -95,10 +82,10 @@ class InfinitePowerGenerator(Generator):
                 space.q_needs,
             )
             for emitter in emitters:
-                self.q_consumed[space.id] = q_needs / (
+                self.q_consumed[emitter.id] = q_needs / (
                     number_of_emitters * emitter.efficiency
                 )
-                self.q_provided[space.id] = q_needs / number_of_emitters
+                self.q_provided[emitter.id] = q_needs / number_of_emitters
 
     def end_iteration(self, time_step: int) -> None: ...
 

@@ -1,5 +1,5 @@
 """
-Test cases for the `project_orchestrator.py` module.
+Test cases for the proof of concept (PoC).
 """
 
 from pathlib import Path

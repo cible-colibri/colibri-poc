@@ -72,8 +72,8 @@ def test_limited_generator() -> None:
     assert isinstance(generator, LimitedGenerator) is True
     assert isinstance(generator, Generator) is True
     generator.run(time_step=1, number_of_iterations=1)
-    assert generator.q_provided["space-1"] == pytest.approx(450, abs=1)
-    assert generator.q_consumed["space-1"] == pytest.approx(500, abs=1)
+    assert generator.q_provided["emitter_2"] == pytest.approx(450, abs=1)
+    assert generator.q_consumed["emitter_2"] == pytest.approx(500, abs=1)
     assert generator.has_converged(time_step=1, number_of_iterations=1) is True
 
 

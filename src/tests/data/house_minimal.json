@@ -70,7 +70,7 @@
                 "Space1": {
                     "type": "Space",
                     "type_id": "Space1",
-                    "id": null,
+                    "id": "Space1",
                     "label": null,
                     "occupation": [],
                     "presence_setpoint_temperature": 19,

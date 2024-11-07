@@ -97,10 +97,10 @@ class LimitedGenerator(Generator):
             )
             q_total_provided: float = min(max_q, q_needs)
             for emitter in emitters:
-                self.q_consumed[space.id] = q_total_provided / (
+                self.q_consumed[emitter.id] = q_total_provided / (
                     (emitter.pn / max_q) * emitter.efficiency
                 )
-                self.q_provided[space.id] = q_total_provided / (
+                self.q_provided[emitter.id] = q_total_provided / (
                     emitter.pn / max_q
                 )
 
