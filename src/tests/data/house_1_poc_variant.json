@@ -11,7 +11,7 @@
             "AcvExploitationOnly": {},
             "LimitedGenerator": {},
             "OccupantModel": {},
-            "SimplifiedWallLosses": {},
+            "LayerWallLosses": {},
             "ThermalSpaceSimplified": {},
             "WeatherModel": {}
         },

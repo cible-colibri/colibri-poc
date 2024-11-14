@@ -8888,7 +8888,7 @@ def merge_dicts_recursive(dict1, dict2):
                 has_object = False
                 for item in result[key]:
                     for o in value:
-                        if 'id' in item and 'id' in o and item['id'] == o['id']:
+                        if "id" in item and "id" in o and item["id"] == o["id"]:
                             has_object = True
                 if not has_object:
                     result[key].extend(value)

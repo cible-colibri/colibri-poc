@@ -14,10 +14,12 @@ from colibri.config.constants import (
     BOUNDARY_COLLECTION,
     COLLECTION,
     JUNCTION,
+    MODULE_COLLECTION,
     NODE_COLLECTION,
     OBJECT_COLLECTION,
     PROJECT,
     SEGMENTS,
+    SIMULATION_PARAMETERS,
     SPACE,
     SPACE_COLLECTION,
     TYPE,
@@ -58,6 +60,12 @@ class ProjectData(Module):
             self.read_project_file() if isinstance(data, Path) is True else data
         )
         if self.project_data:
+            self.module_parameters = self.project_data[PROJECT].get(
+                MODULE_COLLECTION, dict()
+            )
+            self.simulation_parameters = self.project_data[PROJECT].get(
+                SIMULATION_PARAMETERS, dict()
+            )
             spaces: List[Space] = self.get_spaces()
             self.spaces: List[Space] = self.define_output(
                 name="spaces",

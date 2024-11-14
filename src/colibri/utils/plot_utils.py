@@ -21,7 +21,9 @@ class Plot:
     module: Module
     variable_name: str
 
-    def add_plot_to_figure(self, figure: Figure, location: int) -> None:
+    def add_plot_to_figure(
+        self, figure: Figure, location: int, show_title: bool
+    ) -> None:
         """Add the plot to the figure at the location.
 
         Returns
@@ -30,6 +32,8 @@ class Plot:
             Figure where the plot will be added
         location : int
             Location of the plot onto the figure
+        show_title : bool = True
+            Show title on each figure
 
         Raises
         ------
@@ -40,11 +44,12 @@ class Plot:
         >>> None
         """
         axis: Axes = figure.add_subplot(location)
-        axis.set_title(self.name)
+        if show_title is True:
+            axis.set_title(self.name)
         series: List = getattr(self.module, f"{self.variable_name}_series")
         variable: SimulationVariable = self.module.get_field(self.variable_name)
         if not isinstance(series[0], dict):
-            axis.plot(series, label=f"{self.module.name}.{self.variable_name}")
+            axis.plot(series, label=f"{self.module.name}.{variable.name}")
         if isinstance(series[0], dict):
             variables: dict = dict()
             for series_variable in series[-1]:
@@ -53,6 +58,9 @@ class Plot:
                 for k, v in step.items():
                     variables[k].append(v)
             for variable_name, values in variables.items():
-                axis.plot(values, label=f"{self.module.name}.{variable_name}")
+                axis.plot(
+                    values,
+                    label=f"{self.module.name}.{variable.name}.{variable_name}",
+                )
         axis.set_ylabel(f"[{variable.unit.value}]")
         axis.legend(loc="upper right", numpoints=1)

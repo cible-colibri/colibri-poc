@@ -4,6 +4,7 @@ Test cases for the `project_orchestrator.py` module.
 
 from pathlib import Path
 from random import randint
+from typing import List
 from unittest.mock import MagicMock, patch
 
 from colibri.core import ProjectData, ProjectOrchestrator
@@ -45,12 +46,24 @@ def test_prototype_with_links(mock_show: MagicMock) -> None:
         name="simplified_wall_losses"
     )
     occupants: OccupantModel = OccupantModel(name="occupants")
+    scenario_exterior_air_temperatures: List[int] = [
+        randint(5, 20) for _ in range(0, project_orchestrator.time_steps)
+    ]
     weather: WeatherModel = WeatherModel(
         name="weather",
-        scenario_exterior_air_temperatures=[
-            randint(5, 20) for _ in range(0, project_orchestrator.time_steps)
-        ],
+        scenario_exterior_air_temperatures=scenario_exterior_air_temperatures,
     )
+    # Update module parameters according to the modules being used
+    project_data.module_parameters = {
+        AcvExploitationOnly.__name__: {},
+        InfinitePowerGenerator.__name__: {},
+        SimplifiedWallLosses.__name__: {},
+        ThermalSpaceSimplified.__name__: {},
+        OccupantModel.__name__: {},
+        WeatherModel.__name__: {
+            "scenario_exterior_air_temperatures": scenario_exterior_air_temperatures,
+        },
+    }
     # Add models
     project_orchestrator.add_module(module=project_data)
     project_orchestrator.add_module(module=acv_exploitation_only)
@@ -147,12 +160,24 @@ def test_prototype_with_links_created_automatically(
         name="simplified_wall_losses"
     )
     occupants: OccupantModel = OccupantModel(name="occupants")
+    scenario_exterior_air_temperatures: List[int] = [
+        randint(5, 20) for _ in range(0, project_orchestrator.time_steps)
+    ]
     weather: WeatherModel = WeatherModel(
         name="weather",
-        scenario_exterior_air_temperatures=[
-            randint(5, 20) for _ in range(0, project_orchestrator.time_steps)
-        ],
+        scenario_exterior_air_temperatures=scenario_exterior_air_temperatures,
     )
+    # Update module parameters according to the modules being used
+    project_data.module_parameters = {
+        AcvExploitationOnly.__name__: {},
+        InfinitePowerGenerator.__name__: {},
+        SimplifiedWallLosses.__name__: {},
+        ThermalSpaceSimplified.__name__: {},
+        OccupantModel.__name__: {},
+        WeatherModel.__name__: {
+            "scenario_exterior_air_temperatures": scenario_exterior_air_temperatures,
+        },
+    }
     # Add models
     project_orchestrator.add_module(module=project_data)
     project_orchestrator.add_module(module=acv_exploitation_only)
@@ -208,12 +233,24 @@ def test_prototype_variant_with_links_automatically(
         name="layer_wall_losses"
     )
     occupants: OccupantModel = OccupantModel(name="occupants")
+    scenario_exterior_air_temperatures: List[int] = [
+        randint(5, 20) for _ in range(0, project_orchestrator.time_steps)
+    ]
     weather: WeatherModel = WeatherModel(
         name="weather",
-        scenario_exterior_air_temperatures=[
-            randint(5, 20) for _ in range(0, project_orchestrator.time_steps)
-        ],
+        scenario_exterior_air_temperatures=scenario_exterior_air_temperatures,
     )
+    # Update module parameters according to the modules being used
+    project_data.module_parameters = {
+        AcvExploitationOnly.__name__: {},
+        LimitedGenerator.__name__: {},
+        LayerWallLosses.__name__: {},
+        ThermalSpaceSimplified.__name__: {},
+        OccupantModel.__name__: {},
+        WeatherModel.__name__: {
+            "scenario_exterior_air_temperatures": scenario_exterior_air_temperatures,
+        },
+    }
     # Add models
     project_orchestrator.add_module(module=project_data)
     project_orchestrator.add_module(module=acv_exploitation_only)

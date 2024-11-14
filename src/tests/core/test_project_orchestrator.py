@@ -18,20 +18,27 @@ from colibri.utils.exceptions_utils import LinkError
 def test_project_orchestrator(mock_show: MagicMock) -> None:
     """Test the ProjectOrchestrator class."""
     assert isinstance(mock_show, MagicMock) is True
+
+    class FakeProjectData:
+        def __init__(self) -> None:
+            self.simulation_parameters: dict = dict()
+            self.module_parameters: dict = dict()
+
+    fake_project_data: FakeProjectData = FakeProjectData()
     project_orchestrator_name_example: str = "project_orchestrator_example"
     project_orchestrator_example: ProjectOrchestrator = ProjectOrchestrator(
         name=project_orchestrator_name_example
     )
+    project_orchestrator_example.project_data = fake_project_data
     message: dict = project_orchestrator_example.run()
     assert isinstance(message, dict) is True
     project_orchestrator_name_example: str = "project_orchestrator_example"
     project_orchestrator_example: ProjectOrchestrator = ProjectOrchestrator(
         name=project_orchestrator_name_example, verbose=True
     )
+    project_orchestrator_example.project_data = fake_project_data
     message: dict = project_orchestrator_example.run()
     assert isinstance(message, dict) is True
-    # Update project
-    project_orchestrator_example.time_steps = 8
     # Create models
     project_file: Path = (
         Path(__file__).resolve().parents[1] / "data" / "house_1.json"
@@ -39,22 +46,32 @@ def test_project_orchestrator(mock_show: MagicMock) -> None:
     project_data: ProjectData = ProjectData(
         name="project_data", data=project_file
     )
+    scenario_exterior_air_temperatures: List[float] = [
+        18.0,
+        19.0,
+        20.0,
+        21.0,
+        22.0,
+        24.0,
+        20.0,
+        17.0,
+    ]
     weather: WeatherModel = WeatherModel(
         name="weather",
-        scenario_exterior_air_temperatures=[
-            18.0,
-            19.0,
-            20.0,
-            21.0,
-            22.0,
-            24.0,
-            20.0,
-            17.0,
-        ],
+        scenario_exterior_air_temperatures=scenario_exterior_air_temperatures,
     )
     simplified_wall_losses: SimplifiedWallLosses = SimplifiedWallLosses(
         name="simplified_wall_losses"
     )
+    # Update simulation_parameters
+    project_data.simulation_parameters.update({"time_steps": 8})
+    # Update module parameters according to the modules being used
+    project_data.module_parameters = {
+        SimplifiedWallLosses.__name__: {},
+        WeatherModel.__name__: {
+            "scenario_exterior_air_temperatures": scenario_exterior_air_temperatures,
+        },
+    }
     # Add models
     project_orchestrator_example.add_module(module=project_data)
     project_orchestrator_example.add_module(module=simplified_wall_losses)
@@ -120,22 +137,32 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
     project_data: ProjectData = ProjectData(
         name="project_data", data=project_file
     )
+    scenario_exterior_air_temperatures: List[float] = [
+        18.0,
+        19.0,
+        20.0,
+        21.0,
+        22.0,
+        24.0,
+        20.0,
+        17.0,
+    ]
     weather: WeatherModel = WeatherModel(
         name="weather",
-        scenario_exterior_air_temperatures=[
-            18.0,
-            19.0,
-            20.0,
-            21.0,
-            22.0,
-            24.0,
-            20.0,
-            17.0,
-        ],
+        scenario_exterior_air_temperatures=scenario_exterior_air_temperatures,
     )
     simplified_wall_losses: SimplifiedWallLosses = SimplifiedWallLosses(
         name="simplified_wall_losses"
     )
+    # Update simulation_parameters
+    project_data.simulation_parameters.update({"time_steps": 8})
+    # Update module parameters according to the modules being used
+    project_data.module_parameters = {
+        SimplifiedWallLosses.__name__: {},
+        WeatherModel.__name__: {
+            "scenario_exterior_air_temperatures": scenario_exterior_air_temperatures,
+        },
+    }
     # Add models
     project_orchestrator_example.add_module(module=project_data)
     project_orchestrator_example.add_module(module=simplified_wall_losses)
@@ -178,20 +205,20 @@ def test_project_orchestrator_with_iterations(mock_show: MagicMock) -> None:
     )
     weather: WeatherModel = WeatherModel(
         name="weather",
-        scenario_exterior_air_temperatures=[
-            18.0,
-            19.0,
-            20.0,
-            21.0,
-            22.0,
-            24.0,
-            20.0,
-            17.0,
-        ],
+        scenario_exterior_air_temperatures=scenario_exterior_air_temperatures,
     )
     simplified_wall_losses: SimplifiedWallLosses = SimplifiedWallLosses(
         name="simplified_wall_losses"
     )
+    # Update simulation_parameters
+    project_data.simulation_parameters.update({"time_steps": 8})
+    # Update module parameters according to the modules being used
+    project_data.module_parameters = {
+        SimplifiedWallLosses.__name__: {},
+        WeatherModel.__name__: {
+            "scenario_exterior_air_temperatures": scenario_exterior_air_temperatures,
+        },
+    }
     # Add models
     project_orchestrator_example_2.add_module(module=project_data)
     project_orchestrator_example_2.add_module(module=simplified_wall_losses)
@@ -273,3 +300,8 @@ def test_project_orchestrator_generate_scheme() -> None:
             "layers",
         ]
     )
+
+
+if __name__ == "__main__":
+    test_project_orchestrator()
+    test_project_orchestrator_with_iterations()

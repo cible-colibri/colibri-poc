@@ -9,7 +9,7 @@
         },
         "module_collection": {
             "AcvExploitationOnly": {},
-            "LimitedGenerator": {},
+            "InfinitePowerGenerator": {},
             "OccupantModel": {},
             "SimplifiedWallLosses": {},
             "ThermalSpaceSimplified": {},

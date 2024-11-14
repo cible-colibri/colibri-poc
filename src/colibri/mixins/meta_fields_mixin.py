@@ -634,7 +634,10 @@ class MetaFieldMixin:
                     if attribute not in level:
                         if attribute == "Boundary":
                             attribute = attribute + "1"
-                        if attribute =='boundary_condition_collection' or attribute == 'object_collection':
+                        if (
+                            attribute == "boundary_condition_collection"
+                            or attribute == "object_collection"
+                        ):
                             level[attribute] = []
                         else:
                             level[attribute] = {}
@@ -659,7 +662,10 @@ class MetaFieldMixin:
                         )
                         required_parameters: List[str] = model_metadata.args[1:]
                         for parameter in required_parameters:
-                            if parameter != "boundaries" and parameter not in object_dict:
+                            if (
+                                parameter != "boundaries"
+                                and parameter not in object_dict
+                            ):
                                 object_dict[parameter] = None
 
                     for name, variable in variables.items():
@@ -726,11 +732,11 @@ class MetaFieldMixin:
                 level = level[attached_to + "1"]
                 level = level["object_collection"]
                 default_attributes = {
-                        "id": k + "1",
-                        "type": k,
-                        "type_id": k + "1",
-                        "label": k + "1"
-                    }
+                    "id": k + "1",
+                    "type": k,
+                    "type_id": k + "1",
+                    "label": k + "1",
+                }
                 if type(level) is list:
                     level.append(default_attributes)
                 else:

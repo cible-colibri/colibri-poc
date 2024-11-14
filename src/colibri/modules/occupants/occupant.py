@@ -93,6 +93,7 @@ class OccupantModel(Occupants):
                 * space.reference_area
                 * self.occupant_gains
             )
+
             if space.occupation[time_step] > 0:
                 self.setpoint_temperatures[space.id] = (
                     space.presence_setpoint_temperature

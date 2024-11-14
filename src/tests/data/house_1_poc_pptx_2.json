@@ -1,0 +1,218 @@
+{
+    "project": {
+        "id": "project-1",
+        "simulation_parameters": {
+            "time_steps": 12,
+            "verbose": false,
+            "iterate_for_convergence": true,
+            "maximum_number_of_iterations": 10
+        },
+        "module_collection": {
+            "AcvExploitationOnly": {},
+            "LimitedGenerator": {},
+            "OccupantModel": {},
+            "LayerWallLosses": {},
+            "ThermalSpaceSimplified": {},
+            "WeatherModel": {
+                "scenario_exterior_air_temperatures": [9, 12, 13, 14, 18, 21, 21, 16, 12, 11, 9, 9]
+            }
+        },
+        "building_land": {},
+        "node_collection": {
+            "space_collection": {
+                "1": {
+                    "id": "1",
+                    "label": "1",
+                    "type": "space",
+                    "reference_area": 50,
+                    "height": 2.5,
+                    "presence_setpoint_temperature": 20.0,
+                    "absence_setpoint_temperature": 17.0,
+                    "occupation": [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1],
+                    "inside_air_temperature": 20.0,
+                    "q_needs": 0,
+                    "setpoint_temperature": 20.0,
+                    "gain": 0.0
+                },
+                "2": {
+                    "id": "2",
+                    "label": "2",
+                    "type": "space",
+                    "reference_area": 30,
+                    "height": 2.5,
+                    "presence_setpoint_temperature": 20.0,
+                    "absence_setpoint_temperature": 17.0,
+                    "occupation": [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+                    "inside_air_temperature": 20.0,
+                    "q_needs": 0,
+                    "setpoint_temperature": 20.0,
+                    "gain": 0.0
+                }
+            }
+        },
+        "boundary_collection": {
+            "11": {
+                "id": "11",
+                "type": "boundary",
+                "type_id": "mur_11",
+                "label": "11",
+                "side_1": "exterior",
+                "side_2": "1",
+                "azimuth": 180,
+                "tilt": 90,
+                "area": 25.0,
+                "origin": null,
+                "object_collection": [
+                    {
+                        "id": "21",
+                        "type": "emitter",
+                        "label": "21",
+                        "type_id": "emitter_21",
+                        "on_side": "side_1_to_side_2",
+                        "x_relative_position": 1,
+                        "y_relative_position": 1,
+                        "z_relative_position": 0
+                    },
+                    {
+                        "id": "22",
+                        "type": "emitter",
+                        "label": "22",
+                        "type_id": "emitter_22",
+                        "on_side": "side_1_to_side_2",
+                        "x_relative_position": 1,
+                        "y_relative_position": 1,
+                        "z_relative_position": 0
+                    }
+                ],
+                "boundary_condition_collection": []
+            },
+            "12": {
+                "id": "12",
+                "type": "boundary",
+                "type_id": "mur_12",
+                "label": "12",
+                "side_1": "exterior",
+                "side_2": "1",
+                "azimuth": 90,
+                "tilt": 90,
+                "area": 13.0,
+                "origin": null,
+                "object_collection": [],
+                "boundary_condition_collection": []
+            },
+            "13": {
+                "id": "13",
+                "type": "boundary",
+                "type_id": "mur_13",
+                "label": "13",
+                "side_1": "exterior",
+                "side_2": "2",
+                "azimuth": 0,
+                "tilt": 90,
+                "area": 15.0,
+                "origin": null,
+                "object_collection": [
+                    {
+                        "id": "23",
+                        "type": "emitter",
+                        "label": "23",
+                        "type_id": "emitter_23",
+                        "on_side": "side_1_to_side_2",
+                        "x_relative_position": 1,
+                        "y_relative_position": 1,
+                        "z_relative_position": 0
+                    }
+                ],
+                "boundary_condition_collection": []
+            }
+        },
+        "archetype_collection": {
+            "layer_types": {
+                "1": {
+                    "thermal_conductivity": 0.25,
+                    "thickness": 0.02
+                },
+                "2": {
+                    "thermal_conductivity": 0.035,
+                    "thickness": 0.0275
+                },
+                "3": {
+                    "thermal_conductivity": 1.5,
+                    "thickness": 0.2
+                },
+                "4": {
+                    "thermal_conductivity": 0.035,
+                    "thickness": 0.1092
+                },
+                "5": {
+                    "thermal_conductivity": 0.035,
+                    "thickness": 0.0925
+                }
+            },
+            "boundary_types": {
+                "mur_11": {
+                    "layers": [
+                        {
+                            "type": "layer",
+                            "type_id": "1"
+                        },
+                        {
+                            "type": "layer",
+                            "type_id": "2"
+                        },
+                        {
+                            "type": "layer",
+                            "type_id": "3"
+                        }
+                    ]
+                },
+                "mur_12": {
+                    "layers": [
+                        {
+                            "type": "layer",
+                            "type_id": "1"
+                        },
+                        {
+                            "type": "layer",
+                            "type_id": "4"
+                        },
+                        {
+                            "type": "layer",
+                            "type_id": "3"
+                        }
+                    ]
+                },
+                "mur_13": {
+                    "layers": [
+                        {
+                            "type": "layer",
+                            "type_id": "1"
+                        },
+                        {
+                            "type": "layer",
+                            "type_id": "5"
+                        },
+                        {
+                            "type": "layer",
+                            "type_id": "3"
+                        }
+                    ]
+                }
+            },
+            "emitter_types": {
+                "emitter_21": {
+                    "efficiency": 0.85,
+                    "pn": 100
+                },
+                "emitter_22": {
+                    "efficiency": 0.60,
+                    "pn": 80
+                },
+                "emitter_23": {
+                    "efficiency": 0.90,
+                    "pn": 100
+                }
+            }
+        }
+    }
+}

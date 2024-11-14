@@ -211,25 +211,28 @@ class ThermalSpaceSimplified(ThermalSpace):
                     for boundary in space.boundaries
                 ]
             )
-            self.q_needs[space.id] = (
+            self.q_needs[space.id] = max(
                 (
-                    self.setpoint_temperatures.get(
-                        space.id,
-                        space.setpoint_temperature,
+                    (
+                        self.setpoint_temperatures.get(
+                            space.id,
+                            space.setpoint_temperature,
+                        )
+                        - self.previous_inside_air_temperatures.get(
+                            space.id,
+                            space.inside_air_temperature,
+                        )
                     )
-                    - self.previous_inside_air_temperatures.get(
+                    * self.thermal_capacity
+                    * space.reference_area
+                    * space.height
+                    + q_walls
+                    - self.gains.get(
                         space.id,
-                        space.inside_air_temperature,
+                        space.gain,
                     )
-                )
-                * self.thermal_capacity
-                * space.reference_area
-                * space.height
-                + q_walls
-                - self.gains.get(
-                    space.id,
-                    space.gain,
-                )
+                ),
+                0,
             )
             emitters = [
                 boundary_object

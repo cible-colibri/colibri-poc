@@ -5,7 +5,9 @@ WeatherModel class from Weather interface.
 from typing import List
 
 from colibri.interfaces.modules.weather import Weather
+from colibri.utils.colibri_utils import Attachment
 from colibri.utils.enums_utils import (
+    ColibriProjectObjects,
     Units,
 )
 
@@ -48,6 +50,10 @@ class WeatherModel(Weather):
             min=-100,
             max=100,
             unit=Units.DEGREE_CELSIUS,
+            attached_to=Attachment(
+                category=ColibriProjectObjects.PROJECT,
+                from_archetype=True,
+            ),
         )
         self.temperature_diminution_with_altitude: float = 0.0065  # °C/m
 

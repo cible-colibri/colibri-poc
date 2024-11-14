@@ -121,6 +121,7 @@ class Units(Enum):
     YEAR = "year"
     WATT = "W"
     WATT_HOUR = "Wh"
+    WATT_HOUR_PER_CUBIC_METER_PER_DEGREE_CELSIUS = "Wh/(m³.°C)"
     WATT_PER_KELVIN = "W/K"
     WATT_PER_SQUARE_METER = "W/m²"
     WATT_PER_METER_PER_KELVIN = "W/(m.K)"

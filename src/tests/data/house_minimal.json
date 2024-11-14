@@ -37,13 +37,6 @@
                     "lca_impact_properties": null,
                     "installation_year": 1,
                     "service_life": 50,
-                    "constitutive_materials": [
-                        {
-                            "share": 1,
-                            "material_type": "concrete"
-                        }
-                    ],
-                    "end_of_life_properties": null,
                     "emissivity": 0.92,
                     "light_reflectance": 0.8,
                     "albedo": 0.25

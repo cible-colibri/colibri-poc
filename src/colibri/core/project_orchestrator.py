@@ -74,6 +74,7 @@ class ProjectOrchestrator:
     verbose: bool = False
     iterate_for_convergence: bool = False
     maximum_number_of_iterations: int = 10
+    project_data: ProjectData = None
     # Internal variables
     _has_converged: bool = False
     _non_convergence_time_steps: List[int] = field(default_factory=list)
@@ -103,9 +104,14 @@ class ProjectOrchestrator:
         """
         # Start counter to keep track of time for performance
         starting_time = time.perf_counter()
+        # Set the simulation parameters
+        self._set_simulation_parameters()
         # Pass parameters information (modules' values) to connected modules
         self._substitute_parameter_links_values()
-        self._substitute_parameter_links_values_2()
+        # Pass project data's information to each module that needs information from the project data
+        self._pass_project_data_information_to_modules()
+        # Set the value for each intrinsic parameter (defined at the module level) of each module
+        self._set_intrinsic_modules_parameters_value()
         # Add a variable series for each output of each module to store results
         # at each time step
         self._initialize_module_output_series()
@@ -180,6 +186,8 @@ class ProjectOrchestrator:
         """
         self.modules.append(module)
         module.project = self
+        if isinstance(module, ProjectData) is True:
+            self.project_data = module
         return self
 
     def get_modules_by_class(self, class_name: str) -> List[Module]:
@@ -268,8 +276,13 @@ class ProjectOrchestrator:
         self._plots.setdefault(name, [])
         self._plots[name].append(plot)
 
-    def plot(self) -> None:
+    def plot(self, show_title: bool = True) -> None:
         """Plot all the desired variables
+
+        Parameters
+        ----------
+        show_title : bool = True
+            Show title on each figure
 
         Returns
         -------
@@ -292,7 +305,9 @@ class ProjectOrchestrator:
             for plot in [
                 plot for _, plots in self._plots.items() for plot in plots
             ]:
-                plot.add_plot_to_figure(figure=figure, location=location)
+                plot.add_plot_to_figure(
+                    figure=figure, location=location, show_title=show_title
+                )
                 location += 1
             # Show plot
             plt.show()
@@ -721,9 +736,34 @@ class ProjectOrchestrator:
         )
         self.links.append(link)
 
+    def _set_simulation_parameters(self) -> None:
+        """Set the simulation parameters for the project orchestrator
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        if self.project_data is None:
+            return None
+        for (
+            parameter_name,
+            parameter_value,
+        ) in self.project_data.simulation_parameters.items():
+            setattr(self, parameter_name, parameter_value)
+
     def _substitute_parameter_links_values(self):
         """"""
         # TODO: Check if it is parameters or simulation variables or both (error message)
+        #       It seems that this function is to be removed, because only input/output links
+        #       are created, so if to_parameter.role is Roles.PARAMETERS is always False
         for link in self.links:
             to_parameter: Parameter = link.to_module.get_field(link.to_field)
             if to_parameter is None:
@@ -732,20 +772,62 @@ class ProjectOrchestrator:
                 )
             if to_parameter.role is Roles.PARAMETERS:
                 from_field = getattr(link.from_module, link.from_field)
-                setattr(link.to_module, link.to_field, from_field)
 
-    def _substitute_parameter_links_values_2(self):
+    def _pass_project_data_information_to_modules(self) -> None:
+        """Pass project data's information to each module that needs
+        information from the project data
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
         for module in self.modules:
             parameters: List[Parameter] = module.parameters
             for parameter in parameters:
                 parameter_format: str = turn_format_to_string(
                     field_format=parameter.format
                 )
-                if parameter_format == "ProjectData":
-                    project_data: Module = self.get_modules_by_class(
-                        class_name="ProjectData"
-                    )[0]
-                    setattr(module, parameter.name, project_data)
+                if parameter_format == ProjectData.__name__:
+                    setattr(module, parameter.name, self.project_data)
+
+    def _set_intrinsic_modules_parameters_value(self) -> None:
+        """Set the value for each intrinsic parameter
+        (defined at the module level) of each module
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+
+        Examples
+        --------
+        >>> None
+        """
+        if self.project_data is None:
+            return None
+        for (
+            module_class_name,
+            module_parameters,
+        ) in self.project_data.module_parameters.items():
+            module: Module = self.get_modules_by_class(
+                class_name=module_class_name
+            )[0]
+            for (
+                module_parameter_name,
+                module_parameter_value,
+            ) in module_parameters.items():
+                setattr(module, module_parameter_name, module_parameter_value)
 
     def _initialize_module_output_series(self) -> None:
         """Create a variable for each output of each module to store results at
@@ -765,8 +847,8 @@ class ProjectOrchestrator:
         """
         for module in self.modules:
             for variable in module.outputs:
-                serie_name: str = f"{variable.name}{SERIES_EXTENSION_NAME}"
-                setattr(module, serie_name, [0] * self.time_steps)
+                series_name: str = f"{variable.name}{SERIES_EXTENSION_NAME}"
+                setattr(module, series_name, [0] * self.time_steps)
 
     def _initialize_modules(self) -> None:
         """Run the initialize method of each module in the project

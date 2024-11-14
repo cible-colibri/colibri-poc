@@ -96,12 +96,13 @@ class LimitedGenerator(Generator):
                 space.q_needs,
             )
             q_total_provided: float = min(max_q, q_needs)
+
             for emitter in emitters:
                 self.q_consumed[emitter.id] = q_total_provided / (
-                    (emitter.pn / max_q) * emitter.efficiency
+                    (max_q / emitter.pn) * emitter.efficiency
                 )
                 self.q_provided[emitter.id] = q_total_provided / (
-                    emitter.pn / max_q
+                    max_q / emitter.pn
                 )
 
     def end_iteration(self, time_step: int) -> None: ...
