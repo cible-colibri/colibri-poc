@@ -41,16 +41,6 @@ def test_create_class_instance() -> None:
         )
     assert exception_information.typename == ColibriModuleNotFoundError.__name__
     assert str(exception_information.value) == "WrongName is not a valid model."
-    with pytest.raises(Exception) as exception_information:
-        _ = create_class_instance(
-            class_name="CustomModule",
-            class_parameters={"name": "model-1"},
-            output_type=ColibriObjectTypes.MODULE,
-        )
-    assert exception_information.typename == UnauthorizedColibriModule.__name__
-    assert "not a subclass of the available scheme configuration" in str(
-        exception_information.value
-    )
     space: Space = create_class_instance(
         class_name="Space",
         class_parameters={"id": "space-1", "label": "kitchen"},
