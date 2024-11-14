@@ -1,82 +1,35 @@
-default:
-  image: $DOCKER_GRP/docker:25.0
-  services:
-    - docker:25.0-dind
-  tags:
-    - docker
+name: Publish Pages
 
+on:
+  push:
+    branches:
+      - main  # Adjust to the branch you want to use for deployment
 
-stages:
-  - test
-  - sonarqube
-  - documentation
-  - deploy_documentation
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
 
-variables:
-  COBERTURA_REPORT_FILE_PATH: coverage_report.xml
-  GITLAB_PROJECT_NAME: colibri
-  JOB_DOC_AND_TEST_IMAGE_URL: $DOCKER_GRP/python:3.11-slim
-  JUNIT_REPORT_FILE_PATH: junit_report.xml
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Adjust as needed
 
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y pandoc
+          pip install .[doc]  # Same as in your GitLab CI config
 
-job_test:
-  stage: test
-  image: $JOB_DOC_AND_TEST_IMAGE_URL
-  before_script:
-    - pip install .[test]
-  script:
-    - pytest src/tests --cov=src --cov-config=.coveragerc --cov-report term --cov-report xml:$COBERTURA_REPORT_FILE_PATH --junitxml=$JUNIT_REPORT_FILE_PATH
-  coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
-  artifacts:
-    expire_in: 2 weeks
-    when: always
-    paths:
-      - $JUNIT_REPORT_FILE_PATH
-      - $COBERTURA_REPORT_FILE_PATH
-    reports:
-      junit: $JUNIT_REPORT_FILE_PATH
-      coverage_report:
-        coverage_format: cobertura
-        path: $COBERTURA_REPORT_FILE_PATH
+      - name: Build documentation with Sphinx
+        run: sphinx-build docs/source public/
 
-
-job_sonarqube:
-  stage: sonarqube
-  image:
-    name: sonarsource/sonar-scanner-cli:latest
-    entrypoint: [""]
-  variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  cache:
-    key: "${CI_JOB_NAME}"
-    paths:
-      - .sonar/cache
-  script:
-    - sonar-scanner
-  allow_failure: true
-  dependencies:
-    - job_test
-
-
-pages:
-  stage: documentation
-  image: $JOB_DOC_AND_TEST_IMAGE_URL
-  script:
-    - apt update && apt install -y pandoc
-    - pip install .[doc]
-    - sphinx-build docs/source public/
-  artifacts:
-    paths:
-      - public
-
-
-job_deploy_documentation:
-  stage: deploy_documentation
-  variables:
-    BRANCH: $CI_COMMIT_BRANCH
-    JOB_NAME: pages
-    PROJECT_ID: $CI_PROJECT_ID
-    TRIGGER_URL: pages-priv/dee-docs/colibri_documentation
-  trigger: $TRIGGER_URL
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages  # Branch where GitHub Pages will be hosted
